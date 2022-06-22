@@ -1,0 +1,40 @@
+apiVersion: v2
+name: newrelic-prometheus
+description: A Helm chart to deploy Prometheus.
+
+type: application
+
+version: 0.0.1
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: "0.0.1"
+
+dependencies:
+  - name: common-library
+    version: 1.0.4
+    repository: "https://helm-charts.newrelic.com"
+
+keywords:
+  - newrelic
+  - prometheus
+
+maintainers:
+  - name: alvarocabanas
+    url: https://github.com/alvarocabanas
+  - name: carlossscastro
+    url: https://github.com/carlossscastro
+  - name: sigilioso
+    url: https://github.com/sigilioso
+  - name: gsanchezgavier
+    url: https://github.com/gsanchezgavier
+  - name: kang-makes
+    url: https://github.com/kang-makes
+  - name: marcsanmi
+    url: https://github.com/marcsanmi
+  - name: paologallinaharbur
+    url: https://github.com/paologallinaharbur
+  - name: roobre
+    url: https://github.com/roobre
