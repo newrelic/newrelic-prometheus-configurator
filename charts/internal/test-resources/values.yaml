@@ -1,0 +1,35 @@
+# Enable single pod exposing metrics
+deployment:
+  enabled: true
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+
+endpoints:
+  enabled: true
+  replicas: 1
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+
+# https://github.com/prometheus-community/avalanche
+avalanche:
+  enabled: true
+  annotations: {}
+  # Number of metrics to serve
+  metricCount: 5
+  # Number of labels per-metric
+  labelCount: 2
+  # Number of series per-metric
+  seriesCount: 1
+  # Modify length of metric names
+  metricLength: 5
+  # Modify length of label names
+  labelLength: 5
+  # Change series values every {interval} seconds
+  valueInterval: 10
+  # Change series_id label values every {interval} seconds
+  seriesInterval: 500
+  # Change __name__ label values every {interval} seconds
+  metricInterval: 500
+

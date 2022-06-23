@@ -1,0 +1,35 @@
+{{- if .Values.avalanche.enabled }}
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: avalanche
+spec:
+  selector:
+    matchLabels:
+      app: avalanche
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: avalanche
+      {{- with .Values.avalanche.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      containers:
+      - name: avalanche
+        image: quay.io/prometheuscommunity/avalanche:main
+        args:
+        - --metric-count= {{- .Values.avalanche.metricCount }}
+        - --label-count= {{- .Values.avalanche.labelCount }}
+        - --series-count= {{- .Values.avalanche.seriesCount }}
+        - --metricname-length= {{- .Values.avalanche.metricLength }}
+        - --labelname-length= {{- .Values.avalanche.labelLength }}
+        - --value-interval= {{- .Values.avalanche.valueInterval }}
+        - --series-interval= {{- .Values.avalanche.seriesInterval }}
+        - --metric-interval= {{- .Values.avalanche.metricInterval }}
+        - --port=9001
+        ports:
+        - containerPort: 9001
+{{- end }}
