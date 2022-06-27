@@ -12,7 +12,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        kubernetes-version: [ "v1.16.15", "v1.22.0" ]
+        kubernetes-version: [ "v1.16.15", "v1.24.0" ]
     steps:
       - uses: actions/checkout@v2
         with:
