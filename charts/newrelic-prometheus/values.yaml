@@ -1,0 +1,66 @@
+# -- Override the name of the chart
+nameOverride: ""
+# -- Override the full name of the release
+fullnameOverride: ""
+
+# -- Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster`
+cluster: ""
+# -- This set this license key to use. Can be configured also with `global.licenseKey`
+licenseKey: ""
+# -- In case you don't want to have the license key in you values, this allows you to point to a user created secret to get the key from there. Can be configured also with `global.customSecretName`
+customSecretName: ""
+# -- In case you don't want to have the license key in you values, this allows you to point to which secret key is the license key located. Can be configured also with `global.customSecretLicenseKey`
+customSecretLicenseKey: ""
+
+images:
+  # -- The secrets that are needed to pull images from a custom registry.
+  pullSecrets: []
+
+  prometheus:
+    registry: ""
+    repository: quay.io/prometheus/prometheus
+    pullPolicy: IfNotPresent
+    tag: v2.36.2
+
+# -- Settings controlling ServiceAccount creation.
+# @default -- See `values.yaml`
+serviceAccount:
+  # -- Whether the chart should automatically create the ServiceAccount objects required to run.
+  create: true
+  annotations: {}
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# -- Additional labels for chart objects. Can be configured also with `global.labels`
+labels: {}
+# -- Annotations to be added to all pods created by the integration.
+podAnnotations: {}
+# -- Additional labels for chart pods. Can be configured also with `global.podLabels`
+podLabels: {}
+
+# -- Sets pod's priorityClassName. Can be configured also with `global.priorityClassName`
+priorityClassName: ""
+# -- (bool) Sets pod's hostNetwork. Can be configured also with `global.hostNetwork`
+# @default -- `false`
+hostNetwork:
+# -- Sets security context (at pod level). Can be configured also with `global.podSecurityContext`
+podSecurityContext: {}
+# -- Sets security context (at container level). Can be configured also with `global.containerSecurityContext`
+containerSecurityContext: {}
+
+# -- Sets pod's dnsConfig. Can be configured also with `global.dnsConfig`
+dnsConfig: {}
+
+# -- Settings controlling RBAC objects creation.
+rbac:
+  # -- Whether the chart should automatically create the RBAC objects required to run.
+  create: true
+  # -- Whether the chart should create Pod Security Policy objects.
+  pspEnabled: false
+
+# -- Sets pod/node affinities set almost globally. (See [Affinities and tolerations](README.md#affinities-and-tolerations))
+affinity: {}
+# -- Sets pod's node selector almost globally. (See [Affinities and tolerations](README.md#affinities-and-tolerations))
+nodeSelector: {}
+# -- Sets pod's tolerations to node taints almost globally. (See [Affinities and tolerations](README.md#affinities-and-tolerations))
+tolerations: []
