@@ -1,0 +1,35 @@
+{{- if .Values.deployment.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment-app
+spec:
+  selector:
+    matchLabels:
+      app: deployment-app
+  template:
+    metadata:
+      labels:
+        app: deployment-app
+      {{- with .Values.deployment.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          volumeMounts:
+            - name: metrics
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: metrics
+          configMap:
+            name: prometheus-metrics
+            items:
+            - key: metrics-sample
+              path: metrics
+{{- end }}

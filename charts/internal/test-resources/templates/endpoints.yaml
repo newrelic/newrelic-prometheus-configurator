@@ -1,0 +1,47 @@
+{{- if .Values.endpoints.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-endpoints
+spec:
+  replicas: {{ .Values.endpoints.replicas }}
+  selector:
+    matchLabels:
+      app: endpoints
+  template:
+    metadata:
+      labels:
+        app: endpoints
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          volumeMounts:
+            - name: metrics
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: metrics
+          configMap:
+            name: prometheus-metrics
+            items:
+            - key: metrics-sample
+              path: metrics
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-endpoints
+  {{- with .Values.endpoints.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    app: endpoints
+  ports:
+    - port: 80
+      targetPort: 80
+{{- end }}
