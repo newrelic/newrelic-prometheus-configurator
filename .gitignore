@@ -1,2 +1,10 @@
 # Downloaded chart dependencies
 **/charts/*.tgz
+
+# Compiled binaries
+/bin/
+
+# Tilt
+/kubeconfig
+/values-local.yaml
+/.env

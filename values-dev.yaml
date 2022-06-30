@@ -1,0 +1,8 @@
+images:
+  configurator:
+    repository: prometheus-configurator
+    pullPolicy: Never
+    tag: "latest"
+
+cluster: tilt-local
+licenseKey: fake-license

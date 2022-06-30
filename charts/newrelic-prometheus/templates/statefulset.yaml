@@ -46,12 +46,8 @@ spec:
       serviceAccountName: {{ include "newrelic.common.serviceAccount.name" . }}
 
       initContainers:
-        - name: configurator-mock
-          image: busybox
-          command: 
-            - 'sh'
-            - '-c'
-            - 'cp /etc/configurator/config.yaml /etc/prometheus/config/config.yaml'
+        - name: configurator
+          image: {{ include "newrelic.common.images.image" ( dict "imageRoot" .Values.images.configurator "context" .) }}
           volumeMounts:
             - name: configurator-config
               mountPath: /etc/configurator/

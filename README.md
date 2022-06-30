@@ -23,6 +23,23 @@
 
 >[**Optional** - Include instructions on how to run tests if we include tests with the codebase. Remove this section if it's not needed.]
 
+
+## Run local environment
+
+We use minikube and Tilt to launch a local cluster and deploy the [main chart](charts/newrelic-prometheus/) and a set of testing endpoints from the [test-resource](charts/internal/test-resources/).
+
+Make sure you have these tools or install them:
+- [Install minikube](https://minikube.sigs.k8s.io/docs/start/)
+- [Install Tilt](https://docs.tilt.dev/install.html)
+- [Install Helm](https://helm.sh/docs/intro/install/)
+
+Start the local environment:
+```shell
+make local-env-start
+```
+
+Notice that local images are build and pushed to docker running inside the minikube cluster since we are running `eval $(minikube docker-env)` before launching Tilt.
+
 ## Support
 
 New Relic hosts and moderates an online forum where customers can interact with New Relic employees as well as other customers to get help and share best practices. Like all official New Relic open source projects, there's a related Community topic in the New Relic Explorers Hub. You can find this project's topic/threads here:

@@ -7,7 +7,4 @@ metadata:
 apiVersion: v1
 data:
   config.yaml: |
-    # mock config already converted
-    remote_write:
-    - name: test
-      url: https://fake-endpoint:8000
+    # configurator config

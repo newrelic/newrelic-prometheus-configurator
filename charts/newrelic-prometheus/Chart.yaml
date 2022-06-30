@@ -4,7 +4,7 @@ description: A Helm chart to deploy Prometheus.
 
 type: application
 
-version: 0.0.1-devel
+version: 0.0.2-devel
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
