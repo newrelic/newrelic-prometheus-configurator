@@ -48,9 +48,16 @@ jobs:
           minikube version: v1.26.0
           kubernetes version: ${{ matrix.kubernetes-version }}
           github token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-go@v2
+        if: steps.list-changed.outputs.changed == 'true'
+        with:
+          go-version: '1.18'
       - name: Create image for chart testing
         if: steps.list-changed.outputs.changed == 'true'
         run: |
+          make build
+          GOOS=linux GOARCH=amd64 DOCKER_BUILDKIT=1 docker build -t ct/prometheus-configurator:ct  .
+          minikube image load ct/prometheus-configurator:ct
           kubectl create ns ct
       - name: Test install charts
         if: steps.list-changed.outputs.changed == 'true'

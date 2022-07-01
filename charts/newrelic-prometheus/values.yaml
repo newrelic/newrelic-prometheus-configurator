@@ -16,6 +16,11 @@ images:
   # -- The secrets that are needed to pull images from a custom registry.
   pullSecrets: []
 
+  configurator:
+    registry: ""
+    repository: newrelic/prometheus-configurator
+    pullPolicy: IfNotPresent
+    tag: ""
   prometheus:
     registry: ""
     repository: quay.io/prometheus/prometheus
