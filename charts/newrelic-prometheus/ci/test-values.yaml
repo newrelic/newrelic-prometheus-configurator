@@ -1,2 +1,10 @@
 licenseKey: fakeLicenseKey
 cluster: test-cluster-name
+
+# TODO replace this fake configurator image once the correct one exists.
+images:
+  configurator:
+    registry: ""
+    repository: ct/prometheus-configurator
+    pullPolicy: IfNotPresent
+    tag: ct
