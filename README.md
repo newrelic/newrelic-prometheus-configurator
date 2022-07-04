@@ -21,7 +21,12 @@
 
 ## Testing
 
->[**Optional** - Include instructions on how to run tests if we include tests with the codebase. Remove this section if it's not needed.]
+### Running unit tests
+
+```bash
+make test
+```
+
 
 
 ## Run local environment
