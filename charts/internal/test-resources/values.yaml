@@ -33,3 +33,9 @@ avalanche:
   # Change __name__ label values every {interval} seconds
   metricInterval: 500
 
+# Build from /test/openmetrics-fake-exporter
+openMetricsDeployment:
+  enabled: true
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8000"

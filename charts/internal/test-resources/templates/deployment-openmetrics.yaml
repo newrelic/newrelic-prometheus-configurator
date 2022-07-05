@@ -1,0 +1,26 @@
+{{- if .Values.openMetricsDeployment.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-openmetrics
+spec:
+  selector:
+    matchLabels:
+      app: openmetrics
+  template:
+    metadata:
+      labels:
+        app: openmetrics
+      {{- with .Values.openMetricsDeployment.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      containers:
+        - name: openmetrics-fake-exporter
+          image: openmetrics-fake-exporter:latest
+          imagePullPolicy: Never
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+{{- end }}
