@@ -11,6 +11,7 @@ import (
 )
 
 func TestParser(t *testing.T) {
+	// it relies on testdata/<placeholder>.yaml and testdata/<placeholder>.expected.yaml
 	testCases := []string{
 		"remote-write-test",
 	}
@@ -28,6 +29,12 @@ func TestParser(t *testing.T) {
 			assertIsPrometheusConfig(t, output)
 		})
 	}
+}
+
+func TestParserInvalidInputYamlError(t *testing.T) {
+	input := []byte(`}invalid-yml`)
+	_, err := Parse(input)
+	assert.Error(t, err)
 }
 
 func assertYamlOutputsAreEqual(t *testing.T, y1, y2 []byte) {
