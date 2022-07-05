@@ -1,14 +1,17 @@
 package configurator
 
 import (
+	"fmt"
 	"time"
 
+	"github.com/newrelic/infrastructure-agent/pkg/license"
 	prometheusCommonConfig "github.com/prometheus/common/config"
 )
 
 const (
-	stagingURL = "https://staging-metric-api.newrelic.com/prometheus/v1/write?prometheus_server="
-	prodURL    = "https://metric-api.newrelic.com/prometheus/v1/write?prometheus_server="
+	remoteWriteBaseURL       = "https://%smetric-api.%snewrelic.com/prometheus/v1/write"
+	environmentStagingPrefix = "staging-"
+	regionEUPrefix           = "eu."
 )
 
 // RemoteWriteInput defines all the NewRelic's remote write endpoint fields.
@@ -53,13 +56,11 @@ type Authorization struct {
 
 // BuildRemoteWriteOutput builds a RemoteWriteOutput given the input.
 func BuildRemoteWriteOutput(i *Input) RemoteWriteOutput {
-	url := prodURL
-	if i.RemoteWrite.Staging {
-		url = stagingURL
-	}
-	url = url + i.Name
 	return RemoteWriteOutput{
-		URL:                 url,
+		// TODO: shall we setup remote write url parameters?
+		// prometheus_server ?
+		// high availability configuration? <https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure/prometheus-high-availability-ha>
+		URL:                 remoteWriteURL(i.RemoteWrite.Staging, i.RemoteWrite.LicenseKey),
 		RemoteTimeout:       i.RemoteWrite.RemoteTimeout,
 		Authorization:       Authorization{Credentials: i.RemoteWrite.LicenseKey},
 		TLSConfig:           i.RemoteWrite.TLSConfig,
@@ -67,4 +68,15 @@ func BuildRemoteWriteOutput(i *Input) RemoteWriteOutput {
 		QueueConfig:         i.RemoteWrite.QueueConfig,
 		WriteRelabelConfigs: i.RemoteWrite.ExtraWriteRelabelConfigs,
 	}
+}
+
+func remoteWriteURL(staging bool, licenseKey string) string {
+	envPrefix, regionPrefix := "", ""
+	if license.IsRegionEU(licenseKey) {
+		regionPrefix = regionEUPrefix
+	}
+	if staging {
+		envPrefix = environmentStagingPrefix
+	}
+	return fmt.Sprintf(remoteWriteBaseURL, envPrefix, regionPrefix)
 }

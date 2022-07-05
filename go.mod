@@ -3,6 +3,7 @@ module newrelic-prometheus
 go 1.18
 
 require (
+	github.com/newrelic/infrastructure-agent v0.0.0-20220628123709-841750e71812
 	github.com/prometheus/common v0.35.0
 	github.com/prometheus/prometheus v0.36.2
 	github.com/sirupsen/logrus v1.8.1
