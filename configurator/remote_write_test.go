@@ -31,12 +31,12 @@ func TestRemoteWriteParseStaging(t *testing.T) {
 }
 
 func TestRemoteWriteURL(t *testing.T) {
-
 	cases := []struct {
-		Name       string
-		Staging    bool
-		LicenseKey string
-		Expected   string
+		Name           string
+		Staging        bool
+		LicenseKey     string
+		Expected       string
+		DataSourceName string
 	}{
 		{
 			Name:       "staging non-eu",
@@ -62,11 +62,18 @@ func TestRemoteWriteURL(t *testing.T) {
 			LicenseKey: "eu-license-key",
 			Expected:   "https://metric-api.eu.newrelic.com/prometheus/v1/write",
 		},
+		{
+			Name:           "dataSourceName",
+			Staging:        false,
+			LicenseKey:     "non-eu-license-key",
+			Expected:       "https://metric-api.newrelic.com/prometheus/v1/write?prometheus_server=source",
+			DataSourceName: "source",
+		},
 	}
 
 	for _, c := range cases {
 		t.Run(c.Name, func(t *testing.T) {
-			result := remoteWriteURL(c.Staging, c.LicenseKey)
+			result := remoteWriteURL(c.Staging, c.LicenseKey, c.DataSourceName)
 			assert.Equal(t, c.Expected, result)
 		})
 	}

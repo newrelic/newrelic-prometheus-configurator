@@ -1,3 +1,4 @@
+data_source_name: "data-source"
 newrelic_remote_write:
   license_key: nrLicenseKey
   staging: true

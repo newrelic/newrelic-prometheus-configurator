@@ -9,9 +9,10 @@ import (
 )
 
 const (
-	remoteWriteBaseURL       = "https://%smetric-api.%snewrelic.com/prometheus/v1/write"
-	environmentStagingPrefix = "staging-"
-	regionEUPrefix           = "eu."
+	remoteWriteBaseURL         = "https://%smetric-api.%snewrelic.com/prometheus/v1/write"
+	environmentStagingPrefix   = "staging-"
+	regionEUPrefix             = "eu."
+	prometheusServerQueryParam = "prometheus_server"
 )
 
 // RemoteWriteInput defines all the NewRelic's remote write endpoint fields.
@@ -57,10 +58,7 @@ type Authorization struct {
 // BuildRemoteWriteOutput builds a RemoteWriteOutput given the input.
 func BuildRemoteWriteOutput(i *Input) RemoteWriteOutput {
 	return RemoteWriteOutput{
-		// TODO: shall we setup remote write url parameters?
-		// prometheus_server ?
-		// high availability configuration? <https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure/prometheus-high-availability-ha>
-		URL:                 remoteWriteURL(i.RemoteWrite.Staging, i.RemoteWrite.LicenseKey),
+		URL:                 remoteWriteURL(i.RemoteWrite.Staging, i.RemoteWrite.LicenseKey, i.DataSourceName),
 		RemoteTimeout:       i.RemoteWrite.RemoteTimeout,
 		Authorization:       Authorization{Credentials: i.RemoteWrite.LicenseKey},
 		TLSConfig:           i.RemoteWrite.TLSConfig,
@@ -70,7 +68,7 @@ func BuildRemoteWriteOutput(i *Input) RemoteWriteOutput {
 	}
 }
 
-func remoteWriteURL(staging bool, licenseKey string) string {
+func remoteWriteURL(staging bool, licenseKey string, dataSourceName string) string {
 	envPrefix, regionPrefix := "", ""
 	if license.IsRegionEU(licenseKey) {
 		regionPrefix = regionEUPrefix
@@ -78,5 +76,9 @@ func remoteWriteURL(staging bool, licenseKey string) string {
 	if staging {
 		envPrefix = environmentStagingPrefix
 	}
-	return fmt.Sprintf(remoteWriteBaseURL, envPrefix, regionPrefix)
+	url := fmt.Sprintf(remoteWriteBaseURL, envPrefix, regionPrefix)
+	if dataSourceName != "" {
+		url = url + "?prometheus_server=" + dataSourceName
+	}
+	return url
 }

@@ -13,6 +13,7 @@ import (
 
 func TestInput(t *testing.T) {
 	expected := Input{
+		DataSourceName: "data-source",
 		RemoteWrite: RemoteWriteInput{
 			LicenseKey: "nrLicenseKey",
 			Staging:    true,
