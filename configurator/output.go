@@ -2,7 +2,7 @@ package configurator
 
 // Output holds all configuration information in prometheus format which can be directly exported valid prometheus config yaml.
 type Output struct {
-	RemoteWrite []interface{} `yaml:"remote_write_configs"`
+	RemoteWrite []interface{} `yaml:"remote_write"`
 }
 
 func BuildOutput(input *Input) (Output, error) {

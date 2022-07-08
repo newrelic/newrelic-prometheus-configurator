@@ -45,6 +45,10 @@ func assertYamlOutputsAreEqual(t *testing.T, y1, y2 []byte) {
 }
 
 func assertIsPrometheusConfig(t *testing.T, y []byte) {
-	cfg := prometheusConfig.Config{}
-	require.NoError(t, yaml.Unmarshal(y, &cfg), "At least config should be marshaled to prometheus config")
+	tmpFile, err := ioutil.TempFile("", "gen-prometheus-config")
+	require.NoError(t, err)
+	_, err = tmpFile.Write(y)
+	require.NoError(t, err)
+	_, err = prometheusConfig.LoadFile(tmpFile.Name(), true, false, nil)
+	require.NoError(t, err)
 }
