@@ -1,12 +1,10 @@
 package configurator
 
 import (
-	"crypto/tls"
 	"io/ioutil"
 	"testing"
 	"time"
 
-	prometheusCommonConfig "github.com/prometheus/common/config"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -18,13 +16,13 @@ func TestInput(t *testing.T) {
 			LicenseKey: "nrLicenseKey",
 			Staging:    true,
 			ProxyURL:   "http://proxy.url.to.use:1234",
-			TLSConfig: &prometheusCommonConfig.TLSConfig{
+			TLSConfig: &TLSConfig{
 				InsecureSkipVerify: true,
 				CAFile:             "/path/to/ca.crt",
 				CertFile:           "/path/to/cert.crt",
 				KeyFile:            "/path/to/key.crt",
 				ServerName:         "server.name",
-				MinVersion:         tls.VersionTLS12,
+				MinVersion:         "TLS12",
 			},
 			QueueConfig: &QueueConfig{
 				Capacity:          2500,

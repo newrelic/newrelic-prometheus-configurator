@@ -9,7 +9,7 @@ remote_write:
       key_file: /path/to/key.crt
       server_name: server.name
       insecure_skip_verify: true
-      min_version: 771
+      min_version: TLS12
     proxy_url: http://proxy.url.to.use:1234
     queue_config:
       capacity: 2500

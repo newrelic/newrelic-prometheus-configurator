@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/newrelic/infrastructure-agent/pkg/license"
-	prometheusCommonConfig "github.com/prometheus/common/config"
 )
 
 const (
@@ -17,13 +16,13 @@ const (
 
 // RemoteWriteInput defines all the NewRelic's remote write endpoint fields.
 type RemoteWriteInput struct {
-	LicenseKey               string                            `yaml:"license_key"`
-	Staging                  bool                              `yaml:"staging"`
-	ProxyURL                 string                            `yaml:"proxy_url"`
-	TLSConfig                *prometheusCommonConfig.TLSConfig `yaml:"tls_config"` // TODO: check if we would like to use this TLSConfig or other notation common with other New Relic products.
-	QueueConfig              *QueueConfig                      `yaml:"queue_config"`
-	RemoteTimeout            time.Duration                     `yaml:"remote_timeout"`
-	ExtraWriteRelabelConfigs []PrometheusExtraConfig           `yaml:"extra_write_relabel_configs"`
+	LicenseKey               string                  `yaml:"license_key"`
+	Staging                  bool                    `yaml:"staging"`
+	ProxyURL                 string                  `yaml:"proxy_url"`
+	TLSConfig                *TLSConfig              `yaml:"tls_config"` // TODO: check if we would like to use this TLSConfig or other notation common with other New Relic products.
+	QueueConfig              *QueueConfig            `yaml:"queue_config"`
+	RemoteTimeout            time.Duration           `yaml:"remote_timeout"`
+	ExtraWriteRelabelConfigs []PrometheusExtraConfig `yaml:"extra_write_relabel_configs"`
 }
 
 type QueueConfig struct {
@@ -37,16 +36,27 @@ type QueueConfig struct {
 	RetryOnHTTP429    bool          `yaml:"retry_on_http_429"`
 }
 
+// TLSConfig represents remote-write tls configuration, `prometheusCommonConfig.TLSConfig` cannot be used directly
+// because it does not Marshal to yaml properly.
+type TLSConfig struct {
+	CAFile             string `yaml:"ca_file,omitempty" json:"ca_file,omitempty"`
+	CertFile           string `yaml:"cert_file,omitempty" json:"cert_file,omitempty"`
+	KeyFile            string `yaml:"key_file,omitempty" json:"key_file,omitempty"`
+	ServerName         string `yaml:"server_name,omitempty" json:"server_name,omitempty"`
+	InsecureSkipVerify bool   `yaml:"insecure_skip_verify" json:"insecure_skip_verify"`
+	MinVersion         string `yaml:"min_version,omitempty" json:"min_version,omitempty"`
+}
+
 // RemoteWriteOutput represents a prometheus remote_write config which can be obtained from input.
 type RemoteWriteOutput struct {
 	// TODO: check if Name field is needed.
-	URL                 string                            `yaml:"url"`
-	RemoteTimeout       time.Duration                     `yaml:"remote_timeout,omitempty"`
-	Authorization       Authorization                     `yaml:"authorization"`
-	TLSConfig           *prometheusCommonConfig.TLSConfig `yaml:"tls_config,omitempty"`
-	ProxyURL            string                            `yaml:"proxy_url,omitempty"`
-	QueueConfig         *QueueConfig                      `yaml:"queue_config,omitempty"`
-	WriteRelabelConfigs []PrometheusExtraConfig           `yaml:"write_relabel_configs,omitempty"`
+	URL                 string                  `yaml:"url"`
+	RemoteTimeout       time.Duration           `yaml:"remote_timeout,omitempty"`
+	Authorization       Authorization           `yaml:"authorization"`
+	TLSConfig           *TLSConfig              `yaml:"tls_config,omitempty"`
+	ProxyURL            string                  `yaml:"proxy_url,omitempty"`
+	QueueConfig         *QueueConfig            `yaml:"queue_config,omitempty"`
+	WriteRelabelConfigs []PrometheusExtraConfig `yaml:"write_relabel_configs,omitempty"`
 }
 
 // Authorization holds prometheus authorization information for remote write.
