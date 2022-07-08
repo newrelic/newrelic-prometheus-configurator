@@ -8,9 +8,10 @@ import (
 )
 
 const (
-	remoteWriteBaseURL         = "https://%smetric-api.%snewrelic.com/prometheus/v1/write"
-	environmentStagingPrefix   = "staging-"
-	regionEUPrefix             = "eu."
+	remoteWriteBaseURL       = "https://%smetric-api.%snewrelic.com/prometheus/v1/write"
+	environmentStagingPrefix = "staging-"
+	regionEUPrefix           = "eu."
+	// prometheusServerQueryParam is added to remoteWrite url when input's name is defined.
 	prometheusServerQueryParam = "prometheus_server"
 )
 
@@ -49,7 +50,6 @@ type TLSConfig struct {
 
 // RemoteWriteOutput represents a prometheus remote_write config which can be obtained from input.
 type RemoteWriteOutput struct {
-	// TODO: check if Name field is needed.
 	URL                 string                  `yaml:"url"`
 	RemoteTimeout       time.Duration           `yaml:"remote_timeout,omitempty"`
 	Authorization       Authorization           `yaml:"authorization"`
@@ -61,7 +61,6 @@ type RemoteWriteOutput struct {
 
 // Authorization holds prometheus authorization information for remote write.
 type Authorization struct {
-	// TODO: check if any other authorization option may be used.
 	Credentials string `yaml:"credentials"`
 }
 
@@ -88,7 +87,7 @@ func remoteWriteURL(staging bool, licenseKey string, dataSourceName string) stri
 	}
 	url := fmt.Sprintf(remoteWriteBaseURL, envPrefix, regionPrefix)
 	if dataSourceName != "" {
-		url = url + "?prometheus_server=" + dataSourceName
+		url = url + "?" + prometheusServerQueryParam + "=" + dataSourceName
 	}
 	return url
 }

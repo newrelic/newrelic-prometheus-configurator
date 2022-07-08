@@ -2,6 +2,7 @@ package configurator
 
 import (
 	"bytes"
+	"fmt"
 
 	"gopkg.in/yaml.v3"
 )
@@ -13,23 +14,22 @@ const (
 // Parse loads a yaml input and returns the corresponding prometheus-agent yaml.
 func Parse(in []byte) ([]byte, error) {
 	// load the yaml input
-	input, err := loadYaml(in)
+	input := &Input{}
+	err := yaml.Unmarshal(in, input)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error loading input yaml: %s", err)
 	}
 	// builds the corresponding output
 	output, err := BuildOutput(input)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error building output configuration: %s", err)
 	}
 	// parse it to yml
-	return toYaml(&output)
-}
-
-func loadYaml(in []byte) (*Input, error) {
-	input := &Input{}
-	err := yaml.Unmarshal(in, input)
-	return input, err
+	parsed, err := toYaml(&output)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling output configuration to yaml: %s", err)
+	}
+	return parsed, nil
 }
 
 func toYaml(output *Output) ([]byte, error) {

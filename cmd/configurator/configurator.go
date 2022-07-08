@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"io"
+	"fmt"
 	"io/ioutil"
 	"os"
 
@@ -20,34 +20,29 @@ const (
 var logger = log.StandardLogger()
 
 func readInput(inputPath string) ([]byte, error) {
-	var reader io.Reader
 	if inputPath == "" {
-		reader = os.Stdin
-	} else {
-		fileReader, err := os.Open(inputPath)
-		if err != nil {
-			return nil, err
-		}
-		defer closeLoggingErr(fileReader)
-		reader = fileReader
+		return ioutil.ReadAll(os.Stdin)
 	}
-	return ioutil.ReadAll(reader)
+	fileReader, err := os.Open(inputPath)
+	if err != nil {
+		return nil, err
+	}
+	defer closeLoggingErr(fileReader)
+	return ioutil.ReadAll(fileReader)
 }
 
 func writeOutput(outputPath string, output []byte) error {
-	var writer io.Writer
 	if outputPath == "" {
-		writer = os.Stdout
-	} else {
-		fileWriter, err := os.Create(outputPath)
-		if err != nil {
-			return err
-		}
-		defer closeLoggingErr(fileWriter)
-		writer = fileWriter
+		_, err := os.Stdout.Write(output)
+		return fmt.Errorf("error writing the output: %s", err)
 	}
-	_, err := writer.Write(output)
-	return err
+	fileWriter, err := os.Create(outputPath)
+	if err != nil {
+		return fmt.Errorf("error creating the output file: %s", err)
+	}
+	defer closeLoggingErr(fileWriter)
+	_, err = fileWriter.Write(output)
+	return fmt.Errorf("error writing output: %s", err)
 }
 
 func closeLoggingErr(f *os.File) {
@@ -71,8 +66,9 @@ func main() {
 		logger.Errorf("Error parsing the configuration: %s", err)
 		os.Exit(parseErrCode)
 	}
-	if err := writeOutput(*outputFlag, output); err != nil {
-		logger.Errorf("Error parsing the configuration: %s", err)
+	err = writeOutput(*outputFlag, output)
+	if err != nil {
+		logger.Errorf("Error writing the output configuration: %s", err)
 		os.Exit(outputErrCode)
 	}
 }
