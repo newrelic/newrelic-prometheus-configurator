@@ -7,7 +7,7 @@ cluster_context = 'minikube'
 # Only use explicitly allowed kubeconfigs as a safety measure.
 allow_k8s_contexts(cluster_context)
 
-local_resource('Configurator binary', 'make build', deps=[
+local_resource('Configurator binary', 'make compile-multiarch', deps=[
   './cmd',
   './internal',
   './configurator',
@@ -15,6 +15,7 @@ local_resource('Configurator binary', 'make build', deps=[
 
 # Images are pushed to the docker inside minikube since we use 'eval $(minikube docker-env)'.
 docker_build('prometheus-configurator', '.')
+docker_build('openmetrics-fake-exporter', './test/openmetrics-fake-exporter/.')
 
 # Deploying Kubernetes resources.
 k8s_yaml(helm('./charts/%s' % project_name, name=project_name, values=['values-dev.yaml']))
