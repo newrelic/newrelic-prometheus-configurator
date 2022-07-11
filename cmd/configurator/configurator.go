@@ -19,6 +19,28 @@ const (
 
 var logger = log.StandardLogger()
 
+func main() {
+	inputFlag := flag.String("input", "", "Input file to load the configuration from, defaults to stdin.")
+	outputFlag := flag.String("output", "", "Output file to use as output, defaults to stdout.")
+	flag.Parse()
+
+	input, err := readInput(*inputFlag)
+	if err != nil {
+		logger.Errorf("Error loading the input: %s", err)
+		os.Exit(inputErrCode)
+	}
+	output, err := configurator.Parse(input)
+	if err != nil {
+		logger.Errorf("Error parsing the configuration: %s", err)
+		os.Exit(parseErrCode)
+	}
+	err = writeOutput(*outputFlag, output)
+	if err != nil {
+		logger.Errorf("Error writing the output configuration: %s", err)
+		os.Exit(outputErrCode)
+	}
+}
+
 func readInput(inputPath string) ([]byte, error) {
 	if inputPath == "" {
 		input, err := ioutil.ReadAll(os.Stdin)
@@ -60,27 +82,5 @@ func writeOutput(outputPath string, output []byte) error {
 func closeLoggingErr(f *os.File) {
 	if err := f.Close(); err != nil {
 		logger.Errorf("Fail closing file: %s", err)
-	}
-}
-
-func main() {
-	inputFlag := flag.String("input", "", "Input file to load the configuration from, defaults to stdin.")
-	outputFlag := flag.String("output", "", "Output file to use as output, defaults to stdout.")
-	flag.Parse()
-
-	input, err := readInput(*inputFlag)
-	if err != nil {
-		logger.Errorf("Error loading the input: %s", err)
-		os.Exit(inputErrCode)
-	}
-	output, err := configurator.Parse(input)
-	if err != nil {
-		logger.Errorf("Error parsing the configuration: %s", err)
-		os.Exit(parseErrCode)
-	}
-	err = writeOutput(*outputFlag, output)
-	if err != nil {
-		logger.Errorf("Error writing the output configuration: %s", err)
-		os.Exit(outputErrCode)
 	}
 }
