@@ -110,3 +110,5 @@ jobs:
       - uses: actions/checkout@v2
       - name: Codespell test
         uses: codespell-project/actions-codespell@master
+        with:
+          skip: go.mod,go.sum
