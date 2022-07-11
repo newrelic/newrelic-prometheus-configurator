@@ -67,6 +67,7 @@ jobs:
         run: ct install --namespace ct --config .github/ct.yaml --debug --upgrade
 
   test:
+    
     name: Run tests
     runs-on: ubuntu-latest
     steps:
@@ -84,3 +85,28 @@ jobs:
             ${{ runner.os }}-go-
       - name: Run tests
         run: make test
+
+  static-analysis:
+    name: Static analysis and linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: newrelic/newrelic-infra-checkers@v1
+      - name: Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          auditOn: push
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        continue-on-error: ${{ github.event_name != 'pull_request' }}
+        with:
+          only-new-issues: true
+
+  codespell:
+    name: Codespell
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v2
+      - name: Codespell test
+        uses: codespell-project/actions-codespell@master
