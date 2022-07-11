@@ -1,9 +1,10 @@
-{{- if .Values.openMetricsDeployment.enabled }}
+{{- if .Values.openMetricsEndpoints.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}-openmetrics
 spec:
+  replicas: {{ .Values.openMetricsEndpoints.replicas }}
   selector:
     matchLabels:
       app: openmetrics
@@ -11,10 +12,6 @@ spec:
     metadata:
       labels:
         app: openmetrics
-      {{- with .Values.openMetricsDeployment.annotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
     spec:
       containers:
         - name: openmetrics-fake-exporter
@@ -23,4 +20,19 @@ spec:
           ports:
           - containerPort: 8000
             protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-openmetrics
+  {{- with .Values.openMetricsEndpoints.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    app: openmetrics
+  ports:
+    - port: 8000
+      targetPort: 8000
 {{- end }}

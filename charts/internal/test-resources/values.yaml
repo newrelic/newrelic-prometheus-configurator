@@ -34,8 +34,9 @@ avalanche:
   metricInterval: 500
 
 # Build from /test/openmetrics-fake-exporter
-openMetricsDeployment:
+openMetricsEndpoints:
   enabled: true
+  replicas: 1
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "8000"
