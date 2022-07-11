@@ -1,3 +1,6 @@
+// Copyright 2022 New Relic Corporation. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package configurator
 
 import (
@@ -11,14 +14,19 @@ import (
 )
 
 func TestParser(t *testing.T) {
+	t.Parallel()
+
 	// it relies on testdata/<placeholder>.yaml and testdata/<placeholder>.expected.yaml
 	testCases := []string{
 		"remote-write-test",
 	}
+
 	for _, c := range testCases {
-		t.Run(c, func(t *testing.T) {
-			inputFile := "testdata/" + c + ".yaml"
-			expectedFile := "testdata/" + c + ".expected.yaml"
+		name := c
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			inputFile := "testdata/" + name + ".yaml"
+			expectedFile := "testdata/" + name + ".expected.yaml"
 			input, err := ioutil.ReadFile(inputFile)
 			require.NoError(t, err)
 			expected, err := ioutil.ReadFile(expectedFile)
@@ -32,19 +40,26 @@ func TestParser(t *testing.T) {
 }
 
 func TestParserInvalidInputYamlError(t *testing.T) {
+	t.Parallel()
+
 	input := []byte(`}invalid-yml`)
 	_, err := Parse(input)
 	assert.Error(t, err)
 }
 
 func assertYamlOutputsAreEqual(t *testing.T, y1, y2 []byte) {
+	t.Helper()
+
 	var o1, o2 Output
+
 	require.NoError(t, yaml.Unmarshal(y1, &o1))
 	require.NoError(t, yaml.Unmarshal(y2, &o2))
 	assert.EqualValues(t, o1, o2)
 }
 
 func assertIsPrometheusConfig(t *testing.T, y []byte) {
+	t.Helper()
+
 	tmpFile, err := ioutil.TempFile("", "gen-prometheus-config")
 	require.NoError(t, err)
 	_, err = tmpFile.Write(y)

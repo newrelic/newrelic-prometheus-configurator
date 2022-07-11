@@ -1,3 +1,6 @@
+// Copyright 2022 New Relic Corporation. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package configurator
 
 import (
@@ -7,6 +10,8 @@ import (
 )
 
 func TestRemoteWriteParseProd(t *testing.T) {
+	t.Parallel()
+
 	prodInput := &Input{
 		RemoteWrite: RemoteWriteInput{
 			Staging:    false,
@@ -19,6 +24,8 @@ func TestRemoteWriteParseProd(t *testing.T) {
 }
 
 func TestRemoteWriteParseStaging(t *testing.T) {
+	t.Parallel()
+
 	prodInput := &Input{
 		RemoteWrite: RemoteWriteInput{
 			Staging:    true,
@@ -31,6 +38,8 @@ func TestRemoteWriteParseStaging(t *testing.T) {
 }
 
 func TestRemoteWriteURL(t *testing.T) {
+	t.Parallel()
+
 	cases := []struct {
 		Name           string
 		Staging        bool
@@ -71,8 +80,10 @@ func TestRemoteWriteURL(t *testing.T) {
 		},
 	}
 
-	for _, c := range cases {
+	for _, testCase := range cases {
+		c := testCase
 		t.Run(c.Name, func(t *testing.T) {
+			t.Parallel()
 			result := remoteWriteURL(c.Staging, c.LicenseKey, c.DataSourceName)
 			assert.Equal(t, c.Expected, result)
 		})

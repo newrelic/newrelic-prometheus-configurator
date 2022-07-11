@@ -1,3 +1,6 @@
+// Copyright 2022 New Relic Corporation. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package configurator
 
 import (
@@ -20,7 +23,7 @@ type RemoteWriteInput struct {
 	LicenseKey               string                  `yaml:"license_key"`
 	Staging                  bool                    `yaml:"staging"`
 	ProxyURL                 string                  `yaml:"proxy_url"`
-	TLSConfig                *TLSConfig              `yaml:"tls_config"` // TODO: check if we would like to use this TLSConfig or other notation common with other New Relic products.
+	TLSConfig                *TLSConfig              `yaml:"tls_config"`
 	QueueConfig              *QueueConfig            `yaml:"queue_config"`
 	RemoteTimeout            time.Duration           `yaml:"remote_timeout"`
 	ExtraWriteRelabelConfigs []PrometheusExtraConfig `yaml:"extra_write_relabel_configs"`
@@ -83,12 +86,15 @@ func remoteWriteURL(staging bool, licenseKey string, dataSourceName string) stri
 	if license.IsRegionEU(licenseKey) {
 		regionPrefix = regionEUPrefix
 	}
+
 	if staging {
 		envPrefix = environmentStagingPrefix
 	}
+
 	url := fmt.Sprintf(remoteWriteBaseURL, envPrefix, regionPrefix)
 	if dataSourceName != "" {
 		url = url + "?" + prometheusServerQueryParam + "=" + dataSourceName
 	}
+
 	return url
 }

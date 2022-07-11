@@ -1,3 +1,6 @@
+// Copyright 2022 New Relic Corporation. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package configurator
 
 import (
@@ -10,6 +13,8 @@ import (
 )
 
 func TestInput(t *testing.T) {
+	t.Parallel()
+
 	expected := Input{
 		DataSourceName: "data-source",
 		RemoteWrite: RemoteWriteInput{
@@ -51,6 +56,7 @@ func TestInput(t *testing.T) {
 	}
 	inputData, err := ioutil.ReadFile("testdata/input-test.yaml")
 	require.NoError(t, err)
+
 	input := Input{}
 	err = yaml.Unmarshal(inputData, &input)
 	require.NoError(t, err)
