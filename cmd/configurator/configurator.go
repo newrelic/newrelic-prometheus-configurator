@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"newrelic-prometheus/configurator"
@@ -43,7 +43,7 @@ func main() {
 
 func readInput(inputPath string) ([]byte, error) {
 	if inputPath == "" {
-		input, err := ioutil.ReadAll(os.Stdin)
+		input, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			return nil, fmt.Errorf("could not read from stdin: %w", err)
 		}
@@ -54,7 +54,7 @@ func readInput(inputPath string) ([]byte, error) {
 		return nil, fmt.Errorf("the input file could not be opened: %w", err)
 	}
 	defer closeLoggingErr(fileReader)
-	input, err := ioutil.ReadAll(fileReader)
+	input, err := io.ReadAll(fileReader)
 	if err != nil {
 		return nil, fmt.Errorf("could not read from the input file: %w", err)
 	}
@@ -74,7 +74,6 @@ func writeOutput(outputPath string, output []byte) error {
 	_, err = fileWriter.Write(output)
 	if err != nil {
 		return fmt.Errorf("could not write the output: %w", err)
-
 	}
 	return nil
 }
