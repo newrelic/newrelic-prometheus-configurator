@@ -21,28 +21,40 @@ var logger = log.StandardLogger()
 
 func readInput(inputPath string) ([]byte, error) {
 	if inputPath == "" {
-		return ioutil.ReadAll(os.Stdin)
+		input, err := ioutil.ReadAll(os.Stdin)
+		if err != nil {
+			return nil, fmt.Errorf("could not read from stdin: %w", err)
+		}
+		return input, nil
 	}
 	fileReader, err := os.Open(inputPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("the input file could not be opened: %w", err)
 	}
 	defer closeLoggingErr(fileReader)
-	return ioutil.ReadAll(fileReader)
+	input, err := ioutil.ReadAll(fileReader)
+	if err != nil {
+		return nil, fmt.Errorf("could not read from the input file: %w", err)
+	}
+	return input, nil
 }
 
 func writeOutput(outputPath string, output []byte) error {
 	if outputPath == "" {
 		_, err := os.Stdout.Write(output)
-		return fmt.Errorf("error writing the output: %s", err)
+		return fmt.Errorf("could not to stdout: %w", err)
 	}
 	fileWriter, err := os.Create(outputPath)
 	if err != nil {
-		return fmt.Errorf("error creating the output file: %s", err)
+		return fmt.Errorf("the output file cannot be created: %w", err)
 	}
 	defer closeLoggingErr(fileWriter)
 	_, err = fileWriter.Write(output)
-	return fmt.Errorf("error writing output: %s", err)
+	if err != nil {
+		return fmt.Errorf("could not write the output: %w", err)
+
+	}
+	return nil
 }
 
 func closeLoggingErr(f *os.File) {

@@ -17,17 +17,17 @@ func Parse(in []byte) ([]byte, error) {
 	input := &Input{}
 	err := yaml.Unmarshal(in, input)
 	if err != nil {
-		return nil, fmt.Errorf("error loading input yaml: %s", err)
+		return nil, fmt.Errorf("yaml input could not be loaded: %w", err)
 	}
 	// builds the corresponding output
 	output, err := BuildOutput(input)
 	if err != nil {
-		return nil, fmt.Errorf("error building output configuration: %s", err)
+		return nil, fmt.Errorf("output could not be built: %w", err)
 	}
 	// parse it to yml
 	parsed, err := toYaml(&output)
 	if err != nil {
-		return nil, fmt.Errorf("error marshaling output configuration to yaml: %s", err)
+		return nil, fmt.Errorf("output could not be encoded to yaml: %w", err)
 	}
 	return parsed, nil
 }
