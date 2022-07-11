@@ -26,6 +26,7 @@ type RemoteWriteInput struct {
 	ExtraWriteRelabelConfigs []PrometheusExtraConfig `yaml:"extra_write_relabel_configs"`
 }
 
+// QueueConfig represents the remote-write queue config.
 type QueueConfig struct {
 	Capacity          int           `yaml:"capacity"`
 	MaxShards         int           `yaml:"max_shards"`
