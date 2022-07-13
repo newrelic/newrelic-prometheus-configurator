@@ -91,7 +91,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: newrelic/newrelic-infra-checkers@v1
+      - uses: newrelic/newrelic-infra-checkers@v1.1.0
+        with:
+          golangci-lint-config: golangci-lint
       - name: Semgrep
         uses: returntocorp/semgrep-action@v1
         with:
