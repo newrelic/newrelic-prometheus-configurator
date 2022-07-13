@@ -7,11 +7,11 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"newrelic-prometheus/configurator"
 	"os"
 
-	"github.com/scaleway/scaleway-sdk-go/logger"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/newrelic-forks/newrelic-prometheus/configurator"
 )
 
 const (
@@ -94,6 +94,7 @@ func writeOutput(outputPath string, output []byte) error {
 }
 
 func closeLoggingErr(f *os.File) {
+	logger := log.StandardLogger()
 	if err := f.Close(); err != nil {
 		logger.Errorf("Fail closing file: %s", err)
 	}

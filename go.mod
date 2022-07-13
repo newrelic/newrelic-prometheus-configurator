@@ -1,11 +1,10 @@
-module newrelic-prometheus
+module github.com/newrelic-forks/newrelic-prometheus
 
 go 1.18
 
 require (
 	github.com/newrelic/infrastructure-agent v0.0.0-20220628123709-841750e71812
 	github.com/prometheus/prometheus v0.36.2
-	github.com/scaleway/scaleway-sdk-go v1.0.0-beta.9
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.8.0
 	gopkg.in/yaml.v3 v3.0.1
