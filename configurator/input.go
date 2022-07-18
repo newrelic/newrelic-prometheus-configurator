@@ -7,7 +7,9 @@ package configurator
 // prometheus configuration.
 type Input struct {
 	// DataSourceName holds the source name which will be used as `prometheus_server` parameter in New Relic remote
-	// write endpoint.
+	// write endpoint. See:
+	// <https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-remote-write/set-your-prometheus-remote-write-integration/>
+	// for details.
 	DataSourceName string `yaml:"data_source_name"`
 	// RemoteWrite holds the New Relic remote write configuration.
 	RemoteWrite RemoteWriteInput `yaml:"newrelic_remote_write"`
