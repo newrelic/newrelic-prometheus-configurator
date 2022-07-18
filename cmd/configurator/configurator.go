@@ -74,9 +74,10 @@ func readInput(inputPath string) ([]byte, error) {
 
 func writeOutput(outputPath string, output []byte) error {
 	if outputPath == "" {
-		_, err := os.Stdout.Write(output)
-
-		return fmt.Errorf("could not to stdout: %w", err)
+		if _, err := os.Stdout.Write(output); err != nil {
+			return fmt.Errorf("could not to stdout: %w", err)
+		}
+		return nil
 	}
 
 	fileWriter, err := os.Create(outputPath)
@@ -84,8 +85,7 @@ func writeOutput(outputPath string, output []byte) error {
 		return fmt.Errorf("the output file cannot be created: %w", err)
 	}
 
-	_, err = fileWriter.Write(output)
-	if err != nil {
+	if _, err := fileWriter.Write(output); err != nil {
 		return fmt.Errorf("could not write the output: %w", err)
 	}
 
