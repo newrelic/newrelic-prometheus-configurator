@@ -3,7 +3,6 @@ module github.com/newrelic-forks/newrelic-prometheus
 go 1.18
 
 require (
-	github.com/newrelic/infrastructure-agent v0.0.0-20220628123709-841750e71812
 	github.com/prometheus/prometheus v0.36.2
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.8.0
@@ -24,6 +23,7 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
 	github.com/pkg/errors v0.9.1 // indirect

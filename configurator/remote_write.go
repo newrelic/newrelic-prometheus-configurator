@@ -6,8 +6,6 @@ package configurator
 import (
 	"fmt"
 	"time"
-
-	"github.com/newrelic/infrastructure-agent/pkg/license"
 )
 
 const (
@@ -83,7 +81,7 @@ func BuildRemoteWriteOutput(i *Input) RemoteWriteOutput {
 
 func remoteWriteURL(staging bool, licenseKey string, dataSourceName string) string {
 	envPrefix, regionPrefix := "", ""
-	if license.IsRegionEU(licenseKey) {
+	if licenseIsRegionEU(licenseKey) {
 		regionPrefix = regionEUPrefix
 	}
 
