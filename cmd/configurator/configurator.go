@@ -39,8 +39,7 @@ func main() {
 		os.Exit(parseErrCode)
 	}
 
-	err = writeOutput(*outputFlag, output)
-	if err != nil {
+	if err := writeOutput(*outputFlag, output); err != nil {
 		logger.Errorf("Error writing the output configuration: %s", err)
 		os.Exit(outputErrCode)
 	}
