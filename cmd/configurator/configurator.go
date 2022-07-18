@@ -60,11 +60,13 @@ func readInput(inputPath string) ([]byte, error) {
 		return nil, fmt.Errorf("the input file could not be opened: %w", err)
 	}
 
-	defer closeLoggingErr(fileReader)
-
 	input, err := io.ReadAll(fileReader)
 	if err != nil {
 		return nil, fmt.Errorf("could not read from the input file: %w", err)
+	}
+
+	if err := fileReader.Close(); err != nil {
+		return nil, fmt.Errorf("could not close the input file: %w", err)
 	}
 
 	return input, nil
@@ -82,19 +84,14 @@ func writeOutput(outputPath string, output []byte) error {
 		return fmt.Errorf("the output file cannot be created: %w", err)
 	}
 
-	defer closeLoggingErr(fileWriter)
-
 	_, err = fileWriter.Write(output)
 	if err != nil {
 		return fmt.Errorf("could not write the output: %w", err)
 	}
 
-	return nil
-}
-
-func closeLoggingErr(f *os.File) {
-	logger := log.StandardLogger()
-	if err := f.Close(); err != nil {
-		logger.Errorf("Fail closing file: %s", err)
+	if err := fileWriter.Close(); err != nil {
+		return fmt.Errorf("could not close the output file: %w", err)
 	}
+
+	return nil
 }
