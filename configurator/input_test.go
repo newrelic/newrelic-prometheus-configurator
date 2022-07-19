@@ -15,7 +15,52 @@ import (
 func TestInput(t *testing.T) {
 	t.Parallel()
 
-	expected := Input{
+	expected := testInputExpectation(t)
+	inputData, err := ioutil.ReadFile("testdata/input-test.yaml")
+	require.NoError(t, err)
+
+	checkInput(t, expected, inputData)
+}
+
+//nolint:paralleltest
+// t.SetEnv cannot be used in parallel tests.
+func TestInputLicenseKeyFromEnv(t *testing.T) {
+	expectedLicenseKey := "license-key-from-env"
+	expected := testInputExpectation(t)
+	expected.RemoteWrite.LicenseKey = expectedLicenseKey
+	t.Setenv("NRA_LICENSE_KEY", expectedLicenseKey)
+	inputData, err := ioutil.ReadFile("testdata/input-test.no-license-key.yaml")
+	require.NoError(t, err)
+
+	checkInput(t, expected, inputData)
+}
+
+//nolint:paralleltest
+// t.SetEnv cannot be used in parallel tests.
+func TestInputLicenseKeyFromEnvPrecedence(t *testing.T) {
+	expectedLicenseKey := "license-key-from-env"
+	expected := testInputExpectation(t)
+	expected.RemoteWrite.LicenseKey = expectedLicenseKey
+	t.Setenv("NRA_LICENSE_KEY", expectedLicenseKey)
+	inputData, err := ioutil.ReadFile("testdata/input-test.yaml")
+	require.NoError(t, err)
+
+	checkInput(t, expected, inputData)
+}
+
+func checkInput(t *testing.T, expected Input, inputData []byte) {
+	t.Helper()
+
+	input := Input{}
+	err := yaml.Unmarshal(inputData, &input)
+	require.NoError(t, err)
+	require.EqualValues(t, expected, input)
+}
+
+func testInputExpectation(t *testing.T) Input {
+	t.Helper()
+
+	return Input{
 		DataSourceName: "data-source",
 		RemoteWrite: RemoteWriteInput{
 			LicenseKey: "nrLicenseKey",
@@ -54,11 +99,4 @@ func TestInput(t *testing.T) {
 			},
 		},
 	}
-	inputData, err := ioutil.ReadFile("testdata/input-test.yaml")
-	require.NoError(t, err)
-
-	input := Input{}
-	err = yaml.Unmarshal(inputData, &input)
-	require.NoError(t, err)
-	require.EqualValues(t, expected, input)
 }
