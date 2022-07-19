@@ -25,7 +25,7 @@ type asserter struct {
 	prometheusPort string
 }
 
-func newAsserter(options ...func(*asserter)) *asserter {
+func newAsserter(prometheusPort string, options ...func(*asserter)) *asserter {
 	a := &asserter{}
 
 	a.appendable = &mockAppendable{
@@ -34,19 +34,13 @@ func newAsserter(options ...func(*asserter)) *asserter {
 
 	a.defaultBackoff = time.Second
 	a.defaultTimeout = time.Second * 10
-	a.prometheusPort = "9090"
+	a.prometheusPort = prometheusPort
 
 	for _, op := range options {
 		op(a)
 	}
 
 	return a
-}
-
-func withCustomPort(prometheusPort string) func(*asserter) {
-	return func(a *asserter) {
-		a.prometheusPort = prometheusPort
-	}
 }
 
 func (a *asserter) startRemoteWriteEndpoint(t *testing.T) *httptest.Server {
@@ -122,6 +116,8 @@ func retryUntilTrue(timeout time.Duration, backoff time.Duration, f func() bool)
 	return nil
 }
 
+// mockAppendable implements the github.com/prometheus/prometheus/storage.Appendable interface
+// which is used by the remote write server to store the received samples.
 type mockAppendable struct {
 	latestSamples map[string]mockSample
 	lock          sync.Mutex
@@ -153,7 +149,7 @@ func (*mockAppendable) Rollback() error {
 	return nil
 }
 
-func (m *mockAppendable) AppendExemplar(_ storage.SeriesRef, l labels.Labels, e exemplar.Exemplar) (storage.SeriesRef, error) {
+func (m *mockAppendable) AppendExemplar(_ storage.SeriesRef, _ labels.Labels, _ exemplar.Exemplar) (storage.SeriesRef, error) {
 	return 0, nil
 }
 

@@ -74,9 +74,11 @@ func (ps *prometheusServer) start(t *testing.T, configPath string) {
 	})
 }
 
+// freePort returns an available TCP port. Basically returns the port provided by the
+// kernel when trying to bind to port 0 in a similar way as httptest.NewServer does.
 func freePort(t *testing.T) string {
 	t.Helper()
-	// ':0' resolves a free port.
+
 	add, err := net.ResolveTCPAddr("tcp", "localhost:0")
 	if err != nil {
 		t.Error(err)

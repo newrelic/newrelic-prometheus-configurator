@@ -29,7 +29,7 @@ func Test_ServerReady(t *testing.T) {
 
 	ps := newPrometheusServer(t)
 
-	asserter := newAsserter(withCustomPort(ps.port))
+	asserter := newAsserter(ps.port)
 
 	asserter.startRemoteWriteEndpoint(t)
 
@@ -51,7 +51,7 @@ func Test_SelfMetrics(t *testing.T) {
 
 	ps := newPrometheusServer(t)
 
-	asserter := newAsserter(withCustomPort(ps.port))
+	asserter := newAsserter(ps.port)
 
 	rw := asserter.startRemoteWriteEndpoint(t)
 
