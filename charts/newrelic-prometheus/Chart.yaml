@@ -4,7 +4,7 @@ description: A Helm chart to deploy Prometheus.
 
 type: application
 
-version: 0.0.2-devel
+version: 0.0.3-devel
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
@@ -14,7 +14,7 @@ appVersion: "0.0.1"
 
 dependencies:
   - name: common-library
-    version: 1.0.4
+    version: 1.0.5
     repository: "https://helm-charts.newrelic.com"
 
 keywords:
