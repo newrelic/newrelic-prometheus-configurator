@@ -9,5 +9,3 @@ COPY bin/configurator-${TARGETOS}-${TARGETARCH} /
 
 RUN mv /configurator-${TARGETOS}-${TARGETARCH} /configurator && \
     chmod 755 /configurator
-
-ENTRYPOINT ["/sbin/tini", "--", "/configurator"]
