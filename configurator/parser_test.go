@@ -1,12 +1,13 @@
 // Copyright 2022 New Relic Corporation. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package configurator
+package configurator_test
 
 import (
 	"io/ioutil"
 	"testing"
 
+	"github.com/newrelic-forks/newrelic-prometheus/configurator"
 	prometheusConfig "github.com/prometheus/prometheus/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -31,7 +32,7 @@ func TestParser(t *testing.T) {
 			require.NoError(t, err)
 			expected, err := ioutil.ReadFile(expectedFile)
 			require.NoError(t, err)
-			output, err := Parse(input)
+			output, err := configurator.Parse(input)
 			require.NoError(t, err)
 			assertYamlOutputsAreEqual(t, expected, output)
 			assertIsPrometheusConfig(t, output)
@@ -43,14 +44,14 @@ func TestParserInvalidInputYamlError(t *testing.T) {
 	t.Parallel()
 
 	input := []byte(`}invalid-yml`)
-	_, err := Parse(input)
+	_, err := configurator.Parse(input)
 	assert.Error(t, err)
 }
 
 func assertYamlOutputsAreEqual(t *testing.T, y1, y2 []byte) {
 	t.Helper()
 
-	var o1, o2 Output
+	var o1, o2 configurator.Output
 
 	require.NoError(t, yaml.Unmarshal(y1, &o1))
 	require.NoError(t, yaml.Unmarshal(y2, &o2))
