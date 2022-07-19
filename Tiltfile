@@ -7,11 +7,10 @@ cluster_context = 'minikube'
 # Only use explicitly allowed kubeconfigs as a safety measure.
 allow_k8s_contexts(cluster_context)
 
-local_resource('Configurator binary', 'GOOS=linux make compile-multiarch', deps=[
+local_resource('Configurator binary', 'make compile-multiarch', deps=[
   './cmd',
   './internal',
-  './pkg',
-  './src',
+  './configurator',
 ])
 
 # Images are pushed to the docker inside minikube since we use 'eval $(minikube docker-env)'.
