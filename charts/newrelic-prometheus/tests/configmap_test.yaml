@@ -13,7 +13,6 @@ tests:
             # Configuration for newrelic-prometheus-configurator
             data_source_name: cluster-test
             newrelic_remote_write:
-              staging: false
   - it: remote_write config does not include any specific configuration (staging)
     set:
       licenseKey: license-key-test

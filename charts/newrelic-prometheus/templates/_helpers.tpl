@@ -12,7 +12,9 @@ data_source_name: {{ .Values.cluster }}
 {{- define "nerelic-prometheus.configurator.config._remoteWrite" -}}
 
 newrelic_remote_write:
-  staging: {{ include "newrelic.common.nrStaging.value" . }}
+{{- if (include "newrelic.common.nrStaging" . ) }}
+  staging: true
+{{- end -}}
 
 {{- if .Values.config -}}
 
