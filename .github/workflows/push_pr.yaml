@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - check-tilt
 
 env: 
   GO_VERSION: '1.18'
