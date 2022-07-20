@@ -22,16 +22,12 @@ type prometheusServer struct {
 	port string
 }
 
-func newPrometheusServer(t *testing.T, options ...func(*prometheusServer)) *prometheusServer {
+func newPrometheusServer(t *testing.T) *prometheusServer {
 	t.Helper()
 
 	ps := &prometheusServer{}
 
 	ps.port = freePort(t)
-
-	for _, op := range options {
-		op(ps)
-	}
 
 	return ps
 }

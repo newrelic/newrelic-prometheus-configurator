@@ -26,7 +26,7 @@ type asserter struct {
 	prometheusPort string
 }
 
-func newAsserter(prometheusPort string, options ...func(*asserter)) *asserter {
+func newAsserter(prometheusPort string) *asserter {
 	a := &asserter{}
 
 	a.appendable = &mockAppendable{
@@ -36,10 +36,6 @@ func newAsserter(prometheusPort string, options ...func(*asserter)) *asserter {
 	a.defaultBackoff = time.Second
 	a.defaultTimeout = time.Second * 10
 	a.prometheusPort = prometheusPort
-
-	for _, op := range options {
-		op(a)
-	}
 
 	return a
 }
