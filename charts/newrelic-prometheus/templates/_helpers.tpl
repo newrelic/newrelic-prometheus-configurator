@@ -38,8 +38,8 @@ newrelic_remote_write:
 {{- end -}} {{- /* $remoteWrite */ -}}
 
 {{- if .Values.config.extra_remote_write }}
-  extra_remote_write:
-    {{- .Values.config.extra_remote_write | toYaml | nindent 6 -}}
+extra_remote_write:
+  {{- .Values.config.extra_remote_write | toYaml | nindent 4 -}}
 {{- end -}}
 
 {{- end -}}{{- /* .Values.config */ -}}
