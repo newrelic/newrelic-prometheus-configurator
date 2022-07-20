@@ -48,6 +48,8 @@ spec:
       initContainers:
         - name: configurator
           image: {{ include "newrelic.common.images.image" ( dict "imageRoot" .Values.images.configurator "context" .) }}
+          command: ["/configurator"]
+          args: ["-input", "/etc/configurator/config.yaml", "-output", "/etc/prometheus/config/config.yaml"]
           volumeMounts:
             - name: configurator-config
               mountPath: /etc/configurator/
@@ -93,8 +95,8 @@ spec:
             successThreshold: 1
 
           args:
-            - --config.file=/etc/prometheus/config/config.yaml 
-            - --enable-feature=agent,expand-external-labels 
+            - --config.file=/etc/prometheus/config/config.yaml
+            - --enable-feature=agent,expand-external-labels
             - --storage.agent.retention.max-time=30m
             - --storage.agent.wal-truncate-frequency=30m
             - --storage.agent.path=/etc/prometheus/storage
