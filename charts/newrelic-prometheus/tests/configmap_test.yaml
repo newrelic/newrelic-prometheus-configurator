@@ -40,13 +40,13 @@ tests:
             insecure_skip_verify: true
           queue_config:
             retry_on_http_429: false
-          extra_relabel_configs:
+          extra_write_relabel_configs:
             - source_labels:
               - __name__
               - instance
               regexp: node_memory_active_bytes;localhost:9100
               action: drop
-        extraRemoteWrite:
+        extra_remote_write:
           - url: "https://second.remote.write"
     asserts: # fields order may be different when yaml is rendered so we just check they are included.
       - matchRegex:

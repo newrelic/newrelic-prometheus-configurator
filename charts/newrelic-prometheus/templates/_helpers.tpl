@@ -1,8 +1,9 @@
 {{- /* Return the newrelic-prometheus configuration */ -}}
 {{- define "newrelic-prometheus.configurator.config" -}}
 
-data_source_name: {{ .Values.cluster }} # TODO: we should consider using an external label to set the cluster name instead
-{{- include "nerelic-prometheus.configurator.config._remoteWrite" . -}}
+{{- /* TODO: we should consider using an external label to set the cluster name instead */ -}}
+data_source_name: {{ .Values.cluster }}
+{{ include "nerelic-prometheus.configurator.config._remoteWrite" . }}
 
 {{- end -}}
 
@@ -15,7 +16,7 @@ newrelic_remote_write:
 
 {{- if .Values.config -}}
 
-{{- $remoteWrite := .Values.config.remoteWrite -}}
+{{- $remoteWrite := .Values.config.remote_write -}}
 {{- if $remoteWrite  -}}
 {{- if $remoteWrite.extra_write_relabel_configs }}
   extra_write_relabel_configs:
