@@ -58,3 +58,10 @@ local-env-start:
 .PHONY: tilt-up
 tilt-up:
 	eval $$(minikube docker-env); tilt up ; tilt down
+
+.PHONY: tilt-ci
+tilt-ci:
+	helm repo add newrelic https://helm-charts.newrelic.com
+	helm dependency update ./charts/newrelic-prometheus
+# tilt ci has a non configurable timeout of 30m that is why using 'timeout'.
+	eval $$(minikube docker-env); timeout 5m tilt ci
