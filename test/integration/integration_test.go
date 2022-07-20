@@ -31,8 +31,6 @@ func Test_ServerReady(t *testing.T) {
 
 	asserter := newAsserter(ps.port)
 
-	asserter.startRemoteWriteEndpoint(t)
-
 	inputConfig := `
 data_source_name: "data-source"
 newrelic_remote_write:
@@ -53,7 +51,7 @@ func Test_SelfMetrics(t *testing.T) {
 
 	asserter := newAsserter(ps.port)
 
-	rw := asserter.startRemoteWriteEndpoint(t)
+	rw := startRemoteWriteEndpoint(t, asserter.appendable)
 
 	// TODO this test is using a Prom config directly since static targets
 	// are not implemented in the configurator yet.

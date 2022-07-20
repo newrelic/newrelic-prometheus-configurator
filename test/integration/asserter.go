@@ -44,22 +44,6 @@ func newAsserter(prometheusPort string, options ...func(*asserter)) *asserter {
 	return a
 }
 
-func (a *asserter) startRemoteWriteEndpoint(t *testing.T) *httptest.Server {
-	t.Helper()
-
-	handler := remote.NewWriteHandler(nil, a.appendable)
-
-	remoteWriteServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		handler.ServeHTTP(w, r)
-	}))
-
-	t.Cleanup(func() {
-		remoteWriteServer.Close()
-	})
-
-	return remoteWriteServer
-}
-
 func (a *asserter) metricName(t *testing.T, expectedMetricName ...string) {
 	t.Helper()
 
@@ -96,6 +80,22 @@ func (a *asserter) prometheusServerReady(t *testing.T) {
 	require.NoError(t, err, "readiness probe failed")
 }
 
+func startRemoteWriteEndpoint(t *testing.T, appendable storage.Appendable) *httptest.Server {
+	t.Helper()
+
+	handler := remote.NewWriteHandler(nil, appendable)
+
+	remoteWriteServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		handler.ServeHTTP(w, r)
+	}))
+
+	t.Cleanup(func() {
+		remoteWriteServer.Close()
+	})
+
+	return remoteWriteServer
+}
+
 func retryUntilTrue(timeout time.Duration, backoff time.Duration, f func() bool) error {
 	timeoutTicker := time.After(timeout)
 
@@ -123,9 +123,9 @@ type mockAppendable struct {
 }
 
 type mockSample struct {
-	l labels.Labels
-	t int64
-	v float64
+	labels    labels.Labels
+	timestamp int64
+	value     float64
 }
 
 func (m *mockAppendable) Appender(_ context.Context) storage.Appender { //nolint: ireturn // External interface.
