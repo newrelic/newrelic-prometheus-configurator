@@ -8,3 +8,8 @@
 /kubeconfig
 /values-local.yaml
 /.env
+
+# Prometheus binary for integration tests
+/test/integration/prometheus
+
+.golangci.yml
