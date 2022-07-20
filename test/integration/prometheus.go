@@ -10,6 +10,8 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -49,24 +51,19 @@ func (ps *prometheusServer) start(t *testing.T, configPath string) {
 
 	// Log stderr in case of failure.
 	stderr, err := prom.StderrPipe()
-	if err != nil {
-		t.Error(err)
-	}
+	require.NoError(t, err)
 
-	if err := prom.Start(); err != nil {
-		t.Error(err)
-	}
+	err = prom.Start()
+	require.NoError(t, err)
 
 	go func() {
-		if err := prom.Wait(); err != nil {
-			t.Errorf("unexpected server error: %s", err)
-		}
+		err := prom.Wait()
+		require.NoError(t, err)
 	}()
 
 	t.Cleanup(func() {
-		if err := prom.Process.Signal(os.Interrupt); err != nil {
-			t.Error(err)
-		}
+		err := prom.Process.Signal(os.Interrupt)
+		require.NoError(t, err)
 
 		// logs in case the any test fails.
 		slurp, _ := io.ReadAll(stderr)
@@ -80,14 +77,10 @@ func freePort(t *testing.T) string {
 	t.Helper()
 
 	add, err := net.ResolveTCPAddr("tcp", "localhost:0")
-	if err != nil {
-		t.Error(err)
-	}
+	require.NoError(t, err)
 
 	l, err := net.ListenTCP("tcp", add)
-	if err != nil {
-		t.Error(err)
-	}
+	require.NoError(t, err)
 
 	defer l.Close()
 

@@ -14,6 +14,7 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/storage"
 	"github.com/prometheus/prometheus/storage/remote"
+	"github.com/stretchr/testify/require"
 )
 
 var ErrTimeout = errors.New("timeout Exceeded")
@@ -64,7 +65,7 @@ func (a *asserter) metricName(t *testing.T, expectedMetricName ...string) {
 
 	var lastNotFound string
 
-	if err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
+	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
 		for _, mn := range expectedMetricName {
 			if !a.appendable.HasMetric(mn) {
 				lastNotFound = mn
@@ -73,15 +74,14 @@ func (a *asserter) metricName(t *testing.T, expectedMetricName ...string) {
 		}
 
 		return true
-	}); err != nil {
-		t.Errorf("metric not found: %s : %s", lastNotFound, err)
-	}
+	})
+	require.NoError(t, err, "metric not found: ", lastNotFound)
 }
 
 func (a *asserter) prometheusServerReady(t *testing.T) {
 	t.Helper()
 
-	if err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
+	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
 		resp, err := http.Get(fmt.Sprintf("http://localhost:%s/-/healthy", a.prometheusPort))
 		if err != nil {
 			return false
@@ -92,9 +92,8 @@ func (a *asserter) prometheusServerReady(t *testing.T) {
 		}
 
 		return true
-	}); err != nil {
-		t.Errorf("readiness probe failed")
-	}
+	})
+	require.NoError(t, err, "readiness probe failed")
 }
 
 func retryUntilTrue(timeout time.Duration, backoff time.Duration, f func() bool) error {
