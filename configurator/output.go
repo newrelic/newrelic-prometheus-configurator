@@ -8,7 +8,7 @@ package configurator
 // configuration.
 type Output struct {
 	RemoteWrite   []any `yaml:"remote_write"`
-	ScrapeConfigs []any `yaml:"scrape_configs"`
+	ScrapeConfigs []any `yaml:"scrape_configs,omitempty"`
 }
 
 // BuildOutput builds the prometheus config output from the provided input, it holds "first level" transformations
