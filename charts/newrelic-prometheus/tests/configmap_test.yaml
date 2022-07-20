@@ -1,0 +1,69 @@
+suite: test configmap
+templates:
+  - templates/configmap.yaml
+tests:
+  - it: remote_write config does not include any specific configuration (prod)
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            data_source_name: cluster-test
+            newrelic_remote_write:
+              staging: false
+  - it: remote_write config does not include any specific configuration (staging)
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      nrStaging: true
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            data_source_name: cluster-test
+            newrelic_remote_write:
+              staging: true
+  - it: remote_write config with all possible sections
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      nrStaging: true
+      config:
+        remote_write:
+          proxy_url: http://proxy.url
+          remote_timeout: 30s
+          tls_config:
+            insecure_skip_verify: true
+          queue_config:
+            retry_on_http_429: false
+          extra_relabel_configs:
+            - source_labels:
+              - __name__
+              - instance
+              regexp: node_memory_active_bytes;localhost:9100
+              action: drop
+        extraRemoteWrite:
+          - url: "https://second.remote.write"
+    asserts: # fields order may be different when yaml is rendered so we just check they are included.
+      - matchRegex:
+          path: data.config\.yaml
+          pattern: ".*extra_write_relabel_configs:.*"
+      - matchRegex:
+          path: data.config\.yaml
+          pattern: ".*proxy_url: http://proxy.url.*"
+      - matchRegex:
+          path: data.config\.yaml
+          pattern: ".*remote_timeout: 30s.*"
+      - matchRegex:
+          path: data.config\.yaml
+          pattern: ".*tls_config:.*"
+      - matchRegex:
+          path: data.config\.yaml
+          pattern: ".*queue_config:.*"
+      - matchRegex:
+          path: data.config\.yaml
+          pattern: ".*extra_remote_write:.*"
