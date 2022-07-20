@@ -2,7 +2,7 @@ suite: test configmap
 templates:
   - templates/configmap.yaml
 tests:
-  - it: remote_write config does not include any specific configuration (prod)
+  - it: config does not include any specific configuration (prod), only defaults
     set:
       licenseKey: license-key-test
       cluster: cluster-test
@@ -13,7 +13,7 @@ tests:
             # Configuration for newrelic-prometheus-configurator
             data_source_name: cluster-test
             newrelic_remote_write:
-  - it: remote_write config does not include any specific configuration (staging)
+  - it: config does not include any specific configuration (staging), only defaults
     set:
       licenseKey: license-key-test
       cluster: cluster-test
@@ -26,7 +26,7 @@ tests:
             data_source_name: cluster-test
             newrelic_remote_write:
               staging: true
-  - it: remote_write config with all possible sections
+  - it: config including most possible sections
     set:
       licenseKey: license-key-test
       cluster: cluster-test
@@ -47,22 +47,25 @@ tests:
               action: drop
         extra_remote_write:
           - url: "https://second.remote.write"
-    asserts: # fields order may be different when yaml is rendered so we just check they are included.
-      - matchRegex:
+    asserts:
+      - equal:
           path: data.config\.yaml
-          pattern: ".*extra_write_relabel_configs:.*"
-      - matchRegex:
-          path: data.config\.yaml
-          pattern: ".*proxy_url: http://proxy.url.*"
-      - matchRegex:
-          path: data.config\.yaml
-          pattern: ".*remote_timeout: 30s.*"
-      - matchRegex:
-          path: data.config\.yaml
-          pattern: ".*tls_config:.*"
-      - matchRegex:
-          path: data.config\.yaml
-          pattern: ".*queue_config:.*"
-      - matchRegex:
-          path: data.config\.yaml
-          pattern: ".*extra_remote_write:.*"
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            data_source_name: cluster-test
+            newrelic_remote_write:
+              staging: true
+                extra_write_relabel_configs:
+                - action: drop
+                  regexp: node_memory_active_bytes;localhost:9100
+                  source_labels:
+                  - __name__
+                  - instance
+                proxy_url: http://proxy.url
+                queue_config:
+                  retry_on_http_429: false
+                remote_timeout: 30s
+                tls_config:
+                  insecure_skip_verify: true
+            extra_remote_write:
+                - url: https://second.remote.write
