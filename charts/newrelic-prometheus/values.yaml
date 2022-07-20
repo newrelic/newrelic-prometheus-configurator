@@ -70,6 +70,10 @@ nodeSelector: {}
 # -- Sets pod's tolerations to node taints almost globally. (See [Affinities and tolerations](README.md#affinities-and-tolerations))
 tolerations: []
 
+# -- (bool) Send the metrics to the staging backend. Requires a valid staging license key. Can be configured also with `global.nrStaging`
+# @default -- `false`
+nrStaging:
+
 # -- New Relic prometheus configuration.
 # TODO: we need to set default values only when those values are not the same than prometheus agent defaults'.
 config: {}
