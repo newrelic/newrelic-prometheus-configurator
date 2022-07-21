@@ -34,7 +34,7 @@ clean:
 
 .PHONY: test
 test:
-	@echo "[test] Running unit tests"
+	@echo "[test] Running tests"
 	@go test ./... -count=1
 
 .PHONY: compile

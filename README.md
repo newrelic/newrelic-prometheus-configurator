@@ -21,7 +21,7 @@
 
 ## Testing
 
-### Running unit tests
+### Running tests
 
 ```bash
 make test
