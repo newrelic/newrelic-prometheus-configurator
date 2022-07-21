@@ -15,7 +15,7 @@ const (
 	regionEUPrefix           = "eu."
 	// prometheusServerQueryParam is added to remoteWrite url when input's name is defined.
 	prometheusServerQueryParam = "prometheus_server"
-	licenseKeyEnvKey           = "NRIA_LICENSE_KEY"
+	licenseKeyEnvKey           = "NR_PROM_LICENSE_KEY"
 )
 
 // ErrNoLicenseKeyFound is returned when a yaml is Unmarshalled to `*RemoteWriteInput` but no licenseKey is set.

@@ -56,7 +56,7 @@ spec:
             - name: prometheus-config
               mountPath: /etc/prometheus/config
           env:
-            - name: NRIA_LICENSE_KEY
+            - name: NR_PROM_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ include "newrelic.common.license.secretName" . }}
