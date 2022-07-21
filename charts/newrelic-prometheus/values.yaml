@@ -83,12 +83,28 @@ config: {}
 #    extra_write_relabel_configs: []
 #    proxy_url: ""
 #    remote_timeout: 30s
+#    # prometheus tls_config setup, see <https://prometheus.io/docs/prometheus/latest/configuration/configuration/#tls_config> for details.
 #    tls_config:
-#      insecure_skip_verify: false
-#      ca_file: /path/to/ca
-#      key_file: /path/to/key
-#      cert_file: /path/to/cert
-#      server_name: server.name
-#      min_version: TLS12
-#    queue_config: {}
+#    # queue_config setup, see prometheus remote-write tunning <https://prometheus.io/docs/practices/remote_write/#remote-write-tuning>
+#    # for a more detailed explanation.
+#    queue_config:
+#       # Number of samples to buffer per shard before we block reading of more
+#       # samples from the WAL. It is recommended to have enough capacity in each
+#       # shard to buffer several requests to keep throughput up while processing
+#       # occasional slow remote requests.
+#       capacity: 2500
+#       # Maximum number of shards, i.e. amount of concurrency.
+#       max_shards: 200
+#       # Minimum number of shards, i.e. amount of concurrency.
+#       min_shards: 1
+#       # Maximum number of samples per send.
+#       max_samples_per_send: 500
+#       # Maximum time a sample will wait in buffer.
+#       batch_send_deadline: 5s
+#       # Initial retry delay. Gets doubled for every retry.
+#       min_backoff: 30ms
+#       # Maximum retry delay.
+#       max_backoff: 5s
+#       # Retry upon receiving a 429 status code from the remote-write storage.
+#       retry_on_http_429: false
 #  extra_remote_write: []
