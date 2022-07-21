@@ -28,14 +28,14 @@ type Job struct {
 	ExtraMetricRelabelConfigs []PrometheusExtraConfig `yaml:"extra_metric_relabel_config"`
 }
 
-// BasicAuth defines the config for the `Authorization` header on every scrape request
+// BasicAuth defines the config for the `Authorization` header on every scrape request.
 type BasicAuth struct {
 	Username     string `yaml:"username"`
 	Password     string `yaml:"password,omitempty"`
 	PasswordFile string `yaml:"password_file,omitempty"`
 }
 
-// OAuth2 defines the config for prometheus to gather a token from the endpoint
+// OAuth2 defines the config for prometheus to gather a token from the endpoint.
 type OAuth2 struct {
 	ClientID         string            `yaml:"client_id"`
 	ClientSecret     string            `yaml:"client_secret,omitempty"`
@@ -47,7 +47,7 @@ type OAuth2 struct {
 	ProxyURL         string            `yaml:"proxy_url,omitempty"`
 }
 
-// StaticConfigOutput defies each of the static_configs for the prometheus config
+// StaticConfigOutput defines each of the static_configs for the prometheus config.
 type StaticConfigOutput struct {
 	Targets []string          `yaml:"targets"`
 	Labels  map[string]string `yaml:"labels,omitempty"`
