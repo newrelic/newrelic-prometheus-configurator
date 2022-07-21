@@ -69,8 +69,8 @@ type StaticTargetsJobOutput struct {
 }
 
 // BuildStaticTargetsOutput builds the slice of StaticTargetJobOutput given the input.
-func BuildStaticTargetsOutput(i *Input) []any {
-	staticTargetsOutput := make([]any, 0)
+func BuildStaticTargetsOutput(i *Input) []StaticTargetsJobOutput {
+	staticTargetsOutput := make([]StaticTargetsJobOutput, 0)
 	for _, job := range i.StaticTargets.Jobs {
 		jobOutput := StaticTargetsJobOutput{
 			JobName: job.Name,
