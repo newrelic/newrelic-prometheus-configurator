@@ -2,7 +2,7 @@
 {{- define "newrelic-prometheus.configurator.config" -}}
 
 {{- /* TODO: we should consider using an external label to set the cluster name instead */ -}}
-data_source_name: {{ .Values.cluster }}
+data_source_name: {{ include "newrelic.common.cluster" . }}
 {{ include "nerelic-prometheus.configurator.config._remoteWrite" . }}
 
 {{- end -}}
