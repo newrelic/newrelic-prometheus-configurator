@@ -4,9 +4,10 @@
 package configurator_test
 
 import (
+	"testing"
+
 	"github.com/newrelic-forks/newrelic-prometheus/configurator"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 //nolint:funlen
