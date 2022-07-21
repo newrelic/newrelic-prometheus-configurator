@@ -2,7 +2,7 @@ suite: test configmap
 templates:
   - templates/configmap.yaml
 tests:
-  - it: config does not include any specific configuration (prod), only defaults
+  - it: config with defaults
     set:
       licenseKey: license-key-test
       cluster: cluster-test
@@ -13,19 +13,15 @@ tests:
             # Configuration for newrelic-prometheus-configurator
             data_source_name: cluster-test
             newrelic_remote_write:
-  - it: config does not include any specific configuration (staging), only defaults
+  - it: staging is enabled
     set:
       licenseKey: license-key-test
       cluster: cluster-test
       nrStaging: true
     asserts:
-      - equal:
+      - matchRegex:
           path: data.config\.yaml
-          value: |-
-            # Configuration for newrelic-prometheus-configurator
-            data_source_name: cluster-test
-            newrelic_remote_write:
-              staging: true
+          pattern: ".*staging: true.*"
   - it: config including most possible sections
     set:
       licenseKey: license-key-test
