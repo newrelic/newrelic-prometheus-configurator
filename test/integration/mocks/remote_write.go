@@ -75,6 +75,7 @@ func handlerWithProxy(t *testing.T, handler http.Handler, url *string) http.Hand
 
 func pipe(from net.Conn, to net.Conn) error {
 	defer from.Close()
+
 	_, err := io.Copy(from, to)
 	if err != nil && !strings.Contains(err.Error(), "closed network") {
 		return fmt.Errorf("error in pipe: %w", err)

@@ -12,7 +12,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
 	"github.com/stretchr/testify/require"
 )
 
@@ -55,6 +54,7 @@ func (ps *prometheusServer) start(t *testing.T, configPath string) {
 	require.NoError(t, err, stderr)
 
 	go func() {
+		// This is used to print the prometheus errors when it fails.
 		err := prom.Wait()
 		assert.NoError(t, err, stderr)
 	}()
@@ -95,6 +95,8 @@ func fetchPrometheusBinary(version string) error {
 
 	fetchTar := exec.Command(
 		"curl", "-v",
+		"--retry", "5",
+		"--retry-delay", "3",
 		"-L", tarURL,
 		"--output", tarPath)
 	if out, err := fetchTar.CombinedOutput(); err != nil {
