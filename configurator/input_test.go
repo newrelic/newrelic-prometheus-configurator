@@ -28,7 +28,7 @@ func TestInputLicenseKeyFromEnv(t *testing.T) {
 	expectedLicenseKey := "license-key-from-env"
 	expected := testInputExpectation(t)
 	expected.RemoteWrite.LicenseKey = expectedLicenseKey
-	t.Setenv("NRA_LICENSE_KEY", expectedLicenseKey)
+	t.Setenv("NRIA_LICENSE_KEY", expectedLicenseKey)
 	inputData, err := ioutil.ReadFile("testdata/input-test.no-license-key.yaml")
 	require.NoError(t, err)
 
@@ -41,7 +41,7 @@ func TestInputLicenseKeyFromEnvPrecedence(t *testing.T) {
 	expectedLicenseKey := "license-key-from-env"
 	expected := testInputExpectation(t)
 	expected.RemoteWrite.LicenseKey = expectedLicenseKey
-	t.Setenv("NRA_LICENSE_KEY", expectedLicenseKey)
+	t.Setenv("NRIA_LICENSE_KEY", expectedLicenseKey)
 	inputData, err := ioutil.ReadFile("testdata/input-test.yaml")
 	require.NoError(t, err)
 
