@@ -85,7 +85,7 @@ config: {}
 #    remote_timeout: 30s
 #    # prometheus tls_config setup, see <https://prometheus.io/docs/prometheus/latest/configuration/configuration/#tls_config> for details.
 #    tls_config:
-#    # queue_config setup, see prometheus remote-write tunning <https://prometheus.io/docs/practices/remote_write/#remote-write-tuning>
+#    # queue_config setup, see prometheus remote-write tuning <https://prometheus.io/docs/practices/remote_write/#remote-write-tuning>
 #    # for a more detailed explanation.
 #    queue_config:
 #       # Number of samples to buffer per shard before we block reading of more
