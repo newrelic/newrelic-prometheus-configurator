@@ -61,6 +61,17 @@ func testInputExpectation(t *testing.T) Input {
 	t.Helper()
 
 	return Input{
+		Common: CommonConfigInput{
+			GlobalConfig: GlobalConfig{
+				ScrapeInterval:     time.Second * 60,
+				ScrapeTimeout:      time.Second,
+				EvaluationInterval: time.Second,
+				ExternalLabels: map[string]string{
+					"one":   "two",
+					"three": "four",
+				},
+			},
+		},
 		DataSourceName: "data-source",
 		RemoteWrite: RemoteWriteInput{
 			LicenseKey: "nrLicenseKey",
