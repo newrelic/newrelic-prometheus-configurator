@@ -14,7 +14,7 @@ type StaticTargetsInput struct {
 
 // Job represents a static target job config.
 type Job struct {
-	Name                      string                  `yaml:"name"`
+	JobName                   string                  `yaml:"job_name"`
 	Urls                      []string                `yaml:"urls"`
 	MetricsPath               string                  `yaml:"metrics_path"`
 	Labels                    map[string]string       `yaml:"labels"`
@@ -54,7 +54,7 @@ func BuildStaticTargetsOutput(i *Input) []StaticTargetsJobOutput {
 	staticTargetsOutput := make([]StaticTargetsJobOutput, 0)
 	for _, job := range i.StaticTargets.Jobs {
 		jobOutput := StaticTargetsJobOutput{
-			JobName: job.Name,
+			JobName: job.JobName,
 			StaticConfigs: []StaticConfigOutput{
 				{
 					Targets: job.Urls,

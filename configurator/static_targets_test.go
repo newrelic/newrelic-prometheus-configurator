@@ -26,7 +26,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 				StaticTargets: configurator.StaticTargetsInput{
 					Jobs: []configurator.Job{
 						{
-							Name:           "fancy-job",
+							JobName:        "fancy-job",
 							Urls:           []string{"host:port"},
 							MetricsPath:    "/metrics",
 							Labels:         map[string]string{"a": "b"},
