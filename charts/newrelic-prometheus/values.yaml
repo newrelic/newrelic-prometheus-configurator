@@ -69,3 +69,42 @@ affinity: {}
 nodeSelector: {}
 # -- Sets pod's tolerations to node taints almost globally. (See [Affinities and tolerations](README.md#affinities-and-tolerations))
 tolerations: []
+
+# -- (bool) Send the metrics to the staging backend. Requires a valid staging license key. Can be configured also with `global.nrStaging`
+# @default -- `false`
+nrStaging:
+
+# -- New Relic prometheus configuration.
+# TODO: we need to set default values only when those values are not the same than prometheus agent defaults'.
+config: {}
+# TODO: it needs to be completed with all configurator sections and be documented properly
+# config:
+#  newrelic_remote_write:
+#    extra_write_relabel_configs: []
+#    proxy_url: ""
+#    remote_timeout: 30s
+#    # prometheus tls_config setup, see <https://prometheus.io/docs/prometheus/latest/configuration/configuration/#tls_config> for details.
+#    tls_config:
+#    # queue_config setup, see prometheus remote-write tuning <https://prometheus.io/docs/practices/remote_write/#remote-write-tuning>
+#    # for a more detailed explanation.
+#    queue_config:
+#       # Number of samples to buffer per shard before we block reading of more
+#       # samples from the WAL. It is recommended to have enough capacity in each
+#       # shard to buffer several requests to keep throughput up while processing
+#       # occasional slow remote requests.
+#       capacity: 2500
+#       # Maximum number of shards, i.e. amount of concurrency.
+#       max_shards: 200
+#       # Minimum number of shards, i.e. amount of concurrency.
+#       min_shards: 1
+#       # Maximum number of samples per send.
+#       max_samples_per_send: 500
+#       # Maximum time a sample will wait in buffer.
+#       batch_send_deadline: 5s
+#       # Initial retry delay. Gets doubled for every retry.
+#       min_backoff: 30ms
+#       # Maximum retry delay.
+#       max_backoff: 5s
+#       # Retry upon receiving a 429 status code from the remote-write storage.
+#       retry_on_http_429: false
+#  extra_remote_write: []

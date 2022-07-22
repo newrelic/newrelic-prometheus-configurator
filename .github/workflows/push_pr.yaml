@@ -62,12 +62,13 @@ jobs:
       - name: Test install charts
         if: steps.list-changed.outputs.changed == 'true'
         run: ct install --namespace ct --config .github/ct.yaml --debug
-      - name: Test upgrade charts
-        if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --namespace ct --config .github/ct.yaml --debug --upgrade
+      # TODO: enable upgrade check once chart and values are considered stable
+      #- name: Test upgrade charts
+      #  if: steps.list-changed.outputs.changed == 'true'
+      #  run: ct install --namespace ct --config .github/ct.yaml --debug --upgrade
 
   test:
-    
+
     name: Run tests
     runs-on: ubuntu-latest
     steps:
@@ -91,6 +92,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.18'
       - uses: newrelic/newrelic-infra-checkers@v1
         with:
           golangci-lint-config: golangci-lint

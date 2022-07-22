@@ -6,5 +6,6 @@ metadata:
     {{- include "newrelic.common.labels" . | nindent 4 }}
 apiVersion: v1
 data:
-  config.yaml: |
-    # configurator config
+  config.yaml: |-
+    # Configuration for newrelic-prometheus-configurator
+    {{- include "newrelic-prometheus.configurator.config" . | nindent 4 }}

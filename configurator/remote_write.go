@@ -5,6 +5,7 @@ package configurator
 
 import (
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -14,6 +15,12 @@ const (
 	regionEUPrefix           = "eu."
 	// prometheusServerQueryParam is added to remoteWrite url when input's name is defined.
 	prometheusServerQueryParam = "prometheus_server"
+	licenseKeyEnvKey           = "NR_PROM_LICENSE_KEY"
+)
+
+// ErrNoLicenseKeyFound is returned when a yaml is Unmarshalled to `*RemoteWriteInput` but no licenseKey is set.
+var ErrNoLicenseKeyFound = fmt.Errorf(
+	"licenseKey was not set neither in yaml config or %s environment variable", licenseKeyEnvKey,
 )
 
 // RemoteWriteInput defines all the NewRelic's remote write endpoint fields.
@@ -25,6 +32,22 @@ type RemoteWriteInput struct {
 	QueueConfig              *QueueConfig            `yaml:"queue_config"`
 	RemoteTimeout            time.Duration           `yaml:"remote_timeout"`
 	ExtraWriteRelabelConfigs []PrometheusExtraConfig `yaml:"extra_write_relabel_configs"`
+}
+
+// UnmarshalYAML is implemented for `RemoteWriteInput` so licenseKey is fetched from environment if it is
+// not present or it is empty in the yaml input.
+func (i *RemoteWriteInput) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	type original RemoteWriteInput
+	if err := unmarshal((*original)(i)); err != nil {
+		return err
+	}
+	if licenseKey := os.Getenv(licenseKeyEnvKey); licenseKey != "" {
+		i.LicenseKey = licenseKey
+	}
+	if i.LicenseKey == "" {
+		return ErrNoLicenseKeyFound
+	}
+	return nil
 }
 
 // QueueConfig represents the remote-write queue config.
