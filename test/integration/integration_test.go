@@ -64,11 +64,13 @@ static_targets:
       targets:
         - "localhost:%s"
 
-extra_remote_write:
-  - url: %s
-
 newrelic_remote_write:
   license_key: nrLicenseKey
+  proxy_url: %s
+  tls_config:
+    insecure_skip_verify: true
+common:
+  scrape_interval: 1s
 `, ps.port, rw.URL)
 
 	outputConfigPath := runConfigurator(t, inputConfig)
@@ -123,8 +125,8 @@ newrelic_remote_write:
 
 	ps.start(t, outputConfigPath)
 
-	asserter.metricWithLabels(t, "custom_metric_a", []string{"custom_label", "instance", "job"})
-	asserter.metricWithLabels(t, "custom_metric_b", []string{"instance", "job"})
+	asserter.metricLabels(t, map[string]string{"custom_label": "my-value", "instance": "df", "job": "df"}, "custom_metric_a")
+	asserter.metricLabels(t, map[string]string{"instance": "FD", "job": "df"}, "custom_metric_b")
 }
 
 func runConfigurator(t *testing.T, inputConfig string) string {
