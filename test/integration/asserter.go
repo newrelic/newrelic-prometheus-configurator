@@ -4,13 +4,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"sync"
 	"testing"
 	"time"
 
-	"github.com/go-kit/log"
+	"golang.org/x/sync/errgroup"
+
+	log "github.com/go-kit/log"
 	"github.com/prometheus/prometheus/model/exemplar"
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/storage"
@@ -59,13 +64,27 @@ func (a *asserter) metricName(t *testing.T, expectedMetricName ...string) {
 	require.NoError(t, err, "metric not found: ", lastNotFound)
 }
 
-func (a *asserter) metricWithLabels(t *testing.T, expectedMetricName string, expectedlabels []string) {
+func (a *asserter) metricLabels(t *testing.T, expectedMetricLabels map[string]string, expectedMetricName ...string) {
 	t.Helper()
 
+	var lastNotFound string
 	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
-		return a.appendable.HasMetricWithLabels(expectedMetricName, expectedlabels)
+		for _, mn := range expectedMetricName {
+			if sample, ok := a.appendable.GetMetric(mn); ok {
+				for k, v := range expectedMetricLabels {
+					if sample.labels.Get(k) != v {
+						t.Errorf("in the metric %s was not found the label %s=%s", mn, k, v)
+					}
+				}
+			} else {
+				lastNotFound = mn
+				return false
+			}
+		}
+		return true
 	})
-	require.NoError(t, err, "metric with labels not found: ", expectedMetricName, expectedlabels)
+
+	require.NoError(t, err, "metric not found: ", lastNotFound)
 }
 
 func (a *asserter) prometheusServerReady(t *testing.T) {
@@ -91,15 +110,67 @@ func startRemoteWriteEndpoint(t *testing.T, appendable storage.Appendable) *http
 
 	handler := remote.NewWriteHandler(log.NewNopLogger(), appendable)
 
-	remoteWriteServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		handler.ServeHTTP(w, r)
-	}))
+	url := ""
+	s := httptest.NewTLSServer(handlerWithProxy(t, handler, &url))
+	// There is a small race condition. If the first request comes before this is set the dial fails.
+	url = strings.Replace(s.URL, "https://", "", 1)
 
 	t.Cleanup(func() {
-		remoteWriteServer.Close()
+		s.Close()
 	})
+	return s
+}
 
-	return remoteWriteServer
+// handlerWithProxy injects a proxy to a handler.
+// If the method of the request is not Connect everything works as usual.
+// On the other hand with Connect the handler Hijack the connection and creates two pipes connecting the source (promtheus server)
+// and the destination (in this case it is the proxy itself).
+// This is needed whenever we connect through an HTTPS proxy against an HTTPS server.
+func handlerWithProxy(t *testing.T, handler http.Handler, url *string) http.Handler {
+	t.Helper()
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodConnect {
+			handler.ServeHTTP(w, r)
+			return
+		}
+		defer r.Body.Close()
+		conn, err := net.Dial("tcp", *url)
+		require.NoError(t, err)
+
+		w.WriteHeader(http.StatusOK)
+
+		hj, ok := w.(http.Hijacker)
+		if !ok {
+			t.Fatalf("Unable to hijack connection")
+		}
+
+		reqConn, wbuf, err := hj.Hijack()
+		require.NoError(t, err)
+
+		defer reqConn.Close()
+		defer wbuf.Flush()
+
+		g := errgroup.Group{}
+		g.Go(func() error { return pipe(t, reqConn, conn) })
+		g.Go(func() error { return pipe(t, conn, reqConn) })
+
+		if err := g.Wait(); err != nil {
+			require.NoError(t, err)
+		}
+	})
+}
+
+func pipe(t *testing.T, from net.Conn, to net.Conn) error {
+	t.Helper()
+
+	defer from.Close()
+	_, err := io.Copy(from, to)
+	if err != nil && !strings.Contains(err.Error(), "closed network") {
+		return fmt.Errorf("error in pipe: %w", err)
+	}
+
+	return nil
 }
 
 func retryUntilTrue(timeout time.Duration, backoff time.Duration, f func() bool) error {
@@ -166,25 +237,10 @@ func (m *mockAppendable) HasMetric(metricName string) bool {
 	return ok
 }
 
-func (m *mockAppendable) HasMetricWithLabels(metricName string, expectedLabels []string) bool {
+func (m *mockAppendable) GetMetric(metricName string) (mockSample, bool) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
-	sample, ok := m.latestSamples[metricName]
-	if !ok {
-		return false
-	}
+	s, ok := m.latestSamples[metricName]
 
-	for _, expected := range expectedLabels {
-		for i, label := range sample.labels {
-			if label.Name == expected {
-				break
-			}
-			// expected label missing.
-			if i == (len(sample.labels) - 1) {
-				return false
-			}
-		}
-	}
-
-	return true
+	return s, ok
 }
