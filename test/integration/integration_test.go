@@ -56,9 +56,9 @@ func Test_SelfMetrics(t *testing.T) {
 	inputConfig := fmt.Sprintf(`
 static_targets:
   jobs:
-    - name: self-metrics
+    - job_name: self-metrics
       scrape_interval: 1s
-      urls:
+      targets:
         - "localhost:%s"
 
 extra_remote_write:
