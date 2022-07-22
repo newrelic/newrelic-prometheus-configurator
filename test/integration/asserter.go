@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-kit/log"
 	"github.com/prometheus/prometheus/model/exemplar"
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/storage"
@@ -79,7 +80,7 @@ func (a *asserter) prometheusServerReady(t *testing.T) {
 func startRemoteWriteEndpoint(t *testing.T, appendable storage.Appendable) *httptest.Server {
 	t.Helper()
 
-	handler := remote.NewWriteHandler(nil, appendable)
+	handler := remote.NewWriteHandler(log.NewNopLogger(), appendable)
 
 	remoteWriteServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		handler.ServeHTTP(w, r)

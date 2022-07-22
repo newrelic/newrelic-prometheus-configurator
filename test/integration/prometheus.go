@@ -43,6 +43,7 @@ func (ps *prometheusServer) start(t *testing.T, configPath string) {
 		fmt.Sprintf("--config.file=%s", configPath),
 		fmt.Sprintf("--web.listen-address=0.0.0.0:%s", ps.port),
 		fmt.Sprintf("--storage.agent.path=%s", t.TempDir()),
+		"--log.level=debug",
 	)
 
 	// Log stderr in case of failure.

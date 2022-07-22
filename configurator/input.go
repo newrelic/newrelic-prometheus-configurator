@@ -18,24 +18,3 @@ type Input struct {
 	// StaticTargets holds the static-target jobs configuration.
 	StaticTargets StaticTargetsInput `yaml:"static_targets"`
 }
-
-// TLSConfig represents tls configuration, `prometheusCommonConfig.TLSConfig` cannot be used directly
-// because it does not Marshal to yaml properly.
-type TLSConfig struct {
-	CAFile             string `yaml:"ca_file,omitempty" json:"ca_file,omitempty"`
-	CertFile           string `yaml:"cert_file,omitempty" json:"cert_file,omitempty"`
-	KeyFile            string `yaml:"key_file,omitempty" json:"key_file,omitempty"`
-	ServerName         string `yaml:"server_name,omitempty" json:"server_name,omitempty"`
-	InsecureSkipVerify bool   `yaml:"insecure_skip_verify" json:"insecure_skip_verify"`
-	MinVersion         string `yaml:"min_version,omitempty" json:"min_version,omitempty"`
-}
-
-// Authorization holds prometheus authorization information.
-type Authorization struct {
-	Type            string `yaml:"type,omitempty"`
-	Credentials     string `yaml:"credentials,omitempty"`
-	CredentialsFile string `yaml:"credentials_file,omitempty"`
-}
-
-// PrometheusExtraConfig represents some configuration which will be included in prometheus as it is.
-type PrometheusExtraConfig any
