@@ -9,6 +9,18 @@ scrape_configs:
     scrape_interval: 15s
     scrape_timeout: 15s
     metrics_path: /metrics-custom
+    honor_labels: true
+    honor_timestamps: true
+    params:
+      q: [ "puppies" ]
+      oe: [ "utf8" ]
+    scheme: "https"
+    body_size_limit: 100MB
+    sample_limit: 2000
+    target_limit: 2000
+    label_limit: 2000
+    label_name_length_limit: 2000
+    label_value_length_limit: 2000
     tls_config:
       insecure_skip_verify: true
       ca_file: /path/to/ca.crt
