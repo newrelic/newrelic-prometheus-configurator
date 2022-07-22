@@ -20,7 +20,7 @@ const (
 
 // ErrNoLicenseKeyFound is returned when a yaml is Unmarshalled to `*RemoteWriteInput` but no licenseKey is set.
 var ErrNoLicenseKeyFound = fmt.Errorf(
-	"LicenseKey was not set neither in yaml config or %s environment variable", licenseKeyEnvKey,
+	"licenseKey was not set neither in yaml config or %s environment variable", licenseKeyEnvKey,
 )
 
 // RemoteWriteInput defines all the NewRelic's remote write endpoint fields.
