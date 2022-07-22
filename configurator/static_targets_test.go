@@ -27,9 +27,9 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 					Jobs: []configurator.Job{
 						{
 							JobName:        "fancy-job",
-							Urls:           []string{"host:port"},
-							MetricsPath:    "/metrics",
+							Targets:        []string{"host:port"},
 							Labels:         map[string]string{"a": "b"},
+							MetricsPath:    "/metrics",
 							ScrapeInterval: 10000,
 							ScrapeTimeout:  10000,
 							TLSConfig: &configurator.TLSConfig{

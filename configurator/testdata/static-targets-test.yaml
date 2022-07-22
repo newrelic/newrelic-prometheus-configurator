@@ -1,13 +1,13 @@
 # default metadata is added to the metrics (targetName, scrapeJob, ...)
 static_targets:
   jobs:
-    - name: my-custom-target-authorization-full
-      urls:
+    - job_name: my-custom-target-authorization-full
+      targets:
         - "192.168.3.1:2379"
-      metrics_path: /metrics-custom
       labels:
         label1: value1
         label2: value2
+      metrics_path: /metrics-custom
       scrape_interval: 15s
       scrape_timeout: 15s
       tls_config:
@@ -31,8 +31,8 @@ static_targets:
           regex: node_memory_active_bytes;localhost:9100
           action: drop
 
-    - name: my-custom-target-authorization-file
-      urls:
+    - job_name: my-custom-target-authorization-file
+      targets:
         - "192.168.3.1:2379"
       authorization:
         type: Bearer
@@ -40,22 +40,22 @@ static_targets:
         # It is mutually exclusive with `credentials`, we add both for testing purposes
         credentials_file: 'path/to/file'
 
-    - name: my-custom-target-basic-auth
-      urls:
+    - job_name: my-custom-target-basic-auth
+      targets:
         - "192.168.3.1:2379"
       basic_auth:
         username: 'email@newrelic.com'
         password: 'cfgqvzjbhnwcomplicatedpasswordwjnqmd'
 
-    - name: my-custom-target-basic-auth-password-file
-      urls:
+    - job_name: my-custom-target-basic-auth-password-file
+      targets:
         - "192.168.3.1:2379"
       basic_auth:
         username: 'email@newrelic.com'
         password_file: 'root/to/file'
 
-    - name: my-custom-target-oauth2
-      urls:
+    - job_name: my-custom-target-oauth2
+      targets:
         - "192.168.3.1:2379"
       oauth2:
         client_id: a-client-id
@@ -75,8 +75,8 @@ static_targets:
           min_version: TLS12
         proxy_url: a-proxy-url
 
-    - name: my-custom-target-oauth2-secret-file
-      urls:
+    - job_name: my-custom-target-oauth2-secret-file
+      targets:
         - "192.168.3.1:2379"
       oauth2:
         client_id: a-client-id
@@ -98,8 +98,8 @@ static_targets:
         proxy_url: a-proxy-url
 
     ## option to have the self scrape on configuration
-    - name: self-metrics
-      urls:
+    - job_name: self-metrics
+      targets:
         - "localhost:9090"
       extra_metric_relabel_config: []
 newrelic_remote_write:
