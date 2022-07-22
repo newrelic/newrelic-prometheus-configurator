@@ -40,3 +40,14 @@ openMetricsEndpoints:
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "8000"
+
+config:
+  common: ## prometheus global config
+    scrape_interval: 30s
+    scrape_timeout: 5s
+    external_label:
+      # we could add this form the helm chart to avoid override the label name
+      cluster_names: "my_cluster"
+  newrelic_remote_write:
+    staging: false
+
