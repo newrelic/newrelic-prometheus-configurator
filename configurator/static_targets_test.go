@@ -4,8 +4,10 @@
 package configurator_test
 
 import (
+	"net/url"
 	"testing"
 
+	"github.com/alecthomas/units"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator"
 	"github.com/stretchr/testify/assert"
 )
@@ -26,12 +28,22 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 				StaticTargets: configurator.StaticTargetsInput{
 					Jobs: []configurator.Job{
 						{
-							JobName:        "fancy-job",
-							Targets:        []string{"host:port"},
-							Labels:         map[string]string{"a": "b"},
-							MetricsPath:    "/metrics",
-							ScrapeInterval: 10000,
-							ScrapeTimeout:  10000,
+							JobName:               "fancy-job",
+							Targets:               []string{"host:port"},
+							Labels:                map[string]string{"a": "b"},
+							HonorLabels:           true,
+							HonorTimestamps:       true,
+							Params:                url.Values{"q": {"puppies"}, "oe": {"utf8"}},
+							Scheme:                "https",
+							BodySizeLimit:         units.Base2Bytes(1025),
+							SampleLimit:           uint(2000),
+							TargetLimit:           uint(2000),
+							LabelLimit:            uint(2000),
+							LabelNameLengthLimit:  uint(2000),
+							LabelValueLengthLimit: uint(2000),
+							MetricsPath:           "/metrics",
+							ScrapeInterval:        10000,
+							ScrapeTimeout:         10000,
 							TLSConfig: &configurator.TLSConfig{
 								CAFile:             "ca-file",
 								CertFile:           "cert-file",
@@ -90,9 +102,19 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 							Labels:  map[string]string{"a": "b"},
 						},
 					},
-					MetricsPath:    "/metrics",
-					ScrapeInterval: 10000,
-					ScrapeTimeout:  10000,
+					HonorLabels:           true,
+					HonorTimestamps:       true,
+					Params:                url.Values{"q": {"puppies"}, "oe": {"utf8"}},
+					Scheme:                "https",
+					BodySizeLimit:         units.Base2Bytes(1025),
+					SampleLimit:           uint(2000),
+					TargetLimit:           uint(2000),
+					LabelLimit:            uint(2000),
+					LabelNameLengthLimit:  uint(2000),
+					LabelValueLengthLimit: uint(2000),
+					MetricsPath:           "/metrics",
+					ScrapeInterval:        10000,
+					ScrapeTimeout:         10000,
 					TLSConfig: &configurator.TLSConfig{
 						CAFile:             "ca-file",
 						CertFile:           "cert-file",

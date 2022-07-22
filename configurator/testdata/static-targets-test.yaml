@@ -8,6 +8,18 @@ static_targets:
         label1: value1
         label2: value2
       metrics_path: /metrics-custom
+      honor_labels: true
+      honor_timestamps: true
+      params:
+        q: [ "puppies" ]
+        oe: [ "utf8" ]
+      scheme: "https"
+      body_size_limit: 100MB
+      sample_limit: 2000
+      target_limit: 2000
+      label_limit: 2000
+      label_name_length_limit: 2000
+      label_value_length_limit: 2000
       scrape_interval: 15s
       scrape_timeout: 15s
       tls_config:
