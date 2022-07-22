@@ -22,7 +22,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 		Expected []configurator.StaticTargetsJobOutput
 	}{
 		{
-			Name: "Staging, eu and all fields set",
+			Name: "All fields set",
 			Input: &configurator.Input{
 				DataSourceName: "source-of-metrics",
 				StaticTargets: configurator.StaticTargetsInput{
