@@ -53,25 +53,24 @@ func Test_SelfMetrics(t *testing.T) {
 
 	rw := startRemoteWriteEndpoint(t, asserter.appendable)
 
-	// TODO this test is using a Prom config directly since static targets
-	// are not implemented in the configurator yet.
-	promConfig := path.Join(t.TempDir(), "test-config.yml")
-	err := ioutil.WriteFile(promConfig, []byte(fmt.Sprintf(`
-remote_write:
-- url: http://foo:8999/write
-  proxy_url: %s
+	inputConfig := fmt.Sprintf(`
+static_targets:
+  jobs:
+    - name: self-metrics
+      scrape_interval: 1s
+      urls:
+        - "localhost:%s"
 
-global:
-  scrape_interval: 1s
+extra_remote_write:
+  - url: %s
 
-scrape_configs:
-- job_name: self
-  static_configs:
-  - targets: ["localhost:%s"]
-`, rw.URL, ps.port)), 0o444)
-	require.NoError(t, err)
+newrelic_remote_write:
+  license_key: nrLicenseKey
+`, ps.port, rw.URL)
 
-	ps.start(t, promConfig)
+	outputConfigPath := runConfigurator(t, inputConfig)
+
+	ps.start(t, outputConfigPath)
 
 	asserter.metricName(t, "prometheus_build_info")
 }
