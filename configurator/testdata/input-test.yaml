@@ -1,3 +1,12 @@
+common:
+  external_labels:
+    one: two
+    three: four
+  scrape_interval: 1m
+  scrape_timeout: 1s
+  evaluation_interval: 1s
+  query_log_file: none
+
 data_source_name: data-source
 newrelic_remote_write:
   license_key: nrLicenseKey

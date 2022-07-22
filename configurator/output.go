@@ -7,15 +7,17 @@ package configurator
 // Output holds all configuration information in prometheus format which can be directly marshaled to a valid yaml
 // configuration.
 type Output struct {
-	RemoteWrite   []any `yaml:"remote_write"`
-	ScrapeConfigs []any `yaml:"scrape_configs,omitempty"`
+	RemoteWrite   []any              `yaml:"remote_write"`
+	ScrapeConfigs []any              `yaml:"scrape_configs,omitempty"`
+	GlobalConfig  CommonConfigOutput `yaml:"global"`
 }
 
 // BuildOutput builds the prometheus config output from the provided input, it holds "first level" transformations
 // required to obtain a valid prometheus configuration.
 func BuildOutput(input *Input) (Output, error) {
 	output := Output{
-		RemoteWrite: []any{BuildRemoteWriteOutput(input)},
+		RemoteWrite:  []any{BuildRemoteWriteOutput(input)},
+		GlobalConfig: BuildRemoteCommonConfigOutput(input),
 	}
 
 	for _, extraRemoteWriteConfig := range input.ExtraRemoteWrite {

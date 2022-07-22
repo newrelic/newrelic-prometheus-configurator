@@ -1,0 +1,7 @@
+common:
+  external_labels:
+    one: two
+    three: four
+  scrape_interval: 1m
+  scrape_timeout: 1s
+  evaluation_interval: 1s
