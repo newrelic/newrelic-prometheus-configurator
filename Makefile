@@ -57,4 +57,10 @@ local-env-start:
 
 .PHONY: tilt-up
 tilt-up:
-	eval $$(minikube docker-env); tilt up ; tilt down
+	eval $$(minikube docker-env) && tilt up ; tilt down
+
+.PHONY: tilt-ci
+tilt-ci:
+	helm repo add newrelic https://helm-charts.newrelic.com
+	helm dependency update ./charts/newrelic-prometheus
+	eval $$(minikube docker-env) && tilt ci
