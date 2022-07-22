@@ -15,9 +15,9 @@ type StaticTargetsInput struct {
 // Job represents a static target job config.
 type Job struct {
 	JobName                   string                  `yaml:"job_name"`
-	Urls                      []string                `yaml:"urls"`
-	MetricsPath               string                  `yaml:"metrics_path"`
+	Targets                   []string                `yaml:"targets"`
 	Labels                    map[string]string       `yaml:"labels"`
+	MetricsPath               string                  `yaml:"metrics_path"`
 	ScrapeInterval            time.Duration           `yaml:"scrape_interval"`
 	ScrapeTimeout             time.Duration           `yaml:"scrape_timeout"`
 	TLSConfig                 *TLSConfig              `yaml:"tls_config"`
@@ -57,7 +57,7 @@ func BuildStaticTargetsOutput(i *Input) []StaticTargetsJobOutput {
 			JobName: job.JobName,
 			StaticConfigs: []StaticConfigOutput{
 				{
-					Targets: job.Urls,
+					Targets: job.Targets,
 					Labels:  job.Labels,
 				},
 			},
