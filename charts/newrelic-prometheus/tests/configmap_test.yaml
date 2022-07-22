@@ -1,0 +1,67 @@
+suite: test configmap
+templates:
+  - templates/configmap.yaml
+tests:
+  - it: config with defaults
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            data_source_name: cluster-test
+            newrelic_remote_write:
+  - it: staging is enabled
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      nrStaging: true
+    asserts:
+      - matchRegex:
+          path: data.config\.yaml
+          pattern: ".*staging: true.*"
+  - it: config including most possible sections
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      nrStaging: true
+      config:
+        remote_write:
+          proxy_url: http://proxy.url
+          remote_timeout: 30s
+          tls_config:
+            insecure_skip_verify: true
+          queue_config:
+            retry_on_http_429: false
+          extra_write_relabel_configs:
+            - source_labels:
+              - __name__
+              - instance
+              regexp: node_memory_active_bytes;localhost:9100
+              action: drop
+        extra_remote_write:
+          - url: "https://second.remote.write"
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            data_source_name: cluster-test
+            newrelic_remote_write:
+              staging: true
+                extra_write_relabel_configs:
+                - action: drop
+                  regexp: node_memory_active_bytes;localhost:9100
+                  source_labels:
+                  - __name__
+                  - instance
+                proxy_url: http://proxy.url
+                queue_config:
+                  retry_on_http_429: false
+                remote_timeout: 30s
+                tls_config:
+                  insecure_skip_verify: true
+            extra_remote_write:
+                - url: https://second.remote.write
