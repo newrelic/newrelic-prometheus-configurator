@@ -19,4 +19,6 @@ type Input struct {
 	StaticTargets StaticTargetsInput `yaml:"static_targets"`
 	// ExtraScrapeConfigs holds any additional raw scrape configuration to use as it is in prometheus configuration.
 	ExtraScrapeConfigs []PrometheusExtraConfig `yaml:"extra_scrape_configs"`
+	// Kubernetes holds the kubernetes-targets' configuration.
+	Kubernetes KubernetesInput `yaml:"kubernetes"`
 }

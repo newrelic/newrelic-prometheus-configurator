@@ -3,6 +3,7 @@ module github.com/newrelic-forks/newrelic-prometheus
 go 1.18
 
 require (
+	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137
 	github.com/go-kit/log v0.2.1
 	github.com/prometheus/prometheus v0.36.2
 	github.com/sirupsen/logrus v1.8.1
@@ -12,7 +13,6 @@ require (
 
 require (
 	cloud.google.com/go/compute v1.7.0 // indirect
-	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
 	github.com/aws/aws-sdk-go v1.44.20 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect

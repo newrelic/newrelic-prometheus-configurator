@@ -94,9 +94,9 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 				},
 			},
 			Expected: []any{
-				configurator.StaticTargetsJobOutput{
+				configurator.TargetJob{
 					JobName: "fancy-job",
-					StaticConfigs: []configurator.StaticConfigOutput{
+					StaticConfigs: []configurator.StaticConfig{
 						{
 							Targets: []string{"host:port"},
 							Labels:  map[string]string{"a": "b"},
