@@ -63,11 +63,7 @@ func (a *asserter) metricWithLabels(t *testing.T, expectedMetricName string, exp
 	t.Helper()
 
 	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
-		if !a.appendable.HasMetricWithLabels(expectedMetricName, expectedlabels) {
-			return false
-		}
-
-		return true
+		return a.appendable.HasMetricWithLabels(expectedMetricName, expectedlabels)
 	})
 	require.NoError(t, err, "metric with labels not found: ", expectedMetricName, expectedlabels)
 }

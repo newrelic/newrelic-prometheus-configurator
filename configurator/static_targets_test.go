@@ -19,7 +19,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 	cases := []struct {
 		Name     string
 		Input    *configurator.Input
-		Expected []configurator.StaticTargetsJobOutput
+		Expected []any
 	}{
 		{
 			Name: "All fields set",
@@ -93,8 +93,8 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 					},
 				},
 			},
-			Expected: []configurator.StaticTargetsJobOutput{
-				{
+			Expected: []any{
+				configurator.StaticTargetsJobOutput{
 					JobName: "fancy-job",
 					StaticConfigs: []configurator.StaticConfigOutput{
 						{
