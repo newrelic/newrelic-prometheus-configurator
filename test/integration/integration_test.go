@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -75,6 +78,41 @@ newrelic_remote_write:
 	asserter.metricName(t, "prometheus_build_info")
 }
 
+func Test_ExtraScapeConfig(t *testing.T) {
+	t.Parallel()
+
+	ps := newPrometheusServer(t)
+
+	asserter := newAsserter(ps.port)
+
+	rw := startRemoteWriteEndpoint(t, asserter.appendable)
+
+	ex := startMockExporter(t)
+
+	mockExporterTarget := strings.Replace(ex.URL, "http://", "", 1)
+	inputConfig := fmt.Sprintf(`
+static_targets:
+  jobs:
+    - job_name: go-exporter
+      scrape_interval: 1s
+      targets:
+        - "%s"
+      metrics_path: /
+
+extra_remote_write:
+  - url: %s
+
+newrelic_remote_write:
+  license_key: nrLicenseKey
+`, mockExporterTarget, rw.URL)
+
+	outputConfigPath := runConfigurator(t, inputConfig)
+
+	ps.start(t, outputConfigPath)
+
+	asserter.metricWithLabels(t, "go_goroutines", []string{"instance", "job"})
+}
+
 func runConfigurator(t *testing.T, inputConfig string) string {
 	t.Helper()
 
@@ -98,4 +136,21 @@ func runConfigurator(t *testing.T, inputConfig string) string {
 	require.NoError(t, err, string(out))
 
 	return outputConfigPath
+}
+
+func startMockExporter(t *testing.T) *httptest.Server {
+	t.Helper()
+
+	mockExporterServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		response := `
+go_goroutines 46
+go_threads 16`
+		_, _ = fmt.Fprintln(w, response)
+	}))
+
+	t.Cleanup(func() {
+		mockExporterServer.Close()
+	})
+
+	return mockExporterServer
 }

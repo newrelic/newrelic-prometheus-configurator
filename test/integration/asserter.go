@@ -35,7 +35,7 @@ func newAsserter(prometheusPort string) *asserter {
 	}
 
 	a.defaultBackoff = time.Second
-	a.defaultTimeout = time.Second * 10
+	a.defaultTimeout = time.Second * 20
 	a.prometheusPort = prometheusPort
 
 	return a
@@ -57,6 +57,19 @@ func (a *asserter) metricName(t *testing.T, expectedMetricName ...string) {
 		return true
 	})
 	require.NoError(t, err, "metric not found: ", lastNotFound)
+}
+
+func (a *asserter) metricWithLabels(t *testing.T, expectedMetricName string, expectedlabels []string) {
+	t.Helper()
+
+	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
+		if !a.appendable.HasMetricWithLabels(expectedMetricName, expectedlabels) {
+			return false
+		}
+
+		return true
+	})
+	require.NoError(t, err, "metric with labels not found: ", expectedMetricName, expectedlabels)
 }
 
 func (a *asserter) prometheusServerReady(t *testing.T) {
@@ -155,4 +168,21 @@ func (m *mockAppendable) HasMetric(metricName string) bool {
 	_, ok := m.latestSamples[metricName]
 
 	return ok
+}
+
+func (m *mockAppendable) HasMetricWithLabels(metricName string, expectedLabels []string) bool {
+	m.lock.Lock()
+	defer m.lock.Unlock()
+	sample, ok := m.latestSamples[metricName]
+
+	var numFoundLabels int
+	for _, label := range sample.labels {
+		for _, expected := range expectedLabels {
+			if label.Name == expected {
+				numFoundLabels++
+			}
+		}
+	}
+
+	return ok && len(expectedLabels) == numFoundLabels
 }
