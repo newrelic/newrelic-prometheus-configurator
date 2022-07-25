@@ -7,13 +7,15 @@ import (
 	"testing"
 	"time"
 
+	"github.com/newrelic-forks/newrelic-prometheus/test/integration/mocks"
+
 	"github.com/stretchr/testify/require"
 )
 
 var ErrTimeout = errors.New("timeout Exceeded")
 
 type asserter struct {
-	appendable     *mockAppendable
+	appendable     *mocks.MockAppendable
 	defaultTimeout time.Duration
 	defaultBackoff time.Duration
 	prometheusPort string
@@ -22,10 +24,7 @@ type asserter struct {
 func newAsserter(prometheusPort string) *asserter {
 	a := &asserter{}
 
-	a.appendable = &mockAppendable{
-		latestSamples: make(map[string]mockSample),
-	}
-
+	a.appendable = mocks.NewMockAppendable()
 	a.defaultBackoff = time.Second
 	a.defaultTimeout = time.Second * 20
 	a.prometheusPort = prometheusPort
@@ -64,8 +63,8 @@ func (a *asserter) metricLabels(t *testing.T, expectedMetricLabels map[string]st
 				return false
 			}
 			for k, v := range expectedMetricLabels {
-				if sample.labels.Get(k) != v {
-					t.Errorf("in the metric %s was not found the label %s=%s", mn, k, v)
+				if actualValue := sample.Labels.Get(k); actualValue != v {
+					t.Errorf("in the metric %s was not found the label %s %q!=%q", mn, k, v, actualValue)
 				}
 			}
 		}
