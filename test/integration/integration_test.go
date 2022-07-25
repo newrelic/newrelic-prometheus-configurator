@@ -93,24 +93,38 @@ func Test_ExtraScapeConfig(t *testing.T) {
 	inputConfig := fmt.Sprintf(`
 static_targets:
   jobs:
-    - job_name: go-exporter
+    - job_name: metrics-a
       scrape_interval: 1s
       targets:
         - "%s"
-      metrics_path: /
+      metrics_path: /metrics-a
+      extra_relabel_config:
+        - replacement: my-value
+          target_label: custom_label
+          action: replace
+
+extra_scrape_configs:
+  - job_name: metrics-b
+    static_configs:
+      - targets:
+        - "%s"
+    metrics_path: /metrics-b
+    honor_timestamps: false
+    scrape_interval: 1s
 
 extra_remote_write:
   - url: %s
 
 newrelic_remote_write:
   license_key: nrLicenseKey
-`, mockExporterTarget, rw.URL)
+`, mockExporterTarget, mockExporterTarget, rw.URL)
 
 	outputConfigPath := runConfigurator(t, inputConfig)
 
 	ps.start(t, outputConfigPath)
 
-	asserter.metricWithLabels(t, "go_goroutines", []string{"instance", "job"})
+	asserter.metricWithLabels(t, "custom_metric_a", []string{"custom_label", "instance", "job"})
+	asserter.metricWithLabels(t, "custom_metric_b", []string{"instance", "job"})
 }
 
 func runConfigurator(t *testing.T, inputConfig string) string {
@@ -141,12 +155,19 @@ func runConfigurator(t *testing.T, inputConfig string) string {
 func startMockExporter(t *testing.T) *httptest.Server {
 	t.Helper()
 
-	mockExporterServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		response := `
-go_goroutines 46
-go_threads 16`
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/metrics-a/", func(w http.ResponseWriter, r *http.Request) {
+		response := "custom_metric_a 46"
 		_, _ = fmt.Fprintln(w, response)
-	}))
+	})
+
+	mux.HandleFunc("/metrics-b/", func(w http.ResponseWriter, r *http.Request) {
+		response := "custom_metric_b 88"
+		_, _ = fmt.Fprintln(w, response)
+	})
+
+	mockExporterServer := httptest.NewServer(mux)
 
 	t.Cleanup(func() {
 		mockExporterServer.Close()
