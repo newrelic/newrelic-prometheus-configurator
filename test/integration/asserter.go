@@ -170,15 +170,21 @@ func (m *mockAppendable) HasMetricWithLabels(metricName string, expectedLabels [
 	m.lock.Lock()
 	defer m.lock.Unlock()
 	sample, ok := m.latestSamples[metricName]
+	if !ok {
+		return false
+	}
 
-	var numFoundLabels int
-	for _, label := range sample.labels {
-		for _, expected := range expectedLabels {
+	for _, expected := range expectedLabels {
+		for i, label := range sample.labels {
 			if label.Name == expected {
-				numFoundLabels++
+				break
+			}
+			// expected label missing.
+			if i == (len(sample.labels) - 1) {
+				return false
 			}
 		}
 	}
 
-	return ok && len(expectedLabels) == numFoundLabels
+	return true
 }

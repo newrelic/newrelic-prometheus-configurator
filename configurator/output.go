@@ -18,7 +18,6 @@ func BuildOutput(input *Input) (Output, error) {
 		RemoteWrite: []any{BuildRemoteWriteOutput(input)},
 	}
 
-	// Include extra remote-write configs
 	for _, extraRemoteWriteConfig := range input.ExtraRemoteWrite {
 		output.RemoteWrite = append(output.RemoteWrite, extraRemoteWriteConfig)
 	}
@@ -27,7 +26,6 @@ func BuildOutput(input *Input) (Output, error) {
 		output.ScrapeConfigs = append(output.ScrapeConfigs, staticTargets...)
 	}
 
-	// Include extra remote-write configs
 	for _, extraScrapeConfig := range input.ExtraScrapeConfigs {
 		output.ScrapeConfigs = append(output.ScrapeConfigs, extraScrapeConfig)
 	}
