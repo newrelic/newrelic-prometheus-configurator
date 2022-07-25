@@ -17,4 +17,6 @@ type Input struct {
 	ExtraRemoteWrite []PrometheusExtraConfig `yaml:"extra_remote_write"`
 	// StaticTargets holds the static-target jobs configuration.
 	StaticTargets StaticTargetsInput `yaml:"static_targets"`
+	// ExtraScrapeConfigs holds any additional raw scrape configuration to use as it is in prometheus configuration.
+	ExtraScrapeConfigs []PrometheusExtraConfig `yaml:"extra_scrape_configs"`
 }
