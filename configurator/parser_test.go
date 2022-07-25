@@ -20,6 +20,7 @@ func TestParser(t *testing.T) {
 	// it relies on testdata/<placeholder>.yaml and testdata/<placeholder>.expected.yaml
 	testCases := []string{
 		"remote-write-test",
+		"static-targets-test",
 	}
 
 	for _, c := range testCases {

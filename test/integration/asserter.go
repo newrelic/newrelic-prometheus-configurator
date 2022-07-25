@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/go-kit/log"
 	"github.com/prometheus/prometheus/model/exemplar"
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/storage"
@@ -34,7 +35,7 @@ func newAsserter(prometheusPort string) *asserter {
 	}
 
 	a.defaultBackoff = time.Second
-	a.defaultTimeout = time.Second * 10
+	a.defaultTimeout = time.Second * 20
 	a.prometheusPort = prometheusPort
 
 	return a
@@ -58,6 +59,15 @@ func (a *asserter) metricName(t *testing.T, expectedMetricName ...string) {
 	require.NoError(t, err, "metric not found: ", lastNotFound)
 }
 
+func (a *asserter) metricWithLabels(t *testing.T, expectedMetricName string, expectedlabels []string) {
+	t.Helper()
+
+	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
+		return a.appendable.HasMetricWithLabels(expectedMetricName, expectedlabels)
+	})
+	require.NoError(t, err, "metric with labels not found: ", expectedMetricName, expectedlabels)
+}
+
 func (a *asserter) prometheusServerReady(t *testing.T) {
 	t.Helper()
 
@@ -79,7 +89,7 @@ func (a *asserter) prometheusServerReady(t *testing.T) {
 func startRemoteWriteEndpoint(t *testing.T, appendable storage.Appendable) *httptest.Server {
 	t.Helper()
 
-	handler := remote.NewWriteHandler(nil, appendable)
+	handler := remote.NewWriteHandler(log.NewNopLogger(), appendable)
 
 	remoteWriteServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		handler.ServeHTTP(w, r)
@@ -154,4 +164,27 @@ func (m *mockAppendable) HasMetric(metricName string) bool {
 	_, ok := m.latestSamples[metricName]
 
 	return ok
+}
+
+func (m *mockAppendable) HasMetricWithLabels(metricName string, expectedLabels []string) bool {
+	m.lock.Lock()
+	defer m.lock.Unlock()
+	sample, ok := m.latestSamples[metricName]
+	if !ok {
+		return false
+	}
+
+	for _, expected := range expectedLabels {
+		for i, label := range sample.labels {
+			if label.Name == expected {
+				break
+			}
+			// expected label missing.
+			if i == (len(sample.labels) - 1) {
+				return false
+			}
+		}
+	}
+
+	return true
 }

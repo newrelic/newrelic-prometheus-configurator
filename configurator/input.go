@@ -15,7 +15,8 @@ type Input struct {
 	RemoteWrite RemoteWriteInput `yaml:"newrelic_remote_write"`
 	// ExtraRemoteWrite holds any additional remote write configuration to use as it is in prometheus configuration.
 	ExtraRemoteWrite []PrometheusExtraConfig `yaml:"extra_remote_write"`
+	// StaticTargets holds the static-target jobs configuration.
+	StaticTargets StaticTargetsInput `yaml:"static_targets"`
+	// ExtraScrapeConfigs holds any additional raw scrape configuration to use as it is in prometheus configuration.
+	ExtraScrapeConfigs []PrometheusExtraConfig `yaml:"extra_scrape_configs"`
 }
-
-// PrometheusExtraConfig represents some configuration which will be included in prometheus as it is.
-type PrometheusExtraConfig interface{}

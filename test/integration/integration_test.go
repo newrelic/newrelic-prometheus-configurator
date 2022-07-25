@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -53,27 +56,75 @@ func Test_SelfMetrics(t *testing.T) {
 
 	rw := startRemoteWriteEndpoint(t, asserter.appendable)
 
-	// TODO this test is using a Prom config directly since static targets
-	// are not implemented in the configurator yet.
-	promConfig := path.Join(t.TempDir(), "test-config.yml")
-	err := ioutil.WriteFile(promConfig, []byte(fmt.Sprintf(`
-remote_write:
-- url: http://foo:8999/write
-  proxy_url: %s
+	inputConfig := fmt.Sprintf(`
+static_targets:
+  jobs:
+    - job_name: self-metrics
+      scrape_interval: 1s
+      targets:
+        - "localhost:%s"
 
-global:
-  scrape_interval: 1s
+extra_remote_write:
+  - url: %s
 
-scrape_configs:
-- job_name: self
-  static_configs:
-  - targets: ["localhost:%s"]
-`, rw.URL, ps.port)), 0o444)
-	require.NoError(t, err)
+newrelic_remote_write:
+  license_key: nrLicenseKey
+`, ps.port, rw.URL)
 
-	ps.start(t, promConfig)
+	outputConfigPath := runConfigurator(t, inputConfig)
+
+	ps.start(t, outputConfigPath)
 
 	asserter.metricName(t, "prometheus_build_info")
+}
+
+func Test_ExtraScapeConfig(t *testing.T) {
+	t.Parallel()
+
+	ps := newPrometheusServer(t)
+
+	asserter := newAsserter(ps.port)
+
+	rw := startRemoteWriteEndpoint(t, asserter.appendable)
+
+	ex := startMockExporter(t)
+
+	mockExporterTarget := strings.Replace(ex.URL, "http://", "", 1)
+	inputConfig := fmt.Sprintf(`
+static_targets:
+  jobs:
+    - job_name: metrics-a
+      scrape_interval: 1s
+      targets:
+        - "%s"
+      metrics_path: /metrics-a
+      extra_relabel_config:
+        - replacement: my-value
+          target_label: custom_label
+          action: replace
+
+extra_scrape_configs:
+  - job_name: metrics-b
+    static_configs:
+      - targets:
+        - "%s"
+    metrics_path: /metrics-b
+    honor_timestamps: false
+    scrape_interval: 1s
+
+extra_remote_write:
+  - url: %s
+
+newrelic_remote_write:
+  license_key: nrLicenseKey
+`, mockExporterTarget, mockExporterTarget, rw.URL)
+
+	outputConfigPath := runConfigurator(t, inputConfig)
+
+	ps.start(t, outputConfigPath)
+
+	asserter.metricWithLabels(t, "custom_metric_a", []string{"custom_label", "instance", "job"})
+	asserter.metricWithLabels(t, "custom_metric_b", []string{"instance", "job"})
 }
 
 func runConfigurator(t *testing.T, inputConfig string) string {
@@ -99,4 +150,28 @@ func runConfigurator(t *testing.T, inputConfig string) string {
 	require.NoError(t, err, string(out))
 
 	return outputConfigPath
+}
+
+func startMockExporter(t *testing.T) *httptest.Server {
+	t.Helper()
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/metrics-a/", func(w http.ResponseWriter, r *http.Request) {
+		response := "custom_metric_a 46"
+		_, _ = fmt.Fprintln(w, response)
+	})
+
+	mux.HandleFunc("/metrics-b/", func(w http.ResponseWriter, r *http.Request) {
+		response := "custom_metric_b 88"
+		_, _ = fmt.Fprintln(w, response)
+	})
+
+	mockExporterServer := httptest.NewServer(mux)
+
+	t.Cleanup(func() {
+		mockExporterServer.Close()
+	})
+
+	return mockExporterServer
 }
