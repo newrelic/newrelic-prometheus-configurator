@@ -73,7 +73,7 @@ tests:
               external_labels:
                 cluster_name: cluster-test
 
-  - it: cluster_name set from global
+  - it: cluster_name is set from global
     set:
       global:
        cluster: "test"
@@ -102,7 +102,7 @@ tests:
             common:
               external_labels:
                 cluster_name: test2
-  - it: test cluster_name not overwritten from customAttributes
+  - it: cluster_name is not overwritten from customAttributes
     set:
       global:
         cluster: "test"
@@ -120,7 +120,7 @@ tests:
               external_labels:
                 cluster_name: test2
 
-  - it: cluster_name having precedence over extra labels having precedence over customAttributes
+  - it: cluster_name has precedence over extra labels has precedence over customAttributes
     set:
       cluster: test
       customAttributes:
