@@ -7,5 +7,4 @@ global:
   evaluation_interval: 1s
 remote_write:
   - url: "https://metric-api.newrelic.com/prometheus/v1/write"
-    authorization:
-      credentials: ""
+    authorization: {}

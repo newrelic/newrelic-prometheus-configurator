@@ -1,7 +1,6 @@
-package integration
+package mocks
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"net"
@@ -9,20 +8,17 @@ import (
 	"net/http/httptest"
 	"os"
 	"strings"
-	"sync"
 	"testing"
 
 	"github.com/go-kit/log"
-	"github.com/prometheus/prometheus/model/exemplar"
-	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/storage"
 	"github.com/prometheus/prometheus/storage/remote"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/sync/errgroup"
 )
 
-// startRemoteWriteEndpoint start an remote write endpoint with proxy.
-func startRemoteWriteEndpoint(t *testing.T, appendable storage.Appendable) *httptest.Server {
+// StartRemoteWriteEndpoint start an remote write endpoint with proxy.
+func StartRemoteWriteEndpoint(t *testing.T, appendable storage.Appendable) *httptest.Server {
 	t.Helper()
 
 	handler := remote.NewWriteHandler(log.NewJSONLogger(os.Stderr), appendable)
@@ -89,49 +85,4 @@ func pipe(t *testing.T, from net.Conn, to net.Conn) error {
 	}
 
 	return nil
-}
-
-// mockAppendable implements the github.com/prometheus/prometheus/storage.Appendable interface
-// which is used by the remote write server to store the received samples.
-type mockAppendable struct {
-	latestSamples map[string]mockSample
-	lock          sync.Mutex
-}
-
-type mockSample struct {
-	labels    labels.Labels
-	timestamp int64
-	value     float64
-}
-
-func (m *mockAppendable) Appender(_ context.Context) storage.Appender { //nolint: ireturn // External interface.
-	return m
-}
-
-func (m *mockAppendable) Append(_ storage.SeriesRef, l labels.Labels, t int64, v float64) (storage.SeriesRef, error) {
-	m.lock.Lock()
-	defer m.lock.Unlock()
-	m.latestSamples[l.Get("__name__")] = mockSample{l, t, v}
-
-	return 0, nil
-}
-
-func (m *mockAppendable) Commit() error {
-	return nil
-}
-
-func (*mockAppendable) Rollback() error {
-	return nil
-}
-
-func (m *mockAppendable) AppendExemplar(_ storage.SeriesRef, _ labels.Labels, _ exemplar.Exemplar) (storage.SeriesRef, error) {
-	return 0, nil
-}
-
-func (m *mockAppendable) GetMetric(metricName string) (mockSample, bool) {
-	m.lock.Lock()
-	defer m.lock.Unlock()
-	s, ok := m.latestSamples[metricName]
-
-	return s, ok
 }

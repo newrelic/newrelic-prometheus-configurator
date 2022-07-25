@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
-	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path"
 	"strings"
 	"testing"
+
+	"github.com/newrelic-forks/newrelic-prometheus/test/integration/mocks"
 
 	"github.com/stretchr/testify/require"
 )
@@ -54,7 +54,7 @@ func Test_SelfMetricsAreScrapedCorrectly(t *testing.T) {
 
 	asserter := newAsserter(ps.port)
 
-	rw := startRemoteWriteEndpoint(t, asserter.appendable)
+	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 
 	inputConfig := fmt.Sprintf(`
 static_targets:
@@ -87,9 +87,8 @@ func Test_ExtraScapeConfig(t *testing.T) {
 
 	asserter := newAsserter(ps.port)
 
-	rw := startRemoteWriteEndpoint(t, asserter.appendable)
-
-	ex := startMockExporter(t)
+	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
+	ex := mocks.StartMockExporter(t)
 
 	mockExporterTarget := strings.Replace(ex.URL, "http://", "", 1)
 	inputConfig := fmt.Sprintf(`
@@ -114,19 +113,55 @@ extra_scrape_configs:
     honor_timestamps: false
     scrape_interval: 1s
 
-extra_remote_write:
-  - url: %s
-
 newrelic_remote_write:
   license_key: nrLicenseKey
+  proxy_url: %s
+  tls_config:
+    insecure_skip_verify: true
 `, mockExporterTarget, mockExporterTarget, rw.URL)
 
 	outputConfigPath := runConfigurator(t, inputConfig)
 
 	ps.start(t, outputConfigPath)
 
-	asserter.metricLabels(t, map[string]string{"custom_label": "my-value", "instance": "df", "job": "df"}, "custom_metric_a")
-	asserter.metricLabels(t, map[string]string{"instance": "FD", "job": "df"}, "custom_metric_b")
+	asserter.metricLabels(t, map[string]string{"custom_label": "my-value", "__name__": "custom_metric_a", "job": "metrics-a"}, "custom_metric_a")
+	asserter.metricLabels(t, map[string]string{"__name__": "custom_metric_b", "job": "metrics-b"}, "custom_metric_b")
+}
+
+func Test_ExtraLabelsAreAddedToEachSample(t *testing.T) {
+	t.Parallel()
+
+	ps := newPrometheusServer(t)
+	asserter := newAsserter(ps.port)
+	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
+
+	inputConfig := fmt.Sprintf(`
+static_targets:
+  jobs:
+    - job_name: self-metrics
+      scrape_interval: 1s
+      targets:
+        - "localhost:%s"
+data_source_name: "data-source"
+newrelic_remote_write:
+  license_key: nrLicenseKey
+  proxy_url: %s
+  tls_config:
+    insecure_skip_verify: true
+common:
+  scrape_interval: 1s
+  external_labels:
+    cluster_name: test
+    one: two
+    three: four
+`, ps.port, rw.URL)
+
+	outputConfigPath := runConfigurator(t, inputConfig)
+
+	ps.start(t, outputConfigPath)
+
+	asserter.metricName(t, "prometheus_build_info")
+	asserter.metricLabels(t, map[string]string{"cluster_name": "test", "one": "two", "three": "four"}, "prometheus_build_info")
 }
 
 func runConfigurator(t *testing.T, inputConfig string) string {
@@ -152,28 +187,4 @@ func runConfigurator(t *testing.T, inputConfig string) string {
 	require.NoError(t, err, string(out))
 
 	return outputConfigPath
-}
-
-func startMockExporter(t *testing.T) *httptest.Server {
-	t.Helper()
-
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/metrics-a/", func(w http.ResponseWriter, r *http.Request) {
-		response := "custom_metric_a 46"
-		_, _ = fmt.Fprintln(w, response)
-	})
-
-	mux.HandleFunc("/metrics-b/", func(w http.ResponseWriter, r *http.Request) {
-		response := "custom_metric_b 88"
-		_, _ = fmt.Fprintln(w, response)
-	})
-
-	mockExporterServer := httptest.NewServer(mux)
-
-	t.Cleanup(func() {
-		mockExporterServer.Close()
-	})
-
-	return mockExporterServer
 }
