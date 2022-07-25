@@ -73,7 +73,7 @@ tests:
               external_labels:
                 cluster_name: cluster-test
 
-  - it: test cluster_name global precedence
+  - it: cluster_name set from global
     set:
       global:
        cluster: "test"
@@ -87,7 +87,7 @@ tests:
             common:
               external_labels:
                 cluster_name: test
-  - it: test cluster_name local over global precedence
+  - it: cluster_name local value has precedence over global precedence
     set:
       global:
         cluster: "test"
@@ -120,16 +120,18 @@ tests:
               external_labels:
                 cluster_name: test2
 
-  - it: test customAttributes added to extra labels that has precedence
+  - it: cluster_name having precedence over extra labels having precedence over customAttributes
     set:
       cluster: test
       customAttributes:
         attribute: "value"
         one: error
+        cluster_name: "different"
       config:
         common:
           external_labels:
             one: two
+            cluster_name: "different"
           scrape_interval: 15
     asserts:
       - equal:

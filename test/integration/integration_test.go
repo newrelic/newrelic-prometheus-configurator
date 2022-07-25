@@ -47,7 +47,7 @@ newrelic_remote_write:
 	asserter.prometheusServerReady(t)
 }
 
-func Test_SelfMetrics(t *testing.T) {
+func Test_SelfMetricsAreScrapedCorrectly(t *testing.T) {
 	t.Parallel()
 
 	ps := newPrometheusServer(t)
