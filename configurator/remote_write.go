@@ -62,17 +62,6 @@ type QueueConfig struct {
 	RetryOnHTTP429    bool          `yaml:"retry_on_http_429"`
 }
 
-// TLSConfig represents remote-write tls configuration, `prometheusCommonConfig.TLSConfig` cannot be used directly
-// because it does not Marshal to yaml properly.
-type TLSConfig struct {
-	CAFile             string `yaml:"ca_file,omitempty" json:"ca_file,omitempty"`
-	CertFile           string `yaml:"cert_file,omitempty" json:"cert_file,omitempty"`
-	KeyFile            string `yaml:"key_file,omitempty" json:"key_file,omitempty"`
-	ServerName         string `yaml:"server_name,omitempty" json:"server_name,omitempty"`
-	InsecureSkipVerify bool   `yaml:"insecure_skip_verify" json:"insecure_skip_verify"`
-	MinVersion         string `yaml:"min_version,omitempty" json:"min_version,omitempty"`
-}
-
 // RemoteWriteOutput represents a prometheus remote_write config which can be obtained from input.
 type RemoteWriteOutput struct {
 	URL                 string                  `yaml:"url"`
@@ -82,11 +71,6 @@ type RemoteWriteOutput struct {
 	ProxyURL            string                  `yaml:"proxy_url,omitempty"`
 	QueueConfig         *QueueConfig            `yaml:"queue_config,omitempty"`
 	WriteRelabelConfigs []PrometheusExtraConfig `yaml:"write_relabel_configs,omitempty"`
-}
-
-// Authorization holds prometheus authorization information for remote write.
-type Authorization struct {
-	Credentials string `yaml:"credentials"`
 }
 
 // BuildRemoteWriteOutput builds a RemoteWriteOutput given the input.
