@@ -8,4 +8,17 @@ apiVersion: v1
 data:
   config.yaml: |-
     # Configuration for newrelic-prometheus-configurator
-    {{- include "newrelic-prometheus.configurator.config" . | nindent 4 }}
+    data_source_name: {{ include "newrelic.common.cluster" . }}
+    newrelic_remote_write:
+    {{- if (include "newrelic-prometheus.configurator.remote_write" . ) -}}
+      {{- include "newrelic-prometheus.configurator.remote_write" . | nindent 6 }}
+    {{- end -}}
+    {{- if (include "newrelic-prometheus.configurator.extra_remote_write" . ) -}}
+    {{- include "newrelic-prometheus.configurator.extra_remote_write" . | nindent 4 }}
+    {{- end -}}
+    {{- if (include "newrelic-prometheus.configurator.static_targets" . ) -}}
+    {{- include "newrelic-prometheus.configurator.static_targets" . | nindent 4 }}
+    {{- end -}}
+    {{- if (include "newrelic-prometheus.configurator.extra_scrape_configs" . ) -}}
+    {{- include "newrelic-prometheus.configurator.extra_scrape_configs" . | nindent 4 }}
+    {{- end -}}
