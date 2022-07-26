@@ -1,8 +1,8 @@
 package configurator
 
 const (
-	PodKind      = "pods"
-	EndpointKind = "endpoints"
+	podKind      = "pods"
+	endpointKind = "endpoints"
 )
 
 // KubernetesInput defines all fields to set up prometheus.
@@ -31,11 +31,11 @@ func (j *KubernetesJob) checkKind(kind string) bool {
 }
 
 func (j *KubernetesJob) Pods() bool {
-	return j.checkKind(PodKind)
+	return j.checkKind(podKind)
 }
 
 func (j *KubernetesJob) Endpoints() bool {
-	return j.checkKind(EndpointKind)
+	return j.checkKind(endpointKind)
 }
 
 // KubernetesSettingsBuilders defines a functions which returns a copy of the provided `TargetJobOutput` with specific
