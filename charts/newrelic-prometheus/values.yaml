@@ -117,26 +117,49 @@ config: {}
 #       # Retry upon receiving a 429 status code from the remote-write storage.
 #       retry_on_http_429: false
 #  extra_remote_write: []
+#  for more info about static_targets: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
 #  static_targets:
+#      # The job name assigned to scraped metrics by default.
 #    - job_name: ""
+#      # The targets specified for this job
 #      targets: []
+#      # Labels assigned to all metrics scraped from the targets.
 #      labels: {}
+#      # The HTTP resource path on which to fetch metrics from targets.
 #      metrics_path: /metrics
+#      # honor_labels controls how Prometheus handles conflicts between label,
+#      # more info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
 #      honor_labels: true
+#      # honor_timestamps controls whether Prometheus respects the timestamps present n scraped data.
 #      honor_timestamps: true
+#      # Optional HTTP URL parameters.
 #      params: {}
+#      # Configures the protocol scheme used for requests.
 #      scheme: "http"
+#      # An uncompressed response body larger than this many bytes will cause the scrape to fail. 0 means no limit.
+#      # Example: 100MB.
 #      body_size_limit: 0
+#      # Per-scrape limit on number of scraped samples that will be accepted. 0 means no limit.
 #      sample_limit: 0
+#      # Per-scrape config limit on number of unique targets that will be accepted. 0 means no limit.
 #      target_limit: 0
+#      # Per-scrape limit on number of labels that will be accepted for a sample. 0 means no limit.
 #      label_limit: 0
+#      # Per-scrape limit on length of labels name that will be accepted for a sample. 0 means no limit.
 #      label_name_length_limit: 0
+#      # Per-scrape limit on length of labels value that will be accepted for a sample. 0 means no limit
 #      label_value_length_limit: 0
+#      # How frequently to scrape targets from this job.
 #      scrape_interval: 30s
+#      # Per-scrape timeout when scraping this job.
 #      scrape_timeout: 30s
+#      # Configures the scrape request's TLS settings.
 #      tls_config:
 #      # Sets the `Authorization` header on every scrape request
 #      authorization:
+#      # List of target relabel configurations.
 #      extra_relabel_config: []
+#      # List of metric relabel configurations.
 #      extra_metric_relabel_config: []
+#  # extra scrape configs in prometheus format https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
 #  extra_scrape_configs: {}
