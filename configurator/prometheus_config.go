@@ -1,5 +1,7 @@
 package configurator
 
+import "time"
+
 // PrometheusExtraConfig represents some configuration which will be included in prometheus as it is.
 type PrometheusExtraConfig any
 
@@ -44,4 +46,15 @@ type OAuth2 struct {
 type StaticConfig struct {
 	Targets []string          `yaml:"targets"`
 	Labels  map[string]string `yaml:"labels,omitempty"`
+}
+
+// GlobalConfig configures values that are used across other configuration
+// objects.
+type GlobalConfig struct {
+	// How frequently to scrape targets by default.
+	ScrapeInterval time.Duration `yaml:"scrape_interval,omitempty"`
+	// The default timeout when scraping targets.
+	ScrapeTimeout time.Duration `yaml:"scrape_timeout,omitempty"`
+	// The labels to add to any timeseries that this Prometheus instance scrapes.
+	ExternalLabels map[string]string `yaml:"external_labels,omitempty"`
 }

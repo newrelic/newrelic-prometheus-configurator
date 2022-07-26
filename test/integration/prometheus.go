@@ -1,8 +1,8 @@
 package integration
 
 import (
+	"bytes"
 	"fmt"
-	"io"
 	"net"
 	"os"
 	"os/exec"
@@ -10,6 +10,8 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/stretchr/testify/require"
 )
@@ -46,25 +48,20 @@ func (ps *prometheusServer) start(t *testing.T, configPath string) {
 		"--log.level=debug",
 	)
 
-	// Log stderr in case of failure.
-	stderr, err := prom.StderrPipe()
-	require.NoError(t, err)
+	stderr := &bytes.Buffer{}
+	prom.Stderr = stderr
 
-	err = prom.Start()
-	require.NoError(t, err)
+	err := prom.Start()
+	require.NoError(t, err, stderr)
 
 	go func() {
 		err := prom.Wait()
-		require.NoError(t, err)
+		assert.NoError(t, err, stderr)
 	}()
 
 	t.Cleanup(func() {
 		err := prom.Process.Signal(os.Interrupt)
-		require.NoError(t, err)
-
-		// logs in case the any test fails.
-		slurp, _ := io.ReadAll(stderr)
-		t.Log(string(slurp))
+		assert.NoError(t, err, stderr)
 	})
 }
 
