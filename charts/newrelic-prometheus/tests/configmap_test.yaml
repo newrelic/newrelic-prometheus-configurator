@@ -13,6 +13,10 @@ tests:
             # Configuration for newrelic-prometheus-configurator
             data_source_name: cluster-test
             newrelic_remote_write:
+            common:
+              external_labels:
+                cluster_name: cluster-test
+
   - it: staging is enabled
     set:
       licenseKey: license-key-test
@@ -65,3 +69,80 @@ tests:
                   insecure_skip_verify: true
             extra_remote_write:
                 - url: https://second.remote.write
+            common:
+              external_labels:
+                cluster_name: cluster-test
+
+  - it: cluster_name is set from global
+    set:
+      global:
+       cluster: "test"
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            data_source_name: test
+            newrelic_remote_write:
+            common:
+              external_labels:
+                cluster_name: test
+  - it: cluster_name local value has precedence over global precedence
+    set:
+      global:
+        cluster: "test"
+      cluster: "test2"
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            data_source_name: test2
+            newrelic_remote_write:
+            common:
+              external_labels:
+                cluster_name: test2
+  - it: cluster_name is not overwritten from customAttributes
+    set:
+      global:
+        cluster: "test"
+      cluster: "test2"
+      customAttributes:
+        cluster_name: "test3"
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            data_source_name: test2
+            newrelic_remote_write:
+            common:
+              external_labels:
+                cluster_name: test2
+
+  - it: cluster_name has precedence over extra labels has precedence over customAttributes
+    set:
+      cluster: test
+      customAttributes:
+        attribute: "value"
+        one: error
+        cluster_name: "different"
+      config:
+        common:
+          external_labels:
+            one: two
+            cluster_name: "different"
+          scrape_interval: 15
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            data_source_name: test
+            newrelic_remote_write:
+            common:
+              external_labels:
+                attribute: value
+                cluster_name: test
+                one: two
+              scrape_interval: 15

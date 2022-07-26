@@ -79,6 +79,15 @@ nrStaging:
 config: {}
 # TODO: it needs to be completed with all configurator sections and be documented properly
 # config:
+#  common:
+#    The labels to add to any timeseries that this Prometheus instance scrapes.
+#    external_labels:
+#      one: two
+#    How frequently to scrape targets by default.
+#    scrape_interval: 1m
+#    The default timeout when scraping targets.
+#    scrape_timeout: 10s
+
 #  newrelic_remote_write:
 #    extra_write_relabel_configs: []
 #    proxy_url: ""
