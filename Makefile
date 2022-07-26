@@ -33,7 +33,7 @@ clean:
 
 .PHONY: test
 test:
-	go test ./configurator/... -count=1
+	go test ./... -count=1 -race
 
 .PHONY: compile
 compile:
@@ -67,4 +67,4 @@ tilt-ci:
 .PHONY: integration-test
 integration-test:
 	KUBECONFIG='./.kubeconfig-dev' minikube update-context
-	go test ./test/integration/... -count=1
+	go test ./... -tags=integration_test -count=1 -race
