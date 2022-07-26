@@ -14,7 +14,7 @@ type KubernetesInput struct {
 // KubernetesJob holds the configuration which will parsed to a prometheus scrape job including the
 // specific rules needed.
 type KubernetesJob struct {
-	InputJob `yaml:",inline"`
+	TargetJobInput `yaml:",inline"`
 
 	Selector *KubernetesSelector `yaml:"selector,omitempty"`
 	// TargetKind currently supports 'pods' and 'services'.
@@ -50,7 +50,7 @@ func BuildKubernetesTargets(i *Input) []TargetJobOutput {
 	}
 	targetJobs := make([]TargetJobOutput, 0, len(i.Kubernetes.Jobs))
 	for _, k8sJob := range i.Kubernetes.Jobs {
-		tg := BuildTargetJob(k8sJob.InputJob)
+		tg := BuildTargetJob(k8sJob.TargetJobInput)
 		if k8sJob.Pods() {
 			tg = SetupPodsRules(tg)
 		}

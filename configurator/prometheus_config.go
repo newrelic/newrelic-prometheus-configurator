@@ -39,3 +39,9 @@ type OAuth2 struct {
 	TLSConfig        *TLSConfig        `yaml:"tls_config,omitempty"`
 	ProxyURL         string            `yaml:"proxy_url,omitempty"`
 }
+
+// StaticConfig defines each of the static_configs for the prometheus config.
+type StaticConfig struct {
+	Targets []string          `yaml:"targets"`
+	Labels  map[string]string `yaml:"labels,omitempty"`
+}
