@@ -74,7 +74,7 @@ jobs:
     name: Check testing environment 
     runs-on: ubuntu-latest
     # If the environment is broken this job could timeout since the default timeout for tilt ci is 30m.
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
       - name: Setup Minikube
