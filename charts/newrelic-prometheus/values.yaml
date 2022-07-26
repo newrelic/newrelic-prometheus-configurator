@@ -117,3 +117,26 @@ config: {}
 #       # Retry upon receiving a 429 status code from the remote-write storage.
 #       retry_on_http_429: false
 #  extra_remote_write: []
+#  static_targets:
+#    - job_name: ""
+#      targets: []
+#      labels: {}
+#      metrics_path: /metrics
+#      honor_labels: true
+#      honor_timestamps: true
+#      params: {}
+#      scheme: "http"
+#      body_size_limit: 0
+#      sample_limit: 0
+#      target_limit: 0
+#      label_limit: 0
+#      label_name_length_limit: 0
+#      label_value_length_limit: 0
+#      scrape_interval: 30s
+#      scrape_timeout: 30s
+#      tls_config:
+#      # Sets the `Authorization` header on every scrape request
+#      authorization:
+#      extra_relabel_config: []
+#      extra_metric_relabel_config: []
+#  extra_scrape_configs: {}
