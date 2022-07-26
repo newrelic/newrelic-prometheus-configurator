@@ -24,35 +24,40 @@ common:
 {{- end -}}
 
 
-{{- /* Internal use: it builds the remote_write configuration from configurator config */ -}}
-{{- define "newrelic-prometheus.configurator.config._remoteWrite" -}}
-
-newrelic_remote_write:
-{{- if (include "newrelic.common.nrStaging" . ) }}
+{{- define "newrelic-prometheus.configurator.remote_write" -}}
+{{- if (include "newrelic.common.nrStaging" . ) -}}
   staging: true
 {{- end -}}
-
 {{- if .Values.config -}}
-
 {{- if .Values.config.remote_write  -}}
-{{- .Values.config.remote_write | toYaml | nindent 4 -}}
+  {{- .Values.config.remote_write | toYaml | nindent 0 -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}
 
-{{- if .Values.config.extra_remote_write }}
+{{- define "newrelic-prometheus.configurator.extra_remote_write" -}}
+{{- if .Values.config -}}
+{{- if .Values.config.extra_remote_write  -}}
 extra_remote_write:
-  {{- .Values.config.extra_remote_write | toYaml | nindent 4 -}}
+  {{- .Values.config.extra_remote_write | toYaml | nindent 2 -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}
 
-{{- if .Values.config.static_targets  }}
+{{- define "newrelic-prometheus.configurator.static_targets" -}}
+{{- if .Values.config -}}
+{{- if .Values.config.static_targets -}}
 static_targets:
-{{- .Values.config.static_targets | toYaml | nindent 2 -}}
+  {{- .Values.config.static_targets | toYaml | nindent 2 -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}
 
-{{- if .Values.config.extra_scrape_configs }}
+{{- define "newrelic-prometheus.configurator.extra_scrape_configs" -}}
+{{- if .Values.config -}}
+{{- if .Values.config.extra_scrape_configs  -}}
 extra_scrape_configs:
   {{- .Values.config.extra_scrape_configs | toYaml | nindent 2 -}}
 {{- end -}}
-
 {{- end -}}
-
 {{- end -}}
