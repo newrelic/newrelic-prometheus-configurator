@@ -86,9 +86,7 @@ config: {}
 #    How frequently to scrape targets by default.
 #    scrape_interval: 1m
 #    The default timeout when scraping targets.
-#    scrape_timeout: 1s
-#    How frequently to evaluate rules by default.
-#    evaluation_interval: 1s
+#    scrape_timeout: 10s
 
 #  newrelic_remote_write:
 #    extra_write_relabel_configs: []

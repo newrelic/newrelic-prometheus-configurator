@@ -53,6 +53,7 @@ func (m *Appendable) AppendExemplar(_ storage.SeriesRef, _ labels.Labels, _ exem
 	return 0, nil
 }
 
+// GetMetric returns the last sample stored by the appendable.
 func (m *Appendable) GetMetric(metricName string) (AppendableSample, bool) {
 	m.lock.Lock()
 	defer m.lock.Unlock()

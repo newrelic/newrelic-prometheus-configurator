@@ -7,7 +7,7 @@ package configurator
 // prometheus configuration.
 type Input struct {
 	// Common holds configuration for all options common to all scrape methods.
-	Common CommonConfigInput `yaml:"common"`
+	Common GlobalConfig `yaml:"common"`
 	// DataSourceName holds the source name which will be used as `prometheus_server` parameter in New Relic remote
 	// write endpoint. See:
 	// <https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-remote-write/set-your-prometheus-remote-write-integration/>
