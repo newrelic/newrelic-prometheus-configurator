@@ -5,7 +5,7 @@ package configurator
 
 // StaticTargetsInput defines all the static targets jobs.
 type StaticTargetsInput struct {
-	Jobs []TargetJobInput `yaml:"jobs"`
+	Jobs []ScrapeJobInput `yaml:"jobs"`
 }
 
 // BuildStaticTargetsOutput builds the slice of StaticTargetJobOutput given the input.

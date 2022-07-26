@@ -18,7 +18,7 @@ type KubernetesInput struct {
 // KubernetesJob holds the configuration which will parsed to a prometheus scrape job including the
 // specific rules needed.
 type KubernetesJob struct {
-	TargetJobInput `yaml:",inline"`
+	ScrapeJobInput `yaml:",inline"`
 
 	JobNamePrefix string              `yaml:"job_name_prefix"`
 	Selector      *KubernetesSelector `yaml:"selector,omitempty"`
@@ -84,7 +84,7 @@ func (b *kubernetesTargetBuilder) Build(i *Input) ([]TargetJobOutput, error) {
 
 func (b *kubernetesTargetBuilder) buildTargetJob(job KubernetesJob, kind string) TargetJobOutput {
 	// build base target job
-	targetJob := BuildTargetJob(job.TargetJobInput)
+	targetJob := BuildTargetJob(job.ScrapeJobInput)
 	// apply selector rules if defined
 	if b.setSelectorRules != nil && job.Selector != nil {
 		targetJob = b.setSelectorRules(targetJob, job)

@@ -1,7 +1,7 @@
 package configurator
 
-// TargetJobInput represents a target job config for configurator.
-type TargetJobInput struct {
+// ScrapeJobInput represents a target job config for configurator.
+type ScrapeJobInput struct {
 	TargetJob                 TargetJob               `yaml:",inline"`
 	Targets                   []string                `yaml:"targets"`
 	Labels                    map[string]string       `yaml:"labels"`
@@ -18,7 +18,7 @@ type TargetJobOutput struct {
 	KubernetesSdConfigs  map[string]string       `yaml:"kubernetes_sd_config,omitempty"`
 }
 
-func BuildTargetJob(job TargetJobInput) TargetJobOutput {
+func BuildTargetJob(job ScrapeJobInput) TargetJobOutput {
 	return TargetJobOutput{
 		TargetJob: job.TargetJob,
 		StaticConfigs: []StaticConfig{

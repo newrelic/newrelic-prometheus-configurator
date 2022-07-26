@@ -26,7 +26,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 			Input: &configurator.Input{
 				DataSourceName: "source-of-metrics",
 				StaticTargets: configurator.StaticTargetsInput{
-					Jobs: []configurator.TargetJobInput{
+					Jobs: []configurator.ScrapeJobInput{
 						{
 							// nolint: dupl // TargetJob should be the same
 							TargetJob: configurator.TargetJob{
