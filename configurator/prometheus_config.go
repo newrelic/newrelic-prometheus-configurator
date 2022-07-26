@@ -1,6 +1,11 @@
 package configurator
 
-import "time"
+import (
+	"net/url"
+	"time"
+
+	"github.com/alecthomas/units"
+)
 
 // PrometheusExtraConfig represents some configuration which will be included in prometheus as it is.
 type PrometheusExtraConfig any
@@ -40,6 +45,28 @@ type OAuth2 struct {
 	EndpointParams   map[string]string `yaml:"endpoint_params,omitempty"`
 	TLSConfig        *TLSConfig        `yaml:"tls_config,omitempty"`
 	ProxyURL         string            `yaml:"proxy_url,omitempty"`
+}
+
+// TargetJob holds fields which do not change from input and output jobs.
+type TargetJob struct {
+	JobName               string           `yaml:"job_name"`
+	HonorLabels           bool             `yaml:"honor_labels,omitempty"`
+	HonorTimestamps       bool             `yaml:"honor_timestamps"`
+	Params                url.Values       `yaml:"params,omitempty"`
+	Scheme                string           `yaml:"scheme,omitempty"`
+	BodySizeLimit         units.Base2Bytes `yaml:"body_size_limit,omitempty"`
+	SampleLimit           uint             `yaml:"sample_limit,omitempty"`
+	TargetLimit           uint             `yaml:"target_limit,omitempty"`
+	LabelLimit            uint             `yaml:"label_limit,omitempty"`
+	LabelNameLengthLimit  uint             `yaml:"label_name_length_limit,omitempty"`
+	LabelValueLengthLimit uint             `yaml:"label_value_length_limit,omitempty"`
+	MetricsPath           string           `yaml:"metrics_path,omitempty"`
+	ScrapeInterval        time.Duration    `yaml:"scrape_interval,omitempty"`
+	ScrapeTimeout         time.Duration    `yaml:"scrape_timeout,omitempty"`
+	TLSConfig             *TLSConfig       `yaml:"tls_config,omitempty"`
+	BasicAuth             *BasicAuth       `yaml:"basic_auth,omitempty"`
+	Authorization         Authorization    `yaml:"authorization,omitempty"`
+	OAuth2                OAuth2           `yaml:"oauth2,omitempty"`
 }
 
 // StaticConfig defines each of the static_configs for the prometheus config.
