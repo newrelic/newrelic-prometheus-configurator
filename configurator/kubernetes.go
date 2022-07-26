@@ -38,41 +38,44 @@ func (j *KubernetesJob) Endpoints() bool {
 	return j.checkKind(EndpointKind)
 }
 
-// KubernetesSelector defines the field needed to provided filtering capabilities to a kubernetes scrape job.
-type KubernetesSelector struct {
-	// TODO: define selector when this is implemented
+// KubernetesSettingsBuilders defines a functions which returns a copy of the provided `TargetJobOutput` with specific
+// added (considering the specified `*KubernetesJob`).
+type kubernetesSettingsBuilder func(tg TargetJobOutput, k8sJob KubernetesJob) TargetJobOutput
+
+// kubernetesTargetBuilder holds the the specific settings to add to a TargetJobOutput given the corresponding
+// KubernetesJob definition.
+type kubernetesTargetBuilder struct {
+	pod      kubernetesSettingsBuilder
+	endpoint kubernetesSettingsBuilder
+	selector kubernetesSettingsBuilder
+}
+
+func newKubernetesTargetBuilder(pod, endpoint, selector kubernetesSettingsBuilder) *kubernetesTargetBuilder {
+	return &kubernetesTargetBuilder{
+		pod:      pod,
+		endpoint: endpoint,
+		selector: selector,
+	}
 }
 
 // BuildKubernetesTargets builds the prometheus targets corresponding to the Kubernetes configuration in input.
-func BuildKubernetesTargets(i *Input) []TargetJobOutput {
+func (b *kubernetesTargetBuilder) Build(i *Input) []TargetJobOutput {
 	if !i.Kubernetes.Enabled {
 		return nil
 	}
 	targetJobs := make([]TargetJobOutput, 0, len(i.Kubernetes.Jobs))
 	for _, k8sJob := range i.Kubernetes.Jobs {
 		tg := BuildTargetJob(k8sJob.TargetJobInput)
-		if k8sJob.Pods() {
-			tg = SetupPodsRules(tg)
+		if b.pod != nil && k8sJob.Pods() {
+			tg = b.pod(tg, k8sJob)
 		}
-		if k8sJob.Endpoints() {
-			tg = SetupPodsRules(tg)
+		if b.endpoint != nil && k8sJob.Endpoints() {
+			tg = b.endpoint(tg, k8sJob)
 		}
-		if k8sJob.Selector != nil {
-			tg = SetupSelectorRules(tg, k8sJob.Selector)
+		if b.selector != nil && k8sJob.Selector != nil {
+			tg = b.selector(tg, k8sJob)
 		}
 		targetJobs = append(targetJobs, tg)
 	}
 	return targetJobs
-}
-
-func SetupPodsRules(tg TargetJobOutput) TargetJobOutput {
-	return tg // TODO: implement it!
-}
-
-func SetupServicesRules(tg TargetJobOutput) TargetJobOutput {
-	return tg // TODO: implement it!
-}
-
-func SetupSelectorRules(tg TargetJobOutput, selector *KubernetesSelector) TargetJobOutput {
-	return tg // TODO: implement it!
 }
