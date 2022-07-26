@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-// StartMockExporter starts a server with metrics mocked.
-func StartMockExporter(t *testing.T) *httptest.Server {
+// StartExporter starts a server with metrics mocked.
+func StartExporter(t *testing.T) *httptest.Server {
 	t.Helper()
 
 	mux := http.NewServeMux()

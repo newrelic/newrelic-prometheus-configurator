@@ -15,7 +15,7 @@ import (
 var ErrTimeout = errors.New("timeout Exceeded")
 
 type asserter struct {
-	appendable     *mocks.MockAppendable
+	appendable     *mocks.Appendable
 	defaultTimeout time.Duration
 	defaultBackoff time.Duration
 	prometheusPort string
@@ -24,7 +24,7 @@ type asserter struct {
 func newAsserter(prometheusPort string) *asserter {
 	a := &asserter{}
 
-	a.appendable = mocks.NewMockAppendable()
+	a.appendable = mocks.NewAppendable()
 	a.defaultBackoff = time.Second
 	a.defaultTimeout = time.Second * 20
 	a.prometheusPort = prometheusPort

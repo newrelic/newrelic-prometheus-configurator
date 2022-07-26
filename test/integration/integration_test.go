@@ -88,7 +88,7 @@ func Test_ExtraScapeConfig(t *testing.T) {
 	asserter := newAsserter(ps.port)
 
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
-	ex := mocks.StartMockExporter(t)
+	ex := mocks.StartExporter(t)
 
 	mockExporterTarget := strings.Replace(ex.URL, "http://", "", 1)
 	inputConfig := fmt.Sprintf(`
