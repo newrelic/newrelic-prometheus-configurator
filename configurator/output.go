@@ -35,7 +35,11 @@ func BuildOutput(input *Input) (Output, error) {
 		endpointSettingsBuilder,
 		selectorSettingsBuilder,
 	)
-	for _, targetJob := range kubernetesTargetBuilder.Build(input) {
+	k8stargets, err := kubernetesTargetBuilder.Build(input)
+	if err != nil {
+		return output, err
+	}
+	for _, targetJob := range k8stargets {
 		output.ScrapeConfigs = append(output.ScrapeConfigs, targetJob)
 	}
 

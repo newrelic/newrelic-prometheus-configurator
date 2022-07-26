@@ -1,9 +1,13 @@
 package configurator
 
+import "errors"
+
 const (
 	podKind      = "pods"
 	endpointKind = "endpoints"
 )
+
+var ErrInvalidK8sJobKinds = errors.New("at least one kind should be set in target_kinds field")
 
 // KubernetesInput defines all fields to set up prometheus.
 type KubernetesInput struct {
@@ -16,66 +20,80 @@ type KubernetesInput struct {
 type KubernetesJob struct {
 	TargetJobInput `yaml:",inline"`
 
-	Selector *KubernetesSelector `yaml:"selector,omitempty"`
-	// TargetKind currently supports 'pods' and 'services'.
-	TargetKind []string `yaml:"target_kind"`
+	JobNamePrefix string              `yaml:"job_name_prefix"`
+	Selector      *KubernetesSelector `yaml:"selector,omitempty"`
+	TargetKinds   KubernetesJobKind   `yaml:"target_kinds"`
 }
 
-func (j *KubernetesJob) checkKind(kind string) bool {
-	for _, tk := range j.TargetKind {
-		if tk == kind {
-			return true
-		}
-	}
-	return false
+type KubernetesJobKind struct {
+	Pods      bool `yaml:"pods"`
+	Endpoints bool `yaml:"endpoints"`
 }
 
-func (j *KubernetesJob) Pods() bool {
-	return j.checkKind(podKind)
+// Valid returns true when the defined configuration is valid.
+func (k *KubernetesJobKind) Valid() bool {
+	return k.Pods || k.Endpoints
 }
 
-func (j *KubernetesJob) Endpoints() bool {
-	return j.checkKind(endpointKind)
-}
-
-// KubernetesSettingsBuilders defines a functions which returns a copy of the provided `TargetJobOutput` with specific
-// added (considering the specified `*KubernetesJob`).
-type kubernetesSettingsBuilder func(tg TargetJobOutput, k8sJob KubernetesJob) TargetJobOutput
+// KubernetesSettingsBuilders defines a functions which updates and returns a `TargetJobOutput` with specific settings
+// added (considering the specified `KubernetesJob`).
+type kubernetesSettingsBuilder func(targetJob TargetJobOutput, k8sJob KubernetesJob) TargetJobOutput
 
 // kubernetesTargetBuilder holds the the specific settings to add to a TargetJobOutput given the corresponding
 // KubernetesJob definition.
 type kubernetesTargetBuilder struct {
-	pod      kubernetesSettingsBuilder
-	endpoint kubernetesSettingsBuilder
-	selector kubernetesSettingsBuilder
+	setPodRules      kubernetesSettingsBuilder
+	setEndpointRules kubernetesSettingsBuilder
+	setSelectorRules kubernetesSettingsBuilder
 }
 
 func newKubernetesTargetBuilder(pod, endpoint, selector kubernetesSettingsBuilder) *kubernetesTargetBuilder {
 	return &kubernetesTargetBuilder{
-		pod:      pod,
-		endpoint: endpoint,
-		selector: selector,
+		setPodRules:      pod,
+		setEndpointRules: endpoint,
+		setSelectorRules: selector,
 	}
 }
 
 // BuildKubernetesTargets builds the prometheus targets corresponding to the Kubernetes configuration in input.
-func (b *kubernetesTargetBuilder) Build(i *Input) []TargetJobOutput {
+func (b *kubernetesTargetBuilder) Build(i *Input) ([]TargetJobOutput, error) {
 	if !i.Kubernetes.Enabled {
-		return nil
+		return nil, nil
 	}
 	targetJobs := make([]TargetJobOutput, 0, len(i.Kubernetes.Jobs))
 	for _, k8sJob := range i.Kubernetes.Jobs {
-		tg := BuildTargetJob(k8sJob.TargetJobInput)
-		if b.pod != nil && k8sJob.Pods() {
-			tg = b.pod(tg, k8sJob)
+		if !k8sJob.TargetKinds.Valid() {
+			return nil, ErrInvalidK8sJobKinds
 		}
-		if b.endpoint != nil && k8sJob.Endpoints() {
-			tg = b.endpoint(tg, k8sJob)
+
+		if k8sJob.TargetKinds.Pods && b.setPodRules != nil {
+			targetJob := b.buildTargetJob(k8sJob, podKind)
+			targetJob = b.setPodRules(targetJob, k8sJob)
+			targetJobs = append(targetJobs, targetJob)
 		}
-		if b.selector != nil && k8sJob.Selector != nil {
-			tg = b.selector(tg, k8sJob)
+
+		if k8sJob.TargetKinds.Endpoints && b.setEndpointRules != nil {
+			targetJob := b.buildTargetJob(k8sJob, endpointKind)
+			targetJob = b.setEndpointRules(targetJob, k8sJob)
+			targetJobs = append(targetJobs, targetJob)
 		}
-		targetJobs = append(targetJobs, tg)
 	}
-	return targetJobs
+
+	return targetJobs, nil
+}
+
+func (b *kubernetesTargetBuilder) buildTargetJob(job KubernetesJob, kind string) TargetJobOutput {
+	// build base target job
+	targetJob := BuildTargetJob(job.TargetJobInput)
+	// apply selector rules if defined
+	if b.setSelectorRules != nil && job.Selector != nil {
+		targetJob = b.setSelectorRules(targetJob, job)
+	}
+	// build its name based on the prefix
+	targetJob.TargetJob.JobName = b.buildJobName(job.JobNamePrefix, kind)
+	return targetJob
+}
+
+func (b *kubernetesTargetBuilder) buildJobName(prefix string, kind string) string {
+	return prefix + "-" + kind
 }
