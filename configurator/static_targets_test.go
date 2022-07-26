@@ -26,7 +26,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 			Input: &configurator.Input{
 				DataSourceName: "source-of-metrics",
 				StaticTargets: configurator.StaticTargetsInput{
-					Jobs: []configurator.Job{
+					Jobs: []configurator.InputJob{
 						{
 							JobName:               "fancy-job",
 							Targets:               []string{"host:port"},
@@ -94,7 +94,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 				},
 			},
 			Expected: []any{
-				configurator.TargetJob{
+				configurator.TargetJobOutput{
 					JobName: "fancy-job",
 					StaticConfigs: []configurator.StaticConfig{
 						{

@@ -14,7 +14,7 @@ type KubernetesInput struct {
 // KubernetesJob holds the configuration which will parsed to a prometheus scrape job including the
 // specific rules needed.
 type KubernetesJob struct {
-	Job `yaml:",inline"`
+	InputJob `yaml:",inline"`
 
 	Selector *KubernetesSelector `yaml:"selector,omitempty"`
 	// TargetKind currently supports 'pods' and 'services'.
@@ -44,13 +44,13 @@ type KubernetesSelector struct {
 }
 
 // BuildKubernetesTargets builds the prometheus targets corresponding to the Kubernetes configuration in input.
-func BuildKubernetesTargets(i *Input) []TargetJob {
+func BuildKubernetesTargets(i *Input) []TargetJobOutput {
 	if !i.Kubernetes.Enabled {
 		return nil
 	}
-	targetJobs := make([]TargetJob, 0, len(i.Kubernetes.Jobs))
+	targetJobs := make([]TargetJobOutput, 0, len(i.Kubernetes.Jobs))
 	for _, k8sJob := range i.Kubernetes.Jobs {
-		tg := BuildTargetJob(k8sJob.Job)
+		tg := BuildTargetJob(k8sJob.InputJob)
 		if k8sJob.Pods() {
 			tg = SetupPodsRules(tg)
 		}
@@ -65,14 +65,14 @@ func BuildKubernetesTargets(i *Input) []TargetJob {
 	return targetJobs
 }
 
-func SetupPodsRules(tg TargetJob) TargetJob {
+func SetupPodsRules(tg TargetJobOutput) TargetJobOutput {
 	return tg // TODO: implement it!
 }
 
-func SetupServicesRules(tg TargetJob) TargetJob {
+func SetupServicesRules(tg TargetJobOutput) TargetJobOutput {
 	return tg // TODO: implement it!
 }
 
-func SetupSelectorRules(tg TargetJob, selector *KubernetesSelector) TargetJob {
+func SetupSelectorRules(tg TargetJobOutput, selector *KubernetesSelector) TargetJobOutput {
 	return tg // TODO: implement it!
 }

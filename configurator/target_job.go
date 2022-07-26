@@ -7,8 +7,8 @@ import (
 	"github.com/alecthomas/units"
 )
 
-// Job represents a target job config.
-type Job struct {
+// InputJob represents a target job config for configurator.
+type InputJob struct {
 	JobName                   string                  `yaml:"job_name"`
 	Targets                   []string                `yaml:"targets"`
 	Labels                    map[string]string       `yaml:"labels"`
@@ -39,8 +39,8 @@ type StaticConfig struct {
 	Labels  map[string]string `yaml:"labels,omitempty"`
 }
 
-// TargetJob represents a prometheus scrape_config Job config with static_configs which can be obtained from input.
-type TargetJob struct {
+// TargetJobOutput represents a prometheus scrape_config Job config with static_configs which can be obtained from input.
+type TargetJobOutput struct {
 	JobName               string                  `yaml:"job_name"`
 	StaticConfigs         []StaticConfig          `yaml:"static_configs,omitempty"`
 	MetricsPath           string                  `yaml:"metrics_path,omitempty"`
@@ -64,8 +64,8 @@ type TargetJob struct {
 	MetricRelabelConfigs  []PrometheusExtraConfig `yaml:"metric_relabel_configs,omitempty"`
 }
 
-func BuildTargetJob(job Job) TargetJob {
-	return TargetJob{
+func BuildTargetJob(job InputJob) TargetJobOutput {
+	return TargetJobOutput{
 		JobName: job.JobName,
 		StaticConfigs: []StaticConfig{
 			{
