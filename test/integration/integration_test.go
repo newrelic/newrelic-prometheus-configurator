@@ -124,11 +124,11 @@ newrelic_remote_write:
 
 	ps.start(t, outputConfigPath)
 
-	asserter.metricLabels(t, map[string]string{"custom_label": "my-value", "__name__": "custom_metric_a", "job": "metrics-a"}, "custom_metric_a")
-	asserter.metricLabels(t, map[string]string{"__name__": "custom_metric_b", "job": "metrics-b"}, "custom_metric_b")
+	asserter.metricLabels(t, map[string]string{"custom_label": "my-value", "job": "metrics-a"}, "custom_metric_a")
+	asserter.metricLabels(t, map[string]string{"custom_label": "", "job": "metrics-b"}, "custom_metric_b")
 }
 
-func Test_ExtraLabelsAreAddedToEachSample(t *testing.T) {
+func Test_ExternalLabelsAreAddedToEachSample(t *testing.T) {
 	t.Parallel()
 
 	ps := newPrometheusServer(t)

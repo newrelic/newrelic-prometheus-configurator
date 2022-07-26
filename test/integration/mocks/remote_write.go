@@ -10,11 +10,12 @@ import (
 	"strings"
 	"testing"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/go-kit/log"
 	"github.com/prometheus/prometheus/storage"
 	"github.com/prometheus/prometheus/storage/remote"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/sync/errgroup"
 )
 
 // StartRemoteWriteEndpoint start an remote write endpoint with proxy.
@@ -55,9 +56,7 @@ func handlerWithProxy(t *testing.T, handler http.Handler, url *string) http.Hand
 		w.WriteHeader(http.StatusOK)
 
 		hj, ok := w.(http.Hijacker)
-		if !ok {
-			t.Fatalf("Unable to hijack connection")
-		}
+		require.True(t, ok, "Unable to hijack connection")
 
 		reqConn, wbuf, err := hj.Hijack()
 		require.NoError(t, err)
@@ -66,18 +65,15 @@ func handlerWithProxy(t *testing.T, handler http.Handler, url *string) http.Hand
 		defer wbuf.Flush()
 
 		g := errgroup.Group{}
-		g.Go(func() error { return pipe(t, reqConn, conn) })
-		g.Go(func() error { return pipe(t, conn, reqConn) })
+		g.Go(func() error { return pipe(reqConn, conn) })
+		g.Go(func() error { return pipe(conn, reqConn) })
 
-		if err := g.Wait(); err != nil {
-			require.NoError(t, err)
-		}
+		err = g.Wait()
+		require.NoError(t, err)
 	})
 }
 
-func pipe(t *testing.T, from net.Conn, to net.Conn) error {
-	t.Helper()
-
+func pipe(from net.Conn, to net.Conn) error {
 	defer from.Close()
 	_, err := io.Copy(from, to)
 	if err != nil && !strings.Contains(err.Error(), "closed network") {
