@@ -43,6 +43,16 @@ extra_remote_write:
   {{- .Values.config.extra_remote_write | toYaml | nindent 4 -}}
 {{- end -}}
 
+{{- if .Values.config.static_targets  }}
+static_targets:
+{{- .Values.config.static_targets | toYaml | nindent 2 -}}
+{{- end -}}
+
+{{- if .Values.config.extra_scrape_configs }}
+extra_scrape_configs:
+  {{- .Values.config.extra_scrape_configs | toYaml | nindent 2 -}}
+{{- end -}}
+
 {{- end -}}
 
 {{- end -}}
