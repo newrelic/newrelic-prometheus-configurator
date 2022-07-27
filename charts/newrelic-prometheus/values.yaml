@@ -165,7 +165,7 @@ config:
       targets:
         - "localhost:9090"
       extra_metric_relabel_config:
-        - source_labels: [ __name__ ]
+        - source_labels: [__name__]
           regex: "\
             prometheus_agent_active_series|\
             prometheus_target_interval_length_seconds|\
