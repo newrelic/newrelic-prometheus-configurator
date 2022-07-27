@@ -29,14 +29,14 @@ func BuildOutput(input *Input) (Output, error) {
 		output.ScrapeConfigs = append(output.ScrapeConfigs, staticTargets...)
 	}
 
-	// Include the scrape configurations corresponding to kubernetes configuration
-	kubernetesTargetBuilder := newKubernetesJobBuilder()
-	k8stargets, err := kubernetesTargetBuilder.Build(input)
+	// Include the scrape configurations corresponding to kubernetes jobs
+	kubernetesJobBuilder := newKubernetesJobBuilder()
+	k8sJobs, err := kubernetesJobBuilder.Build(input)
 	if err != nil {
 		return output, err
 	}
-	for _, targetJob := range k8stargets {
-		output.ScrapeConfigs = append(output.ScrapeConfigs, targetJob)
+	for _, job := range k8sJobs {
+		output.ScrapeConfigs = append(output.ScrapeConfigs, job)
 	}
 
 	// Include "extra" scrape configuration

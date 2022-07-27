@@ -61,7 +61,7 @@ func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 	if !i.Kubernetes.Enabled {
 		return nil, nil
 	}
-	jobs := make([]JobOutput, 0, len(i.Kubernetes.Jobs))
+	jobs := []JobOutput{}
 	for _, k8sJob := range i.Kubernetes.Jobs {
 		if !k8sJob.TargetKinds.Valid() {
 			return nil, ErrInvalidK8sJobKinds
