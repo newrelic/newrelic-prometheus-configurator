@@ -16,6 +16,8 @@ import (
 func TestBuildStaticTargetsOutput(t *testing.T) {
 	t.Parallel()
 
+	trueValue := true
+
 	cases := []struct {
 		Name     string
 		Input    *configurator.Input
@@ -32,7 +34,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 							TargetJob: configurator.TargetJob{
 								JobName:               "fancy-job",
 								HonorLabels:           true,
-								HonorTimestamps:       true,
+								HonorTimestamps:       &trueValue,
 								Params:                url.Values{"q": {"puppies"}, "oe": {"utf8"}},
 								Scheme:                "https",
 								BodySizeLimit:         units.Base2Bytes(1025),
@@ -102,7 +104,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 					TargetJob: configurator.TargetJob{
 						JobName:               "fancy-job",
 						HonorLabels:           true,
-						HonorTimestamps:       true,
+						HonorTimestamps:       &trueValue,
 						Params:                url.Values{"q": {"puppies"}, "oe": {"utf8"}},
 						Scheme:                "https",
 						BodySizeLimit:         units.Base2Bytes(1025),

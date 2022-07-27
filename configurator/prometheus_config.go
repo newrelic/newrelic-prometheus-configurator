@@ -51,7 +51,7 @@ type OAuth2 struct {
 type TargetJob struct {
 	JobName               string           `yaml:"job_name"`
 	HonorLabels           bool             `yaml:"honor_labels,omitempty"`
-	HonorTimestamps       bool             `yaml:"honor_timestamps"`
+	HonorTimestamps       *bool            `yaml:"honor_timestamps,omitempty"`
 	Params                url.Values       `yaml:"params,omitempty"`
 	Scheme                string           `yaml:"scheme,omitempty"`
 	BodySizeLimit         units.Base2Bytes `yaml:"body_size_limit,omitempty"`
