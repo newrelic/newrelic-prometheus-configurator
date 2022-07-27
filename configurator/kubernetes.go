@@ -26,13 +26,13 @@ type KubernetesJob struct {
 }
 
 type KubernetesTargetKind struct {
-	Pods      bool `yaml:"pods"`
-	Endpoints bool `yaml:"endpoints"`
+	Pod      bool `yaml:"pod"`
+	Endpoint bool `yaml:"endpoint"`
 }
 
 // Valid returns true when the defined configuration is valid.
 func (k *KubernetesTargetKind) Valid() bool {
-	return k.Pods || k.Endpoints
+	return k.Pod || k.Endpoint
 }
 
 // KubernetesSettingsBuilders defines a functions which updates and returns a `TargetJobOutput` with specific settings
@@ -67,13 +67,13 @@ func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 			return nil, ErrInvalidK8sJobKinds
 		}
 
-		if k8sJob.TargetKinds.Pods && b.addPodSettings != nil {
+		if k8sJob.TargetKinds.Pod && b.addPodSettings != nil {
 			job := b.buildJob(k8sJob, podKind)
 			job = b.addPodSettings(job, k8sJob)
 			jobs = append(jobs, job)
 		}
 
-		if k8sJob.TargetKinds.Endpoints && b.addEndpointSettings != nil {
+		if k8sJob.TargetKinds.Endpoint && b.addEndpointSettings != nil {
 			job := b.buildJob(k8sJob, endpointKind)
 			job = b.addEndpointSettings(job, k8sJob)
 			jobs = append(jobs, job)
