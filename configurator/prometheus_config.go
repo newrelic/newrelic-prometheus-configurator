@@ -85,3 +85,14 @@ type GlobalConfig struct {
 	// The labels to add to any timeseries that this Prometheus instance scrapes.
 	ExternalLabels map[string]string `yaml:"external_labels,omitempty"`
 }
+
+// RelabelConfig defines relabel config rules which can be used in other configuration objects.
+type RelabelConfig struct {
+	SourceLabels []string `yaml:"source_labels,omitempty"`
+	Separator    string   `yaml:"separator,omitempty"`
+	TargetLabel  string   `yaml:"target_label,omitempty"`
+	Regex        string   `yaml:"regex,omitempty"`
+	Modulus      int      `yaml:"modulus,omitempty"`
+	Replacement  string   `yaml:"replacement,omitempty"`
+	Action       string   `yaml:"action,omitempty"`
+}
