@@ -6,7 +6,7 @@ type KubernetesSelector struct {
 }
 
 // selectorSettingsBuilder returns a copy of `tg` including the specific settings for when selectors are defined.
-func selectorSettingsBuilder(tg TargetJobOutput, _ KubernetesJob) TargetJobOutput {
+func selectorSettingsBuilder(tg JobOutput, _ KubernetesJob) JobOutput {
 	// TODO: include the specific settings
 	return tg
 }

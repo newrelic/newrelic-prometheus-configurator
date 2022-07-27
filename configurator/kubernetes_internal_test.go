@@ -11,7 +11,7 @@ func TestKubernetesTargetBuilder_KubernetesNotEnabled(t *testing.T) {
 	t.Parallel()
 
 	i := &Input{Kubernetes: KubernetesInput{Enabled: false}}
-	builder := &kubernetesTargetBuilder{}
+	builder := &kubernetesJobBuilder{}
 	result, err := builder.Build(i)
 	require.NoError(t, err)
 	assert.Nil(t, result)
@@ -28,7 +28,7 @@ func TestKubernetesTargetBuilder_InvalidSettings(t *testing.T) {
 			},
 		},
 	}
-	builder := &kubernetesTargetBuilder{}
+	builder := &kubernetesJobBuilder{}
 	_, err := builder.Build(i)
 	require.Error(t, err)
 }
@@ -37,7 +37,7 @@ func TestKubernetesTargetBuilder_InvalidSettings(t *testing.T) {
 func TestKubernetesTargetBuilder(t *testing.T) {
 	t.Parallel()
 
-	podSettingsMock := func(tg TargetJobOutput, job KubernetesJob) TargetJobOutput {
+	podSettingsMock := func(tg JobOutput, job KubernetesJob) JobOutput {
 		if tg.StaticConfigs[0].Labels == nil {
 			tg.StaticConfigs[0].Labels = map[string]string{}
 		}
@@ -45,7 +45,7 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 		return tg
 	}
 
-	endpointSettingsMock := func(tg TargetJobOutput, job KubernetesJob) TargetJobOutput {
+	endpointSettingsMock := func(tg JobOutput, job KubernetesJob) JobOutput {
 		if tg.StaticConfigs[0].Labels == nil {
 			tg.StaticConfigs[0].Labels = map[string]string{}
 		}
@@ -53,7 +53,7 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 		return tg
 	}
 
-	selectorSettingsMock := func(tg TargetJobOutput, job KubernetesJob) TargetJobOutput {
+	selectorSettingsMock := func(tg JobOutput, job KubernetesJob) JobOutput {
 		if tg.StaticConfigs[0].Labels == nil {
 			tg.StaticConfigs[0].Labels = map[string]string{}
 		}
@@ -64,7 +64,7 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 	cases := []struct {
 		Name     string
 		Input    *Input
-		Expected []TargetJobOutput
+		Expected []JobOutput
 	}{
 		{
 			Name:     "Kubernetes not enabled",
@@ -79,14 +79,14 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKinds:   KubernetesJobKind{Pods: true},
+							TargetKinds:   KubernetesTargetKind{Pods: true},
 						},
 					},
 				},
 			},
-			Expected: []TargetJobOutput{
+			Expected: []JobOutput{
 				{
-					TargetJob:     TargetJob{JobName: "job-pods"},
+					Job:           Job{JobName: "job-pods"},
 					StaticConfigs: []StaticConfig{{Labels: map[string]string{"pods": "pods"}}},
 				},
 			},
@@ -99,14 +99,14 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKinds:   KubernetesJobKind{Endpoints: true},
+							TargetKinds:   KubernetesTargetKind{Endpoints: true},
 						},
 					},
 				},
 			},
-			Expected: []TargetJobOutput{
+			Expected: []JobOutput{
 				{
-					TargetJob:     TargetJob{JobName: "job-endpoints"},
+					Job:           Job{JobName: "job-endpoints"},
 					StaticConfigs: []StaticConfig{{Labels: map[string]string{"endpoints": "endpoints"}}},
 				},
 			},
@@ -119,15 +119,15 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKinds:   KubernetesJobKind{Pods: true},
+							TargetKinds:   KubernetesTargetKind{Pods: true},
 							Selector:      &KubernetesSelector{},
 						},
 					},
 				},
 			},
-			Expected: []TargetJobOutput{
+			Expected: []JobOutput{
 				{
-					TargetJob:     TargetJob{JobName: "job-pods"},
+					Job:           Job{JobName: "job-pods"},
 					StaticConfigs: []StaticConfig{{Labels: map[string]string{"selector": "selector", "pods": "pods"}}},
 				},
 			},
@@ -140,15 +140,15 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKinds:   KubernetesJobKind{Endpoints: true},
+							TargetKinds:   KubernetesTargetKind{Endpoints: true},
 							Selector:      &KubernetesSelector{},
 						},
 					},
 				},
 			},
-			Expected: []TargetJobOutput{
+			Expected: []JobOutput{
 				{
-					TargetJob:     TargetJob{JobName: "job-endpoints"},
+					Job:           Job{JobName: "job-endpoints"},
 					StaticConfigs: []StaticConfig{{Labels: map[string]string{"selector": "selector", "endpoints": "endpoints"}}},
 				},
 			},
@@ -161,15 +161,15 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKinds:   KubernetesJobKind{Pods: true, Endpoints: true},
+							TargetKinds:   KubernetesTargetKind{Pods: true, Endpoints: true},
 							Selector:      &KubernetesSelector{},
 						},
 					},
 				},
 			},
-			Expected: []TargetJobOutput{
+			Expected: []JobOutput{
 				{
-					TargetJob: TargetJob{JobName: "job-pods"},
+					Job: Job{JobName: "job-pods"},
 					StaticConfigs: []StaticConfig{
 						{
 							Labels: map[string]string{"selector": "selector", "pods": "pods"},
@@ -177,7 +177,7 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 					},
 				},
 				{
-					TargetJob: TargetJob{JobName: "job-endpoints"},
+					Job: Job{JobName: "job-endpoints"},
 					StaticConfigs: []StaticConfig{
 						{
 							Labels: map[string]string{"selector": "selector", "endpoints": "endpoints"},
@@ -193,7 +193,7 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
 
-			builder := newKubernetesTargetBuilder(podSettingsMock, endpointSettingsMock, selectorSettingsMock)
+			builder := newKubernetesJobBuilder(podSettingsMock, endpointSettingsMock, selectorSettingsMock)
 			targets, err := builder.Build((c.Input))
 			require.NoError(t, err)
 			assert.Equal(t, c.Expected, targets)

@@ -28,10 +28,10 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 			Input: &configurator.Input{
 				DataSourceName: "source-of-metrics",
 				StaticTargets: configurator.StaticTargetsInput{
-					Jobs: []configurator.ScrapeJobInput{
+					Jobs: []configurator.JobInput{
 						{
 							// nolint: dupl // TargetJob should be the same
-							TargetJob: configurator.TargetJob{
+							Job: configurator.Job{
 								JobName:               "fancy-job",
 								HonorLabels:           true,
 								HonorTimestamps:       &trueValue,
@@ -99,9 +99,9 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 				},
 			},
 			Expected: []any{
-				configurator.TargetJobOutput{
+				configurator.JobOutput{
 					// nolint: dupl // TargetJob should be the same.
-					TargetJob: configurator.TargetJob{
+					Job: configurator.Job{
 						JobName:               "fancy-job",
 						HonorLabels:           true,
 						HonorTimestamps:       &trueValue,

@@ -30,7 +30,7 @@ func BuildOutput(input *Input) (Output, error) {
 	}
 
 	// Include the scrape configurations corresponding to kubernetes configuration
-	kubernetesTargetBuilder := newKubernetesTargetBuilder(
+	kubernetesTargetBuilder := newKubernetesJobBuilder(
 		podSettingsBuilder,
 		endpointSettingsBuilder,
 		selectorSettingsBuilder,

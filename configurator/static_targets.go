@@ -5,14 +5,14 @@ package configurator
 
 // StaticTargetsInput defines all the static targets jobs.
 type StaticTargetsInput struct {
-	Jobs []ScrapeJobInput `yaml:"jobs"`
+	Jobs []JobInput `yaml:"jobs"`
 }
 
 // BuildStaticTargetsOutput builds the slice of StaticTargetJobOutput given the input.
 func BuildStaticTargetsOutput(i *Input) []any {
 	staticTargetsOutput := make([]any, 0)
 	for _, job := range i.StaticTargets.Jobs {
-		staticTargetsOutput = append(staticTargetsOutput, BuildTargetJob(job))
+		staticTargetsOutput = append(staticTargetsOutput, BuildJobOutput(job))
 	}
 
 	return staticTargetsOutput

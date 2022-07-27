@@ -47,8 +47,8 @@ type OAuth2 struct {
 	ProxyURL         string            `yaml:"proxy_url,omitempty"`
 }
 
-// TargetJob holds fields which do not change from input and output jobs.
-type TargetJob struct {
+// Job holds fields which do not change from input and output jobs.
+type Job struct {
 	JobName               string           `yaml:"job_name"`
 	HonorLabels           bool             `yaml:"honor_labels,omitempty"`
 	HonorTimestamps       *bool            `yaml:"honor_timestamps,omitempty"`
