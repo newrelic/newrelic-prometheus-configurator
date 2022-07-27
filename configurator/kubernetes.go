@@ -3,8 +3,8 @@ package configurator
 import "errors"
 
 const (
-	podKind      = "pods"
-	endpointKind = "endpoints"
+	podKind      = "pod"
+	endpointKind = "endpoint"
 )
 
 var ErrInvalidK8sJobKinds = errors.New("at least one kind should be set in target_kinds field")
