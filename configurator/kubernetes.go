@@ -22,7 +22,7 @@ type KubernetesJob struct {
 
 	JobNamePrefix string               `yaml:"job_name_prefix"`
 	Selector      *KubernetesSelector  `yaml:"selector,omitempty"`
-	TargetKinds   KubernetesTargetKind `yaml:"target_kinds"`
+	TargetKind    KubernetesTargetKind `yaml:"target_kind"`
 }
 
 type KubernetesTargetKind struct {
@@ -63,17 +63,17 @@ func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 	}
 	jobs := []JobOutput{}
 	for _, k8sJob := range i.Kubernetes.Jobs {
-		if !k8sJob.TargetKinds.Valid() {
+		if !k8sJob.TargetKind.Valid() {
 			return nil, ErrInvalidK8sJobKinds
 		}
 
-		if k8sJob.TargetKinds.Pod && b.addPodSettings != nil {
+		if k8sJob.TargetKind.Pod && b.addPodSettings != nil {
 			job := b.buildJob(k8sJob, podKind)
 			job = b.addPodSettings(job, k8sJob)
 			jobs = append(jobs, job)
 		}
 
-		if k8sJob.TargetKinds.Endpoint && b.addEndpointSettings != nil {
+		if k8sJob.TargetKind.Endpoint && b.addEndpointSettings != nil {
 			job := b.buildJob(k8sJob, endpointKind)
 			job = b.addEndpointSettings(job, k8sJob)
 			jobs = append(jobs, job)

@@ -85,7 +85,7 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKinds:   KubernetesTargetKind{Pod: true},
+							TargetKind:    KubernetesTargetKind{Pod: true},
 						},
 					},
 				},
@@ -105,7 +105,7 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKinds:   KubernetesTargetKind{Endpoint: true},
+							TargetKind:    KubernetesTargetKind{Endpoint: true},
 						},
 					},
 				},
@@ -125,7 +125,7 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKinds:   KubernetesTargetKind{Pod: true},
+							TargetKind:    KubernetesTargetKind{Pod: true},
 							Selector:      &KubernetesSelector{},
 						},
 					},
@@ -146,7 +146,7 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKinds:   KubernetesTargetKind{Endpoint: true},
+							TargetKind:    KubernetesTargetKind{Endpoint: true},
 							Selector:      &KubernetesSelector{},
 						},
 					},
@@ -167,7 +167,7 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKinds:   KubernetesTargetKind{Pod: true, Endpoint: true},
+							TargetKind:    KubernetesTargetKind{Pod: true, Endpoint: true},
 							Selector:      &KubernetesSelector{},
 						},
 					},
