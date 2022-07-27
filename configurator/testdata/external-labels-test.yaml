@@ -4,3 +4,6 @@ common:
     three: four
   scrape_interval: 1m
   scrape_timeout: 1s
+
+newrelic_remote_write:
+  license_key: fake

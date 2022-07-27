@@ -22,32 +22,6 @@ func TestInput(t *testing.T) {
 	checkInput(t, expected, inputData)
 }
 
-//nolint:paralleltest
-// t.SetEnv cannot be used in parallel tests.
-func TestInputLicenseKeyFromEnv(t *testing.T) {
-	expectedLicenseKey := "license-key-from-env"
-	expected := testInputExpectation(t)
-	expected.RemoteWrite.LicenseKey = expectedLicenseKey
-	t.Setenv("NR_PROM_LICENSE_KEY", expectedLicenseKey)
-	inputData, err := ioutil.ReadFile("testdata/input-test.no-license-key.yaml")
-	require.NoError(t, err)
-
-	checkInput(t, expected, inputData)
-}
-
-//nolint:paralleltest
-// t.SetEnv cannot be used in parallel tests.
-func TestInputLicenseKeyFromEnvPrecedence(t *testing.T) {
-	expectedLicenseKey := "license-key-from-env"
-	expected := testInputExpectation(t)
-	expected.RemoteWrite.LicenseKey = expectedLicenseKey
-	t.Setenv("NR_PROM_LICENSE_KEY", expectedLicenseKey)
-	inputData, err := ioutil.ReadFile("testdata/input-test.yaml")
-	require.NoError(t, err)
-
-	checkInput(t, expected, inputData)
-}
-
 func checkInput(t *testing.T, expected Input, inputData []byte) {
 	t.Helper()
 
