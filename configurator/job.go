@@ -19,15 +19,20 @@ type JobOutput struct {
 }
 
 func BuildJobOutput(job JobInput) JobOutput {
-	return JobOutput{
-		Job: job.Job,
-		StaticConfigs: []StaticConfig{
+	jobOutput := JobOutput{
+		Job:                  job.Job,
+		RelabelConfigs:       job.ExtraRelabelConfigs,
+		MetricRelabelConfigs: job.ExtraMetricRelabelConfigs,
+	}
+
+	if (len(job.Targets) > 0) || (len(job.Labels) > 0) {
+		jobOutput.StaticConfigs = []StaticConfig{
 			{
 				Targets: job.Targets,
 				Labels:  job.Labels,
 			},
-		},
-		RelabelConfigs:       job.ExtraRelabelConfigs,
-		MetricRelabelConfigs: job.ExtraMetricRelabelConfigs,
+		}
 	}
+
+	return jobOutput
 }
