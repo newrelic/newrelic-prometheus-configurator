@@ -294,3 +294,6 @@ tests:
                   key_file: /path/to/key.crt
                   min_version: TLS12
                   server_name: server.name
+            common:
+              external_labels:
+                cluster_name: cluster-test

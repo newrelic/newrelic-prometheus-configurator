@@ -1,15 +1,7 @@
 {{- /* Return the newrelic-prometheus configuration */ -}}
-{{- define "newrelic-prometheus.configurator.config" -}}
 
-{{- /* TODO: we should consider using an external label to set the cluster name instead */ -}}
-data_source_name: {{ include "newrelic.common.cluster" . }}
-{{ include "newrelic-prometheus.configurator.config._remoteWrite" . }}
-{{ include "newrelic-prometheus.configurator.config._common" . }}
-
-{{- end -}}
-
-{{- /* Internal use: it builds the common configuration from configurator config, cluster name and custom attributes */ -}}
-{{- define "newrelic-prometheus.configurator.config._common" -}}
+{{- /* it builds the common configuration from configurator config, cluster name and custom attributes */ -}}
+{{- define "newrelic-prometheus.configurator.common" -}}
 {{- $tmp := dict "external_labels" (dict "cluster_name" (include "newrelic.common.cluster" . )) -}}
 {{- if .Values.config  -}}
     {{- if .Values.config.common -}}
