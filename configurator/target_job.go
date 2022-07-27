@@ -15,7 +15,7 @@ type TargetJobOutput struct {
 	StaticConfigs        []StaticConfig          `yaml:"static_configs,omitempty"`
 	RelabelConfigs       []PrometheusExtraConfig `yaml:"relabel_configs,omitempty"`
 	MetricRelabelConfigs []PrometheusExtraConfig `yaml:"metric_relabel_configs,omitempty"`
-	KubernetesSdConfigs  map[string]string       `yaml:"kubernetes_sd_config,omitempty"`
+	KubernetesSdConfigs  []map[string]string     `yaml:"kubernetes_sd_config,omitempty"`
 }
 
 func BuildTargetJob(job ScrapeJobInput) TargetJobOutput {
