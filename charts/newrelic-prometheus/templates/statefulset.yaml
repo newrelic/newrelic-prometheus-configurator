@@ -56,6 +56,10 @@ spec:
             - name: prometheus-config
               mountPath: /etc/prometheus/config
           env:
+            - name: NR_PROM_DATA_SOURCE_NAME
+              valueFrom: 
+                fieldRef: 
+                  fieldPath: metadata.name
             - name: NR_PROM_LICENSE_KEY
               valueFrom:
                 secretKeyRef:
@@ -93,7 +97,6 @@ spec:
             timeoutSeconds: 4
             failureThreshold: 3
             successThreshold: 1
-
           args:
             - --config.file=/etc/prometheus/config/config.yaml
             - --enable-feature=agent,expand-external-labels

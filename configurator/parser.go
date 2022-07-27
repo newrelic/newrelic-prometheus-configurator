@@ -13,6 +13,7 @@ import (
 
 const (
 	yamlEncoderIndent    = 2
+	DataSourceNameEnvKey = "NR_PROM_DATA_SOURCE_NAME"
 	LicenseKeyEnvKey     = "NR_PROM_LICENSE_KEY"
 )
 
@@ -53,6 +54,9 @@ func expandConfigsFromEnvVars(i *Input) error {
 		return ErrNoLicenseKeyFound
 	}
 
+	if dataSourceName := os.Getenv(DataSourceNameEnvKey); dataSourceName != "" {
+		i.DataSourceName = dataSourceName
+	}
 
 	return nil
 }

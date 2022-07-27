@@ -48,6 +48,33 @@ func TestParser(t *testing.T) {
 	}
 }
 
+func TestDataSourceName(t *testing.T) {
+	configWithDataSourceName := `
+data_source_name: %s
+newrelic_remote_write:
+  license_key: fake
+`
+	//nolint: paralleltest // need clean env variables.
+	t.Run("IsSetFromConfig", func(t *testing.T) {
+		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithDataSourceName, "prom-instance-name")))
+		require.NoError(t, err)
+
+		require.Contains(t, string(prometheusConfig), fmt.Sprintf("prometheus_server=%s", "prom-instance-name"))
+	})
+
+	expectedName := "prom-instance-name-from-env"
+	t.Setenv(configurator.DataSourceNameEnvKey, expectedName)
+
+	t.Run("IsSetFromEnvVar", func(t *testing.T) {
+		t.Parallel()
+
+		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithDataSourceName, "")))
+		require.NoError(t, err)
+
+		require.Contains(t, string(prometheusConfig), fmt.Sprintf("prometheus_server=%s", expectedName))
+	})
+}
+
 func TestLicenseKey(t *testing.T) {
 	configWithLicense := `
 newrelic_remote_write:
