@@ -32,6 +32,9 @@ tests:
       licenseKey: license-key-test
       cluster: cluster-test
       nrStaging: true
+      config:
+        static_targets:
+          jobs: []
     asserts:
       - matchRegex:
           path: data.config\.yaml
@@ -57,6 +60,8 @@ tests:
               action: drop
         extra_remote_write:
           - url: "https://second.remote.write"
+        static_targets:
+          jobs: []
     asserts:
       - equal:
           path: data.config\.yaml
@@ -80,15 +85,7 @@ tests:
             extra_remote_write:
               - url: https://second.remote.write
             static_targets:
-              jobs:
-              - extra_metric_relabel_config:
-                - action: keep
-                  regex: prometheus_agent_active_series|prometheus_target_interval_length_seconds|prometheus_target_scrape_pool_targets|prometheus_remote_storage_samples_pending|prometheus_remote_storage_samples_in_total|prometheus_remote_storage_samples_retried_total|prometheus_agent_corruptions_total|prometheus_remote_storage_shards|prometheus_sd_kubernetes_events_total|prometheus_agent_checkpoint_creations_failed_total|prometheus_agent_checkpoint_deletions_failed_total|prometheus_remote_storage_dropped_samples_total|prometheus_remote_storage_failed_samples_total|prometheus_sd_kubernetes_http_request_total|prometheus_agent_truncate_duration_seconds_sum|prometheus_build_info|process_resident_memory_bytes|process_virtual_memory_bytes|process_cpu_seconds_total|scrape_pool_targets|scrape_duration_seconds
-                  source_labels:
-                  - __name__
-                job_name: self-metrics
-                targets:
-                - localhost:9090
+              jobs: []
             common:
               external_labels:
                 cluster_name: cluster-test
@@ -97,6 +94,9 @@ tests:
     set:
       global:
        cluster: "test"
+      config:
+        static_targets:
+          jobs: []
     asserts:
       - equal:
           path: data.config\.yaml
@@ -105,15 +105,7 @@ tests:
             data_source_name: test
             newrelic_remote_write:
             static_targets:
-              jobs:
-              - extra_metric_relabel_config:
-                - action: keep
-                  regex: prometheus_agent_active_series|prometheus_target_interval_length_seconds|prometheus_target_scrape_pool_targets|prometheus_remote_storage_samples_pending|prometheus_remote_storage_samples_in_total|prometheus_remote_storage_samples_retried_total|prometheus_agent_corruptions_total|prometheus_remote_storage_shards|prometheus_sd_kubernetes_events_total|prometheus_agent_checkpoint_creations_failed_total|prometheus_agent_checkpoint_deletions_failed_total|prometheus_remote_storage_dropped_samples_total|prometheus_remote_storage_failed_samples_total|prometheus_sd_kubernetes_http_request_total|prometheus_agent_truncate_duration_seconds_sum|prometheus_build_info|process_resident_memory_bytes|process_virtual_memory_bytes|process_cpu_seconds_total|scrape_pool_targets|scrape_duration_seconds
-                  source_labels:
-                  - __name__
-                job_name: self-metrics
-                targets:
-                - localhost:9090
+              jobs: []
             common:
               external_labels:
                 cluster_name: test
@@ -122,6 +114,9 @@ tests:
       global:
         cluster: "test"
       cluster: "test2"
+      config:
+        static_targets:
+          jobs: []
     asserts:
       - equal:
           path: data.config\.yaml
@@ -130,15 +125,7 @@ tests:
             data_source_name: test2
             newrelic_remote_write:
             static_targets:
-              jobs:
-              - extra_metric_relabel_config:
-                - action: keep
-                  regex: prometheus_agent_active_series|prometheus_target_interval_length_seconds|prometheus_target_scrape_pool_targets|prometheus_remote_storage_samples_pending|prometheus_remote_storage_samples_in_total|prometheus_remote_storage_samples_retried_total|prometheus_agent_corruptions_total|prometheus_remote_storage_shards|prometheus_sd_kubernetes_events_total|prometheus_agent_checkpoint_creations_failed_total|prometheus_agent_checkpoint_deletions_failed_total|prometheus_remote_storage_dropped_samples_total|prometheus_remote_storage_failed_samples_total|prometheus_sd_kubernetes_http_request_total|prometheus_agent_truncate_duration_seconds_sum|prometheus_build_info|process_resident_memory_bytes|process_virtual_memory_bytes|process_cpu_seconds_total|scrape_pool_targets|scrape_duration_seconds
-                  source_labels:
-                  - __name__
-                job_name: self-metrics
-                targets:
-                - localhost:9090
+              jobs: []
             common:
               external_labels:
                 cluster_name: test2
@@ -149,6 +136,9 @@ tests:
       cluster: "test2"
       customAttributes:
         cluster_name: "test3"
+      config:
+        static_targets:
+          jobs: []
     asserts:
       - equal:
           path: data.config\.yaml
@@ -157,15 +147,7 @@ tests:
             data_source_name: test2
             newrelic_remote_write:
             static_targets:
-              jobs:
-              - extra_metric_relabel_config:
-                - action: keep
-                  regex: prometheus_agent_active_series|prometheus_target_interval_length_seconds|prometheus_target_scrape_pool_targets|prometheus_remote_storage_samples_pending|prometheus_remote_storage_samples_in_total|prometheus_remote_storage_samples_retried_total|prometheus_agent_corruptions_total|prometheus_remote_storage_shards|prometheus_sd_kubernetes_events_total|prometheus_agent_checkpoint_creations_failed_total|prometheus_agent_checkpoint_deletions_failed_total|prometheus_remote_storage_dropped_samples_total|prometheus_remote_storage_failed_samples_total|prometheus_sd_kubernetes_http_request_total|prometheus_agent_truncate_duration_seconds_sum|prometheus_build_info|process_resident_memory_bytes|process_virtual_memory_bytes|process_cpu_seconds_total|scrape_pool_targets|scrape_duration_seconds
-                  source_labels:
-                  - __name__
-                job_name: self-metrics
-                targets:
-                - localhost:9090
+              jobs: []
             common:
               external_labels:
                 cluster_name: test2
@@ -183,6 +165,8 @@ tests:
             one: two
             cluster_name: "different"
           scrape_interval: 15
+        static_targets:
+          jobs: []
     asserts:
       - equal:
           path: data.config\.yaml
@@ -191,15 +175,7 @@ tests:
             data_source_name: test
             newrelic_remote_write:
             static_targets:
-              jobs:
-              - extra_metric_relabel_config:
-                - action: keep
-                  regex: prometheus_agent_active_series|prometheus_target_interval_length_seconds|prometheus_target_scrape_pool_targets|prometheus_remote_storage_samples_pending|prometheus_remote_storage_samples_in_total|prometheus_remote_storage_samples_retried_total|prometheus_agent_corruptions_total|prometheus_remote_storage_shards|prometheus_sd_kubernetes_events_total|prometheus_agent_checkpoint_creations_failed_total|prometheus_agent_checkpoint_deletions_failed_total|prometheus_remote_storage_dropped_samples_total|prometheus_remote_storage_failed_samples_total|prometheus_sd_kubernetes_http_request_total|prometheus_agent_truncate_duration_seconds_sum|prometheus_build_info|process_resident_memory_bytes|process_virtual_memory_bytes|process_cpu_seconds_total|scrape_pool_targets|scrape_duration_seconds
-                  source_labels:
-                  - __name__
-                job_name: self-metrics
-                targets:
-                - localhost:9090
+              jobs: []
             common:
               external_labels:
                 attribute: value
