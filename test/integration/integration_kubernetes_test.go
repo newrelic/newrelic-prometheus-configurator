@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
-	"net/http"
-	"net/http/httptest"
 	"path"
 	"strconv"
 	"testing"
@@ -41,16 +39,9 @@ func Test_PodMetricsLabels(t *testing.T) {
 
 	ps := newPrometheusServer(t)
 
-	asserter := newAsserter(ps.port)
+	asserter := newAsserter(ps)
 
-	exporter := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, err := w.Write([]byte(`
-# HELP mock_gauge_metric A gauge test metric.
-# TYPE mock_gauge_metric gauge
-mock_gauge_metric 9
-`))
-		require.NoError(t, err)
-	}))
+	exporter := mocks.StartExporter(t)
 
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 
@@ -99,8 +90,6 @@ scrape_configs:
 	ps.start(t, promConfig)
 
 	instance := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
-	asserter.activeTargetsURLs(t, fmt.Sprintf("http://%s/metrics", instance))
-
 	expectedLabels := map[string]string{
 		"pod_label": "Value.of.label",
 		"pod":       pod.Name,
@@ -147,7 +136,7 @@ func Test_PodDiscovery(t *testing.T) {
 
 	ps := newPrometheusServer(t)
 
-	asserter := newAsserter(ps.port)
+	asserter := newAsserter(ps)
 
 	// TODO this test is using a Prom config directly since pods targets
 	// are not implemented in the configurator yet.
@@ -174,14 +163,12 @@ scrape_configs:
     - __meta_kubernetes_pod_annotation_prometheus_io_scrape
     - __meta_kubernetes_pod_label_k8s_io_app
     action: keep
-    regex: true
-`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)), 0o444)
+    regex: true;%s
+`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name, pod.Labels["k8s.io/app"])), 0o444)
 	require.NoError(t, err)
 
 	ps.start(t, promConfig)
 
-	instance := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
-	asserter.activeTargetsURLs(t, fmt.Sprintf("http://%s/metrics", instance))
-
+	asserter.activeTargetLabels(t, map[string]string{"__meta_kubernetes_pod_label_k8s_io_app": pod.Labels["k8s.io/app"]})
 	asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_pod_label_k8s_io_app": podDropped.Labels["k8s.io/app"]})
 }

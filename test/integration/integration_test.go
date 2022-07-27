@@ -28,7 +28,7 @@ func Test_ServerReady(t *testing.T) {
 
 	ps := newPrometheusServer(t)
 
-	asserter := newAsserter(ps.port)
+	asserter := newAsserter(ps)
 
 	inputConfig := `
 data_source_name: "data-source"
@@ -48,7 +48,7 @@ func Test_SelfMetricsAreScrapedCorrectly(t *testing.T) {
 
 	ps := newPrometheusServer(t)
 
-	asserter := newAsserter(ps.port)
+	asserter := newAsserter(ps)
 
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 
@@ -81,7 +81,7 @@ func Test_ExtraScapeConfig(t *testing.T) {
 
 	ps := newPrometheusServer(t)
 
-	asserter := newAsserter(ps.port)
+	asserter := newAsserter(ps)
 
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 	ex := mocks.StartExporter(t)
@@ -126,7 +126,7 @@ func Test_ExternalLabelsAreAddedToEachSample(t *testing.T) {
 	t.Parallel()
 
 	ps := newPrometheusServer(t)
-	asserter := newAsserter(ps.port)
+	asserter := newAsserter(ps)
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 
 	inputConfig := fmt.Sprintf(`
