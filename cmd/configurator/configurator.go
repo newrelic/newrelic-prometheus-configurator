@@ -69,7 +69,6 @@ func readInput(inputPath string) ([]byte, error) {
 		return nil, fmt.Errorf("could not close the input file: %w", err)
 	}
 
-	//random comment
 	return input, nil
 }
 
