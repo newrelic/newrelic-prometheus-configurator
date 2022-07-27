@@ -13,6 +13,16 @@ tests:
             # Configuration for newrelic-prometheus-configurator
             data_source_name: cluster-test
             newrelic_remote_write:
+            static_targets:
+              jobs:
+              - extra_metric_relabel_config:
+                - action: keep
+                  regex: prometheus_agent_active_series|prometheus_target_interval_length_seconds|prometheus_target_scrape_pool_targets|prometheus_remote_storage_samples_pending|prometheus_remote_storage_samples_in_total|prometheus_remote_storage_samples_retried_total|prometheus_agent_corruptions_total|prometheus_remote_storage_shards|prometheus_sd_kubernetes_events_total|prometheus_agent_checkpoint_creations_failed_total|prometheus_agent_checkpoint_deletions_failed_total|prometheus_remote_storage_dropped_samples_total|prometheus_remote_storage_failed_samples_total|prometheus_sd_kubernetes_http_request_total|prometheus_agent_truncate_duration_seconds_sum|prometheus_build_info|process_resident_memory_bytes|process_virtual_memory_bytes|process_cpu_seconds_total|scrape_pool_targets|scrape_duration_seconds
+                  source_labels:
+                  - __name__
+                job_name: self-metrics
+                targets:
+                - localhost:9090
             common:
               external_labels:
                 cluster_name: cluster-test
@@ -22,11 +32,14 @@ tests:
       licenseKey: license-key-test
       cluster: cluster-test
       nrStaging: true
+      config:
+        static_targets:
+          jobs: []
     asserts:
       - matchRegex:
           path: data.config\.yaml
           pattern: ".*staging: true.*"
-  - it: config including most possible sections
+  - it: config including remote_write most possible sections
     set:
       licenseKey: license-key-test
       cluster: cluster-test
@@ -47,6 +60,8 @@ tests:
               action: drop
         extra_remote_write:
           - url: "https://second.remote.write"
+        static_targets:
+          jobs: []
     asserts:
       - equal:
           path: data.config\.yaml
@@ -55,20 +70,22 @@ tests:
             data_source_name: cluster-test
             newrelic_remote_write:
               staging: true
-                extra_write_relabel_configs:
-                - action: drop
-                  regexp: node_memory_active_bytes;localhost:9100
-                  source_labels:
-                  - __name__
-                  - instance
-                proxy_url: http://proxy.url
-                queue_config:
-                  retry_on_http_429: false
-                remote_timeout: 30s
-                tls_config:
-                  insecure_skip_verify: true
+              extra_write_relabel_configs:
+              - action: drop
+                regexp: node_memory_active_bytes;localhost:9100
+                source_labels:
+                - __name__
+                - instance
+              proxy_url: http://proxy.url
+              queue_config:
+                retry_on_http_429: false
+              remote_timeout: 30s
+              tls_config:
+                insecure_skip_verify: true
             extra_remote_write:
-                - url: https://second.remote.write
+              - url: https://second.remote.write
+            static_targets:
+              jobs: []
             common:
               external_labels:
                 cluster_name: cluster-test
@@ -77,6 +94,9 @@ tests:
     set:
       global:
        cluster: "test"
+      config:
+        static_targets:
+          jobs: []
     asserts:
       - equal:
           path: data.config\.yaml
@@ -84,6 +104,8 @@ tests:
             # Configuration for newrelic-prometheus-configurator
             data_source_name: test
             newrelic_remote_write:
+            static_targets:
+              jobs: []
             common:
               external_labels:
                 cluster_name: test
@@ -92,6 +114,9 @@ tests:
       global:
         cluster: "test"
       cluster: "test2"
+      config:
+        static_targets:
+          jobs: []
     asserts:
       - equal:
           path: data.config\.yaml
@@ -99,6 +124,8 @@ tests:
             # Configuration for newrelic-prometheus-configurator
             data_source_name: test2
             newrelic_remote_write:
+            static_targets:
+              jobs: []
             common:
               external_labels:
                 cluster_name: test2
@@ -109,6 +136,9 @@ tests:
       cluster: "test2"
       customAttributes:
         cluster_name: "test3"
+      config:
+        static_targets:
+          jobs: []
     asserts:
       - equal:
           path: data.config\.yaml
@@ -116,6 +146,8 @@ tests:
             # Configuration for newrelic-prometheus-configurator
             data_source_name: test2
             newrelic_remote_write:
+            static_targets:
+              jobs: []
             common:
               external_labels:
                 cluster_name: test2
@@ -133,6 +165,8 @@ tests:
             one: two
             cluster_name: "different"
           scrape_interval: 15
+        static_targets:
+          jobs: []
     asserts:
       - equal:
           path: data.config\.yaml
@@ -140,9 +174,162 @@ tests:
             # Configuration for newrelic-prometheus-configurator
             data_source_name: test
             newrelic_remote_write:
+            static_targets:
+              jobs: []
             common:
               external_labels:
                 attribute: value
                 cluster_name: test
                 one: two
               scrape_interval: 15
+  - it: config including static_targets overwritten with most possible sections
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      config:
+        static_targets:
+          jobs:
+            - job_name: my-custom-target-authorization-full
+              targets:
+                - "192.168.3.1:2379"
+              params:
+                q: [ "puppies" ]
+                oe: [ "utf8" ]
+              scheme: "https"
+              body_size_limit: 100MiB
+              sample_limit: 2000
+              target_limit: 2000
+              label_limit: 2000
+              label_name_length_limit: 2000
+              label_value_length_limit: 2000
+              scrape_interval: 15s
+              scrape_timeout: 15s
+              tls_config:
+                insecure_skip_verify: true
+                ca_file: /path/to/ca.crt
+                key_file: /path/to/key.crt
+                cert_file: /path/to/cert.crt
+                server_name: server.name
+                min_version: TLS12
+              authorization:
+                type: Bearer
+                credentials: "fancy-credentials"
+              extra_relabel_config:
+                - source_labels: [ '__name__', 'instance' ]
+                  regex: node_memory_active_bytes;localhost:9100
+                  action: drop
+              extra_metric_relabel_config:
+                - source_labels: [ '__name__', 'instance' ]
+                  regex: node_memory_active_bytes;localhost:9100
+                  action: drop
+        extra_scrape_configs:
+          - job_name: extra-scrape-config
+            static_configs:
+              - targets:
+                  - "192.168.3.1:2379"
+                labels:
+                  label1: value1
+                  label2: value2
+            scrape_interval: 15s
+            scrape_timeout: 15s
+            tls_config:
+              insecure_skip_verify: true
+              ca_file: /path/to/ca.crt
+              key_file: /path/to/key.crt
+              cert_file: /path/to/cert.crt
+              server_name: server.name
+              min_version: TLS12
+            authorization:
+              type: Bearer
+              credentials: "fancy-credentials"
+            relabel_configs:
+              - source_labels: [ '__name__', 'instance' ]
+                regex: node_memory_active_bytes;localhost:9100
+                action: drop
+            metric_relabel_configs:
+              - source_labels: [ '__name__', 'instance' ]
+                regex: node_memory_active_bytes;localhost:9100
+                action: drop
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            data_source_name: cluster-test
+            newrelic_remote_write:
+            static_targets:
+              jobs:
+              - authorization:
+                  credentials: fancy-credentials
+                  type: Bearer
+                body_size_limit: 100MiB
+                extra_metric_relabel_config:
+                - action: drop
+                  regex: node_memory_active_bytes;localhost:9100
+                  source_labels:
+                  - __name__
+                  - instance
+                extra_relabel_config:
+                - action: drop
+                  regex: node_memory_active_bytes;localhost:9100
+                  source_labels:
+                  - __name__
+                  - instance
+                job_name: my-custom-target-authorization-full
+                label_limit: 2000
+                label_name_length_limit: 2000
+                label_value_length_limit: 2000
+                params:
+                  oe:
+                  - utf8
+                  q:
+                  - puppies
+                sample_limit: 2000
+                scheme: https
+                scrape_interval: 15s
+                scrape_timeout: 15s
+                target_limit: 2000
+                targets:
+                - 192.168.3.1:2379
+                tls_config:
+                  ca_file: /path/to/ca.crt
+                  cert_file: /path/to/cert.crt
+                  insecure_skip_verify: true
+                  key_file: /path/to/key.crt
+                  min_version: TLS12
+                  server_name: server.name
+            extra_scrape_configs:
+              - authorization:
+                  credentials: fancy-credentials
+                  type: Bearer
+                job_name: extra-scrape-config
+                metric_relabel_configs:
+                - action: drop
+                  regex: node_memory_active_bytes;localhost:9100
+                  source_labels:
+                  - __name__
+                  - instance
+                relabel_configs:
+                - action: drop
+                  regex: node_memory_active_bytes;localhost:9100
+                  source_labels:
+                  - __name__
+                  - instance
+                scrape_interval: 15s
+                scrape_timeout: 15s
+                static_configs:
+                - labels:
+                    label1: value1
+                    label2: value2
+                  targets:
+                  - 192.168.3.1:2379
+                tls_config:
+                  ca_file: /path/to/ca.crt
+                  cert_file: /path/to/cert.crt
+                  insecure_skip_verify: true
+                  key_file: /path/to/key.crt
+                  min_version: TLS12
+                  server_name: server.name
+            common:
+              external_labels:
+                cluster_name: cluster-test
