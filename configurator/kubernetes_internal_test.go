@@ -193,7 +193,11 @@ func TestKubernetesTargetBuilder(t *testing.T) {
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
 
-			builder := newKubernetesJobBuilder(podSettingsMock, endpointSettingsMock, selectorSettingsMock)
+			builder := &kubernetesJobBuilder{
+				addPodSettings:      podSettingsMock,
+				addEndpointSettings: endpointSettingsMock,
+				addSelectorSettings: selectorSettingsMock,
+			}
 			targets, err := builder.Build((c.Input))
 			require.NoError(t, err)
 			assert.Equal(t, c.Expected, targets)

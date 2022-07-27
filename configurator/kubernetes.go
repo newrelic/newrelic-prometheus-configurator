@@ -47,11 +47,12 @@ type kubernetesJobBuilder struct {
 	addSelectorSettings kubernetesSettingsBuilder
 }
 
-func newKubernetesJobBuilder(pod, endpoint, selector kubernetesSettingsBuilder) *kubernetesJobBuilder {
+// newKubernetesJobBuilder creates a builder using the default settings builders.
+func newKubernetesJobBuilder() *kubernetesJobBuilder {
 	return &kubernetesJobBuilder{
-		addPodSettings:      pod,
-		addEndpointSettings: endpoint,
-		addSelectorSettings: selector,
+		addPodSettings:      podSettingsBuilder,
+		addEndpointSettings: endpointSettingsBuilder,
+		addSelectorSettings: selectorSettingsBuilder,
 	}
 }
 

@@ -30,11 +30,7 @@ func BuildOutput(input *Input) (Output, error) {
 	}
 
 	// Include the scrape configurations corresponding to kubernetes configuration
-	kubernetesTargetBuilder := newKubernetesJobBuilder(
-		podSettingsBuilder,
-		endpointSettingsBuilder,
-		selectorSettingsBuilder,
-	)
+	kubernetesTargetBuilder := newKubernetesJobBuilder()
 	k8stargets, err := kubernetesTargetBuilder.Build(input)
 	if err != nil {
 		return output, err
