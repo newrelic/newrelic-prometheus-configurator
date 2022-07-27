@@ -76,9 +76,7 @@ nrStaging:
 
 # -- New Relic prometheus configuration.
 # TODO: we need to set default values only when those values are not the same than prometheus agent defaults'.
-config: {}
-# TODO: it needs to be completed with all configurator sections and be documented properly
-# config:
+config:
 #  common:
 #    The labels to add to any timeseries that this Prometheus instance scrapes.
 #    external_labels:
@@ -117,3 +115,79 @@ config: {}
 #       # Retry upon receiving a 429 status code from the remote-write storage.
 #       retry_on_http_429: false
 #  extra_remote_write: []
+#  for more info about static_targets: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
+  static_targets:
+    jobs:
+#    # The job name assigned to scraped metrics by default.
+#    - job_name: ""
+#      # The targets specified for this job
+#      targets: []
+#      # Labels assigned to all metrics scraped from the targets.
+#      labels: {}
+#      # The HTTP resource path on which to fetch metrics from targets.
+#      metrics_path: /metrics
+#      # honor_labels controls how Prometheus handles conflicts between label,
+#      # more info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
+#      honor_labels: true
+#      # honor_timestamps controls whether Prometheus respects the timestamps present n scraped data.
+#      honor_timestamps: true
+#      # Optional HTTP URL parameters.
+#      params: {}
+#      # Configures the protocol scheme used for requests.
+#      scheme: "http"
+#      # An uncompressed response body larger than this many bytes will cause the scrape to fail. 0 means no limit.
+#      # Example: 100MB.
+#      body_size_limit: 0
+#      # Per-scrape limit on number of scraped samples that will be accepted. 0 means no limit.
+#      sample_limit: 0
+#      # Per-scrape config limit on number of unique targets that will be accepted. 0 means no limit.
+#      target_limit: 0
+#      # Per-scrape limit on number of labels that will be accepted for a sample. 0 means no limit.
+#      label_limit: 0
+#      # Per-scrape limit on length of labels name that will be accepted for a sample. 0 means no limit.
+#      label_name_length_limit: 0
+#      # Per-scrape limit on length of labels value that will be accepted for a sample. 0 means no limit
+#      label_value_length_limit: 0
+#      # How frequently to scrape targets from this job.
+#      scrape_interval: 30s
+#      # Per-scrape timeout when scraping this job.
+#      scrape_timeout: 30s
+#      # Configures the scrape request's TLS settings.
+#      tls_config:
+#      # Sets the `Authorization` header on every scrape request
+#      authorization:
+#      # List of target relabel configurations.
+#      extra_relabel_config: []
+#      # List of metric relabel configurations.
+#      extra_metric_relabel_config: []
+    # prometheus self-metrics job is always active reporting only the metrics on the regex list.
+    - job_name: self-metrics
+      targets:
+        - "localhost:9090"
+      extra_metric_relabel_config:
+        - source_labels: [__name__]
+          regex: "\
+            prometheus_agent_active_series|\
+            prometheus_target_interval_length_seconds|\
+            prometheus_target_scrape_pool_targets|\
+            prometheus_remote_storage_samples_pending|\
+            prometheus_remote_storage_samples_in_total|\
+            prometheus_remote_storage_samples_retried_total|\
+            prometheus_agent_corruptions_total|\
+            prometheus_remote_storage_shards|\
+            prometheus_sd_kubernetes_events_total|\
+            prometheus_agent_checkpoint_creations_failed_total|\
+            prometheus_agent_checkpoint_deletions_failed_total|\
+            prometheus_remote_storage_dropped_samples_total|\
+            prometheus_remote_storage_failed_samples_total|\
+            prometheus_sd_kubernetes_http_request_total|\
+            prometheus_agent_truncate_duration_seconds_sum|\
+            prometheus_build_info|\
+            process_resident_memory_bytes|\
+            process_virtual_memory_bytes|\
+            process_cpu_seconds_total|\
+            scrape_pool_targets|\
+            scrape_duration_seconds"
+          action: keep
+#  # extra scrape configs in prometheus format https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
+#  extra_scrape_configs: {}
