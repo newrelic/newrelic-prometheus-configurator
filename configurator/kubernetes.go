@@ -42,16 +42,16 @@ type kubernetesSettingsBuilder func(job JobOutput, k8sJob KubernetesJob) JobOutp
 // kubernetesJobBuilder holds the the specific settings to add to a TargetJobOutput given the corresponding
 // KubernetesJob definition.
 type kubernetesJobBuilder struct {
-	setPodRules      kubernetesSettingsBuilder
-	setEndpointRules kubernetesSettingsBuilder
-	setSelectorRules kubernetesSettingsBuilder
+	addPodSettings      kubernetesSettingsBuilder
+	addEndpointSettings kubernetesSettingsBuilder
+	addSelectorSettings kubernetesSettingsBuilder
 }
 
 func newKubernetesJobBuilder(pod, endpoint, selector kubernetesSettingsBuilder) *kubernetesJobBuilder {
 	return &kubernetesJobBuilder{
-		setPodRules:      pod,
-		setEndpointRules: endpoint,
-		setSelectorRules: selector,
+		addPodSettings:      pod,
+		addEndpointSettings: endpoint,
+		addSelectorSettings: selector,
 	}
 }
 
@@ -66,15 +66,15 @@ func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 			return nil, ErrInvalidK8sJobKinds
 		}
 
-		if k8sJob.TargetKinds.Pods && b.setPodRules != nil {
+		if k8sJob.TargetKinds.Pods && b.addPodSettings != nil {
 			job := b.buildJob(k8sJob, podKind)
-			job = b.setPodRules(job, k8sJob)
+			job = b.addPodSettings(job, k8sJob)
 			jobs = append(jobs, job)
 		}
 
-		if k8sJob.TargetKinds.Endpoints && b.setEndpointRules != nil {
+		if k8sJob.TargetKinds.Endpoints && b.addEndpointSettings != nil {
 			job := b.buildJob(k8sJob, endpointKind)
-			job = b.setEndpointRules(job, k8sJob)
+			job = b.addEndpointSettings(job, k8sJob)
 			jobs = append(jobs, job)
 		}
 	}
@@ -82,15 +82,17 @@ func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 	return jobs, nil
 }
 
-func (b *kubernetesJobBuilder) buildJob(k8sJob KubernetesJob, kind string) JobOutput {
+// buildJob creates a base JobOutput given the kubernetes settings and the target kind. It add
+// the selector settings (if any) and builds the job name.
+func (b *kubernetesJobBuilder) buildJob(k8sJob KubernetesJob, targetKind string) JobOutput {
 	// build base job
 	job := BuildJobOutput(k8sJob.JobInput)
 	// apply selector rules if defined
-	if b.setSelectorRules != nil && k8sJob.Selector != nil {
-		job = b.setSelectorRules(job, k8sJob)
+	if b.addSelectorSettings != nil && k8sJob.Selector != nil {
+		job = b.addSelectorSettings(job, k8sJob)
 	}
 	// build its name based on the prefix
-	job.Job.JobName = b.buildJobName(k8sJob.JobNamePrefix, kind)
+	job.Job.JobName = b.buildJobName(k8sJob.JobNamePrefix, targetKind)
 	return job
 }
 
