@@ -7,22 +7,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestKubernetesTargetBuilder_KubernetesNotEnabled(t *testing.T) {
-	t.Parallel()
-
-	i := &Input{Kubernetes: KubernetesInput{Enabled: false}}
-	builder := &kubernetesJobBuilder{}
-	result, err := builder.Build(i)
-	require.NoError(t, err)
-	assert.Nil(t, result)
-}
-
 func TestKubernetesJobBuilder_InvalidSettings(t *testing.T) {
 	t.Parallel()
 
 	i := &Input{
 		Kubernetes: KubernetesInput{
-			Enabled: true,
 			Jobs: []KubernetesJob{
 				{JobNamePrefix: "job"}, // No kind defined.
 			},
@@ -75,15 +64,19 @@ func TestKubernetesJobBuilder(t *testing.T) {
 		Expected []JobOutput
 	}{
 		{
-			Name:     "Kubernetes not enabled",
-			Input:    &Input{Kubernetes: KubernetesInput{Enabled: false}},
+			Name:     "Kubernetes not defined",
+			Input:    &Input{},
+			Expected: nil,
+		},
+		{
+			Name:     "Kubernetes empty",
+			Input:    &Input{Kubernetes: KubernetesInput{}},
 			Expected: nil,
 		},
 		{
 			Name: "Kind pods",
 			Input: &Input{
 				Kubernetes: KubernetesInput{
-					Enabled: true,
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
@@ -103,7 +96,6 @@ func TestKubernetesJobBuilder(t *testing.T) {
 			Name: "Kind endpoints",
 			Input: &Input{
 				Kubernetes: KubernetesInput{
-					Enabled: true,
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
@@ -123,7 +115,6 @@ func TestKubernetesJobBuilder(t *testing.T) {
 			Name: "Selector defined and pod",
 			Input: &Input{
 				Kubernetes: KubernetesInput{
-					Enabled: true,
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
@@ -144,7 +135,6 @@ func TestKubernetesJobBuilder(t *testing.T) {
 			Name: "Selector defined and endpoints",
 			Input: &Input{
 				Kubernetes: KubernetesInput{
-					Enabled: true,
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
@@ -165,7 +155,6 @@ func TestKubernetesJobBuilder(t *testing.T) {
 			Name: "Pods, endpoints and selector defined",
 			Input: &Input{
 				Kubernetes: KubernetesInput{
-					Enabled: true,
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",

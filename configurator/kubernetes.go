@@ -11,8 +11,7 @@ var ErrInvalidK8sJobKinds = errors.New("at least one kind should be set in targe
 
 // KubernetesInput defines all fields to set up prometheus.
 type KubernetesInput struct {
-	Enabled bool            `yaml:"enabled"`
-	Jobs    []KubernetesJob `yaml:"jobs"`
+	Jobs []KubernetesJob `yaml:"jobs"`
 }
 
 // KubernetesJob holds the configuration which will parsed to a prometheus scrape job including the
@@ -58,10 +57,7 @@ func newKubernetesJobBuilder() *kubernetesJobBuilder {
 
 // BuildKubernetesTargets builds the prometheus targets corresponding to the Kubernetes configuration in input.
 func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
-	if !i.Kubernetes.Enabled {
-		return nil, nil
-	}
-	jobs := []JobOutput{}
+	var jobs []JobOutput
 	for _, k8sJob := range i.Kubernetes.Jobs {
 		if !k8sJob.TargetKind.Valid() {
 			return nil, ErrInvalidK8sJobKinds
