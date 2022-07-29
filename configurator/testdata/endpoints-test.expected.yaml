@@ -1,0 +1,60 @@
+scrape_configs:
+  - job_name: kubernetes-job-endpoints
+    honor_labels: true
+    kubernetes_sd_configs:
+      - role: endpoints
+    relabel_configs:
+      - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_scrape ]
+        action: keep
+        regex: "true"
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape_slow]
+        action: drop
+        regex: "true"
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [ __address__, __meta_kubernetes_service_annotation_prometheus_io_port ]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        target_label: __address__
+        replacement: $1:$2
+
+      - source_labels: [__scheme__,__address__,__metrics_path__]
+        action: replace
+        regex: (.+);(.+);(.+)
+        replacement: $1://$2$3
+        target_label: scrapedTargetURL
+      - source_labels: [__meta_kubernetes_endpoints_name]
+        action: replace
+        target_label: targetName
+      - source_labels: [job]
+        action: replace
+        target_label: scrappedTargetKind
+      - action: labeldrop
+        regex: job
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+        replacement: label_$1
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: namespaceName
+      - source_labels: [__meta_kubernetes_service_name]
+        action: replace
+        target_label: serviceName
+      - source_labels: [__meta_kubernetes_pod_phase]
+        action: drop
+        regex: Pending|Succeeded|Failed|Completed
+        # Extra relabel config
+      - source_labels: [ test_label ]
+        action: drop
+        regex: (.+)
+
+remote_write:
+  - url: https://metric-api.newrelic.com/prometheus/v1/write
+    authorization:
+      credentials: nrLicenseKey

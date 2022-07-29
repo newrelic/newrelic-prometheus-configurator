@@ -26,6 +26,7 @@ func TestParser(t *testing.T) {
 		"remote-write-test",
 		"static-targets-test",
 		"external-labels-test",
+		"endpoints-test",
 	}
 
 	for _, c := range testCases {

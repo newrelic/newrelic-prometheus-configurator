@@ -36,7 +36,7 @@ func BuildJobOutput(job JobInput) JobOutput {
 }
 
 func (o JobOutput) WithExtraConfigs(i JobInput) JobOutput {
-	for _, c := range i.ExtraMetricRelabelConfigs {
+	for _, c := range i.ExtraRelabelConfigs {
 		o.RelabelConfigs = append(o.RelabelConfigs, c)
 	}
 	for _, c := range i.ExtraMetricRelabelConfigs {

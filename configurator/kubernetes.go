@@ -41,7 +41,7 @@ func (k *KubernetesTargetKind) Valid() bool {
 // added (considering the specified `KubernetesJob`).
 type kubernetesSettingsBuilder func(job JobOutput, k8sJob KubernetesJob) JobOutput
 
-// kubernetesJobBuilder holds the the specific settings to add to a TargetJobOutput given the corresponding
+// kubernetesJobBuilder holds the specific settings to add to a TargetJobOutput given the corresponding
 // KubernetesJob definition.
 type kubernetesJobBuilder struct {
 	addPodSettings       kubernetesSettingsBuilder
@@ -58,7 +58,7 @@ func newKubernetesJobBuilder() *kubernetesJobBuilder {
 	}
 }
 
-// BuildKubernetesTargets builds the prometheus targets corresponding to the Kubernetes configuration in input.
+// Build builds the prometheus targets corresponding to the Kubernetes configuration in input.
 func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 	var jobs []JobOutput
 	for _, k8sJob := range i.Kubernetes.Jobs {

@@ -1,0 +1,16 @@
+kubernetes:
+  jobs:
+    - job_name_prefix: kubernetes-job
+      target_kind:
+        endpoints: true
+
+      # Added extra label to test that we append properly already existing
+      # relabel configs.
+      extra_relabel_config:
+      - action: drop
+        regex: (.+)
+        source_labels:
+        - test_label
+
+newrelic_remote_write:
+  license_key: nrLicenseKey
