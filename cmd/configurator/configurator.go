@@ -4,14 +4,17 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
 	"os"
 
-	log "github.com/sirupsen/logrus"
+	configurator "github.com/newrelic-forks/newrelic-prometheus/configurator"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator"
+	"gopkg.in/yaml.v3"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -33,7 +36,7 @@ func main() {
 		os.Exit(inputErrCode)
 	}
 
-	output, err := configurator.Parse(input)
+	output, err := configurator.BuildOutput(input)
 	if err != nil {
 		logger.Errorf("Error parsing the configuration: %s", err)
 		os.Exit(parseErrCode)
@@ -45,11 +48,18 @@ func main() {
 	}
 }
 
-func readInput(inputPath string) ([]byte, error) {
+func readInput(inputPath string) (*configurator.Input, error) {
+	input := &configurator.Input{}
+
 	if inputPath == "" {
-		input, err := io.ReadAll(os.Stdin)
+		data, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			return nil, fmt.Errorf("could not read from stdin: %w", err)
+		}
+
+		err = yaml.Unmarshal(data, input)
+		if err != nil {
+			return nil, fmt.Errorf("yaml input could not be loaded: %w", err)
 		}
 
 		return input, nil
@@ -60,21 +70,40 @@ func readInput(inputPath string) ([]byte, error) {
 		return nil, fmt.Errorf("the input file could not be opened: %w", err)
 	}
 
-	input, err := io.ReadAll(fileReader)
+	data, err := io.ReadAll(fileReader)
 	if err != nil {
 		return nil, fmt.Errorf("could not read from the input file: %w", err)
 	}
 
-	if err := fileReader.Close(); err != nil {
+	if err = fileReader.Close(); err != nil {
 		return nil, fmt.Errorf("could not close the input file: %w", err)
+	}
+
+	err = yaml.Unmarshal(data, input)
+	if err != nil {
+		return nil, fmt.Errorf("yaml input could not be loaded: %w", err)
 	}
 
 	return input, nil
 }
 
-func writeOutput(outputPath string, output []byte) error {
+func writeOutput(outputPath string, output *configurator.Output) error {
+	const (
+		yamlEncoderIndent = 2
+	)
+
+	buffer := bytes.Buffer{}
+	encoder := yaml.NewEncoder(&buffer)
+	encoder.SetIndent(yamlEncoderIndent)
+
+	if err := encoder.Encode(output); err != nil {
+		return fmt.Errorf("could not encode to yaml %w", err)
+	}
+
+	data := buffer.Bytes()
+
 	if outputPath == "" {
-		if _, err := os.Stdout.Write(output); err != nil {
+		if _, err := os.Stdout.Write(data); err != nil {
 			return fmt.Errorf("could not to stdout: %w", err)
 		}
 		return nil
@@ -85,7 +114,7 @@ func writeOutput(outputPath string, output []byte) error {
 		return fmt.Errorf("the output file cannot be created: %w", err)
 	}
 
-	if _, err := fileWriter.Write(output); err != nil {
+	if _, err := fileWriter.Write(data); err != nil {
 		return fmt.Errorf("could not write the output: %w", err)
 	}
 
