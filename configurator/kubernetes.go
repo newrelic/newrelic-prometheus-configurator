@@ -3,8 +3,8 @@ package configurator
 import "errors"
 
 const (
-	podKind      = "pod"
-	endpointKind = "endpoint"
+	podKind       = "pod"
+	endpointsKind = "endpoints"
 )
 
 var ErrInvalidK8sJobKinds = errors.New("at least one kind should be set in target_kinds field")
@@ -26,13 +26,13 @@ type KubernetesJob struct {
 }
 
 type KubernetesTargetKind struct {
-	Pod      bool `yaml:"pod"`
-	Endpoint bool `yaml:"endpoint"`
+	Pod       bool `yaml:"pod"`
+	Endpoints bool `yaml:"endpoints"`
 }
 
 // Valid returns true when the defined configuration is valid.
 func (k *KubernetesTargetKind) Valid() bool {
-	return k.Pod || k.Endpoint
+	return k.Pod || k.Endpoints
 }
 
 // KubernetesSettingsBuilders defines a functions which updates and returns a `TargetJobOutput` with specific settings
@@ -42,17 +42,17 @@ type kubernetesSettingsBuilder func(job JobOutput, k8sJob KubernetesJob) JobOutp
 // kubernetesJobBuilder holds the the specific settings to add to a TargetJobOutput given the corresponding
 // KubernetesJob definition.
 type kubernetesJobBuilder struct {
-	addPodSettings      kubernetesSettingsBuilder
-	addEndpointSettings kubernetesSettingsBuilder
-	addSelectorSettings kubernetesSettingsBuilder
+	addPodSettings       kubernetesSettingsBuilder
+	addEndpointsSettings kubernetesSettingsBuilder
+	addSelectorSettings  kubernetesSettingsBuilder
 }
 
 // newKubernetesJobBuilder creates a builder using the default settings builders.
 func newKubernetesJobBuilder() *kubernetesJobBuilder {
 	return &kubernetesJobBuilder{
-		addPodSettings:      podSettingsBuilder,
-		addEndpointSettings: endpointSettingsBuilder,
-		addSelectorSettings: selectorSettingsBuilder,
+		addPodSettings:       podSettingsBuilder,
+		addEndpointsSettings: endpointSettingsBuilder,
+		addSelectorSettings:  selectorSettingsBuilder,
 	}
 }
 
@@ -73,9 +73,9 @@ func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 			jobs = append(jobs, job)
 		}
 
-		if k8sJob.TargetKind.Endpoint && b.addEndpointSettings != nil {
-			job := b.buildJob(k8sJob, endpointKind)
-			job = b.addEndpointSettings(job, k8sJob)
+		if k8sJob.TargetKind.Endpoints && b.addEndpointsSettings != nil {
+			job := b.buildJob(k8sJob, endpointsKind)
+			job = b.addEndpointsSettings(job, k8sJob)
 			jobs = append(jobs, job)
 		}
 	}

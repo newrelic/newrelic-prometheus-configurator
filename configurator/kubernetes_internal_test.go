@@ -64,9 +64,9 @@ func TestKubernetesJobBuilder(t *testing.T) {
 	}
 
 	builder := &kubernetesJobBuilder{
-		addPodSettings:      withStaticConfigReady(podSettingsMock),
-		addEndpointSettings: withStaticConfigReady(endpointSettingsMock),
-		addSelectorSettings: withStaticConfigReady(selectorSettingsMock),
+		addPodSettings:       withStaticConfigReady(podSettingsMock),
+		addEndpointsSettings: withStaticConfigReady(endpointSettingsMock),
+		addSelectorSettings:  withStaticConfigReady(selectorSettingsMock),
 	}
 
 	cases := []struct {
@@ -107,14 +107,14 @@ func TestKubernetesJobBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKind:    KubernetesTargetKind{Endpoint: true},
+							TargetKind:    KubernetesTargetKind{Endpoints: true},
 						},
 					},
 				},
 			},
 			Expected: []JobOutput{
 				{
-					Job:           Job{JobName: "job-endpoint"},
+					Job:           Job{JobName: "job-endpoints"},
 					StaticConfigs: []StaticConfig{{Labels: map[string]string{"endpoints": "endpoints"}}},
 				},
 			},
@@ -148,7 +148,7 @@ func TestKubernetesJobBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKind:    KubernetesTargetKind{Endpoint: true},
+							TargetKind:    KubernetesTargetKind{Endpoints: true},
 							Selector:      &KubernetesSelector{},
 						},
 					},
@@ -156,7 +156,7 @@ func TestKubernetesJobBuilder(t *testing.T) {
 			},
 			Expected: []JobOutput{
 				{
-					Job:           Job{JobName: "job-endpoint"},
+					Job:           Job{JobName: "job-endpoints"},
 					StaticConfigs: []StaticConfig{{Labels: map[string]string{"selector": "selector", "endpoints": "endpoints"}}},
 				},
 			},
@@ -169,7 +169,7 @@ func TestKubernetesJobBuilder(t *testing.T) {
 					Jobs: []KubernetesJob{
 						{
 							JobNamePrefix: "job",
-							TargetKind:    KubernetesTargetKind{Pod: true, Endpoint: true},
+							TargetKind:    KubernetesTargetKind{Pod: true, Endpoints: true},
 							Selector:      &KubernetesSelector{},
 						},
 					},
@@ -185,7 +185,7 @@ func TestKubernetesJobBuilder(t *testing.T) {
 					},
 				},
 				{
-					Job: Job{JobName: "job-endpoint"},
+					Job: Job{JobName: "job-endpoints"},
 					StaticConfigs: []StaticConfig{
 						{
 							Labels: map[string]string{"selector": "selector", "endpoints": "endpoints"},
