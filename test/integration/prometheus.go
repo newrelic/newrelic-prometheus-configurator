@@ -79,11 +79,7 @@ func (ps *prometheusServer) healthy(t *testing.T) bool {
 		return false
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return false
-	}
-
-	return true
+	return resp.StatusCode == http.StatusOK
 }
 
 func (ps *prometheusServer) targets(t *testing.T) (*targetDiscovery, bool) {
