@@ -21,13 +21,15 @@
 
 ## Testing
 
-### Running tests
+### Running unit tests
 
 ```bash
 make test
 ```
 
+### Running integration tests
 
+Detailed info about integration tests [here](./test/integration/README.md).
 
 ## Run local environment
 
@@ -40,7 +42,8 @@ Make sure you have these tools or install them:
 
 Start the local environment:
 ```shell
-make local-env-start
+make start-local-cluster
+make tilt-up
 ```
 
 Notice that local images are build and pushed to docker running inside the minikube cluster since we are running `eval $(minikube docker-env)` before launching Tilt.
