@@ -12,6 +12,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
+
+	// kubernetes module needed to be imported in order to support 'kubernetes_sd_configs' field in prometheus scrape
+	// configs. see: <https://github.com/prometheus/prometheus/tree/main/discovery> for details.
+	_ "github.com/prometheus/prometheus/discovery/kubernetes"
 )
 
 func TestParser(t *testing.T) {
@@ -68,5 +72,5 @@ func assertIsPrometheusConfig(t *testing.T, y []byte) {
 	_, err = tmpFile.Write(y)
 	require.NoError(t, err)
 	_, err = prometheusConfig.LoadFile(tmpFile.Name(), true, false, nil)
-	require.NoError(t, err)
+	require.NoError(t, err, "file content was %s", string(y))
 }
