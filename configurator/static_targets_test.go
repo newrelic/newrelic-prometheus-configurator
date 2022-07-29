@@ -16,6 +16,8 @@ import (
 func TestBuildStaticTargetsOutput(t *testing.T) {
 	t.Parallel()
 
+	trueValue := true
+
 	cases := []struct {
 		Name     string
 		Input    *configurator.Input
@@ -26,45 +28,24 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 			Input: &configurator.Input{
 				DataSourceName: "source-of-metrics",
 				StaticTargets: configurator.StaticTargetsInput{
-					Jobs: []configurator.Job{
+					Jobs: []configurator.JobInput{
 						{
-							JobName:               "fancy-job",
-							Targets:               []string{"host:port"},
-							Labels:                map[string]string{"a": "b"},
-							HonorLabels:           true,
-							HonorTimestamps:       true,
-							Params:                url.Values{"q": {"puppies"}, "oe": {"utf8"}},
-							Scheme:                "https",
-							BodySizeLimit:         units.Base2Bytes(1025),
-							SampleLimit:           uint(2000),
-							TargetLimit:           uint(2000),
-							LabelLimit:            uint(2000),
-							LabelNameLengthLimit:  uint(2000),
-							LabelValueLengthLimit: uint(2000),
-							MetricsPath:           "/metrics",
-							ScrapeInterval:        10000,
-							ScrapeTimeout:         10000,
-							TLSConfig: &configurator.TLSConfig{
-								CAFile:             "ca-file",
-								CertFile:           "cert-file",
-								KeyFile:            "key-file",
-								ServerName:         "server.name",
-								InsecureSkipVerify: true,
-								MinVersion:         "TLS12",
-							},
-							BasicAuth: nil,
-							Authorization: configurator.Authorization{
-								Type:            "Bearer",
-								Credentials:     "aaa",
-								CredentialsFile: "a/b",
-							},
-							OAuth2: configurator.OAuth2{
-								ClientID:         "client",
-								ClientSecret:     "secret",
-								ClientSecretFile: "a/secret",
-								Scopes:           []string{"all"},
-								TokenURL:         "a-url",
-								EndpointParams:   map[string]string{"param": "value"},
+							// nolint: dupl // TargetJob should be the same
+							Job: configurator.Job{
+								JobName:               "fancy-job",
+								HonorLabels:           true,
+								HonorTimestamps:       &trueValue,
+								Params:                url.Values{"q": {"puppies"}, "oe": {"utf8"}},
+								Scheme:                "https",
+								BodySizeLimit:         units.Base2Bytes(1025),
+								SampleLimit:           uint(2000),
+								TargetLimit:           uint(2000),
+								LabelLimit:            uint(2000),
+								LabelNameLengthLimit:  uint(2000),
+								LabelValueLengthLimit: uint(2000),
+								MetricsPath:           "/metrics",
+								ScrapeInterval:        10000,
+								ScrapeTimeout:         10000,
 								TLSConfig: &configurator.TLSConfig{
 									CAFile:             "ca-file",
 									CertFile:           "cert-file",
@@ -73,8 +54,32 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 									InsecureSkipVerify: true,
 									MinVersion:         "TLS12",
 								},
-								ProxyURL: "",
+								BasicAuth: nil,
+								Authorization: configurator.Authorization{
+									Type:            "Bearer",
+									Credentials:     "aaa",
+									CredentialsFile: "a/b",
+								},
+								OAuth2: configurator.OAuth2{
+									ClientID:         "client",
+									ClientSecret:     "secret",
+									ClientSecretFile: "a/secret",
+									Scopes:           []string{"all"},
+									TokenURL:         "a-url",
+									EndpointParams:   map[string]string{"param": "value"},
+									TLSConfig: &configurator.TLSConfig{
+										CAFile:             "ca-file",
+										CertFile:           "cert-file",
+										KeyFile:            "key-file",
+										ServerName:         "server.name",
+										InsecureSkipVerify: true,
+										MinVersion:         "TLS12",
+									},
+									ProxyURL: "",
+								},
 							},
+							Targets: []string{"host:port"},
+							Labels:  map[string]string{"a": "b"},
 							ExtraRelabelConfigs: []configurator.PrometheusExtraConfig{
 								map[string]any{
 									"source_labels": []any{"src.label"},
@@ -94,48 +99,23 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 				},
 			},
 			Expected: []any{
-				configurator.StaticTargetsJobOutput{
-					JobName: "fancy-job",
-					StaticConfigs: []configurator.StaticConfigOutput{
-						{
-							Targets: []string{"host:port"},
-							Labels:  map[string]string{"a": "b"},
-						},
-					},
-					HonorLabels:           true,
-					HonorTimestamps:       true,
-					Params:                url.Values{"q": {"puppies"}, "oe": {"utf8"}},
-					Scheme:                "https",
-					BodySizeLimit:         units.Base2Bytes(1025),
-					SampleLimit:           uint(2000),
-					TargetLimit:           uint(2000),
-					LabelLimit:            uint(2000),
-					LabelNameLengthLimit:  uint(2000),
-					LabelValueLengthLimit: uint(2000),
-					MetricsPath:           "/metrics",
-					ScrapeInterval:        10000,
-					ScrapeTimeout:         10000,
-					TLSConfig: &configurator.TLSConfig{
-						CAFile:             "ca-file",
-						CertFile:           "cert-file",
-						KeyFile:            "key-file",
-						ServerName:         "server.name",
-						InsecureSkipVerify: true,
-						MinVersion:         "TLS12",
-					},
-					BasicAuth: nil,
-					Authorization: configurator.Authorization{
-						Type:            "Bearer",
-						Credentials:     "aaa",
-						CredentialsFile: "a/b",
-					},
-					OAuth2: configurator.OAuth2{
-						ClientID:         "client",
-						ClientSecret:     "secret",
-						ClientSecretFile: "a/secret",
-						Scopes:           []string{"all"},
-						TokenURL:         "a-url",
-						EndpointParams:   map[string]string{"param": "value"},
+				configurator.JobOutput{
+					// nolint: dupl // TargetJob should be the same.
+					Job: configurator.Job{
+						JobName:               "fancy-job",
+						HonorLabels:           true,
+						HonorTimestamps:       &trueValue,
+						Params:                url.Values{"q": {"puppies"}, "oe": {"utf8"}},
+						Scheme:                "https",
+						BodySizeLimit:         units.Base2Bytes(1025),
+						SampleLimit:           uint(2000),
+						TargetLimit:           uint(2000),
+						LabelLimit:            uint(2000),
+						LabelNameLengthLimit:  uint(2000),
+						LabelValueLengthLimit: uint(2000),
+						MetricsPath:           "/metrics",
+						ScrapeInterval:        10000,
+						ScrapeTimeout:         10000,
 						TLSConfig: &configurator.TLSConfig{
 							CAFile:             "ca-file",
 							CertFile:           "cert-file",
@@ -144,16 +124,45 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 							InsecureSkipVerify: true,
 							MinVersion:         "TLS12",
 						},
-						ProxyURL: "",
+						BasicAuth: nil,
+						Authorization: configurator.Authorization{
+							Type:            "Bearer",
+							Credentials:     "aaa",
+							CredentialsFile: "a/b",
+						},
+						OAuth2: configurator.OAuth2{
+							ClientID:         "client",
+							ClientSecret:     "secret",
+							ClientSecretFile: "a/secret",
+							Scopes:           []string{"all"},
+							TokenURL:         "a-url",
+							EndpointParams:   map[string]string{"param": "value"},
+							TLSConfig: &configurator.TLSConfig{
+								CAFile:             "ca-file",
+								CertFile:           "cert-file",
+								KeyFile:            "key-file",
+								ServerName:         "server.name",
+								InsecureSkipVerify: true,
+								MinVersion:         "TLS12",
+							},
+							ProxyURL: "",
+						},
 					},
-					RelabelConfigs: []configurator.PrometheusExtraConfig{
+					StaticConfigs: []configurator.StaticConfig{
+						{
+							Targets: []string{"host:port"},
+							Labels:  map[string]string{"a": "b"},
+						},
+					},
+
+					RelabelConfigs: []any{
 						map[string]any{
 							"source_labels": []any{"src.label"},
 							"regex":         "to_drop.*",
 							"action":        "drop",
 						},
 					},
-					MetricRelabelConfigs: []configurator.PrometheusExtraConfig{
+					MetricRelabelConfigs: []any{
 						map[string]any{
 							"source_labels": []any{"src.label"},
 							"regex":         "to_drop.*",

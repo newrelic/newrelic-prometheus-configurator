@@ -24,10 +24,22 @@ func BuildOutput(input *Input) (Output, error) {
 		output.RemoteWrite = append(output.RemoteWrite, extraRemoteWriteConfig)
 	}
 
+	// Include the scrape configurations corresponding to static targets
 	if staticTargets := BuildStaticTargetsOutput(input); len(staticTargets) > 0 {
 		output.ScrapeConfigs = append(output.ScrapeConfigs, staticTargets...)
 	}
 
+	// Include the scrape configurations corresponding to kubernetes jobs
+	kubernetesJobBuilder := newKubernetesJobBuilder()
+	k8sJobs, err := kubernetesJobBuilder.Build(input)
+	if err != nil {
+		return output, err
+	}
+	for _, job := range k8sJobs {
+		output.ScrapeConfigs = append(output.ScrapeConfigs, job)
+	}
+
+	// Include "extra" scrape configuration
 	for _, extraScrapeConfig := range input.ExtraScrapeConfigs {
 		output.ScrapeConfigs = append(output.ScrapeConfigs, extraScrapeConfig)
 	}

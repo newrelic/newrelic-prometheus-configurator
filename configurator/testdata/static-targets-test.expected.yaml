@@ -46,7 +46,6 @@ scrape_configs:
     static_configs:
       - targets:
         - "192.168.3.1:2379"
-    honor_timestamps: false
     authorization:
       type: Bearer
       # Sets the credentials to the credentials read from the configured file.
@@ -57,7 +56,6 @@ scrape_configs:
     static_configs:
       - targets:
           - "192.168.3.1:2379"
-    honor_timestamps: false
     basic_auth:
       username: 'email@newrelic.com'
       password: 'cfgqvzjbhnwcomplicatedpasswordwjnqmd'
@@ -66,7 +64,6 @@ scrape_configs:
     static_configs:
         - targets:
           - "192.168.3.1:2379"
-    honor_timestamps: false
     basic_auth:
       username: 'email@newrelic.com'
       password_file: 'root/to/file'
@@ -75,7 +72,6 @@ scrape_configs:
     static_configs:
         - targets:
           - "192.168.3.1:2379"
-    honor_timestamps: false
     oauth2:
       client_id: a-client-id
       client_secret: a-secret
@@ -98,7 +94,6 @@ scrape_configs:
     static_configs:
       - targets:
           - "192.168.3.1:2379"
-    honor_timestamps: false
     oauth2:
       client_id: a-client-id
       # It is mutually exclusive with `client_secret`.
@@ -123,7 +118,6 @@ scrape_configs:
     static_configs:
       - targets:
           - "localhost:9090"
-    honor_timestamps: false
 
   ## extra scrape config
   - job_name: extra-scrape-config
