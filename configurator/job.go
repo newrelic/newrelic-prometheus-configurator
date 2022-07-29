@@ -11,18 +11,16 @@ type JobInput struct {
 
 // JobOutput represents a prometheus scrape_config Job config with static_configs which can be obtained from input.
 type JobOutput struct {
-	Job                  Job                     `yaml:",inline"`
-	StaticConfigs        []StaticConfig          `yaml:"static_configs,omitempty"`
-	RelabelConfigs       []PrometheusExtraConfig `yaml:"relabel_configs,omitempty"`
-	MetricRelabelConfigs []PrometheusExtraConfig `yaml:"metric_relabel_configs,omitempty"`
-	KubernetesSdConfigs  []map[string]string     `yaml:"kubernetes_sd_configs,omitempty"`
+	Job                  Job                 `yaml:",inline"`
+	StaticConfigs        []StaticConfig      `yaml:"static_configs,omitempty"`
+	RelabelConfigs       []any               `yaml:"relabel_configs,omitempty"`
+	MetricRelabelConfigs []any               `yaml:"metric_relabel_configs,omitempty"`
+	KubernetesSdConfigs  []map[string]string `yaml:"kubernetes_sd_configs,omitempty"`
 }
 
 func BuildJobOutput(job JobInput) JobOutput {
 	jobOutput := JobOutput{
-		Job:                  job.Job,
-		RelabelConfigs:       job.ExtraRelabelConfigs,
-		MetricRelabelConfigs: job.ExtraMetricRelabelConfigs,
+		Job: job.Job,
 	}
 
 	if (len(job.Targets) > 0) || (len(job.Labels) > 0) {
@@ -35,4 +33,14 @@ func BuildJobOutput(job JobInput) JobOutput {
 	}
 
 	return jobOutput
+}
+
+func (o JobOutput) WithExtraConfigs(i JobInput) JobOutput {
+	for _, c := range i.ExtraMetricRelabelConfigs {
+		o.RelabelConfigs = append(o.RelabelConfigs, c)
+	}
+	for _, c := range i.ExtraMetricRelabelConfigs {
+		o.MetricRelabelConfigs = append(o.MetricRelabelConfigs, c)
+	}
+	return o
 }

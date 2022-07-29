@@ -72,13 +72,13 @@ func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 
 		if k8sJob.TargetKind.Pod && b.addPodSettings != nil {
 			job := b.buildJob(k8sJob, podKind)
-			job = b.addPodSettings(job, k8sJob)
+			job = b.addPodSettings(job, k8sJob).WithExtraConfigs(k8sJob.JobInput)
 			jobs = append(jobs, job)
 		}
 
 		if k8sJob.TargetKind.Endpoints && b.addEndpointsSettings != nil {
 			job := b.buildJob(k8sJob, endpointsKind)
-			job = b.addEndpointsSettings(job, k8sJob)
+			job = b.addEndpointsSettings(job, k8sJob).WithExtraConfigs(k8sJob.JobInput)
 			jobs = append(jobs, job)
 		}
 	}

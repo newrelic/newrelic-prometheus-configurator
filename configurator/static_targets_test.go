@@ -155,14 +155,14 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 						},
 					},
 
-					RelabelConfigs: []configurator.PrometheusExtraConfig{
+					RelabelConfigs: []any{
 						map[string]any{
 							"source_labels": []any{"src.label"},
 							"regex":         "to_drop.*",
 							"action":        "drop",
 						},
 					},
-					MetricRelabelConfigs: []configurator.PrometheusExtraConfig{
+					MetricRelabelConfigs: []any{
 						map[string]any{
 							"source_labels": []any{"src.label"},
 							"regex":         "to_drop.*",

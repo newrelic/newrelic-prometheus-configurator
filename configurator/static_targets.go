@@ -12,7 +12,8 @@ type StaticTargetsInput struct {
 func BuildStaticTargetsOutput(i *Input) []any {
 	staticTargetsOutput := make([]any, 0)
 	for _, job := range i.StaticTargets.Jobs {
-		staticTargetsOutput = append(staticTargetsOutput, BuildJobOutput(job))
+		jobOutput := BuildJobOutput(job).WithExtraConfigs(job)
+		staticTargetsOutput = append(staticTargetsOutput, jobOutput)
 	}
 
 	return staticTargetsOutput
