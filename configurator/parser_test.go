@@ -30,6 +30,7 @@ func TestParser(t *testing.T) {
 		"external-labels-test",
 		"endpoints-test",
 		"filter-test",
+		"pods-test",
 	}
 
 	for _, c := range testCases {

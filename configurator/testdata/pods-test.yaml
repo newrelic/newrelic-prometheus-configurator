@@ -1,0 +1,8 @@
+kubernetes:
+  jobs:
+    - job_name_prefix: kubernetes-job
+      target_discovery:
+        pod: true
+
+newrelic_remote_write:
+  license_key: nrLicenseKey
