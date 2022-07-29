@@ -7,8 +7,10 @@ const (
 	endpointsKind = "endpoints"
 )
 
-var ErrInvalidK8sJobKinds = errors.New("at least one kind should be set in target_kinds field")
-var ErrInvalidK8sJobPrefix = errors.New("prefix cannot be empty in kubernetes jobs")
+var (
+	ErrInvalidK8sJobKinds  = errors.New("at least one kind should be set in target_kinds field")
+	ErrInvalidK8sJobPrefix = errors.New("prefix cannot be empty in kubernetes jobs")
+)
 
 // KubernetesInput defines all fields to set up prometheus.
 type KubernetesInput struct {
