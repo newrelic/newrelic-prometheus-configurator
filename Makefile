@@ -29,17 +29,14 @@ build: clean test compile-multiarch
 
 .PHONY: clean
 clean:
-	@echo "[clean] Removing integration binaries"
-	@rm -rf $(BIN_DIR)
+	rm -rf $(BIN_DIR)
 
 .PHONY: test
 test:
-	@echo "[test] Running tests"
-	@go test ./... -count=1
+	go test ./... -count=1 -race
 
 .PHONY: compile
 compile:
-	@echo "[compile] Building $(BINARY_NAME)"
 	CGO_ENABLED=$(CGO_ENABLED) go build $(LDFLAGS) -o $(BIN_DIR)/$(BINARY_NAME) ./cmd/configurator/configurator.go
 
 .PHONY: compile-multiarch
@@ -48,19 +45,26 @@ compile-multiarch:
 	$(MAKE) compile GOOS=linux GOARCH=arm64
 	$(MAKE) compile GOOS=linux GOARCH=arm
 
-.PHONY: local-env-start
-local-env-start:
+.PHONY: start-local-cluster
+start-local-cluster:
 	minikube start
+
+.PHONY: helm-deps
+helm-deps:
 	helm repo add newrelic https://helm-charts.newrelic.com
 	helm dependency update ./charts/newrelic-prometheus
-	$(MAKE) tilt-up
 
 .PHONY: tilt-up
 tilt-up:
+	$(MAKE) helm-deps
 	eval $$(minikube docker-env) && tilt up ; tilt down
 
 .PHONY: tilt-ci
 tilt-ci:
-	helm repo add newrelic https://helm-charts.newrelic.com
-	helm dependency update ./charts/newrelic-prometheus
+	$(MAKE) helm-deps
 	eval $$(minikube docker-env) && tilt ci
+
+.PHONY: integration-test
+integration-test:
+	KUBECONFIG='./.kubeconfig-dev' minikube update-context
+	go test ./... -tags=integration_test -count=1 -race

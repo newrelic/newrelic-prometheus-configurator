@@ -1,3 +1,5 @@
+//go:build integration_test
+
 package mocks
 
 import (
@@ -12,6 +14,15 @@ func StartExporter(t *testing.T) *httptest.Server {
 	t.Helper()
 
 	mux := http.NewServeMux()
+
+	mux.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
+		response := `
+# HELP mock_gauge_metric A gauge test metric.
+# TYPE mock_gauge_metric gauge
+mock_gauge_metric 9
+`
+		_, _ = fmt.Fprintln(w, response)
+	})
 
 	mux.HandleFunc("/metrics-a/", func(w http.ResponseWriter, r *http.Request) {
 		response := "custom_metric_a 46"

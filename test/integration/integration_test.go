@@ -1,18 +1,14 @@
+//go:build integration_test
+
 package integration
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
-	"path"
-	"strings"
 	"testing"
 
 	"github.com/newrelic-forks/newrelic-prometheus/test/integration/mocks"
-
-	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -32,7 +28,7 @@ func Test_ServerReady(t *testing.T) {
 
 	ps := newPrometheusServer(t)
 
-	asserter := newAsserter(ps.port)
+	asserter := newAsserter(ps)
 
 	inputConfig := `
 data_source_name: "data-source"
@@ -52,7 +48,7 @@ func Test_SelfMetricsAreScrapedCorrectly(t *testing.T) {
 
 	ps := newPrometheusServer(t)
 
-	asserter := newAsserter(ps.port)
+	asserter := newAsserter(ps)
 
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 
@@ -85,12 +81,12 @@ func Test_ExtraScapeConfig(t *testing.T) {
 
 	ps := newPrometheusServer(t)
 
-	asserter := newAsserter(ps.port)
+	asserter := newAsserter(ps)
 
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 	ex := mocks.StartExporter(t)
 
-	mockExporterTarget := strings.Replace(ex.URL, "http://", "", 1)
+	mockExporterTarget := ex.Listener.Addr().String()
 	inputConfig := fmt.Sprintf(`
 static_targets:
   jobs:
@@ -99,10 +95,8 @@ static_targets:
       targets:
         - "%s"
       metrics_path: /metrics-a
-      extra_relabel_config:
-        - replacement: my-value
-          target_label: custom_label
-          action: replace
+      labels:
+        custom_label: foo
 
 extra_scrape_configs:
   - job_name: metrics-b
@@ -124,15 +118,15 @@ newrelic_remote_write:
 
 	ps.start(t, outputConfigPath)
 
-	asserter.metricLabels(t, map[string]string{"custom_label": "my-value", "job": "metrics-a"}, "custom_metric_a")
-	asserter.metricLabels(t, map[string]string{"custom_label": "", "job": "metrics-b"}, "custom_metric_b")
+	asserter.metricLabels(t, map[string]string{"custom_label": "foo", "instance": mockExporterTarget, "job": "metrics-a"}, "custom_metric_a")
+	asserter.metricLabels(t, map[string]string{"instance": mockExporterTarget, "job": "metrics-b"}, "custom_metric_b")
 }
 
 func Test_ExternalLabelsAreAddedToEachSample(t *testing.T) {
 	t.Parallel()
 
 	ps := newPrometheusServer(t)
-	asserter := newAsserter(ps.port)
+	asserter := newAsserter(ps)
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 
 	inputConfig := fmt.Sprintf(`
@@ -162,29 +156,4 @@ common:
 
 	asserter.metricName(t, "prometheus_build_info")
 	asserter.metricLabels(t, map[string]string{"cluster_name": "test", "one": "two", "three": "four"}, "prometheus_build_info")
-}
-
-func runConfigurator(t *testing.T, inputConfig string) string {
-	t.Helper()
-
-	tempDir := t.TempDir()
-	inputConfigPath := path.Join(tempDir, "input.yml")
-	outputConfigPath := path.Join(tempDir, "output.yml")
-
-	err := ioutil.WriteFile(inputConfigPath, []byte(inputConfig), 0o444)
-	require.NoError(t, err)
-
-	// nolint:gosec
-	configurator := exec.Command(
-		"go",
-		"run",
-		"../../cmd/configurator",
-		fmt.Sprintf("--input=%s", inputConfigPath),
-		fmt.Sprintf("--output=%s", outputConfigPath),
-	)
-
-	out, err := configurator.CombinedOutput()
-	require.NoError(t, err, string(out))
-
-	return outputConfigPath
 }

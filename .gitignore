@@ -13,3 +13,6 @@
 /test/integration/prometheus
 
 .golangci.yml
+
+# local kubeconfig generated from minikube for integration tests.
+.kubeconfig-dev

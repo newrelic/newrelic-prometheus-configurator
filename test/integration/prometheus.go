@@ -1,18 +1,22 @@
+//go:build integration_test
+
 package integration
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"net"
+	"net/http"
 	"os"
 	"os/exec"
 	"path"
 	"runtime"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
-
 	"github.com/stretchr/testify/require"
 )
 
@@ -55,6 +59,7 @@ func (ps *prometheusServer) start(t *testing.T, configPath string) {
 	require.NoError(t, err, stderr)
 
 	go func() {
+		// This is used to print the prometheus errors when it fails.
 		err := prom.Wait()
 		assert.NoError(t, err, stderr)
 	}()
@@ -63,6 +68,42 @@ func (ps *prometheusServer) start(t *testing.T, configPath string) {
 		err := prom.Process.Signal(os.Interrupt)
 		assert.NoError(t, err, stderr)
 	})
+}
+
+func (ps *prometheusServer) healthy(t *testing.T) bool {
+	t.Helper()
+
+	resp, err := http.Get(fmt.Sprintf("http://localhost:%s/-/healthy", ps.port))
+	if err != nil {
+		t.Logf("Fail to Get healthy API: %s", err)
+		return false
+	}
+
+	return resp.StatusCode == http.StatusOK
+}
+
+func (ps *prometheusServer) targets(t *testing.T) (*targetDiscovery, bool) {
+	t.Helper()
+
+	targetsURL := fmt.Sprintf("http://localhost:%s/api/v1/targets", ps.port)
+	resp, err := http.Get(targetsURL)
+	if err != nil {
+		t.Logf("Fail to Get targets API: %s", err)
+		return nil, false
+	}
+	defer resp.Body.Close()
+
+	decodedResponse := &response{}
+	err = json.NewDecoder(resp.Body).Decode(decodedResponse)
+	require.NoError(t, err)
+
+	t.Logf("Targets API response: %s", decodedResponse)
+
+	targets := &targetDiscovery{}
+	err = json.Unmarshal(decodedResponse.Data, targets)
+	require.NoError(t, err)
+
+	return targets, true
 }
 
 // freePort returns an available TCP port. Basically returns the port provided by the
@@ -95,6 +136,8 @@ func fetchPrometheusBinary(version string) error {
 
 	fetchTar := exec.Command(
 		"curl", "-v",
+		"--retry", "5",
+		"--retry-delay", "3",
 		"-L", tarURL,
 		"--output", tarPath)
 	if out, err := fetchTar.CombinedOutput(); err != nil {
@@ -131,4 +174,44 @@ func checkVersion(path string, version string) (bool, error) {
 	}
 
 	return strings.Contains(string(out), version), nil
+}
+
+type response struct {
+	Status    string          `json:"status"`
+	Data      json.RawMessage `json:"data,omitempty"`
+	ErrorType string          `json:"errorType,omitempty"`
+	Error     string          `json:"error,omitempty"`
+	Warnings  []string        `json:"warnings,omitempty"`
+}
+
+// target has the information for one target.
+type target struct {
+	// Labels before any processing.
+	DiscoveredLabels map[string]string `json:"discoveredLabels"`
+	// Any labels that are added to this target and its metrics.
+	Labels map[string]string `json:"labels"`
+
+	ScrapePool string `json:"scrapePool"`
+	ScrapeURL  string `json:"scrapeUrl"`
+	GlobalURL  string `json:"globalUrl"`
+
+	LastError          string    `json:"lastError"`
+	LastScrape         time.Time `json:"lastScrape"`
+	LastScrapeDuration float64   `json:"lastScrapeDuration"`
+	Health             string    `json:"health"`
+
+	ScrapeInterval string `json:"scrapeInterval"`
+	ScrapeTimeout  string `json:"scrapeTimeout"`
+}
+
+// droppedTarget has the information for one target that was dropped during relabelling.
+type droppedTarget struct {
+	// Labels before any processing.
+	DiscoveredLabels map[string]string `json:"discoveredLabels"`
+}
+
+// targetDiscovery has all the active targets.
+type targetDiscovery struct {
+	ActiveTargets  []*target        `json:"activeTargets"`
+	DroppedTargets []*droppedTarget `json:"droppedTargets"`
 }
