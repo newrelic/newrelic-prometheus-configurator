@@ -8,6 +8,7 @@ const (
 )
 
 var ErrInvalidK8sJobKinds = errors.New("at least one kind should be set in target_kinds field")
+var ErrInvalidK8sJobPrefix = errors.New("prefix cannot be empty in kubernetes jobs")
 
 // KubernetesInput defines all fields to set up prometheus.
 type KubernetesInput struct {
@@ -63,6 +64,10 @@ func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 			return nil, ErrInvalidK8sJobKinds
 		}
 
+		if err := b.checkJob(k8sJob); err != nil {
+			return nil, err
+		}
+
 		if k8sJob.TargetKind.Pod && b.addPodSettings != nil {
 			job := b.buildJob(k8sJob, podKind)
 			job = b.addPodSettings(job, k8sJob)
@@ -95,4 +100,11 @@ func (b *kubernetesJobBuilder) buildJob(k8sJob KubernetesJob, targetKind string)
 
 func (b *kubernetesJobBuilder) buildJobName(prefix string, kind string) string {
 	return prefix + "-" + kind
+}
+
+func (b *kubernetesJobBuilder) checkJob(k8sJob KubernetesJob) error {
+	if k8sJob.JobNamePrefix == "" {
+		return ErrInvalidK8sJobPrefix
+	}
+	return nil
 }

@@ -10,16 +10,43 @@ import (
 func TestKubernetesJobBuilder_InvalidSettings(t *testing.T) {
 	t.Parallel()
 
-	i := &Input{
-		Kubernetes: KubernetesInput{
-			Jobs: []KubernetesJob{
-				{JobNamePrefix: "job"}, // No kind defined.
+	builder := &kubernetesJobBuilder{}
+
+	cases := []struct {
+		Name  string
+		Input *Input
+	}{
+		{
+			Name: "No kind defined",
+			Input: &Input{
+				Kubernetes: KubernetesInput{
+					Jobs: []KubernetesJob{
+						{JobNamePrefix: "job"},
+					},
+				},
+			},
+		},
+		{
+			Name: "No prefix defined",
+			Input: &Input{
+				Kubernetes: KubernetesInput{
+					Jobs: []KubernetesJob{
+						{TargetKind: KubernetesTargetKind{Pod: true}},
+					},
+				},
 			},
 		},
 	}
-	builder := &kubernetesJobBuilder{}
-	_, err := builder.Build(i)
-	require.Error(t, err)
+
+	for _, tc := range cases {
+		c := tc
+		t.Run(c.Name, func(t *testing.T) {
+			t.Parallel()
+
+			_, err := builder.Build(c.Input)
+			require.Error(t, err)
+		})
+	}
 }
 
 //nolint: funlen
