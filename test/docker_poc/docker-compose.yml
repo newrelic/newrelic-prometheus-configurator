@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  prometheus-server:
+    image: quay.io/prometheus/prometheus
+    # quick and dirty workaround since prometheus image uses nobody user
+    user: root
+    entrypoint:
+    - /bin/prometheus 
+    - --config.file=/etc/prometheus/prometheus.yml
+    - --enable-feature=agent
+    - --log.level=debug
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+
+  prometheus-exporter:
+    image: nginx
+    labels:
+      - prometheus.io/scrape=true
+    ports:
+      - "80:80"
+    volumes:
+      - ./metrics:/usr/share/nginx/html/metrics
