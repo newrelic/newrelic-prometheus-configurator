@@ -1,9 +1,9 @@
+//go:build integration_test
+
 package integration
 
 import (
 	"errors"
-	"fmt"
-	"net/http"
 	"testing"
 	"time"
 
@@ -15,23 +15,24 @@ import (
 var ErrTimeout = errors.New("timeout Exceeded")
 
 type asserter struct {
-	appendable     *mocks.Appendable
-	defaultTimeout time.Duration
-	defaultBackoff time.Duration
-	prometheusPort string
+	appendable       *mocks.Appendable
+	defaultTimeout   time.Duration
+	defaultBackoff   time.Duration
+	prometheusServer *prometheusServer
 }
 
-func newAsserter(prometheusPort string) *asserter {
+func newAsserter(ps *prometheusServer) *asserter {
 	a := &asserter{}
 
 	a.appendable = mocks.NewAppendable()
 	a.defaultBackoff = time.Second
 	a.defaultTimeout = time.Second * 20
-	a.prometheusPort = prometheusPort
+	a.prometheusServer = ps
 
 	return a
 }
 
+// metricName checks that the asserter remote write receiver has received all expectedMetricName.
 func (a *asserter) metricName(t *testing.T, expectedMetricName ...string) {
 	t.Helper()
 
@@ -74,22 +75,70 @@ func (a *asserter) metricLabels(t *testing.T, expectedMetricLabels map[string]st
 	require.NoError(t, err, "metric not found: ", lastNotFound)
 }
 
+// prometheusServerReady probes the healthy endpoint of Prometheus.
 func (a *asserter) prometheusServerReady(t *testing.T) {
 	t.Helper()
 
 	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
-		resp, err := http.Get(fmt.Sprintf("http://localhost:%s/-/healthy", a.prometheusPort))
-		if err != nil {
-			return false
-		}
-
-		if resp.StatusCode != http.StatusOK {
-			return false
-		}
-
-		return true
+		return a.prometheusServer.healthy(t)
 	})
 	require.NoError(t, err, "readiness probe failed")
+}
+
+// activeTargetLabels checks that Prometheus has at least one active target with all expected labels.
+func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]string) {
+	t.Helper()
+
+	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
+		targets, ok := a.prometheusServer.targets(t)
+		if !ok {
+			return false
+		}
+
+		for _, at := range targets.ActiveTargets {
+			if containsLabels(at.DiscoveredLabels, expectedLabels) {
+				return true
+			}
+		}
+
+		return false
+	})
+
+	require.NoError(t, err)
+}
+
+// droppedTargetLabels checks that Prometheus has at least one dropped target with all expected labels.
+func (a *asserter) droppedTargetLabels(t *testing.T, expectedLabels map[string]string) {
+	t.Helper()
+
+	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
+		targets, ok := a.prometheusServer.targets(t)
+		if !ok {
+			return false
+		}
+
+		for _, at := range targets.DroppedTargets {
+			if containsLabels(at.DiscoveredLabels, expectedLabels) {
+				return true
+			}
+		}
+
+		return false
+	})
+
+	require.NoError(t, err)
+}
+
+func containsLabels(labels, expectedLabels map[string]string) bool {
+	for k, v := range expectedLabels {
+		if val, ok := labels[k]; ok && val == v {
+			continue
+		}
+
+		return false
+	}
+
+	return true
 }
 
 func retryUntilTrue(timeout time.Duration, backoff time.Duration, f func() bool) error {
