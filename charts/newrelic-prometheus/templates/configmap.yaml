@@ -9,7 +9,7 @@ data:
   config.yaml: |-
     # Configuration for newrelic-prometheus-configurator
     newrelic_remote_write:
-    {{- with (include "newrelic-prometheus.configurator.remote_write" . ) -}}
+    {{- with (include "newrelic-prometheus.configurator.newrelic_remote_write" . ) -}}
       {{- . | nindent 6 }}
     {{- end -}}
     {{- with (include "newrelic-prometheus.configurator.extra_remote_write" . ) -}}

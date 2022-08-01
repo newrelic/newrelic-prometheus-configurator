@@ -114,7 +114,9 @@ config:
 #       max_backoff: 5s
 #       # Retry upon receiving a 429 status code from the remote-write storage.
 #       retry_on_http_429: false
+
 #  extra_remote_write: []
+
 #  for more info about static_targets: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
   static_targets:
     jobs:

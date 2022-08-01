@@ -44,7 +44,7 @@ tests:
       cluster: cluster-test
       nrStaging: true
       config:
-        remote_write:
+        newrelic_remote_write:
           proxy_url: http://proxy.url
           remote_timeout: 30s
           tls_config:
