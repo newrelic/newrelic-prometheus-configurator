@@ -4,51 +4,37 @@ scrape_configs:
     kubernetes_sd_configs:
       - role: endpoints
     relabel_configs:
-      - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_scrape ]
-        action: keep
-        regex: "true"
-      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape_slow]
+      - source_labels: [ __meta_kubernetes_pod_phase ]
         action: drop
-        regex: "true"
+        regex: Pending|Succeeded|Failed|Completed
       - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
         action: replace
-        target_label: __metrics_path__
-        regex: (.+)
-      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        target_label: __scheme__
+        regex: (https?)
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
         action: replace
         target_label: __metrics_path__
         regex: (.+)
       - source_labels: [ __address__, __meta_kubernetes_service_annotation_prometheus_io_port ]
         action: replace
-        regex: ([^:]+)(?::\d+)?;(\d+)
+        regex: (.+?)(?::\d+)?;(\d+)
         target_label: __address__
         replacement: $1:$2
-
-      - source_labels: [__scheme__,__address__,__metrics_path__]
-        action: replace
-        regex: (.+);(.+);(.+)
-        replacement: $1://$2$3
-        target_label: scrapedTargetURL
-      - source_labels: [__meta_kubernetes_endpoints_name]
-        action: replace
-        target_label: targetName
-      - source_labels: [job]
-        action: replace
-        target_label: scrappedTargetKind
-      - action: labeldrop
-        regex: job
       - action: labelmap
-        regex: __meta_kubernetes_pod_label_(.+)
-        replacement: label_$1
+        regex: __meta_kubernetes_service_annotation_prometheus_io_param_(.+)
+        replacement: __param_$1
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
       - source_labels: [__meta_kubernetes_namespace]
         action: replace
-        target_label: namespaceName
+        target_label: namespace
       - source_labels: [__meta_kubernetes_service_name]
         action: replace
-        target_label: serviceName
-      - source_labels: [__meta_kubernetes_pod_phase]
-        action: drop
-        regex: Pending|Succeeded|Failed|Completed
+        target_label: service
+      - source_labels: [ __meta_kubernetes_pod_node_name ]
+        action: replace
+        target_label: node
+
         # Extra relabel config
       - source_labels: [ test_label ]
         action: drop
