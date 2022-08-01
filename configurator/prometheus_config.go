@@ -96,3 +96,26 @@ type RelabelConfig struct {
 	Replacement  string   `yaml:"replacement,omitempty"`
 	Action       string   `yaml:"action,omitempty"`
 }
+
+// KubernetesSdConfig defines the kubernetes service discovery config.
+type KubernetesSdConfig struct {
+	APISever       string                  `yaml:"api_server,omitempty"`
+	Role           string                  `yaml:"role,omitempty"`
+	KubeconfigFile string                  `yaml:"kubeconfig_file,omitempty"`
+	Namespaces     []KubernetesSdNamespace `yaml:"namespaces,omitempty"`
+	Selectors      []KubernetesSdSelector  `yaml:"selectors,omitempty"`
+	Node           bool                    `yaml:"node,omitempty"`
+}
+
+// KubernetesSdNamespace defines the kubernetes service discovery namespace entity.
+type KubernetesSdNamespace struct {
+	OwnNamespace bool     `yaml:"own_namespace,omitempty"`
+	Names        []string `yaml:"names,omitempty"`
+}
+
+// KubernetesSdSelector defines the kubernetes service discovery selector entity.
+type KubernetesSdSelector struct {
+	Role  string `yaml:"role,omitempty"`
+	Label string `yaml:"label,omitempty"`
+	Field string `yaml:"field,omitempty"`
+}

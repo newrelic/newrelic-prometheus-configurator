@@ -11,11 +11,11 @@ type JobInput struct {
 
 // JobOutput represents a prometheus scrape_config Job config with static_configs which can be obtained from input.
 type JobOutput struct {
-	Job                  Job                 `yaml:",inline"`
-	StaticConfigs        []StaticConfig      `yaml:"static_configs,omitempty"`
-	RelabelConfigs       []any               `yaml:"relabel_configs,omitempty"`
-	MetricRelabelConfigs []any               `yaml:"metric_relabel_configs,omitempty"`
-	KubernetesSdConfigs  []map[string]string `yaml:"kubernetes_sd_configs,omitempty"`
+	Job                  Job                  `yaml:",inline"`
+	StaticConfigs        []StaticConfig       `yaml:"static_configs,omitempty"`
+	RelabelConfigs       []any                `yaml:"relabel_configs,omitempty"`
+	MetricRelabelConfigs []any                `yaml:"metric_relabel_configs,omitempty"`
+	KubernetesSdConfigs  []KubernetesSdConfig `yaml:"kubernetes_sd_configs,omitempty"`
 }
 
 func BuildJobOutput(job JobInput) JobOutput {

@@ -3,9 +3,12 @@ package configurator
 // endpointSettingsBuilder returns a copy of `tg` including the specific settings for when endpoints kind is set.
 func endpointSettingsBuilder(job JobOutput, _ KubernetesJob) JobOutput {
 	job.Job.HonorLabels = true
-	job.KubernetesSdConfigs = []map[string]string{
-		{"role": "endpoints"},
+	job.KubernetesSdConfigs = []KubernetesSdConfig{
+		{
+			Role: "endpoints",
+		},
 	}
+
 	job.RelabelConfigs = append(job.RelabelConfigs,
 		RelabelConfig{
 			SourceLabels: []string{"__meta_kubernetes_pod_phase"},
