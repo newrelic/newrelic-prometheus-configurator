@@ -4,10 +4,12 @@
 package configurator_test
 
 import (
+	"fmt"
 	"io/ioutil"
 	"testing"
 
 	"github.com/newrelic-forks/newrelic-prometheus/configurator"
+
 	prometheusConfig "github.com/prometheus/prometheus/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -45,6 +47,74 @@ func TestParser(t *testing.T) {
 			assertIsPrometheusConfig(t, output)
 		})
 	}
+}
+
+func TestDataSourceName(t *testing.T) {
+	configWithDataSourceName := `
+data_source_name: %s
+newrelic_remote_write:
+  license_key: fake
+`
+	//nolint: paralleltest // need clean env variables.
+	t.Run("IsSetFromConfig", func(t *testing.T) {
+		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithDataSourceName, "prom-instance-name")))
+		require.NoError(t, err)
+
+		require.Contains(t, string(prometheusConfig), fmt.Sprintf("prometheus_server=%s", "prom-instance-name"))
+	})
+
+	expectedName := "prom-instance-name-from-env"
+	t.Setenv(configurator.DataSourceNameEnvKey, expectedName)
+
+	t.Run("IsSetFromEnvVar", func(t *testing.T) {
+		t.Parallel()
+
+		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithDataSourceName, "")))
+		require.NoError(t, err)
+
+		require.Contains(t, string(prometheusConfig), fmt.Sprintf("prometheus_server=%s", expectedName))
+	})
+}
+
+func TestLicenseKey(t *testing.T) {
+	configWithLicense := `
+newrelic_remote_write:
+  license_key: %s
+`
+	//nolint: paralleltest // need clean env variables.
+	t.Run("FailIfNotSet", func(t *testing.T) {
+		_, err := configurator.Parse([]byte(fmt.Sprintf(configWithLicense, "")))
+		require.ErrorIs(t, err, configurator.ErrNoLicenseKeyFound)
+	})
+
+	//nolint: paralleltest // need clean env variables.
+	t.Run("IsSetFromConfig", func(t *testing.T) {
+		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithLicense, "fake")))
+		require.NoError(t, err)
+
+		require.Contains(t, string(prometheusConfig), fmt.Sprintf("credentials: %s", "fake"))
+	})
+
+	expectedLicenseKey := "license-key-from-env"
+	t.Setenv(configurator.LicenseKeyEnvKey, expectedLicenseKey)
+
+	t.Run("IsSetFromEnvVar", func(t *testing.T) {
+		t.Parallel()
+
+		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithLicense, "")))
+		require.NoError(t, err)
+
+		require.Contains(t, string(prometheusConfig), fmt.Sprintf("credentials: %s", expectedLicenseKey))
+	})
+
+	t.Run("IsOverrideByEnvVar", func(t *testing.T) {
+		t.Parallel()
+
+		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithLicense, "fake")))
+		require.NoError(t, err)
+
+		require.Contains(t, string(prometheusConfig), fmt.Sprintf("credentials: %s", expectedLicenseKey))
+	})
 }
 
 func TestParserInvalidInputYamlError(t *testing.T) {
