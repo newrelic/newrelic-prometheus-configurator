@@ -28,8 +28,10 @@ func Parse(newrelicConfig []byte) ([]byte, error) {
 		return nil, fmt.Errorf("yaml input could not be loaded: %w", err)
 	}
 
-	if err := expandConfigsFromEnvVars(input); err != nil {
-		return nil, fmt.Errorf("expanding env vars: %w", err)
+	expand(input)
+
+	if err := validate(input); err != nil {
+		return nil, fmt.Errorf("invalid config: %w", err)
 	}
 
 	output, err := BuildOutput(input)
@@ -45,17 +47,20 @@ func Parse(newrelicConfig []byte) ([]byte, error) {
 	return prometheusConfig, nil
 }
 
-func expandConfigsFromEnvVars(i *Input) error {
+// expand replace some specifics configs that can be defined by env variables.
+func expand(config *Input) {
 	if licenseKey := os.Getenv(LicenseKeyEnvKey); licenseKey != "" {
-		i.RemoteWrite.LicenseKey = licenseKey
-	}
-
-	if i.RemoteWrite.LicenseKey == "" {
-		return ErrNoLicenseKeyFound
+		config.RemoteWrite.LicenseKey = licenseKey
 	}
 
 	if dataSourceName := os.Getenv(DataSourceNameEnvKey); dataSourceName != "" {
-		i.DataSourceName = dataSourceName
+		config.DataSourceName = dataSourceName
+	}
+}
+
+func validate(config *Input) error {
+	if config.RemoteWrite.LicenseKey == "" {
+		return ErrNoLicenseKeyFound
 	}
 
 	return nil
