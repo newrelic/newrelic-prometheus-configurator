@@ -48,6 +48,7 @@ func TestParser(t *testing.T) {
 	}
 }
 
+//nolint: tparallel
 func TestDataSourceName(t *testing.T) {
 	configWithDataSourceName := `
 data_source_name: %s
@@ -75,6 +76,7 @@ newrelic_remote_write:
 	})
 }
 
+//nolint: tparallel
 func TestLicenseKey(t *testing.T) {
 	configWithLicense := `
 newrelic_remote_write:
