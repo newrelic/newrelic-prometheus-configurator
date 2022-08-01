@@ -6,35 +6,64 @@ package configurator
 import (
 	"bytes"
 	"fmt"
+	"os"
 
 	"gopkg.in/yaml.v3"
 )
 
 const (
-	yamlEncoderIndent = 2
+	yamlEncoderIndent    = 2
+	DataSourceNameEnvKey = "NR_PROM_DATA_SOURCE_NAME"
+	LicenseKeyEnvKey     = "NR_PROM_LICENSE_KEY"
+)
+
+var ErrNoLicenseKeyFound = fmt.Errorf(
+	"licenseKey was not set neither in yaml config or %s environment variable", LicenseKeyEnvKey,
 )
 
 // Parse loads a yaml input and returns the corresponding prometheus-agent yaml.
-func Parse(in []byte) ([]byte, error) {
-	// load the yaml input
+func Parse(newrelicConfig []byte) ([]byte, error) {
 	input := &Input{}
-
-	err := yaml.Unmarshal(in, input)
-	if err != nil {
+	if err := yaml.Unmarshal(newrelicConfig, input); err != nil {
 		return nil, fmt.Errorf("yaml input could not be loaded: %w", err)
 	}
-	// builds the corresponding output
+
+	expand(input)
+
+	if err := validate(input); err != nil {
+		return nil, fmt.Errorf("invalid config: %w", err)
+	}
+
 	output, err := BuildOutput(input)
 	if err != nil {
 		return nil, fmt.Errorf("output could not be built: %w", err)
 	}
-	// parse it to yml
-	parsed, err := toYaml(&output)
+
+	prometheusConfig, err := toYaml(&output)
 	if err != nil {
 		return nil, fmt.Errorf("output could not be encoded to yaml: %w", err)
 	}
 
-	return parsed, nil
+	return prometheusConfig, nil
+}
+
+// expand replace some specifics configs that can be defined by env variables.
+func expand(config *Input) {
+	if licenseKey := os.Getenv(LicenseKeyEnvKey); licenseKey != "" {
+		config.RemoteWrite.LicenseKey = licenseKey
+	}
+
+	if dataSourceName := os.Getenv(DataSourceNameEnvKey); dataSourceName != "" {
+		config.DataSourceName = dataSourceName
+	}
+}
+
+func validate(config *Input) error {
+	if config.RemoteWrite.LicenseKey == "" {
+		return ErrNoLicenseKeyFound
+	}
+
+	return nil
 }
 
 func toYaml(output *Output) ([]byte, error) {
