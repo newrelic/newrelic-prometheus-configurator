@@ -1,0 +1,35 @@
+kubernetes:
+  jobs:
+    # Job with kubernetes sd config not populated and with extra_label_config
+    - job_name_prefix: kubernetes-job
+      target_kind:
+        endpoints: true
+
+      # Added extra label to test that we place properly already existing configs.
+      extra_relabel_config:
+      - action: drop
+        regex: (.+)
+        source_labels:
+        - test_label
+
+    # Job with kubernetes sd config actually populated
+    - job_name_prefix: kubernetes-job-2
+      sd_config:
+        kubeconfig_file: test_file
+        namespaces:
+          own_namespace: false
+          names:
+          - namespace1
+            namespace2
+        selectors:
+        - role: endpoints
+          label: test_label
+          field: app=test
+        node: false
+
+      target_kind:
+        endpoints: true
+
+
+newrelic_remote_write:
+  license_key: nrLicenseKey

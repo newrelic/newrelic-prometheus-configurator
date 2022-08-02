@@ -28,6 +28,7 @@ func TestParser(t *testing.T) {
 		"remote-write-test",
 		"static-targets-test",
 		"external-labels-test",
+		"endpoints-test",
 	}
 
 	for _, c := range testCases {
@@ -48,6 +49,7 @@ func TestParser(t *testing.T) {
 	}
 }
 
+//nolint: tparallel
 func TestDataSourceName(t *testing.T) {
 	configWithDataSourceName := `
 data_source_name: %s
@@ -75,6 +77,7 @@ newrelic_remote_write:
 	})
 }
 
+//nolint: tparallel
 func TestLicenseKey(t *testing.T) {
 	configWithLicense := `
 newrelic_remote_write:

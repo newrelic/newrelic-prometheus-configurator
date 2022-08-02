@@ -24,12 +24,21 @@ type KubernetesJob struct {
 
 	JobNamePrefix string               `yaml:"job_name_prefix"`
 	Selector      *KubernetesSelector  `yaml:"selector,omitempty"`
+	SdConfig      *SdConfig            `yaml:"sd_config,omitempty"`
 	TargetKind    KubernetesTargetKind `yaml:"target_kind"`
 }
 
 type KubernetesTargetKind struct {
 	Pod       bool `yaml:"pod"`
 	Endpoints bool `yaml:"endpoints"`
+}
+
+// SdConfig holds the config for service discovery.
+type SdConfig struct {
+	KubeconfigFile string                 `yaml:"kubeconfig_file,omitempty"`
+	Namespaces     KubernetesSdNamespace  `yaml:"namespaces,omitempty"`
+	Selectors      []KubernetesSdSelector `yaml:"selectors,omitempty"`
+	Node           *bool                  `yaml:"node,omitempty"`
 }
 
 // Valid returns true when the defined configuration is valid.
@@ -41,7 +50,7 @@ func (k *KubernetesTargetKind) Valid() bool {
 // added (considering the specified `KubernetesJob`).
 type kubernetesSettingsBuilder func(job JobOutput, k8sJob KubernetesJob) JobOutput
 
-// kubernetesJobBuilder holds the the specific settings to add to a TargetJobOutput given the corresponding
+// kubernetesJobBuilder holds the specific settings to add to a TargetJobOutput given the corresponding
 // KubernetesJob definition.
 type kubernetesJobBuilder struct {
 	addPodSettings       kubernetesSettingsBuilder
@@ -58,7 +67,7 @@ func newKubernetesJobBuilder() *kubernetesJobBuilder {
 	}
 }
 
-// BuildKubernetesTargets builds the prometheus targets corresponding to the Kubernetes configuration in input.
+// Build builds the prometheus targets corresponding to the Kubernetes configuration in input.
 func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 	var jobs []JobOutput
 	for _, k8sJob := range i.Kubernetes.Jobs {
