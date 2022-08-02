@@ -29,6 +29,7 @@ func TestParser(t *testing.T) {
 		"static-targets-test",
 		"external-labels-test",
 		"endpoints-test",
+		"filter-test",
 	}
 
 	for _, c := range testCases {

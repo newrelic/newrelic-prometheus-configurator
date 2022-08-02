@@ -20,17 +20,15 @@ type KubernetesInput struct {
 // KubernetesJob holds the configuration which will parsed to a prometheus scrape job including the
 // specific rules needed.
 type KubernetesJob struct {
-	JobInput `yaml:",inline"`
-
+	JobInput        `yaml:",inline"`
 	JobNamePrefix   string                    `yaml:"job_name_prefix"`
-	Selector        *KubernetesSelector       `yaml:"selector,omitempty"`
 	TargetDiscovery KubernetesTargetDiscovery `yaml:"target_discovery"`
 }
 
 type KubernetesTargetDiscovery struct {
-	Pod       bool `yaml:"pod"`
-	Endpoints bool `yaml:"endpoints"`
-	// TODO: Filter Filter `yaml:"filter,omitempty"`. Implemented in Guillermo's PR.
+	Pod              bool              `yaml:"pod"`
+	Endpoints        bool              `yaml:"endpoints"`
+	Filter           *Filter           `yaml:"filter,omitempty"`
 	AdditionalConfig *AdditionalConfig `yaml:"additional_config,omitempty"`
 }
 
@@ -54,15 +52,19 @@ type kubernetesSettingsBuilder func(job JobOutput, k8sJob KubernetesJob) JobOutp
 // KubernetesJobBuilder holds the specific settings to add to a TargetJobOutput given the corresponding
 // KubernetesJob definition.
 type KubernetesJobBuilder struct {
-	addPodSettings               kubernetesSettingsBuilder
-	addEndpointsSettings         kubernetesSettingsBuilder
+	addPodSettings             kubernetesSettingsBuilder
+	addPodFilterSettings       kubernetesSettingsBuilder
+	addEndpointsSettings       kubernetesSettingsBuilder
+	addEndpointsFilterSettings kubernetesSettingsBuilder
 }
 
 // NewKubernetesJobBuilder creates a builder using the default settings builders.
 func NewKubernetesJobBuilder() *KubernetesJobBuilder {
 	return &KubernetesJobBuilder{
-		addPodSettings:               podSettingsBuilder,
-		addEndpointsSettings:         endpointSettingsBuilder,
+		addPodSettings:             podSettingsBuilder,
+		addPodFilterSettings:       podFilterSettingsBuilder,
+		addEndpointsSettings:       endpointSettingsBuilder,
+		addEndpointsFilterSettings: endpointsFilterSettingsBuilder,
 	}
 }
 
@@ -81,12 +83,14 @@ func (b *KubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 
 		if k8sJob.TargetDiscovery.Pod && b.addPodSettings != nil {
 			job := b.buildJob(k8sJob, podKind)
+			job = b.addPodFilterSettings(job, k8sJob)
 			job = b.addPodSettings(job, k8sJob).WithExtraConfigs(k8sJob.JobInput)
 			jobs = append(jobs, job)
 		}
 
 		if k8sJob.TargetDiscovery.Endpoints && b.addEndpointsSettings != nil {
 			job := b.buildJob(k8sJob, endpointsKind)
+			job = b.addEndpointsFilterSettings(job, k8sJob)
 			job = b.addEndpointsSettings(job, k8sJob).WithExtraConfigs(k8sJob.JobInput)
 			jobs = append(jobs, job)
 		}
@@ -95,8 +99,7 @@ func (b *KubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 	return jobs, nil
 }
 
-// buildJob creates a base JobOutput given the kubernetes settings and the target kind. It add
-// the selector settings (if any) and builds the job name.
+// buildJob creates a base JobOutput given the kubernetes settings and the target kind.
 func (b *KubernetesJobBuilder) buildJob(k8sJob KubernetesJob, targetKind string) JobOutput {
 	// build base job
 	job := BuildJobOutput(k8sJob.JobInput)
@@ -115,5 +118,6 @@ func (b *KubernetesJobBuilder) checkJob(k8sJob KubernetesJob) error {
 	if k8sJob.JobNamePrefix == "" {
 		return ErrInvalidK8sJobPrefix
 	}
+
 	return nil
 }

@@ -1,0 +1,15 @@
+kubernetes:
+  jobs:
+    - job_name_prefix: kubernetes-job
+      target_discovery:
+        pod: true
+        endpoints: true
+        # cannot add more labels/annotations to this test since the order is not
+        # guaranteed when checking expected 'regex' results. `kubernetes_test.go` for more
+        # complex tests.
+        filter:
+          annotations:
+            prometheus.io/scrape: true
+          
+newrelic_remote_write:
+  license_key: nrLicenseKey
