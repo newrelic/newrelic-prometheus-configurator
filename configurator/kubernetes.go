@@ -24,12 +24,21 @@ type KubernetesJob struct {
 
 	JobNamePrefix string               `yaml:"job_name_prefix"`
 	Selector      *KubernetesSelector  `yaml:"selector,omitempty"`
+	SdConfig      *SdConfig            `yaml:"sd_config,omitempty"`
 	TargetKind    KubernetesTargetKind `yaml:"target_kind"`
 }
 
 type KubernetesTargetKind struct {
 	Pod       bool `yaml:"pod"`
 	Endpoints bool `yaml:"endpoints"`
+}
+
+// SdConfig holds the config for service discovery.
+type SdConfig struct {
+	KubeconfigFile string                 `yaml:"kubeconfig_file,omitempty"`
+	Namespaces     KubernetesSdNamespace  `yaml:"namespaces,omitempty"`
+	Selectors      []KubernetesSdSelector `yaml:"selectors,omitempty"`
+	Node           *bool                  `yaml:"node,omitempty"`
 }
 
 // Valid returns true when the defined configuration is valid.

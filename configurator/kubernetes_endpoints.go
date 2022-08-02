@@ -1,13 +1,23 @@
 package configurator
 
 // endpointSettingsBuilder returns a copy of `tg` including the specific settings for when endpoints kind is set.
-func endpointSettingsBuilder(job JobOutput, _ KubernetesJob) JobOutput {
+func endpointSettingsBuilder(job JobOutput, input KubernetesJob) JobOutput {
 	job.Job.HonorLabels = true
-	job.KubernetesSdConfigs = []KubernetesSdConfig{
-		{
-			Role: "endpoints",
-		},
+
+	kubernetesConfig := KubernetesSdConfig{
+		Role: "endpoints",
 	}
+
+	if input.SdConfig != nil {
+		kubernetesConfig.KubeconfigFile = input.SdConfig.KubeconfigFile
+		kubernetesConfig.Namespaces = input.SdConfig.Namespaces
+		kubernetesConfig.Selectors = input.SdConfig.Selectors
+		if input.SdConfig.Node != nil {
+			kubernetesConfig.AttachMetadata = &AttachMetadata{Node: input.SdConfig.Node}
+		}
+	}
+
+	job.KubernetesSdConfigs = []KubernetesSdConfig{kubernetesConfig}
 
 	job.RelabelConfigs = append(job.RelabelConfigs,
 		RelabelConfig{
