@@ -31,7 +31,7 @@ func TestKubernetesJobBuilder_InvalidSettings(t *testing.T) {
 			Input: &Input{
 				Kubernetes: KubernetesInput{
 					Jobs: []KubernetesJob{
-						{TargetKind: KubernetesTargetKind{Pod: true}},
+						{TargetDiscovery: KubernetesTargetDiscovery{Pod: true}},
 					},
 				},
 			},
@@ -106,8 +106,8 @@ func TestKubernetesJobBuilder(t *testing.T) {
 				Kubernetes: KubernetesInput{
 					Jobs: []KubernetesJob{
 						{
-							JobNamePrefix: "job",
-							TargetKind:    KubernetesTargetKind{Pod: true},
+							JobNamePrefix:   "job",
+							TargetDiscovery: KubernetesTargetDiscovery{Pod: true},
 						},
 					},
 				},
@@ -125,8 +125,8 @@ func TestKubernetesJobBuilder(t *testing.T) {
 				Kubernetes: KubernetesInput{
 					Jobs: []KubernetesJob{
 						{
-							JobNamePrefix: "job",
-							TargetKind:    KubernetesTargetKind{Endpoints: true},
+							JobNamePrefix:   "job",
+							TargetDiscovery: KubernetesTargetDiscovery{Endpoints: true},
 						},
 					},
 				},
@@ -144,9 +144,9 @@ func TestKubernetesJobBuilder(t *testing.T) {
 				Kubernetes: KubernetesInput{
 					Jobs: []KubernetesJob{
 						{
-							JobNamePrefix: "job",
-							TargetKind:    KubernetesTargetKind{Pod: true},
-							Selector:      &KubernetesSelector{},
+							JobNamePrefix:   "job",
+							TargetDiscovery: KubernetesTargetDiscovery{Pod: true},
+							Selector:        &KubernetesSelector{},
 						},
 					},
 				},
@@ -164,9 +164,9 @@ func TestKubernetesJobBuilder(t *testing.T) {
 				Kubernetes: KubernetesInput{
 					Jobs: []KubernetesJob{
 						{
-							JobNamePrefix: "job",
-							TargetKind:    KubernetesTargetKind{Endpoints: true},
-							Selector:      &KubernetesSelector{},
+							JobNamePrefix:   "job",
+							TargetDiscovery: KubernetesTargetDiscovery{Endpoints: true},
+							Selector:        &KubernetesSelector{},
 						},
 					},
 				},
@@ -184,9 +184,9 @@ func TestKubernetesJobBuilder(t *testing.T) {
 				Kubernetes: KubernetesInput{
 					Jobs: []KubernetesJob{
 						{
-							JobNamePrefix: "job",
-							TargetKind:    KubernetesTargetKind{Pod: true, Endpoints: true},
-							Selector:      &KubernetesSelector{},
+							JobNamePrefix:   "job",
+							TargetDiscovery: KubernetesTargetDiscovery{Pod: true, Endpoints: true},
+							Selector:        &KubernetesSelector{},
 						},
 					},
 				},
