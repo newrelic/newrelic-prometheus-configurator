@@ -1,6 +1,6 @@
 package configurator
 
-// endpointSettingsBuilder returns a copy of `tg` including the specific settings for when endpoints kind is set.
+// endpointSettingsBuilder returns a copy of `job` including the specific settings for when endpoints kind is set.
 func endpointSettingsBuilder(job JobOutput, input KubernetesJob) JobOutput {
 	job.Job.HonorLabels = true
 
