@@ -19,16 +19,22 @@ common:
 {{- end -}}
 
 
-{{- /* it builds the remote_write configuration from configurator config */ -}}
-{{- define "newrelic-prometheus.configurator.remote_write" -}}
+{{- /* it builds the newrelic_remote_write configuration from configurator config */ -}}
+{{- define "newrelic-prometheus.configurator.newrelic_remote_write" -}}
+{{- $tmp := dict -}}
+
 {{- if (include "newrelic.common.nrStaging" . ) -}}
-  staging: true
+  {{- $tmp = dict "staging" true  -}}
 {{- end -}}
 
 {{- if .Values.config -}}
-  {{- if .Values.config.remote_write  -}}
-    {{- .Values.config.remote_write | toYaml | nindent 0 -}}
+  {{- if .Values.config.newrelic_remote_write  -}}
+    {{- $tmp = mustMerge $tmp .Values.config.newrelic_remote_write  -}}
   {{- end -}}
+{{- end -}}
+
+{{- if not (empty $tmp) -}}
+  {{- dict "newrelic_remote_write" $tmp | toYaml -}}
 {{- end -}}
 
 {{- end -}}
