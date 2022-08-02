@@ -68,3 +68,8 @@ tilt-ci:
 integration-test:
 	KUBECONFIG='./.kubeconfig-dev' minikube update-context
 	go test ./... -tags=integration_test -count=1 -race
+
+.PHONY: chart-unit-test
+chart-unit-test:
+	helm dependency update ./charts/newrelic-prometheus
+	helm unittest ./charts/newrelic-prometheus -3
