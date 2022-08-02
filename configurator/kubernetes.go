@@ -22,27 +22,28 @@ type KubernetesInput struct {
 type KubernetesJob struct {
 	JobInput `yaml:",inline"`
 
-	JobNamePrefix string               `yaml:"job_name_prefix"`
-	Selector      *KubernetesSelector  `yaml:"selector,omitempty"`
-	SdConfig      *SdConfig            `yaml:"sd_config,omitempty"`
-	TargetKind    KubernetesTargetKind `yaml:"target_kind"`
+	JobNamePrefix   string                    `yaml:"job_name_prefix"`
+	Selector        *KubernetesSelector       `yaml:"selector,omitempty"`
+	TargetDiscovery KubernetesTargetDiscovery `yaml:"target_discovery"`
 }
 
-type KubernetesTargetKind struct {
+type KubernetesTargetDiscovery struct {
 	Pod       bool `yaml:"pod"`
 	Endpoints bool `yaml:"endpoints"`
+	// TODO: Filter Filter `yaml:"filter,omitempty"`. Implemented in Guillermo's PR.
+	AdditionalConfig *AdditionalConfig `yaml:"additional_config,omitempty"`
 }
 
-// SdConfig holds the config for service discovery.
-type SdConfig struct {
-	KubeconfigFile string                 `yaml:"kubeconfig_file,omitempty"`
-	Namespaces     KubernetesSdNamespace  `yaml:"namespaces,omitempty"`
-	Selectors      []KubernetesSdSelector `yaml:"selectors,omitempty"`
-	Node           *bool                  `yaml:"node,omitempty"`
+// AdditionalConfig holds additional config for the service discovery.
+type AdditionalConfig struct {
+	KubeconfigFile string                  `yaml:"kubeconfig_file,omitempty"`
+	Namespaces     *KubernetesSdNamespace  `yaml:"namespaces,omitempty"`
+	Selectors      *[]KubernetesSdSelector `yaml:"selectors,omitempty"`
+	AttachMetadata *AttachMetadata         `yaml:"attach_metadata,omitempty"`
 }
 
 // Valid returns true when the defined configuration is valid.
-func (k *KubernetesTargetKind) Valid() bool {
+func (k *KubernetesTargetDiscovery) Valid() bool {
 	return k.Pod || k.Endpoints
 }
 
@@ -71,7 +72,7 @@ func newKubernetesJobBuilder() *kubernetesJobBuilder {
 func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 	var jobs []JobOutput
 	for _, k8sJob := range i.Kubernetes.Jobs {
-		if !k8sJob.TargetKind.Valid() {
+		if !k8sJob.TargetDiscovery.Valid() {
 			return nil, ErrInvalidK8sJobKinds
 		}
 
@@ -79,13 +80,13 @@ func (b *kubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 			return nil, err
 		}
 
-		if k8sJob.TargetKind.Pod && b.addPodSettings != nil {
+		if k8sJob.TargetDiscovery.Pod && b.addPodSettings != nil {
 			job := b.buildJob(k8sJob, podKind)
 			job = b.addPodSettings(job, k8sJob).WithExtraConfigs(k8sJob.JobInput)
 			jobs = append(jobs, job)
 		}
 
-		if k8sJob.TargetKind.Endpoints && b.addEndpointsSettings != nil {
+		if k8sJob.TargetDiscovery.Endpoints && b.addEndpointsSettings != nil {
 			job := b.buildJob(k8sJob, endpointsKind)
 			job = b.addEndpointsSettings(job, k8sJob).WithExtraConfigs(k8sJob.JobInput)
 			jobs = append(jobs, job)

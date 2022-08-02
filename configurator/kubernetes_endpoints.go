@@ -4,20 +4,9 @@ package configurator
 func endpointSettingsBuilder(job JobOutput, input KubernetesJob) JobOutput {
 	job.Job.HonorLabels = true
 
-	kubernetesConfig := KubernetesSdConfig{
-		Role: "endpoints",
-	}
+	kubernetesSdConfig := setK8sSdConfigFromJob("endpoints", input)
 
-	if input.SdConfig != nil {
-		kubernetesConfig.KubeconfigFile = input.SdConfig.KubeconfigFile
-		kubernetesConfig.Namespaces = input.SdConfig.Namespaces
-		kubernetesConfig.Selectors = input.SdConfig.Selectors
-		if input.SdConfig.Node != nil {
-			kubernetesConfig.AttachMetadata = &AttachMetadata{Node: input.SdConfig.Node}
-		}
-	}
-
-	job.KubernetesSdConfigs = []KubernetesSdConfig{kubernetesConfig}
+	job.KubernetesSdConfigs = []KubernetesSdConfig{kubernetesSdConfig}
 
 	job.RelabelConfigs = append(job.RelabelConfigs,
 		RelabelConfig{
@@ -71,4 +60,32 @@ func endpointSettingsBuilder(job JobOutput, input KubernetesJob) JobOutput {
 	)
 
 	return job
+}
+
+// setK8sSdConfigFromJob populates a KubernetesSdConfig from a given KubernetesJob.
+func setK8sSdConfigFromJob(role string, input KubernetesJob) KubernetesSdConfig {
+	k8sSdConfig := KubernetesSdConfig{
+		Role: role,
+	}
+
+	if input.TargetDiscovery.AdditionalConfig == nil {
+		return k8sSdConfig
+	}
+
+	k8sSdConfig.KubeconfigFile = input.TargetDiscovery.AdditionalConfig.KubeconfigFile
+
+	if input.TargetDiscovery.AdditionalConfig.Namespaces != nil {
+		k8sSdConfig.Namespaces = input.TargetDiscovery.AdditionalConfig.Namespaces
+	}
+
+	if input.TargetDiscovery.AdditionalConfig.Selectors != nil {
+		k8sSdConfig.Selectors = input.TargetDiscovery.AdditionalConfig.Selectors
+	}
+
+	if input.TargetDiscovery.AdditionalConfig.AttachMetadata != nil &&
+		input.TargetDiscovery.AdditionalConfig.AttachMetadata.Node != nil {
+		k8sSdConfig.AttachMetadata = &AttachMetadata{Node: input.TargetDiscovery.AdditionalConfig.AttachMetadata.Node}
+	}
+
+	return k8sSdConfig
 }
