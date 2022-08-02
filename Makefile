@@ -71,5 +71,6 @@ integration-test:
 
 .PHONY: chart-unit-test
 chart-unit-test:
+	ct --config .github/ct.yaml lint --debug
 	helm dependency update ./charts/newrelic-prometheus
 	helm unittest ./charts/newrelic-prometheus -3
