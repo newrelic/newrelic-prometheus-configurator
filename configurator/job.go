@@ -18,8 +18,8 @@ type JobOutput struct {
 	KubernetesSdConfigs  []KubernetesSdConfig `yaml:"kubernetes_sd_configs,omitempty"`
 }
 
-func BuildJobOutput(job JobInput) JobOutput {
-	jobOutput := JobOutput{
+func BuildJobOutput(job JobInput) *JobOutput {
+	jobOutput := &JobOutput{
 		Job: job.Job,
 	}
 
@@ -35,12 +35,24 @@ func BuildJobOutput(job JobInput) JobOutput {
 	return jobOutput
 }
 
-func (o JobOutput) WithExtraConfigs(i JobInput) JobOutput {
+func (o *JobOutput) AddPodFilter(f *Filter) {
+	if f != nil {
+		o.RelabelConfigs = append(o.RelabelConfigs, f.Pod())
+	}
+}
+
+func (o *JobOutput) AddEndpointsFilter(f *Filter) {
+	if f != nil {
+		o.RelabelConfigs = append(o.RelabelConfigs, f.Endpoints())
+	}
+}
+
+func (o *JobOutput) AddExtraConfigs(i JobInput) {
 	for _, c := range i.ExtraRelabelConfigs {
 		o.RelabelConfigs = append(o.RelabelConfigs, c)
 	}
+
 	for _, c := range i.ExtraMetricRelabelConfigs {
 		o.MetricRelabelConfigs = append(o.MetricRelabelConfigs, c)
 	}
-	return o
 }

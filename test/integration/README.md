@@ -1,6 +1,6 @@
 ## Integration Tests
 ### Goal
-Integration tests are meant to test some custom configurations we are adding to Prometheus with the Configurator. For instance the k8s `selector`, `target_kind`, etc. 
+Integration tests are meant to test some custom configurations we are adding to Prometheus with the Configurator. For instance the k8s `target_discovery`. 
 As an example we want to test if the relabel configs we are adding to drop some targets based on the label names in combination with annotations are behaving as expected. But we don't want to test if `basic_auth` feature is working.
 
 ### Run

@@ -30,11 +30,13 @@ func BuildOutput(input *Input) (Output, error) {
 	}
 
 	// Include the scrape configurations corresponding to kubernetes jobs
-	kubernetesJobBuilder := newKubernetesJobBuilder()
+	kubernetesJobBuilder := NewKubernetesJobBuilder()
+
 	k8sJobs, err := kubernetesJobBuilder.Build(input)
 	if err != nil {
 		return output, err
 	}
+
 	for _, job := range k8sJobs {
 		output.ScrapeConfigs = append(output.ScrapeConfigs, job)
 	}
