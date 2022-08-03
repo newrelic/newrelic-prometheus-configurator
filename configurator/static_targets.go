@@ -11,9 +11,11 @@ type StaticTargetsInput struct {
 // BuildStaticTargetsOutput builds the slice of StaticTargetJobOutput given the input.
 func BuildStaticTargetsOutput(i *Input) []any {
 	staticTargetsOutput := make([]any, 0)
+
 	for _, job := range i.StaticTargets.Jobs {
-		jobOutput := BuildJobOutput(job).WithExtraConfigs(job)
-		staticTargetsOutput = append(staticTargetsOutput, jobOutput)
+		jobOutput := BuildJobOutput(job)
+		jobOutput.AddExtraConfigs(job)
+		staticTargetsOutput = append(staticTargetsOutput, *jobOutput)
 	}
 
 	return staticTargetsOutput

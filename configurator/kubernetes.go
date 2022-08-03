@@ -47,24 +47,24 @@ func (k *KubernetesTargetDiscovery) Valid() bool {
 
 // KubernetesSettingsBuilders defines a functions which updates and returns a `TargetJobOutput` with specific settings
 // added (considering the specified `KubernetesJob`).
-type kubernetesSettingsBuilder func(job JobOutput, k8sJob KubernetesJob) JobOutput
+type kubernetesSettingsBuilder func(job *JobOutput, k8sJob KubernetesJob)
 
 // KubernetesJobBuilder holds the specific settings to add to a TargetJobOutput given the corresponding
 // KubernetesJob definition.
 type KubernetesJobBuilder struct {
-	addPodSettings             kubernetesSettingsBuilder
-	addPodFilterSettings       kubernetesSettingsBuilder
-	addEndpointsSettings       kubernetesSettingsBuilder
-	addEndpointsFilterSettings kubernetesSettingsBuilder
+	addPodSettings kubernetesSettingsBuilder
+	// addPodFilterSettings       kubernetesSettingsBuilder
+	addEndpointsSettings kubernetesSettingsBuilder
+	// addEndpointsFilterSettings kubernetesSettingsBuilder
 }
 
 // NewKubernetesJobBuilder creates a builder using the default settings builders.
 func NewKubernetesJobBuilder() *KubernetesJobBuilder {
 	return &KubernetesJobBuilder{
-		addPodSettings:             podSettingsBuilder,
-		addPodFilterSettings:       podFilterSettingsBuilder,
-		addEndpointsSettings:       endpointSettingsBuilder,
-		addEndpointsFilterSettings: endpointsFilterSettingsBuilder,
+		addPodSettings: podSettingsBuilder,
+		// addPodFilterSettings:       podFilterSettingsBuilder,
+		addEndpointsSettings: endpointSettingsBuilder,
+		// addEndpointsFilterSettings: endpointsFilterSettingsBuilder,
 	}
 }
 
@@ -83,16 +83,20 @@ func (b *KubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 
 		if k8sJob.TargetDiscovery.Pod && b.addPodSettings != nil {
 			job := b.buildJob(k8sJob, podKind)
-			job = b.addPodFilterSettings(job, k8sJob)
-			job = b.addPodSettings(job, k8sJob).WithExtraConfigs(k8sJob.JobInput)
-			jobs = append(jobs, job)
+			job.AddPodFilter(k8sJob.TargetDiscovery.Filter)
+			b.addPodSettings(job, k8sJob)
+			job.AddExtraConfigs(k8sJob.JobInput)
+
+			jobs = append(jobs, *job)
 		}
 
 		if k8sJob.TargetDiscovery.Endpoints && b.addEndpointsSettings != nil {
 			job := b.buildJob(k8sJob, endpointsKind)
-			job = b.addEndpointsFilterSettings(job, k8sJob)
-			job = b.addEndpointsSettings(job, k8sJob).WithExtraConfigs(k8sJob.JobInput)
-			jobs = append(jobs, job)
+			job.AddEndpointsFilter(k8sJob.TargetDiscovery.Filter)
+			b.addEndpointsSettings(job, k8sJob)
+			job.AddExtraConfigs(k8sJob.JobInput)
+
+			jobs = append(jobs, *job)
 		}
 	}
 
@@ -100,7 +104,7 @@ func (b *KubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 }
 
 // buildJob creates a base JobOutput given the kubernetes settings and the target kind.
-func (b *KubernetesJobBuilder) buildJob(k8sJob KubernetesJob, targetKind string) JobOutput {
+func (b *KubernetesJobBuilder) buildJob(k8sJob KubernetesJob, targetKind string) *JobOutput {
 	// build base job
 	job := BuildJobOutput(k8sJob.JobInput)
 

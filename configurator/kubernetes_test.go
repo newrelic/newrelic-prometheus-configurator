@@ -65,10 +65,17 @@ func TestBuildFilter(t *testing.T) {
 		Annotations: map[string]string{
 			"prometheus.io/scrape":     "true",
 			"extra.special.annotation": "yes",
+			"empty":                    "",
 		},
 		Labels: map[string]string{
 			"k8s.io/app":              "(foo|bar)",
 			"my.custom.authorization": "my-auth",
+		},
+	}
+
+	emptyLabelFilter := &configurator.Filter{
+		Labels: map[string]string{
+			"check.if.present": "",
 		},
 	}
 
@@ -84,7 +91,7 @@ func TestBuildFilter(t *testing.T) {
 		want regexBySourceLabel
 	}{
 		{
-			name: "Annotation pod filter",
+			name: "annotation pod filter",
 			args: args{
 				Input: configurator.Input{
 					Kubernetes: configurator.KubernetesInput{
@@ -105,7 +112,28 @@ func TestBuildFilter(t *testing.T) {
 			},
 		},
 		{
-			name: "Combined pod filter",
+			name: "check pod label is present",
+			args: args{
+				Input: configurator.Input{
+					Kubernetes: configurator.KubernetesInput{
+						Jobs: []configurator.KubernetesJob{
+							{
+								JobNamePrefix: "test-endpoints",
+								TargetDiscovery: configurator.KubernetesTargetDiscovery{
+									Pod:    true,
+									Filter: emptyLabelFilter,
+								},
+							},
+						},
+					},
+				},
+			},
+			want: regexBySourceLabel{
+				"__meta_kubernetes_pod_labelpresent_check_if_present": "true",
+			},
+		},
+		{
+			name: "combined pod filter",
 			args: args{
 				Input: configurator.Input{
 					Kubernetes: configurator.KubernetesInput{
@@ -124,12 +152,13 @@ func TestBuildFilter(t *testing.T) {
 			want: regexBySourceLabel{
 				"__meta_kubernetes_pod_annotation_prometheus_io_scrape":     "true",
 				"__meta_kubernetes_pod_annotation_extra_special_annotation": "yes",
+				"__meta_kubernetes_pod_annotationpresent_empty":             "true",
 				"__meta_kubernetes_pod_label_k8s_io_app":                    "(foo|bar)",
 				"__meta_kubernetes_pod_label_my_custom_authorization":       "my-auth",
 			},
 		},
 		{
-			name: "Annotation service-endpoints filter",
+			name: "annotation service-endpoints filter",
 			args: args{
 				Input: configurator.Input{
 					Kubernetes: configurator.KubernetesInput{
@@ -150,7 +179,28 @@ func TestBuildFilter(t *testing.T) {
 			},
 		},
 		{
-			name: "Combined service-endpoints filter",
+			name: "check service-endpoints label is present",
+			args: args{
+				Input: configurator.Input{
+					Kubernetes: configurator.KubernetesInput{
+						Jobs: []configurator.KubernetesJob{
+							{
+								JobNamePrefix: "test-endpoints",
+								TargetDiscovery: configurator.KubernetesTargetDiscovery{
+									Endpoints: true,
+									Filter:    emptyLabelFilter,
+								},
+							},
+						},
+					},
+				},
+			},
+			want: regexBySourceLabel{
+				"__meta_kubernetes_service_labelpresent_check_if_present": "true",
+			},
+		},
+		{
+			name: "combined service-endpoints filter",
 			args: args{
 				Input: configurator.Input{
 					Kubernetes: configurator.KubernetesInput{
@@ -169,6 +219,7 @@ func TestBuildFilter(t *testing.T) {
 			want: regexBySourceLabel{
 				"__meta_kubernetes_service_annotation_prometheus_io_scrape":     "true",
 				"__meta_kubernetes_service_annotation_extra_special_annotation": "yes",
+				"__meta_kubernetes_service_annotationpresent_empty":             "true",
 				"__meta_kubernetes_service_label_k8s_io_app":                    "(foo|bar)",
 				"__meta_kubernetes_service_label_my_custom_authorization":       "my-auth",
 			},
