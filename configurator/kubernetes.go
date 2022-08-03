@@ -49,22 +49,18 @@ func (k *KubernetesTargetDiscovery) Valid() bool {
 // added (considering the specified `KubernetesJob`).
 type kubernetesSettingsBuilder func(job *JobOutput, k8sJob KubernetesJob)
 
-// KubernetesJobBuilder holds the specific settings to add to a TargetJobOutput given the corresponding
-// KubernetesJob definition.
+// KubernetesJobBuilder holds the specific settings to add to a TargetJobOutput given the
+// corresponding KubernetesJob definition.
 type KubernetesJobBuilder struct {
-	addPodSettings kubernetesSettingsBuilder
-	// addPodFilterSettings       kubernetesSettingsBuilder
+	addPodSettings       kubernetesSettingsBuilder
 	addEndpointsSettings kubernetesSettingsBuilder
-	// addEndpointsFilterSettings kubernetesSettingsBuilder
 }
 
 // NewKubernetesJobBuilder creates a builder using the default settings builders.
 func NewKubernetesJobBuilder() *KubernetesJobBuilder {
 	return &KubernetesJobBuilder{
-		addPodSettings: podSettingsBuilder,
-		// addPodFilterSettings:       podFilterSettingsBuilder,
+		addPodSettings:       podSettingsBuilder,
 		addEndpointsSettings: endpointSettingsBuilder,
-		// addEndpointsFilterSettings: endpointsFilterSettingsBuilder,
 	}
 }
 

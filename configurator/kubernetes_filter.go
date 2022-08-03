@@ -54,42 +54,39 @@ func (f Filter) build(metadataSourcePrefix string) RelabelConfig {
 
 // addConditions iterates over the metadata and appends the conditions
 // to `source_labels` and `regex` of the filter.
-func addConditions(filter *RelabelConfig, metadata map[string]string, metadataPrefix string) {
-	for key, val := range metadata {
+func addConditions(relabelConfig *RelabelConfig, metadata map[string]string, metadataPrefix string) {
+	for prometheusLabels, regex := range metadata {
 		// Prometheus sanitize all metadata keys (like kubernetes label/annotations names) to comply
 		// with their naming conventions. We have to do the same so we can match in relabel configs.
 		// The values in the metadata are not sanitized.
 		// e.g: kubernetes label `prometheus.io/scrape` -> `prometheus_io_scrape`
-		sanitizedK8sKey := invalidPrometheusLabelCharRegex.ReplaceAllString(key, "_")
+		sanitizedK8sKey := invalidPrometheusLabelCharRegex.ReplaceAllString(prometheusLabels, "_")
 
 		prefix := metadataPrefix
-		// Using the `present` Prom label to check if metadata exist.
-		if val == "" {
+		// If no value has specified for metadata we just check it exist using the
+		// `__meta_kubernetes_<role>_<annotation/label>present_<annotation/label name>: true
+		if regex == "" {
 			prefix += presentSuffix
+			regex = "true"
 		}
 
 		prometheusSourceLabel := prefix + "_" + sanitizedK8sKey
 
 		// Position on this array really matters since Prometheus will check against the `regex`
 		// in order.
-		filter.SourceLabels = append(filter.SourceLabels, prometheusSourceLabel)
+		relabelConfig.SourceLabels = append(relabelConfig.SourceLabels, prometheusSourceLabel)
 
-		appendRegex(&filter.Regex, val)
+		// Position here also matters since Prometheus parse this regex using the separator and
+		// do the match against the same position of the source labels.
+		relabelConfig.Regex = appendRegex(relabelConfig.Regex, regex)
 	}
 }
 
-func appendRegex(regex *string, newRegex string) {
-	// If no value has specified for metadata we just check it exist using the
-	// `__meta_kubernetes_<role>_<annotation/label>present_<annotation/label name>: true
-	if newRegex == "" {
-		newRegex = "true"
-	}
+func appendRegex(regex string, newRegex string) string {
 	// avoids to put separator for only one condition. In Prometheus this `regex: true;` doesn't work.
-	if *regex == "" {
-		*regex = newRegex
-	} else {
-		// Position here also really matters since Prometheus parse this regex using the separator and
-		// do the match against the same position of the source labels.
-		*regex = *regex + separator + newRegex
+	if regex == "" {
+		return newRegex
 	}
+
+	return regex + separator + newRegex
 }
