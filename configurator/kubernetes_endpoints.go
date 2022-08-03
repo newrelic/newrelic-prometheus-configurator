@@ -1,7 +1,7 @@
 package configurator
 
 // endpointSettingsBuilder returns a copy of `job` including the specific settings for when endpoints kind is set.
-func endpointSettingsBuilder(job JobOutput, input KubernetesJob) JobOutput {
+func endpointSettingsBuilder(job *JobOutput, input KubernetesJob) {
 	job.Job.HonorLabels = true
 
 	kubernetesSdConfig := setK8sSdConfigFromJob("endpoints", input)
@@ -58,8 +58,6 @@ func endpointSettingsBuilder(job JobOutput, input KubernetesJob) JobOutput {
 			TargetLabel:  "node",
 		},
 	)
-
-	return job
 }
 
 // setK8sSdConfigFromJob populates a KubernetesSdConfig from a given KubernetesJob.
