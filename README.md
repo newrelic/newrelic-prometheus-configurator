@@ -40,8 +40,12 @@ Make sure you have these tools or install them:
 - [Install Tilt](https://docs.tilt.dev/install.html)
 - [Install Helm](https://helm.sh/docs/intro/install/)
 
+A license key and cluster name are required to run the environment. Configure them by the environment variables `NR_PROM_CLUSTER` and `NR_PROM_LICENSE_KEY`.
+
 Start the local environment:
 ```shell
+export NR_PROM_CLUSTER=<cluster name>
+export NR_PROM_LICENSE_KEY=<Newrelic ingest key>
 make start-local-cluster
 make tilt-up
 ```
