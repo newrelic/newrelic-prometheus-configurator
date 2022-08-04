@@ -5,8 +5,8 @@ package statictargets
 
 import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 
-// Input defines all the static targets jobs.
-type Input struct {
+// Config defines all the static targets jobs.
+type Config struct {
 	Jobs []Job `yaml:"jobs"`
 }
 
@@ -20,10 +20,10 @@ type Job struct {
 }
 
 // BuildOutput builds the slice of StaticTargetJobOutput given the input.
-func BuildOutput(i Input) []any {
+func BuildOutput(c Config) []any {
 	staticTargetsOutput := make([]any, 0)
 
-	for _, job := range i.Jobs {
+	for _, job := range c.Jobs {
 		jobOutput := job.Job
 
 		jobOutput.StaticConfigs = []promcfg.StaticConfig{
@@ -33,12 +33,12 @@ func BuildOutput(i Input) []any {
 			},
 		}
 
-		for _, c := range job.ExtraRelabelConfigs {
-			jobOutput.RelabelConfigs = append(jobOutput.RelabelConfigs, c)
+		for _, rc := range job.ExtraRelabelConfigs {
+			jobOutput.RelabelConfigs = append(jobOutput.RelabelConfigs, rc)
 		}
 
-		for _, c := range job.ExtraMetricRelabelConfigs {
-			jobOutput.MetricRelabelConfigs = append(jobOutput.MetricRelabelConfigs, c)
+		for _, mrc := range job.ExtraMetricRelabelConfigs {
+			jobOutput.MetricRelabelConfigs = append(jobOutput.MetricRelabelConfigs, mrc)
 		}
 
 		staticTargetsOutput = append(staticTargetsOutput, jobOutput)

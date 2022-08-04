@@ -1,8 +1,9 @@
-package kubernetes
+package kubernetes //nolint: dupl
 
 import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 
-func podRelableConfigs(job Job) []any {
+// podRelabelConfigs returns all relabel configs for an Pod job.
+func podRelabelConfigs(job Job) []any {
 	rc := []any{}
 
 	if job.TargetDiscovery.Filter.Valid() {
@@ -20,8 +21,7 @@ func podRelableConfigs(job Job) []any {
 	return rc
 }
 
-// podDefaultRelabelConfigs includes the specific settings for pods in the provided JobOutput and returns it.
-func podDefaultRelabelConfigs() []promcfg.RelabelConfig { //nolint:dupl
+func podDefaultRelabelConfigs() []promcfg.RelabelConfig {
 	return []promcfg.RelabelConfig{
 		{
 			SourceLabels: []string{"__meta_kubernetes_pod_phase"},

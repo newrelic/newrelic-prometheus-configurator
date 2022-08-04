@@ -16,16 +16,16 @@ var (
 	ErrInvalidK8sJobPrefix = errors.New("prefix cannot be empty in kubernetes jobs")
 )
 
-// Input defines all fields to set up prometheus.
-type Input struct {
+// Config defines all fields to set up prometheus to scrape k8s targets.
+type Config struct {
 	Jobs []Job `yaml:"jobs"`
 }
 
-func (i Input) Build() ([]promcfg.Job, error) {
+func (c Config) Build() ([]promcfg.Job, error) {
 	var jobs []promcfg.Job
 
-	for _, job := range i.Jobs {
-		if err := i.validate(job); err != nil {
+	for _, job := range c.Jobs {
+		if err := c.validate(job); err != nil {
 			return nil, err
 		}
 
@@ -36,10 +36,10 @@ func (i Input) Build() ([]promcfg.Job, error) {
 
 			podJob.KubernetesSdConfigs = append(podJob.KubernetesSdConfigs, buildSdConfig(podKind, job.TargetDiscovery.AdditionalConfig))
 
-			podJob.RelabelConfigs = append(podJob.RelabelConfigs, podRelableConfigs(job)...)
+			podJob.RelabelConfigs = append(podJob.RelabelConfigs, podRelabelConfigs(job)...)
 
-			for _, c := range job.ExtraMetricRelabelConfigs {
-				podJob.MetricRelabelConfigs = append(podJob.MetricRelabelConfigs, c)
+			for _, mrc := range job.ExtraMetricRelabelConfigs {
+				podJob.MetricRelabelConfigs = append(podJob.MetricRelabelConfigs, mrc)
 			}
 
 			jobs = append(jobs, podJob)
@@ -52,10 +52,10 @@ func (i Input) Build() ([]promcfg.Job, error) {
 
 			endpointsJob.KubernetesSdConfigs = append(endpointsJob.KubernetesSdConfigs, buildSdConfig(endpointsKind, job.TargetDiscovery.AdditionalConfig))
 
-			endpointsJob.RelabelConfigs = append(endpointsJob.RelabelConfigs, endpointsRelableConfigs(job)...)
+			endpointsJob.RelabelConfigs = append(endpointsJob.RelabelConfigs, endpointsRelabelConfigs(job)...)
 
-			for _, c := range job.ExtraMetricRelabelConfigs {
-				endpointsJob.MetricRelabelConfigs = append(endpointsJob.MetricRelabelConfigs, c)
+			for _, mrc := range job.ExtraMetricRelabelConfigs {
+				endpointsJob.MetricRelabelConfigs = append(endpointsJob.MetricRelabelConfigs, mrc)
 			}
 
 			jobs = append(jobs, endpointsJob)
@@ -65,7 +65,7 @@ func (i Input) Build() ([]promcfg.Job, error) {
 	return jobs, nil
 }
 
-func (i Input) validate(job Job) error {
+func (c Config) validate(job Job) error {
 	if !job.TargetDiscovery.Valid() {
 		return ErrInvalidK8sJobKinds
 	}

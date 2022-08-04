@@ -17,7 +17,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		remoteConfig   remotewrite.Input
+		remoteConfig   remotewrite.Config
 		dataSourceName string
 	}
 
@@ -29,7 +29,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 		{
 			Name: "Prod,  non-eu and only mandatory fields",
 			Input: args{
-				remoteConfig: remotewrite.Input{
+				remoteConfig: remotewrite.Config{
 					LicenseKey: "fake-prod",
 				},
 			},
@@ -44,7 +44,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 			Name: "Staging, eu and all fields set",
 			Input: args{
 				dataSourceName: "source-of-metrics",
-				remoteConfig: remotewrite.Input{
+				remoteConfig: remotewrite.Config{
 					LicenseKey: "eu-fake-staging",
 					Staging:    true,
 					ProxyURL:   "http://proxy.url",

@@ -1,8 +1,9 @@
-package kubernetes
+package kubernetes //nolint: dupl
 
 import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 
-func endpointsRelableConfigs(job Job) []any {
+// endpointsRelabelConfigs returns all relabel configs for an Endpoints job.
+func endpointsRelabelConfigs(job Job) []any {
 	rc := []any{}
 
 	if job.TargetDiscovery.Filter.Valid() {
@@ -20,7 +21,6 @@ func endpointsRelableConfigs(job Job) []any {
 	return rc
 }
 
-// endpointsRelabelConfigs returns a copy of `job` including the specific settings for when endpoints kind is set.
 func endpointsDefaultRelabelConfigs() []promcfg.RelabelConfig {
 	return []promcfg.RelabelConfig{
 		{

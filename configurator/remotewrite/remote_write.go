@@ -18,8 +18,8 @@ const (
 	prometheusServerQueryParam = "prometheus_server"
 )
 
-// Input defines all the NewRelic's remote write endpoint fields.
-type Input struct {
+// Config defines all the NewRelic's remote write endpoint fields.
+type Config struct {
 	LicenseKey               string                `yaml:"license_key"`
 	Staging                  bool                  `yaml:"staging"`
 	ProxyURL                 string                `yaml:"proxy_url"`
@@ -30,15 +30,15 @@ type Input struct {
 }
 
 // BuildOutput builds a RemoteWriteOutput given the input.
-func BuildOutput(i Input, dataSourceName string) promcfg.RemoteWriteOutput {
+func BuildOutput(c Config, dataSourceName string) promcfg.RemoteWriteOutput {
 	return promcfg.RemoteWriteOutput{
-		URL:                 remoteWriteURL(i.Staging, i.LicenseKey, dataSourceName),
-		RemoteTimeout:       i.RemoteTimeout,
-		Authorization:       promcfg.Authorization{Credentials: i.LicenseKey},
-		TLSConfig:           i.TLSConfig,
-		ProxyURL:            i.ProxyURL,
-		QueueConfig:         i.QueueConfig,
-		WriteRelabelConfigs: i.ExtraWriteRelabelConfigs,
+		URL:                 remoteWriteURL(c.Staging, c.LicenseKey, dataSourceName),
+		RemoteTimeout:       c.RemoteTimeout,
+		Authorization:       promcfg.Authorization{Credentials: c.LicenseKey},
+		TLSConfig:           c.TLSConfig,
+		ProxyURL:            c.ProxyURL,
+		QueueConfig:         c.QueueConfig,
+		WriteRelabelConfigs: c.ExtraWriteRelabelConfigs,
 	}
 }
 

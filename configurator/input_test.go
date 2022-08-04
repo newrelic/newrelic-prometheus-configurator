@@ -46,7 +46,7 @@ func testInputExpectation(t *testing.T) Input {
 			},
 		},
 		DataSourceName: "data-source",
-		RemoteWrite: remotewrite.Input{
+		RemoteWrite: remotewrite.Config{
 			LicenseKey: "nrLicenseKey",
 			Staging:    true,
 			ProxyURL:   "http://proxy.url.to.use:1234",

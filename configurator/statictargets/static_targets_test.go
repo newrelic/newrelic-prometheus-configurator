@@ -21,12 +21,12 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 
 	cases := []struct {
 		Name     string
-		Input    statictargets.Input
+		Input    statictargets.Config
 		Expected []any
 	}{
 		{
 			Name: "All fields set",
-			Input: statictargets.Input{
+			Input: statictargets.Config{
 				Jobs: []statictargets.Job{
 					{
 						// nolint: dupl // TargetJob should be the same

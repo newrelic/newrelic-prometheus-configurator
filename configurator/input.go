@@ -21,13 +21,13 @@ type Input struct {
 	// for details.
 	DataSourceName string `yaml:"data_source_name"`
 	// RemoteWrite holds the New Relic remote write configuration.
-	RemoteWrite remotewrite.Input `yaml:"newrelic_remote_write"`
+	RemoteWrite remotewrite.Config `yaml:"newrelic_remote_write"`
 	// ExtraRemoteWrite holds any additional remote write configuration to use as it is in prometheus configuration.
 	ExtraRemoteWrite []promcfg.ExtraConfig `yaml:"extra_remote_write"`
 	// StaticTargets holds the static-target jobs configuration.
-	StaticTargets statictargets.Input `yaml:"static_targets"`
+	StaticTargets statictargets.Config `yaml:"static_targets"`
 	// ExtraScrapeConfigs holds any additional raw scrape configuration to use as it is in prometheus configuration.
 	ExtraScrapeConfigs []promcfg.ExtraConfig `yaml:"extra_scrape_configs"`
 	// Kubernetes holds the kubernetes-targets' configuration.
-	Kubernetes kubernetes.Input `yaml:"kubernetes"`
+	Kubernetes kubernetes.Config `yaml:"kubernetes"`
 }

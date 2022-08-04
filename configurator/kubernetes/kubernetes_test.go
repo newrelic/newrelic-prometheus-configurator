@@ -13,12 +13,12 @@ func TestBuildFailWhen(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		k8sConfig kubernetes.Input
+		k8sConfig kubernetes.Config
 		want      error
 	}{
 		{
 			name: "JobNamePrefix is empty",
-			k8sConfig: kubernetes.Input{
+			k8sConfig: kubernetes.Config{
 				Jobs: []kubernetes.Job{
 					{
 						JobNamePrefix:   "",
@@ -30,7 +30,7 @@ func TestBuildFailWhen(t *testing.T) {
 		},
 		{
 			name: "All TargetKind are disabled",
-			k8sConfig: kubernetes.Input{
+			k8sConfig: kubernetes.Config{
 				Jobs: []kubernetes.Job{
 					{
 						JobNamePrefix: "test",
@@ -79,7 +79,7 @@ func TestBuildFilter(t *testing.T) {
 	}
 
 	type args struct {
-		Input kubernetes.Input
+		Input kubernetes.Config
 	}
 
 	type regexBySourceLabel map[string]string
@@ -92,7 +92,7 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "annotation pod filter",
 			args: args{
-				Input: kubernetes.Input{
+				Input: kubernetes.Config{
 					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-pod",
@@ -111,7 +111,7 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "check pod label is present",
 			args: args{
-				Input: kubernetes.Input{
+				Input: kubernetes.Config{
 					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-endpoints",
@@ -130,7 +130,7 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "combined pod filter",
 			args: args{
-				Input: kubernetes.Input{
+				Input: kubernetes.Config{
 					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-pod",
@@ -153,7 +153,7 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "annotation service-endpoints filter",
 			args: args{
-				Input: kubernetes.Input{
+				Input: kubernetes.Config{
 					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-endpoints",
@@ -172,7 +172,7 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "check service-endpoints label is present",
 			args: args{
-				Input: kubernetes.Input{
+				Input: kubernetes.Config{
 					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-endpoints",
@@ -191,7 +191,7 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "combined service-endpoints filter",
 			args: args{
-				Input: kubernetes.Input{
+				Input: kubernetes.Config{
 					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-pod",
