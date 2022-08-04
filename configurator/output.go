@@ -7,6 +7,7 @@ package configurator
 import (
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/kubernetes"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/statictargets"
 )
 
@@ -22,7 +23,7 @@ type Output struct {
 // required to obtain a valid prometheus configuration.
 func BuildOutput(input *Input) (Output, error) {
 	output := Output{
-		RemoteWrite:  []any{BuildRemoteWriteOutput(input)},
+		RemoteWrite:  []any{remotewrite.BuildOutput(input.RemoteWrite, input.DataSourceName)},
 		GlobalConfig: input.Common,
 	}
 

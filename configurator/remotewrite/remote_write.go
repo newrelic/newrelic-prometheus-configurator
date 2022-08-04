@@ -1,7 +1,7 @@
 // Copyright 2022 New Relic Corporation. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package configurator
+package remotewrite
 
 import (
 	"fmt"
@@ -18,8 +18,8 @@ const (
 	prometheusServerQueryParam = "prometheus_server"
 )
 
-// RemoteWriteInput defines all the NewRelic's remote write endpoint fields.
-type RemoteWriteInput struct {
+// Input defines all the NewRelic's remote write endpoint fields.
+type Input struct {
 	LicenseKey               string                          `yaml:"license_key"`
 	Staging                  bool                            `yaml:"staging"`
 	ProxyURL                 string                          `yaml:"proxy_url"`
@@ -29,16 +29,16 @@ type RemoteWriteInput struct {
 	ExtraWriteRelabelConfigs []promcfg.PrometheusExtraConfig `yaml:"extra_write_relabel_configs"`
 }
 
-// BuildRemoteWriteOutput builds a RemoteWriteOutput given the input.
-func BuildRemoteWriteOutput(i *Input) promcfg.RemoteWriteOutput {
+// BuildOutput builds a RemoteWriteOutput given the input.
+func BuildOutput(i Input, dataSourceName string) promcfg.RemoteWriteOutput {
 	return promcfg.RemoteWriteOutput{
-		URL:                 remoteWriteURL(i.RemoteWrite.Staging, i.RemoteWrite.LicenseKey, i.DataSourceName),
-		RemoteTimeout:       i.RemoteWrite.RemoteTimeout,
-		Authorization:       promcfg.Authorization{Credentials: i.RemoteWrite.LicenseKey},
-		TLSConfig:           i.RemoteWrite.TLSConfig,
-		ProxyURL:            i.RemoteWrite.ProxyURL,
-		QueueConfig:         i.RemoteWrite.QueueConfig,
-		WriteRelabelConfigs: i.RemoteWrite.ExtraWriteRelabelConfigs,
+		URL:                 remoteWriteURL(i.Staging, i.LicenseKey, dataSourceName),
+		RemoteTimeout:       i.RemoteTimeout,
+		Authorization:       promcfg.Authorization{Credentials: i.LicenseKey},
+		TLSConfig:           i.TLSConfig,
+		ProxyURL:            i.ProxyURL,
+		QueueConfig:         i.QueueConfig,
+		WriteRelabelConfigs: i.ExtraWriteRelabelConfigs,
 	}
 }
 

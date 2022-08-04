@@ -1,14 +1,14 @@
 // Copyright 2022 New Relic Corporation. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package configurator_test
+package remotewrite_test
 
 import (
 	"testing"
 	"time"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,15 +16,20 @@ import (
 func TestBuildRemoteWriteOutput(t *testing.T) {
 	t.Parallel()
 
+	type args struct {
+		remoteConfig   remotewrite.Input
+		dataSourceName string
+	}
+
 	cases := []struct {
 		Name     string
-		Input    *configurator.Input
+		Input    args
 		Expected promcfg.RemoteWriteOutput
 	}{
 		{
 			Name: "Prod,  non-eu and only mandatory fields",
-			Input: &configurator.Input{
-				RemoteWrite: configurator.RemoteWriteInput{
+			Input: args{
+				remoteConfig: remotewrite.Input{
 					LicenseKey: "fake-prod",
 				},
 			},
@@ -37,9 +42,9 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 		},
 		{
 			Name: "Staging, eu and all fields set",
-			Input: &configurator.Input{
-				DataSourceName: "source-of-metrics",
-				RemoteWrite: configurator.RemoteWriteInput{
+			Input: args{
+				dataSourceName: "source-of-metrics",
+				remoteConfig: remotewrite.Input{
 					LicenseKey: "eu-fake-staging",
 					Staging:    true,
 					ProxyURL:   "http://proxy.url",
@@ -111,7 +116,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 		c := tc
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			output := configurator.BuildRemoteWriteOutput(c.Input)
+			output := remotewrite.BuildOutput(c.Input.remoteConfig, c.Input.dataSourceName)
 			assert.EqualValues(t, c.Expected, output)
 		})
 	}

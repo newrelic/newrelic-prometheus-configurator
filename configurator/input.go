@@ -6,6 +6,7 @@ package configurator
 import (
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/kubernetes"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/statictargets"
 )
 
@@ -20,7 +21,7 @@ type Input struct {
 	// for details.
 	DataSourceName string `yaml:"data_source_name"`
 	// RemoteWrite holds the New Relic remote write configuration.
-	RemoteWrite RemoteWriteInput `yaml:"newrelic_remote_write"`
+	RemoteWrite remotewrite.Input `yaml:"newrelic_remote_write"`
 	// ExtraRemoteWrite holds any additional remote write configuration to use as it is in prometheus configuration.
 	ExtraRemoteWrite []promcfg.PrometheusExtraConfig `yaml:"extra_remote_write"`
 	// StaticTargets holds the static-target jobs configuration.

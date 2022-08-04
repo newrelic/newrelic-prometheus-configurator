@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -45,7 +46,7 @@ func testInputExpectation(t *testing.T) Input {
 			},
 		},
 		DataSourceName: "data-source",
-		RemoteWrite: RemoteWriteInput{
+		RemoteWrite: remotewrite.Input{
 			LicenseKey: "nrLicenseKey",
 			Staging:    true,
 			ProxyURL:   "http://proxy.url.to.use:1234",
