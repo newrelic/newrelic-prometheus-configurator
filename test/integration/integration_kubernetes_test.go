@@ -225,12 +225,14 @@ func Test_EndpointsDiscovery(t *testing.T) {
 			Namespace: k8sEnv.testNamespace.Name,
 			Labels: map[string]string{
 				"k8s.io/app": "myApp",
+				"test.label": "test.value",
 			},
 			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-				"prometheus.io/scheme": "https",
-				"prometheus.io/path":   "/custom-path",
-				"prometheus.io/port":   strconv.Itoa(8001),
+				"prometheus.io/scrape":     "true",
+				"prometheus.io/scheme":     "https",
+				"prometheus.io/path":       "/custom-path",
+				"prometheus.io/port":       strconv.Itoa(8001),
+				"prometheus.io/param_test": "test-param",
 			},
 		},
 		Spec: corev1.ServiceSpec{
@@ -257,7 +259,6 @@ func Test_EndpointsDiscovery(t *testing.T) {
 
 	asserter := newAsserter(ps)
 
-	// are not implemented in the configurator yet.
 	promConfig := path.Join(t.TempDir(), "test-config.yml")
 
 	err = ioutil.WriteFile(promConfig, []byte(fmt.Sprintf(`
@@ -296,6 +297,11 @@ scrape_configs:
     target_label: __address__
     regex: (.+?)(?::\d+)?;(\d+)
     replacement: $1:$2
+  - action: labelmap
+    regex: __meta_kubernetes_service_annotation_prometheus_io_param_(.+)
+    replacement: __param_$1
+  - action: labelmap
+    regex: __meta_kubernetes_service_label_(.+)
   - source_labels: [__meta_kubernetes_namespace]
     action: replace
     target_label: namespace
@@ -310,15 +316,16 @@ scrape_configs:
 
 	ps.start(t, promConfig)
 
-	instance := svc.Annotations["prometheus.io/scheme"] + "://" +
+	scrapeURL := svc.Annotations["prometheus.io/scheme"] + "://" +
 		net.JoinHostPort(pod.Status.PodIP, svc.Annotations["prometheus.io/port"]) +
-		svc.Annotations["prometheus.io/path"]
+		svc.Annotations["prometheus.io/path"] + "?test=test-param"
 
 	// Active targets
-	asserter.checkActiveTargetsField(t, "scrapeUrl", instance)
+	asserter.checkActiveTargetsField(t, "scrapeUrl", scrapeURL)
 	asserter.activeTargetLabels(t, map[string]string{"namespace": k8sEnv.testNamespace.Name})
 	asserter.activeTargetLabels(t, map[string]string{"service": svc.Name})
 	asserter.activeTargetLabels(t, map[string]string{"node": pod.Spec.NodeName})
+	asserter.activeTargetLabels(t, map[string]string{"test_label": svc.Labels["test.label"]})
 
 	// Dropped targets
 	asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_pod_name": failedPod.Name})
