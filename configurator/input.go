@@ -6,6 +6,7 @@ package configurator
 import (
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/kubernetes"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/statictargets"
 )
 
 // Input represents the input configuration, it it used to load New Relic configuration so it can be parsed to
@@ -23,7 +24,7 @@ type Input struct {
 	// ExtraRemoteWrite holds any additional remote write configuration to use as it is in prometheus configuration.
 	ExtraRemoteWrite []promcfg.PrometheusExtraConfig `yaml:"extra_remote_write"`
 	// StaticTargets holds the static-target jobs configuration.
-	StaticTargets StaticTargetsInput `yaml:"static_targets"`
+	StaticTargets statictargets.Input `yaml:"static_targets"`
 	// ExtraScrapeConfigs holds any additional raw scrape configuration to use as it is in prometheus configuration.
 	ExtraScrapeConfigs []promcfg.PrometheusExtraConfig `yaml:"extra_scrape_configs"`
 	// Kubernetes holds the kubernetes-targets' configuration.

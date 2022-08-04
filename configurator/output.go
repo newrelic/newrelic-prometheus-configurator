@@ -7,6 +7,7 @@ package configurator
 import (
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/kubernetes"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/statictargets"
 )
 
 // Output holds all configuration information in prometheus format which can be directly marshaled to a valid yaml
@@ -30,7 +31,7 @@ func BuildOutput(input *Input) (Output, error) {
 	}
 
 	// Include the scrape configurations corresponding to static targets
-	if staticTargets := BuildStaticTargetsOutput(input); len(staticTargets) > 0 {
+	if staticTargets := statictargets.BuildOutput(input.StaticTargets); len(staticTargets) > 0 {
 		output.ScrapeConfigs = append(output.ScrapeConfigs, staticTargets...)
 	}
 

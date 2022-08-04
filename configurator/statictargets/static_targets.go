@@ -1,17 +1,17 @@
 // Copyright 2022 New Relic Corporation. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package configurator
+package statictargets
 
 import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 
-// StaticTargetsInput defines all the static targets jobs.
-type StaticTargetsInput struct {
-	Jobs []StaticTargetJob `yaml:"jobs"`
+// Input defines all the static targets jobs.
+type Input struct {
+	Jobs []Job `yaml:"jobs"`
 }
 
-// StaticTargetJob represents job config for configurator.
-type StaticTargetJob struct {
+// Job represents job config for configurator.
+type Job struct {
 	Job                       promcfg.Job                     `yaml:",inline"`
 	Targets                   []string                        `yaml:"targets"`
 	Labels                    map[string]string               `yaml:"labels"`
@@ -19,11 +19,11 @@ type StaticTargetJob struct {
 	ExtraMetricRelabelConfigs []promcfg.PrometheusExtraConfig `yaml:"extra_metric_relabel_config"`
 }
 
-// BuildStaticTargetsOutput builds the slice of StaticTargetJobOutput given the input.
-func BuildStaticTargetsOutput(i *Input) []any {
+// BuildOutput builds the slice of StaticTargetJobOutput given the input.
+func BuildOutput(i Input) []any {
 	staticTargetsOutput := make([]any, 0)
 
-	for _, job := range i.StaticTargets.Jobs {
+	for _, job := range i.Jobs {
 		jobOutput := job.Job
 
 		jobOutput.StaticConfigs = []promcfg.StaticConfig{
