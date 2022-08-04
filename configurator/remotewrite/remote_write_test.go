@@ -116,7 +116,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 		c := tc
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			output := remotewrite.BuildOutput(c.Input.remoteConfig, c.Input.dataSourceName)
+			output := c.Input.remoteConfig.Build(c.Input.dataSourceName)
 			assert.EqualValues(t, c.Expected, output)
 		})
 	}

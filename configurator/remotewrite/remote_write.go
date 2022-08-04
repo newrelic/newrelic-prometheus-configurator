@@ -29,8 +29,8 @@ type Config struct {
 	ExtraWriteRelabelConfigs []promcfg.ExtraConfig `yaml:"extra_write_relabel_configs"`
 }
 
-// BuildOutput builds a RemoteWriteOutput given the input.
-func BuildOutput(c Config, dataSourceName string) promcfg.RemoteWriteOutput {
+// Build builds a RemoteWriteOutput given the input.
+func (c Config) Build(dataSourceName string) promcfg.RemoteWriteOutput {
 	return promcfg.RemoteWriteOutput{
 		URL:                 remoteWriteURL(c.Staging, c.LicenseKey, dataSourceName),
 		RemoteTimeout:       c.RemoteTimeout,

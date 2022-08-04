@@ -6,8 +6,6 @@ package configurator
 
 import (
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/statictargets"
 )
 
 // Output holds all configuration information in prometheus format which can be directly marshaled to a valid yaml
@@ -22,7 +20,7 @@ type Output struct {
 // required to obtain a valid prometheus configuration.
 func BuildOutput(input *Input) (Output, error) {
 	output := Output{
-		RemoteWrite:  []any{remotewrite.BuildOutput(input.RemoteWrite, input.DataSourceName)},
+		RemoteWrite:  []any{input.RemoteWrite.Build(input.DataSourceName)},
 		GlobalConfig: input.Common,
 	}
 
@@ -30,12 +28,10 @@ func BuildOutput(input *Input) (Output, error) {
 		output.RemoteWrite = append(output.RemoteWrite, extraRemoteWriteConfig)
 	}
 
-	// Include the scrape configurations corresponding to static targets
-	if staticTargets := statictargets.BuildOutput(input.StaticTargets); len(staticTargets) > 0 {
-		output.ScrapeConfigs = append(output.ScrapeConfigs, staticTargets...)
+	for _, staticTargets := range input.StaticTargets.Build() {
+		output.ScrapeConfigs = append(output.ScrapeConfigs, staticTargets)
 	}
 
-	// Include the scrape configurations corresponding to kubernetes jobs
 	k8sJobs, err := input.Kubernetes.Build()
 	if err != nil {
 		return output, err

@@ -22,7 +22,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 	cases := []struct {
 		Name     string
 		Input    statictargets.Config
-		Expected []any
+		Expected []promcfg.Job
 	}{
 		{
 			Name: "All fields set",
@@ -96,8 +96,8 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 					},
 				},
 			},
-			Expected: []any{
-				promcfg.Job{
+			Expected: []promcfg.Job{
+				{
 					JobName:               "fancy-job",
 					HonorLabels:           true,
 					HonorTimestamps:       &trueValue,
@@ -174,7 +174,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 		c := tc
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			output := statictargets.BuildOutput(c.Input)
+			output := c.Input.Build()
 			assert.EqualValues(t, c.Expected, output)
 		})
 	}

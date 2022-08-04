@@ -19,9 +19,9 @@ type Job struct {
 	ExtraMetricRelabelConfigs []promcfg.ExtraConfig `yaml:"extra_metric_relabel_config"`
 }
 
-// BuildOutput builds the slice of StaticTargetJobOutput given the input.
-func BuildOutput(c Config) []any {
-	staticTargetsOutput := make([]any, 0)
+// Build builds the slice of StaticTargetJobOutput given the input.
+func (c Config) Build() []promcfg.Job {
+	staticTargetsOutput := []promcfg.Job{}
 
 	for _, job := range c.Jobs {
 		jobOutput := job.Job
