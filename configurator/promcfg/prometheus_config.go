@@ -1,4 +1,4 @@
-package configurator
+package promcfg
 
 import (
 	"net/url"
@@ -121,4 +121,27 @@ type KubernetesSdSelector struct {
 	Role  string `yaml:"role,omitempty"`
 	Label string `yaml:"label,omitempty"`
 	Field string `yaml:"field,omitempty"`
+}
+
+// QueueConfig represents the remote-write queue config.
+type QueueConfig struct {
+	Capacity          int           `yaml:"capacity"`
+	MaxShards         int           `yaml:"max_shards"`
+	MinShards         int           `yaml:"min_shards"`
+	MaxSamplesPerSend int           `yaml:"max_samples_per_send"`
+	BatchSendDeadLine time.Duration `yaml:"batch_send_deadline"`
+	MinBackoff        time.Duration `yaml:"min_backoff"`
+	MaxBackoff        time.Duration `yaml:"max_backoff"`
+	RetryOnHTTP429    bool          `yaml:"retry_on_http_429"`
+}
+
+// RemoteWriteOutput represents a prometheus remote_write config which can be obtained from input.
+type RemoteWriteOutput struct {
+	URL                 string                  `yaml:"url"`
+	RemoteTimeout       time.Duration           `yaml:"remote_timeout,omitempty"`
+	Authorization       Authorization           `yaml:"authorization"`
+	TLSConfig           *TLSConfig              `yaml:"tls_config,omitempty"`
+	ProxyURL            string                  `yaml:"proxy_url,omitempty"`
+	QueueConfig         *QueueConfig            `yaml:"queue_config,omitempty"`
+	WriteRelabelConfigs []PrometheusExtraConfig `yaml:"write_relabel_configs,omitempty"`
 }

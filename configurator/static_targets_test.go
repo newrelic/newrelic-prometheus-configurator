@@ -9,6 +9,7 @@ import (
 
 	"github.com/alecthomas/units"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,7 +32,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 					Jobs: []configurator.JobInput{
 						{
 							//nolint: dupl // TargetJob should be the same
-							Job: configurator.Job{
+							Job: promcfg.Job{
 								JobName:               "fancy-job",
 								HonorLabels:           true,
 								HonorTimestamps:       &trueValue,
@@ -46,7 +47,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 								MetricsPath:           "/metrics",
 								ScrapeInterval:        10000,
 								ScrapeTimeout:         10000,
-								TLSConfig: &configurator.TLSConfig{
+								TLSConfig: &promcfg.TLSConfig{
 									CAFile:             "ca-file",
 									CertFile:           "cert-file",
 									KeyFile:            "key-file",
@@ -55,19 +56,19 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 									MinVersion:         "TLS12",
 								},
 								BasicAuth: nil,
-								Authorization: configurator.Authorization{
+								Authorization: promcfg.Authorization{
 									Type:            "Bearer",
 									Credentials:     "aaa",
 									CredentialsFile: "a/b",
 								},
-								OAuth2: configurator.OAuth2{
+								OAuth2: promcfg.OAuth2{
 									ClientID:         "client",
 									ClientSecret:     "secret",
 									ClientSecretFile: "a/secret",
 									Scopes:           []string{"all"},
 									TokenURL:         "a-url",
 									EndpointParams:   map[string]string{"param": "value"},
-									TLSConfig: &configurator.TLSConfig{
+									TLSConfig: &promcfg.TLSConfig{
 										CAFile:             "ca-file",
 										CertFile:           "cert-file",
 										KeyFile:            "key-file",
@@ -80,14 +81,14 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 							},
 							Targets: []string{"host:port"},
 							Labels:  map[string]string{"a": "b"},
-							ExtraRelabelConfigs: []configurator.PrometheusExtraConfig{
+							ExtraRelabelConfigs: []promcfg.PrometheusExtraConfig{
 								map[string]any{
 									"source_labels": []any{"src.label"},
 									"regex":         "to_drop.*",
 									"action":        "drop",
 								},
 							},
-							ExtraMetricRelabelConfigs: []configurator.PrometheusExtraConfig{
+							ExtraMetricRelabelConfigs: []promcfg.PrometheusExtraConfig{
 								map[string]any{
 									"source_labels": []any{"src.label"},
 									"regex":         "to_drop.*",
@@ -101,7 +102,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 			Expected: []any{
 				configurator.JobOutput{
 					//nolint: dupl // TargetJob should be the same.
-					Job: configurator.Job{
+					Job: promcfg.Job{
 						JobName:               "fancy-job",
 						HonorLabels:           true,
 						HonorTimestamps:       &trueValue,
@@ -116,7 +117,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 						MetricsPath:           "/metrics",
 						ScrapeInterval:        10000,
 						ScrapeTimeout:         10000,
-						TLSConfig: &configurator.TLSConfig{
+						TLSConfig: &promcfg.TLSConfig{
 							CAFile:             "ca-file",
 							CertFile:           "cert-file",
 							KeyFile:            "key-file",
@@ -125,19 +126,19 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 							MinVersion:         "TLS12",
 						},
 						BasicAuth: nil,
-						Authorization: configurator.Authorization{
+						Authorization: promcfg.Authorization{
 							Type:            "Bearer",
 							Credentials:     "aaa",
 							CredentialsFile: "a/b",
 						},
-						OAuth2: configurator.OAuth2{
+						OAuth2: promcfg.OAuth2{
 							ClientID:         "client",
 							ClientSecret:     "secret",
 							ClientSecretFile: "a/secret",
 							Scopes:           []string{"all"},
 							TokenURL:         "a-url",
 							EndpointParams:   map[string]string{"param": "value"},
-							TLSConfig: &configurator.TLSConfig{
+							TLSConfig: &promcfg.TLSConfig{
 								CAFile:             "ca-file",
 								CertFile:           "cert-file",
 								KeyFile:            "key-file",
@@ -148,7 +149,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 							ProxyURL: "",
 						},
 					},
-					StaticConfigs: []configurator.StaticConfig{
+					StaticConfigs: []promcfg.StaticConfig{
 						{
 							Targets: []string{"host:port"},
 							Labels:  map[string]string{"a": "b"},

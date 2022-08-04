@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/newrelic-forks/newrelic-prometheus/configurator"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 	"github.com/stretchr/testify/require"
 )
 
@@ -238,7 +239,7 @@ func TestBuildFilter(t *testing.T) {
 			require.GreaterOrEqual(t, len(job[0].RelabelConfigs), 1)
 
 			// we expect the filter relabel config as first one.
-			actualRelabelConfig, ok := job[0].RelabelConfigs[0].(configurator.RelabelConfig)
+			actualRelabelConfig, ok := job[0].RelabelConfigs[0].(promcfg.RelabelConfig)
 			require.True(t, ok)
 
 			require.Equal(t, len(tt.want), len(actualRelabelConfig.SourceLabels))

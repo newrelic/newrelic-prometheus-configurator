@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/newrelic-forks/newrelic-prometheus/configurator"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +19,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 	cases := []struct {
 		Name     string
 		Input    *configurator.Input
-		Expected configurator.RemoteWriteOutput
+		Expected promcfg.RemoteWriteOutput
 	}{
 		{
 			Name: "Prod,  non-eu and only mandatory fields",
@@ -27,9 +28,9 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 					LicenseKey: "fake-prod",
 				},
 			},
-			Expected: configurator.RemoteWriteOutput{
+			Expected: promcfg.RemoteWriteOutput{
 				URL: "https://metric-api.newrelic.com/prometheus/v1/write",
-				Authorization: configurator.Authorization{
+				Authorization: promcfg.Authorization{
 					Credentials: "fake-prod",
 				},
 			},
@@ -42,7 +43,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 					LicenseKey: "eu-fake-staging",
 					Staging:    true,
 					ProxyURL:   "http://proxy.url",
-					TLSConfig: &configurator.TLSConfig{
+					TLSConfig: &promcfg.TLSConfig{
 						CAFile:             "ca-file",
 						CertFile:           "cert-file",
 						KeyFile:            "key-file",
@@ -50,7 +51,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 						InsecureSkipVerify: true,
 						MinVersion:         "TLS12",
 					},
-					QueueConfig: &configurator.QueueConfig{
+					QueueConfig: &promcfg.QueueConfig{
 						Capacity:          100,
 						MaxShards:         10,
 						MinShards:         2,
@@ -61,7 +62,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 						RetryOnHTTP429:    true,
 					},
 					RemoteTimeout: 10 * time.Second,
-					ExtraWriteRelabelConfigs: []configurator.PrometheusExtraConfig{
+					ExtraWriteRelabelConfigs: []promcfg.PrometheusExtraConfig{
 						map[string]any{
 							"source_labels": []any{"src.label"},
 							"regex":         "to_drop.*",
@@ -70,14 +71,14 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 					},
 				},
 			},
-			Expected: configurator.RemoteWriteOutput{
+			Expected: promcfg.RemoteWriteOutput{
 				URL:           "https://staging-metric-api.eu.newrelic.com/prometheus/v1/write?prometheus_server=source-of-metrics",
 				RemoteTimeout: 10 * time.Second,
-				Authorization: configurator.Authorization{
+				Authorization: promcfg.Authorization{
 					Credentials: "eu-fake-staging",
 				},
 				ProxyURL: "http://proxy.url",
-				TLSConfig: &configurator.TLSConfig{
+				TLSConfig: &promcfg.TLSConfig{
 					CAFile:             "ca-file",
 					CertFile:           "cert-file",
 					KeyFile:            "key-file",
@@ -85,7 +86,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 					InsecureSkipVerify: true,
 					MinVersion:         "TLS12",
 				},
-				QueueConfig: &configurator.QueueConfig{
+				QueueConfig: &promcfg.QueueConfig{
 					Capacity:          100,
 					MaxShards:         10,
 					MinShards:         2,
@@ -95,7 +96,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 					MaxBackoff:        time.Second,
 					RetryOnHTTP429:    true,
 				},
-				WriteRelabelConfigs: []configurator.PrometheusExtraConfig{
+				WriteRelabelConfigs: []promcfg.PrometheusExtraConfig{
 					map[string]any{
 						"source_labels": []any{"src.label"},
 						"regex":         "to_drop.*",

@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -35,7 +36,7 @@ func testInputExpectation(t *testing.T) Input {
 	t.Helper()
 
 	return Input{
-		Common: GlobalConfig{
+		Common: promcfg.GlobalConfig{
 			ScrapeInterval: time.Second * 60,
 			ScrapeTimeout:  time.Second,
 			ExternalLabels: map[string]string{
@@ -48,7 +49,7 @@ func testInputExpectation(t *testing.T) Input {
 			LicenseKey: "nrLicenseKey",
 			Staging:    true,
 			ProxyURL:   "http://proxy.url.to.use:1234",
-			TLSConfig: &TLSConfig{
+			TLSConfig: &promcfg.TLSConfig{
 				InsecureSkipVerify: true,
 				CAFile:             "/path/to/ca.crt",
 				CertFile:           "/path/to/cert.crt",
@@ -56,7 +57,7 @@ func testInputExpectation(t *testing.T) Input {
 				ServerName:         "server.name",
 				MinVersion:         "TLS12",
 			},
-			QueueConfig: &QueueConfig{
+			QueueConfig: &promcfg.QueueConfig{
 				Capacity:          2500,
 				MaxShards:         200,
 				MinShards:         1,
@@ -67,7 +68,7 @@ func testInputExpectation(t *testing.T) Input {
 				RetryOnHTTP429:    false,
 			},
 			RemoteTimeout: 30 * time.Second,
-			ExtraWriteRelabelConfigs: []PrometheusExtraConfig{
+			ExtraWriteRelabelConfigs: []promcfg.PrometheusExtraConfig{
 				map[string]any{
 					"source_labels": []any{"__name__", "instance"},
 					"regex":         "node_memory_active_bytes;localhost:9100",
@@ -75,7 +76,7 @@ func testInputExpectation(t *testing.T) Input {
 				},
 			},
 		},
-		ExtraRemoteWrite: []PrometheusExtraConfig{
+		ExtraRemoteWrite: []promcfg.PrometheusExtraConfig{
 			map[string]any{
 				"url": "https://extra.prometheus.remote.write",
 			},

@@ -4,12 +4,14 @@
 // Package configurator holds the code to parse New Relic's configuration into a valid prometheus-agent configuration.
 package configurator
 
+import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+
 // Output holds all configuration information in prometheus format which can be directly marshaled to a valid yaml
 // configuration.
 type Output struct {
-	RemoteWrite   []any        `yaml:"remote_write"`
-	ScrapeConfigs []any        `yaml:"scrape_configs,omitempty"`
-	GlobalConfig  GlobalConfig `yaml:"global"`
+	RemoteWrite   []any                `yaml:"remote_write"`
+	ScrapeConfigs []any                `yaml:"scrape_configs,omitempty"`
+	GlobalConfig  promcfg.GlobalConfig `yaml:"global"`
 }
 
 // BuildOutput builds the prometheus config output from the provided input, it holds "first level" transformations

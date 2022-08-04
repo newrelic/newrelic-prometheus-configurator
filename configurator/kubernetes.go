@@ -1,6 +1,10 @@
 package configurator
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+)
 
 const (
 	podKind       = "pod"
@@ -34,10 +38,10 @@ type KubernetesTargetDiscovery struct {
 
 // AdditionalConfig holds additional config for the service discovery.
 type AdditionalConfig struct {
-	KubeconfigFile string                  `yaml:"kubeconfig_file,omitempty"`
-	Namespaces     *KubernetesSdNamespace  `yaml:"namespaces,omitempty"`
-	Selectors      *[]KubernetesSdSelector `yaml:"selectors,omitempty"`
-	AttachMetadata *AttachMetadata         `yaml:"attach_metadata,omitempty"`
+	KubeconfigFile string                          `yaml:"kubeconfig_file,omitempty"`
+	Namespaces     *promcfg.KubernetesSdNamespace  `yaml:"namespaces,omitempty"`
+	Selectors      *[]promcfg.KubernetesSdSelector `yaml:"selectors,omitempty"`
+	AttachMetadata *promcfg.AttachMetadata         `yaml:"attach_metadata,omitempty"`
 }
 
 // Valid returns true when the defined configuration is valid.
