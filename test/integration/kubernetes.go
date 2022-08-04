@@ -82,6 +82,17 @@ func (ke *k8sEnvirnoment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 	return p
 }
 
+// addService adds a service using the k8s client.
+// It fails in case the service can't be added.
+func (ke *k8sEnvirnoment) addService(t *testing.T, srv *corev1.Service) *corev1.Service {
+	t.Helper()
+
+	p, err := ke.client.CoreV1().Services(ke.testNamespace.Name).Create(context.Background(), srv, metav1.CreateOptions{})
+	require.NoError(t, err)
+
+	return p
+}
+
 //nolint:goerr113
 func k8sClient(kubeconfigPath string) (*kubernetes.Clientset, error) {
 	conf, err := clientcmd.BuildConfigFromFlags("", kubeconfigPath)

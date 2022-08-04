@@ -85,8 +85,9 @@ func (a *asserter) prometheusServerReady(t *testing.T) {
 	require.NoError(t, err, "readiness probe failed")
 }
 
-// activeTargetLabels checks that Prometheus has at least one active target with all expected labels.
-func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]string) {
+// activeTargetDiscoveredLabels checks that Prometheus has at least one active target with all expected label for
+// discoveredLabels.
+func (a *asserter) activeTargetDiscoveredLabels(t *testing.T, expectedLabels map[string]string) {
 	t.Helper()
 
 	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
@@ -98,6 +99,51 @@ func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]st
 		for _, at := range targets.ActiveTargets {
 			if containsLabels(at.DiscoveredLabels, expectedLabels) {
 				return true
+			}
+		}
+
+		return false
+	})
+
+	require.NoError(t, err)
+}
+
+// activeTargetLabels checks that Prometheus has at least one active target with all expected labels for labels.
+func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]string) {
+	t.Helper()
+
+	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
+		targets, ok := a.prometheusServer.targets(t)
+		if !ok {
+			return false
+		}
+
+		for _, at := range targets.ActiveTargets {
+			if containsLabels(at.Labels, expectedLabels) {
+				return true
+			}
+		}
+
+		return false
+	})
+
+	require.NoError(t, err)
+}
+
+func (a *asserter) checkActiveTargetField(t *testing.T, key, value string) {
+	t.Helper()
+
+	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
+		targets, ok := a.prometheusServer.targets(t)
+		if !ok {
+			return false
+		}
+
+		// TODO: Add these values as constants
+		for _, at := range targets.ActiveTargets {
+			switch key {
+			case "scrapeUrl":
+				return at.ScrapeURL == value
 			}
 		}
 
