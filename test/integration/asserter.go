@@ -130,7 +130,8 @@ func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]st
 	require.NoError(t, err)
 }
 
-func (a *asserter) checkActiveTargetsField(t *testing.T, key, value string) {
+// activeTargetField checks that Prometheus has at least one active target with the given value for that specific key.
+func (a *asserter) activeTargetField(t *testing.T, key, value string) {
 	t.Helper()
 
 	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {

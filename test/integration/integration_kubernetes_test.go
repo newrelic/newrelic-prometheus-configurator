@@ -321,7 +321,7 @@ scrape_configs:
 		svc.Annotations["prometheus.io/path"] + "?test=test-param"
 
 	// Active targets
-	asserter.checkActiveTargetsField(t, "scrapeUrl", scrapeURL)
+	asserter.activeTargetField(t, "scrapeUrl", scrapeURL)
 	asserter.activeTargetLabels(t, map[string]string{"namespace": k8sEnv.testNamespace.Name})
 	asserter.activeTargetLabels(t, map[string]string{"service": svc.Name})
 	asserter.activeTargetLabels(t, map[string]string{"node": pod.Spec.NodeName})
