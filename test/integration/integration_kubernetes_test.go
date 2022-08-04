@@ -3,6 +3,7 @@
 package integration
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -178,6 +179,7 @@ func Test_EndpointsDiscovery(t *testing.T) {
 
 	k8sEnv := newK8sEnvironment(t)
 
+	// Create initial pod
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "testpod",
@@ -191,6 +193,32 @@ func Test_EndpointsDiscovery(t *testing.T) {
 		Spec: fakePodSpec(),
 	}
 
+	// Create failing pod
+	failedPod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "testpod-failed",
+			Labels: map[string]string{
+				"k8s.io/app": "myApp",
+			},
+			Annotations: map[string]string{
+				"prometheus.io/scrape": "true",
+			},
+		},
+		Status: corev1.PodStatus{
+			Phase: corev1.PodFailed,
+		},
+		Spec: corev1.PodSpec{
+
+			Containers: []corev1.Container{
+				{
+					Name:  "fake-exporter",
+					Image: "fake-image",
+				},
+			},
+		},
+	}
+
+	// Create service
 	svc := &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "testservice",
@@ -219,6 +247,10 @@ func Test_EndpointsDiscovery(t *testing.T) {
 	}
 
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
+
+	failedPod, err := k8sEnv.client.CoreV1().Pods(k8sEnv.testNamespace.Name).Create(context.Background(), failedPod, metav1.CreateOptions{})
+	require.NoError(t, err)
+
 	svc = k8sEnv.addService(t, svc)
 
 	ps := newPrometheusServer(t)
@@ -228,7 +260,7 @@ func Test_EndpointsDiscovery(t *testing.T) {
 	// are not implemented in the configurator yet.
 	promConfig := path.Join(t.TempDir(), "test-config.yml")
 
-	err := ioutil.WriteFile(promConfig, []byte(fmt.Sprintf(`
+	err = ioutil.WriteFile(promConfig, []byte(fmt.Sprintf(`
 remote_write:
 - url: http://foo:8999/write
 
@@ -248,6 +280,9 @@ scrape_configs:
     attach_metadata:
       node: true
   relabel_configs:
+  - source_labels: [__meta_kubernetes_pod_phase]
+    action: drop
+    regex: Pending|Succeeded|Failed|Completed
   - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
     action: replace
     target_label: __scheme__
@@ -279,8 +314,12 @@ scrape_configs:
 		net.JoinHostPort(pod.Status.PodIP, svc.Annotations["prometheus.io/port"]) +
 		svc.Annotations["prometheus.io/path"]
 
-	asserter.checkActiveTargetField(t, "scrapeUrl", instance)
+	// Active targets
+	asserter.checkActiveTargetsField(t, "scrapeUrl", instance)
 	asserter.activeTargetLabels(t, map[string]string{"namespace": k8sEnv.testNamespace.Name})
 	asserter.activeTargetLabels(t, map[string]string{"service": svc.Name})
-	//asserter.activeTargetLabels(t, map[string]string{"node": "minikube"})
+	asserter.activeTargetLabels(t, map[string]string{"node": pod.Spec.NodeName})
+
+	// Dropped targets
+	asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_pod_name": failedPod.Name})
 }

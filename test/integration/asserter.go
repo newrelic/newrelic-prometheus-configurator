@@ -130,7 +130,7 @@ func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]st
 	require.NoError(t, err)
 }
 
-func (a *asserter) checkActiveTargetField(t *testing.T, key, value string) {
+func (a *asserter) checkActiveTargetsField(t *testing.T, key, value string) {
 	t.Helper()
 
 	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
