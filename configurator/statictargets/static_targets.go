@@ -12,11 +12,11 @@ type Input struct {
 
 // Job represents job config for configurator.
 type Job struct {
-	Job                       promcfg.Job                     `yaml:",inline"`
-	Targets                   []string                        `yaml:"targets"`
-	Labels                    map[string]string               `yaml:"labels"`
-	ExtraRelabelConfigs       []promcfg.PrometheusExtraConfig `yaml:"extra_relabel_config"`
-	ExtraMetricRelabelConfigs []promcfg.PrometheusExtraConfig `yaml:"extra_metric_relabel_config"`
+	Job                       promcfg.Job           `yaml:",inline"`
+	Targets                   []string              `yaml:"targets"`
+	Labels                    map[string]string     `yaml:"labels"`
+	ExtraRelabelConfigs       []promcfg.ExtraConfig `yaml:"extra_relabel_config"`
+	ExtraMetricRelabelConfigs []promcfg.ExtraConfig `yaml:"extra_metric_relabel_config"`
 }
 
 // BuildOutput builds the slice of StaticTargetJobOutput given the input.

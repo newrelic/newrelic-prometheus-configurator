@@ -7,8 +7,8 @@ import (
 	"github.com/alecthomas/units"
 )
 
-// PrometheusExtraConfig represents some configuration which will be included in prometheus as it is.
-type PrometheusExtraConfig any
+// ExtraConfig represents some configuration which will be included in prometheus as it is.
+type ExtraConfig any
 
 // TLSConfig represents tls configuration, `prometheusCommonConfig.TLSConfig` cannot be used directly
 // because it does not Marshal to yaml properly.
@@ -142,11 +142,11 @@ type QueueConfig struct {
 
 // RemoteWriteOutput represents a prometheus remote_write config which can be obtained from input.
 type RemoteWriteOutput struct {
-	URL                 string                  `yaml:"url"`
-	RemoteTimeout       time.Duration           `yaml:"remote_timeout,omitempty"`
-	Authorization       Authorization           `yaml:"authorization"`
-	TLSConfig           *TLSConfig              `yaml:"tls_config,omitempty"`
-	ProxyURL            string                  `yaml:"proxy_url,omitempty"`
-	QueueConfig         *QueueConfig            `yaml:"queue_config,omitempty"`
-	WriteRelabelConfigs []PrometheusExtraConfig `yaml:"write_relabel_configs,omitempty"`
+	URL                 string        `yaml:"url"`
+	RemoteTimeout       time.Duration `yaml:"remote_timeout,omitempty"`
+	Authorization       Authorization `yaml:"authorization"`
+	TLSConfig           *TLSConfig    `yaml:"tls_config,omitempty"`
+	ProxyURL            string        `yaml:"proxy_url,omitempty"`
+	QueueConfig         *QueueConfig  `yaml:"queue_config,omitempty"`
+	WriteRelabelConfigs []ExtraConfig `yaml:"write_relabel_configs,omitempty"`
 }

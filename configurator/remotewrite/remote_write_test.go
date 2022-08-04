@@ -67,7 +67,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 						RetryOnHTTP429:    true,
 					},
 					RemoteTimeout: 10 * time.Second,
-					ExtraWriteRelabelConfigs: []promcfg.PrometheusExtraConfig{
+					ExtraWriteRelabelConfigs: []promcfg.ExtraConfig{
 						map[string]any{
 							"source_labels": []any{"src.label"},
 							"regex":         "to_drop.*",
@@ -101,7 +101,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 					MaxBackoff:        time.Second,
 					RetryOnHTTP429:    true,
 				},
-				WriteRelabelConfigs: []promcfg.PrometheusExtraConfig{
+				WriteRelabelConfigs: []promcfg.ExtraConfig{
 					map[string]any{
 						"source_labels": []any{"src.label"},
 						"regex":         "to_drop.*",

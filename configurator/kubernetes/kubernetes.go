@@ -80,11 +80,11 @@ func (i Input) validate(job Job) error {
 // Job holds the configuration which will parsed to a prometheus scrape job including the
 // specific rules needed.
 type Job struct {
-	Job                       promcfg.Job                     `yaml:",inline"`
-	JobNamePrefix             string                          `yaml:"job_name_prefix"`
-	TargetDiscovery           TargetDiscovery                 `yaml:"target_discovery"`
-	ExtraRelabelConfigs       []promcfg.PrometheusExtraConfig `yaml:"extra_relabel_config"`
-	ExtraMetricRelabelConfigs []promcfg.PrometheusExtraConfig `yaml:"extra_metric_relabel_config"`
+	Job                       promcfg.Job           `yaml:",inline"`
+	JobNamePrefix             string                `yaml:"job_name_prefix"`
+	TargetDiscovery           TargetDiscovery       `yaml:"target_discovery"`
+	ExtraRelabelConfigs       []promcfg.ExtraConfig `yaml:"extra_relabel_config"`
+	ExtraMetricRelabelConfigs []promcfg.ExtraConfig `yaml:"extra_metric_relabel_config"`
 }
 
 type TargetDiscovery struct {

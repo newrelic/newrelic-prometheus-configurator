@@ -79,14 +79,14 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 						},
 						Targets: []string{"host:port"},
 						Labels:  map[string]string{"a": "b"},
-						ExtraRelabelConfigs: []promcfg.PrometheusExtraConfig{
+						ExtraRelabelConfigs: []promcfg.ExtraConfig{
 							map[string]any{
 								"source_labels": []any{"src.label"},
 								"regex":         "to_drop.*",
 								"action":        "drop",
 							},
 						},
-						ExtraMetricRelabelConfigs: []promcfg.PrometheusExtraConfig{
+						ExtraMetricRelabelConfigs: []promcfg.ExtraConfig{
 							map[string]any{
 								"source_labels": []any{"src.label"},
 								"regex":         "to_drop.*",
