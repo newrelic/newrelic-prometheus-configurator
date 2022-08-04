@@ -67,6 +67,11 @@ type Job struct {
 	BasicAuth             *BasicAuth       `yaml:"basic_auth,omitempty"`
 	Authorization         Authorization    `yaml:"authorization,omitempty"`
 	OAuth2                OAuth2           `yaml:"oauth2,omitempty"`
+
+	StaticConfigs        []StaticConfig       `yaml:"static_configs,omitempty"`
+	RelabelConfigs       []any                `yaml:"relabel_configs,omitempty"`
+	MetricRelabelConfigs []any                `yaml:"metric_relabel_configs,omitempty"`
+	KubernetesSdConfigs  []KubernetesSdConfig `yaml:"kubernetes_sd_configs,omitempty"`
 }
 
 // StaticConfig defines each of the static_configs for the prometheus config.

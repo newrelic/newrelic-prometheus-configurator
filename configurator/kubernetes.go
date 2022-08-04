@@ -51,7 +51,7 @@ func (k *KubernetesTargetDiscovery) Valid() bool {
 
 // KubernetesSettingsBuilders defines a functions which updates and returns a `TargetJobOutput` with specific settings
 // added (considering the specified `KubernetesJob`).
-type kubernetesSettingsBuilder func(job *JobOutput, k8sJob KubernetesJob)
+type kubernetesSettingsBuilder func(job promcfg.Job, k8sJob KubernetesJob) promcfg.Job
 
 // KubernetesJobBuilder holds the specific settings to add to a TargetJobOutput given the
 // corresponding KubernetesJob definition.
@@ -69,8 +69,8 @@ func NewKubernetesJobBuilder() *KubernetesJobBuilder {
 }
 
 // Build builds the prometheus targets corresponding to the Kubernetes configuration in input.
-func (b *KubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
-	var jobs []JobOutput
+func (b *KubernetesJobBuilder) Build(i *Input) ([]promcfg.Job, error) {
+	var jobs []promcfg.Job
 
 	for _, k8sJob := range i.Kubernetes.Jobs {
 		if !k8sJob.TargetDiscovery.Valid() {
@@ -82,36 +82,51 @@ func (b *KubernetesJobBuilder) Build(i *Input) ([]JobOutput, error) {
 		}
 
 		if k8sJob.TargetDiscovery.Pod && b.addPodSettings != nil {
-			job := b.buildJob(k8sJob, podKind)
-			job.AddPodFilter(k8sJob.TargetDiscovery.Filter)
-			b.addPodSettings(job, k8sJob)
-			job.AddExtraConfigs(k8sJob.JobInput)
+			job := k8sJob.Job
 
-			jobs = append(jobs, *job)
+			job.JobName = b.buildJobName(k8sJob.JobNamePrefix, podKind)
+
+			if f := k8sJob.TargetDiscovery.Filter; f != nil {
+				job.RelabelConfigs = append(job.RelabelConfigs, f.Pod())
+			}
+
+			job = b.addPodSettings(job, k8sJob)
+
+			for _, c := range k8sJob.ExtraRelabelConfigs {
+				job.RelabelConfigs = append(job.RelabelConfigs, c)
+			}
+
+			for _, c := range k8sJob.ExtraMetricRelabelConfigs {
+				job.MetricRelabelConfigs = append(job.MetricRelabelConfigs, c)
+			}
+
+			jobs = append(jobs, job)
 		}
 
 		if k8sJob.TargetDiscovery.Endpoints && b.addEndpointsSettings != nil {
-			job := b.buildJob(k8sJob, endpointsKind)
-			job.AddEndpointsFilter(k8sJob.TargetDiscovery.Filter)
-			b.addEndpointsSettings(job, k8sJob)
-			job.AddExtraConfigs(k8sJob.JobInput)
+			job := k8sJob.Job
 
-			jobs = append(jobs, *job)
+			job.JobName = b.buildJobName(k8sJob.JobNamePrefix, endpointsKind)
+
+			if f := k8sJob.TargetDiscovery.Filter; f != nil {
+				job.RelabelConfigs = append(job.RelabelConfigs, f.Endpoints())
+			}
+
+			job = b.addEndpointsSettings(job, k8sJob)
+
+			for _, c := range k8sJob.ExtraRelabelConfigs {
+				job.RelabelConfigs = append(job.RelabelConfigs, c)
+			}
+
+			for _, c := range k8sJob.ExtraMetricRelabelConfigs {
+				job.MetricRelabelConfigs = append(job.MetricRelabelConfigs, c)
+			}
+
+			jobs = append(jobs, job)
 		}
 	}
 
 	return jobs, nil
-}
-
-// buildJob creates a base JobOutput given the kubernetes settings and the target kind.
-func (b *KubernetesJobBuilder) buildJob(k8sJob KubernetesJob, targetKind string) *JobOutput {
-	// build base job
-	job := BuildJobOutput(k8sJob.JobInput)
-
-	// build its name based on the prefix
-	job.Job.JobName = b.buildJobName(k8sJob.JobNamePrefix, targetKind)
-
-	return job
 }
 
 func (b *KubernetesJobBuilder) buildJobName(prefix string, kind string) string {

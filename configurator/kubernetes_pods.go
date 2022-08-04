@@ -3,8 +3,8 @@ package configurator
 import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 
 // podSettingsBuilder includes the specific settings for pods in the provided JobOutput and returns it.
-func podSettingsBuilder(job *JobOutput, kj KubernetesJob) {
-	job.Job.HonorLabels = true
+func podSettingsBuilder(job promcfg.Job, kj KubernetesJob) promcfg.Job {
+	job.HonorLabels = true
 
 	kubernetesSdConfig := setK8sSdConfigFromJob("pod", kj)
 
@@ -59,4 +59,6 @@ func podSettingsBuilder(job *JobOutput, kj KubernetesJob) {
 			TargetLabel:  "pod",
 		},
 	)
+
+	return job
 }
