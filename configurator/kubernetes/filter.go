@@ -39,6 +39,11 @@ func (f Filter) Endpoints() promcfg.RelabelConfig {
 	return f.build(serviceMetadata)
 }
 
+// Endpoints creates a RelabelConfig that will keep only the Endpoints targets specified in Filter.
+func (f Filter) Valid() bool {
+	return len(f.Annotations) != 0 || len(f.Labels) != 0
+}
+
 // build creates a RelabelConfig that will keep only the targets specified in Filter.
 // All conditions are concatenated with 'AND' operation.
 // If no value has been specified for the metadata, it will check that exists.

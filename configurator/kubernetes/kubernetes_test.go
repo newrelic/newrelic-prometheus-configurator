@@ -13,16 +13,16 @@ func TestBuildFailWhen(t *testing.T) {
 
 	tests := []struct {
 		name      string
-		k8sConfig kubernetes.KubernetesInput
+		k8sConfig kubernetes.Input
 		want      error
 	}{
 		{
 			name: "JobNamePrefix is empty",
-			k8sConfig: kubernetes.KubernetesInput{
-				Jobs: []kubernetes.KubernetesJob{
+			k8sConfig: kubernetes.Input{
+				Jobs: []kubernetes.Job{
 					{
 						JobNamePrefix:   "",
-						TargetDiscovery: kubernetes.KubernetesTargetDiscovery{Pod: true},
+						TargetDiscovery: kubernetes.TargetDiscovery{Pod: true},
 					},
 				},
 			},
@@ -30,8 +30,8 @@ func TestBuildFailWhen(t *testing.T) {
 		},
 		{
 			name: "All TargetKind are disabled",
-			k8sConfig: kubernetes.KubernetesInput{
-				Jobs: []kubernetes.KubernetesJob{
+			k8sConfig: kubernetes.Input{
+				Jobs: []kubernetes.Job{
 					{
 						JobNamePrefix: "test",
 					},
@@ -46,7 +46,7 @@ func TestBuildFailWhen(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			_, err := kubernetes.NewKubernetesJobBuilder().Build(&tt.k8sConfig)
+			_, err := tt.k8sConfig.Build()
 			require.ErrorIs(t, err, tt.want)
 		})
 	}
@@ -56,11 +56,11 @@ func TestBuildFailWhen(t *testing.T) {
 func TestBuildFilter(t *testing.T) {
 	t.Parallel()
 
-	annotationsFilter := &kubernetes.Filter{
+	annotationsFilter := kubernetes.Filter{
 		Annotations: map[string]string{"prometheus.io/scrape": "true"},
 	}
 
-	combinedFilter := &kubernetes.Filter{
+	combinedFilter := kubernetes.Filter{
 		Annotations: map[string]string{
 			"prometheus.io/scrape":     "true",
 			"extra.special.annotation": "yes",
@@ -72,14 +72,14 @@ func TestBuildFilter(t *testing.T) {
 		},
 	}
 
-	emptyLabelFilter := &kubernetes.Filter{
+	emptyLabelFilter := kubernetes.Filter{
 		Labels: map[string]string{
 			"check.if.present": "",
 		},
 	}
 
 	type args struct {
-		Input kubernetes.KubernetesInput
+		Input kubernetes.Input
 	}
 
 	type regexBySourceLabel map[string]string
@@ -92,11 +92,11 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "annotation pod filter",
 			args: args{
-				Input: kubernetes.KubernetesInput{
-					Jobs: []kubernetes.KubernetesJob{
+				Input: kubernetes.Input{
+					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-pod",
-							TargetDiscovery: kubernetes.KubernetesTargetDiscovery{
+							TargetDiscovery: kubernetes.TargetDiscovery{
 								Pod:    true,
 								Filter: annotationsFilter,
 							},
@@ -111,11 +111,11 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "check pod label is present",
 			args: args{
-				Input: kubernetes.KubernetesInput{
-					Jobs: []kubernetes.KubernetesJob{
+				Input: kubernetes.Input{
+					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-endpoints",
-							TargetDiscovery: kubernetes.KubernetesTargetDiscovery{
+							TargetDiscovery: kubernetes.TargetDiscovery{
 								Pod:    true,
 								Filter: emptyLabelFilter,
 							},
@@ -130,11 +130,11 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "combined pod filter",
 			args: args{
-				Input: kubernetes.KubernetesInput{
-					Jobs: []kubernetes.KubernetesJob{
+				Input: kubernetes.Input{
+					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-pod",
-							TargetDiscovery: kubernetes.KubernetesTargetDiscovery{
+							TargetDiscovery: kubernetes.TargetDiscovery{
 								Pod:    true,
 								Filter: combinedFilter,
 							},
@@ -153,11 +153,11 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "annotation service-endpoints filter",
 			args: args{
-				Input: kubernetes.KubernetesInput{
-					Jobs: []kubernetes.KubernetesJob{
+				Input: kubernetes.Input{
+					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-endpoints",
-							TargetDiscovery: kubernetes.KubernetesTargetDiscovery{
+							TargetDiscovery: kubernetes.TargetDiscovery{
 								Endpoints: true,
 								Filter:    annotationsFilter,
 							},
@@ -172,11 +172,11 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "check service-endpoints label is present",
 			args: args{
-				Input: kubernetes.KubernetesInput{
-					Jobs: []kubernetes.KubernetesJob{
+				Input: kubernetes.Input{
+					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-endpoints",
-							TargetDiscovery: kubernetes.KubernetesTargetDiscovery{
+							TargetDiscovery: kubernetes.TargetDiscovery{
 								Endpoints: true,
 								Filter:    emptyLabelFilter,
 							},
@@ -191,11 +191,11 @@ func TestBuildFilter(t *testing.T) {
 		{
 			name: "combined service-endpoints filter",
 			args: args{
-				Input: kubernetes.KubernetesInput{
-					Jobs: []kubernetes.KubernetesJob{
+				Input: kubernetes.Input{
+					Jobs: []kubernetes.Job{
 						{
 							JobNamePrefix: "test-pod",
-							TargetDiscovery: kubernetes.KubernetesTargetDiscovery{
+							TargetDiscovery: kubernetes.TargetDiscovery{
 								Endpoints: true,
 								Filter:    combinedFilter,
 							},
@@ -217,7 +217,7 @@ func TestBuildFilter(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			job, err := kubernetes.NewKubernetesJobBuilder().Build(&tt.args.Input)
+			job, err := tt.args.Input.Build()
 			require.NoError(t, err)
 
 			// tests should be independent and contain just one job entry.

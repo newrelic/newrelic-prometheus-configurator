@@ -5,7 +5,6 @@
 package configurator
 
 import (
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/kubernetes"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/statictargets"
@@ -37,9 +36,7 @@ func BuildOutput(input *Input) (Output, error) {
 	}
 
 	// Include the scrape configurations corresponding to kubernetes jobs
-	kubernetesJobBuilder := kubernetes.NewKubernetesJobBuilder()
-
-	k8sJobs, err := kubernetesJobBuilder.Build(&input.Kubernetes)
+	k8sJobs, err := input.Kubernetes.Build()
 	if err != nil {
 		return output, err
 	}
