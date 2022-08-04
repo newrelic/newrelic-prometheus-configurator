@@ -4,7 +4,10 @@
 // Package configurator holds the code to parse New Relic's configuration into a valid prometheus-agent configuration.
 package configurator
 
-import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+import (
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/kubernetes"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+)
 
 // Output holds all configuration information in prometheus format which can be directly marshaled to a valid yaml
 // configuration.
@@ -32,9 +35,9 @@ func BuildOutput(input *Input) (Output, error) {
 	}
 
 	// Include the scrape configurations corresponding to kubernetes jobs
-	kubernetesJobBuilder := NewKubernetesJobBuilder()
+	kubernetesJobBuilder := kubernetes.NewKubernetesJobBuilder()
 
-	k8sJobs, err := kubernetesJobBuilder.Build(input)
+	k8sJobs, err := kubernetesJobBuilder.Build(&input.Kubernetes)
 	if err != nil {
 		return output, err
 	}

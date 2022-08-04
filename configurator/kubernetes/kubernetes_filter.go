@@ -1,4 +1,4 @@
-package configurator
+package kubernetes
 
 import (
 	"regexp"

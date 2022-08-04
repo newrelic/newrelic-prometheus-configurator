@@ -1,4 +1,4 @@
-package configurator
+package kubernetes
 
 import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 

@@ -3,7 +3,10 @@
 
 package configurator
 
-import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+import (
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/kubernetes"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+)
 
 // Input represents the input configuration, it it used to load New Relic configuration so it can be parsed to
 // prometheus configuration.
@@ -24,5 +27,5 @@ type Input struct {
 	// ExtraScrapeConfigs holds any additional raw scrape configuration to use as it is in prometheus configuration.
 	ExtraScrapeConfigs []promcfg.PrometheusExtraConfig `yaml:"extra_scrape_configs"`
 	// Kubernetes holds the kubernetes-targets' configuration.
-	Kubernetes KubernetesInput `yaml:"kubernetes"`
+	Kubernetes kubernetes.KubernetesInput `yaml:"kubernetes"`
 }

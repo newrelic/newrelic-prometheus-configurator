@@ -1,4 +1,4 @@
-package configurator
+package kubernetes
 
 import (
 	"errors"
@@ -71,10 +71,10 @@ func NewKubernetesJobBuilder() *KubernetesJobBuilder {
 }
 
 // Build builds the prometheus targets corresponding to the Kubernetes configuration in input.
-func (b *KubernetesJobBuilder) Build(i *Input) ([]promcfg.Job, error) {
+func (b *KubernetesJobBuilder) Build(i *KubernetesInput) ([]promcfg.Job, error) {
 	var jobs []promcfg.Job
 
-	for _, k8sJob := range i.Kubernetes.Jobs {
+	for _, k8sJob := range i.Jobs {
 		if !k8sJob.TargetDiscovery.Valid() {
 			return nil, ErrInvalidK8sJobKinds
 		}
