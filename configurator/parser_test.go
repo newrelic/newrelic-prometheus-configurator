@@ -20,8 +20,10 @@ import (
 	_ "github.com/prometheus/prometheus/discovery/kubernetes"
 )
 
+// nolint: paralleltest,tparallel
 func TestParser(t *testing.T) {
-	t.Parallel()
+	t.Setenv(configurator.LicenseKeyEnvKey, "")
+	t.Setenv(configurator.DataSourceNameEnvKey, "")
 
 	// it relies on testdata/<placeholder>.yaml and testdata/<placeholder>.expected.yaml
 	testCases := []string{
@@ -51,6 +53,9 @@ func TestParser(t *testing.T) {
 
 //nolint: tparallel
 func TestDataSourceName(t *testing.T) {
+	t.Setenv(configurator.LicenseKeyEnvKey, "")
+	t.Setenv(configurator.DataSourceNameEnvKey, "")
+
 	configWithDataSourceName := `
 data_source_name: %s
 newrelic_remote_write:
@@ -79,6 +84,9 @@ newrelic_remote_write:
 
 //nolint: tparallel
 func TestLicenseKey(t *testing.T) {
+	t.Setenv(configurator.LicenseKeyEnvKey, "")
+	t.Setenv(configurator.DataSourceNameEnvKey, "")
+
 	configWithLicense := `
 newrelic_remote_write:
   license_key: %s
