@@ -29,7 +29,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 			Input: &configurator.Input{
 				DataSourceName: "source-of-metrics",
 				StaticTargets: configurator.StaticTargetsInput{
-					Jobs: []configurator.JobInput{
+					Jobs: []configurator.StaticTargetJob{
 						{
 							//nolint: dupl // TargetJob should be the same
 							Job: promcfg.Job{

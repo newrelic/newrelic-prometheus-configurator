@@ -24,9 +24,11 @@ type KubernetesInput struct {
 // KubernetesJob holds the configuration which will parsed to a prometheus scrape job including the
 // specific rules needed.
 type KubernetesJob struct {
-	JobInput        `yaml:",inline"`
-	JobNamePrefix   string                    `yaml:"job_name_prefix"`
-	TargetDiscovery KubernetesTargetDiscovery `yaml:"target_discovery"`
+	Job                       promcfg.Job                     `yaml:",inline"`
+	JobNamePrefix             string                          `yaml:"job_name_prefix"`
+	TargetDiscovery           KubernetesTargetDiscovery       `yaml:"target_discovery"`
+	ExtraRelabelConfigs       []promcfg.PrometheusExtraConfig `yaml:"extra_relabel_config"`
+	ExtraMetricRelabelConfigs []promcfg.PrometheusExtraConfig `yaml:"extra_metric_relabel_config"`
 }
 
 type KubernetesTargetDiscovery struct {

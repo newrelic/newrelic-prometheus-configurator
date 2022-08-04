@@ -7,7 +7,16 @@ import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 
 // StaticTargetsInput defines all the static targets jobs.
 type StaticTargetsInput struct {
-	Jobs []JobInput `yaml:"jobs"`
+	Jobs []StaticTargetJob `yaml:"jobs"`
+}
+
+// StaticTargetJob represents job config for configurator.
+type StaticTargetJob struct {
+	Job                       promcfg.Job                     `yaml:",inline"`
+	Targets                   []string                        `yaml:"targets"`
+	Labels                    map[string]string               `yaml:"labels"`
+	ExtraRelabelConfigs       []promcfg.PrometheusExtraConfig `yaml:"extra_relabel_config"`
+	ExtraMetricRelabelConfigs []promcfg.PrometheusExtraConfig `yaml:"extra_metric_relabel_config"`
 }
 
 // BuildStaticTargetsOutput builds the slice of StaticTargetJobOutput given the input.

@@ -26,12 +26,3 @@ type Input struct {
 	// Kubernetes holds the kubernetes-targets' configuration.
 	Kubernetes KubernetesInput `yaml:"kubernetes"`
 }
-
-// JobInput represents job config for configurator.
-type JobInput struct {
-	Job                       promcfg.Job                     `yaml:",inline"`
-	Targets                   []string                        `yaml:"targets"`
-	Labels                    map[string]string               `yaml:"labels"`
-	ExtraRelabelConfigs       []promcfg.PrometheusExtraConfig `yaml:"extra_relabel_config"`
-	ExtraMetricRelabelConfigs []promcfg.PrometheusExtraConfig `yaml:"extra_metric_relabel_config"`
-}
