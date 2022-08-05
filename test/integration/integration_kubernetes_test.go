@@ -278,8 +278,6 @@ scrape_configs:
     namespaces:
       names:
       - %s
-    attach_metadata:
-      node: true
   relabel_configs:
   - source_labels: [__meta_kubernetes_pod_phase]
     action: drop
@@ -316,9 +314,16 @@ scrape_configs:
 
 	ps.start(t, promConfig)
 
-	scrapeURL := svc.Annotations["prometheus.io/scheme"] + "://" +
-		net.JoinHostPort(pod.Status.PodIP, svc.Annotations["prometheus.io/port"]) +
-		svc.Annotations["prometheus.io/path"] + "?test=test-param"
+	// Build scrapeURL
+	instance := net.JoinHostPort(pod.Status.PodIP, svc.Annotations["prometheus.io/port"])
+	params := "?test=" + svc.Annotations["prometheus.io/param_test"]
+
+	scrapeURL := fmt.Sprintf("%s://%s%s%s",
+		svc.Annotations["prometheus.io/scheme"],
+		instance,
+		svc.Annotations["prometheus.io/path"],
+		params,
+	)
 
 	// Active targets
 	asserter.activeTargetField(t, "scrapeUrl", scrapeURL)
