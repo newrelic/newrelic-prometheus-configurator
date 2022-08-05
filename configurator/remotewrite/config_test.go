@@ -24,7 +24,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 	cases := []struct {
 		Name     string
 		Input    args
-		Expected promcfg.RemoteWriteOutput
+		Expected promcfg.RemoteWrite
 	}{
 		{
 			Name: "Prod,  non-eu and only mandatory fields",
@@ -33,7 +33,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 					LicenseKey: "fake-prod",
 				},
 			},
-			Expected: promcfg.RemoteWriteOutput{
+			Expected: promcfg.RemoteWrite{
 				URL: "https://metric-api.newrelic.com/prometheus/v1/write",
 				Authorization: promcfg.Authorization{
 					Credentials: "fake-prod",
@@ -76,7 +76,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 					},
 				},
 			},
-			Expected: promcfg.RemoteWriteOutput{
+			Expected: promcfg.RemoteWrite{
 				URL:           "https://staging-metric-api.eu.newrelic.com/prometheus/v1/write?prometheus_server=source-of-metrics",
 				RemoteTimeout: 10 * time.Second,
 				Authorization: promcfg.Authorization{

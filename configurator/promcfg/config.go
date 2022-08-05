@@ -140,8 +140,8 @@ type QueueConfig struct {
 	RetryOnHTTP429    bool          `yaml:"retry_on_http_429"`
 }
 
-// RemoteWriteOutput represents a prometheus remote_write config which can be obtained from input.
-type RemoteWriteOutput struct {
+// RemoteWrite represents a prometheus remote_write config which can be obtained from input.
+type RemoteWrite struct {
 	URL                 string        `yaml:"url"`
 	RemoteTimeout       time.Duration `yaml:"remote_timeout,omitempty"`
 	Authorization       Authorization `yaml:"authorization"`

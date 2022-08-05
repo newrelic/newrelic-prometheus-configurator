@@ -21,6 +21,7 @@ type Config struct {
 	Jobs []Job `yaml:"jobs"`
 }
 
+// Build will create a Prometheus Job list based on the kubernetes configuration.
 func (c Config) Build() ([]promcfg.Job, error) {
 	var jobs []promcfg.Job
 

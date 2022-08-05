@@ -29,9 +29,9 @@ type Config struct {
 	ExtraWriteRelabelConfigs []promcfg.ExtraConfig `yaml:"extra_write_relabel_configs"`
 }
 
-// Build builds a RemoteWriteOutput given the input.
-func (c Config) Build(dataSourceName string) promcfg.RemoteWriteOutput {
-	return promcfg.RemoteWriteOutput{
+// Build will create the Prometheus remote_write entry for NewRelic.
+func (c Config) Build(dataSourceName string) promcfg.RemoteWrite {
+	return promcfg.RemoteWrite{
 		URL:                 remoteWriteURL(c.Staging, c.LicenseKey, dataSourceName),
 		RemoteTimeout:       c.RemoteTimeout,
 		Authorization:       promcfg.Authorization{Credentials: c.LicenseKey},

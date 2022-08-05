@@ -19,7 +19,7 @@ type Job struct {
 	ExtraMetricRelabelConfigs []promcfg.ExtraConfig `yaml:"extra_metric_relabel_config"`
 }
 
-// Build builds the slice of StaticTargetJobOutput given the input.
+// Build will create a Prometheus Job list based on the static targets configuration.
 func (c Config) Build() []promcfg.Job {
 	staticTargetsOutput := []promcfg.Job{}
 
