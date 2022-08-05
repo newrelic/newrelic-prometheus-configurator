@@ -11,8 +11,8 @@ import (
 	"testing"
 
 	"github.com/newrelic-forks/newrelic-prometheus/test/integration/mocks"
-
 	"github.com/stretchr/testify/require"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -171,4 +171,129 @@ scrape_configs:
 
 	asserter.activeTargetLabels(t, map[string]string{"__meta_kubernetes_pod_label_k8s_io_app": pod.Labels["k8s.io/app"]})
 	asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_pod_label_k8s_io_app": podDropped.Labels["k8s.io/app"]})
+}
+
+func Test_EndpointsDiscovery(t *testing.T) {
+	t.Parallel()
+
+	k8sEnv := newK8sEnvironment(t)
+
+	// Create initial pod
+	pod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "testpod",
+			Labels: map[string]string{
+				"k8s.io/app": "myApp",
+			},
+			Annotations: map[string]string{
+				"prometheus.io/scrape": "true",
+			},
+		},
+		Spec: fakePodSpec(),
+	}
+
+	terminationGracePeriodSeconds := int64(1)
+
+	// Create failing pod
+	failedPod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "testpod-failed",
+			Labels: map[string]string{
+				"k8s.io/app": "myApp",
+			},
+			Annotations: map[string]string{
+				"prometheus.io/scrape": "true",
+			},
+		},
+		Spec: corev1.PodSpec{
+			ActiveDeadlineSeconds: &terminationGracePeriodSeconds,
+			Containers: []corev1.Container{
+				{
+					Name:  "fake-exporter",
+					Image: "this-image-dont-exist-pod-will-fail",
+				},
+			},
+		},
+	}
+
+	// Create service
+	svc := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "testservice",
+			Namespace: k8sEnv.testNamespace.Name,
+			Labels: map[string]string{
+				"k8s.io/app": "myApp",
+				"test.label": "test.value",
+			},
+			Annotations: map[string]string{
+				"prometheus.io/scrape":     "true",
+				"prometheus.io/scheme":     "https",
+				"prometheus.io/path":       "/custom-path",
+				"prometheus.io/port":       "8001",
+				"prometheus.io/param_test": "test-param",
+			},
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: []corev1.ServicePort{
+				{
+					Port:     80,
+					Protocol: "TCP",
+				},
+			},
+			Selector: map[string]string{
+				"k8s.io/app": "myApp",
+			},
+		},
+	}
+
+	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
+	failedPod = k8sEnv.addPodAndWaitOnPhase(t, failedPod, corev1.PodFailed)
+	svc = k8sEnv.addService(t, svc)
+
+	inputConfig := fmt.Sprintf(`
+newrelic_remote_write:
+  license_key: nrLicenseKey
+common:
+  scrape_interval: 1s
+kubernetes:
+  jobs:
+    - job_name_prefix: test-k8s
+      target_discovery:
+        endpoints: true
+        additional_config:
+         kubeconfig_file: %s
+         namespaces:
+          names:
+          - %s
+`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
+
+	outputConfigPath := runConfigurator(t, inputConfig)
+
+	ps := newPrometheusServer(t)
+	ps.start(t, outputConfigPath)
+
+	// Build scrapeURL
+	instance := net.JoinHostPort(pod.Status.PodIP, svc.Annotations["prometheus.io/port"])
+	params := "?test=" + svc.Annotations["prometheus.io/param_test"]
+
+	scrapeURL := fmt.Sprintf("%s://%s%s%s",
+		svc.Annotations["prometheus.io/scheme"],
+		instance,
+		svc.Annotations["prometheus.io/path"],
+		params,
+	)
+
+	asserter := newAsserter(ps)
+
+	// Active targets
+	asserter.activeTargetField(t, scrapeURLKey, scrapeURL)
+	asserter.activeTargetLabels(t, map[string]string{
+		"namespace":  k8sEnv.testNamespace.Name,
+		"service":    svc.Name,
+		"node":       pod.Spec.NodeName,
+		"test_label": svc.Labels["test.label"],
+	})
+
+	// Dropped targets
+	asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_pod_name": failedPod.Name})
 }

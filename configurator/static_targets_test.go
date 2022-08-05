@@ -30,7 +30,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 				StaticTargets: configurator.StaticTargetsInput{
 					Jobs: []configurator.JobInput{
 						{
-							// nolint: dupl // TargetJob should be the same
+							//nolint: dupl // TargetJob should be the same
 							Job: configurator.Job{
 								JobName:               "fancy-job",
 								HonorLabels:           true,
@@ -100,7 +100,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 			},
 			Expected: []any{
 				configurator.JobOutput{
-					// nolint: dupl // TargetJob should be the same.
+					//nolint: dupl // TargetJob should be the same.
 					Job: configurator.Job{
 						JobName:               "fancy-job",
 						HonorLabels:           true,

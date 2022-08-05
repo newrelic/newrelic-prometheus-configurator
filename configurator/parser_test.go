@@ -20,8 +20,7 @@ import (
 	_ "github.com/prometheus/prometheus/discovery/kubernetes"
 )
 
-//nolint: paralleltest,tparallel
-func TestParser(t *testing.T) {
+func TestParser(t *testing.T) { //nolint: paralleltest,tparallel
 	t.Setenv(configurator.LicenseKeyEnvKey, "")
 	t.Setenv(configurator.DataSourceNameEnvKey, "")
 
@@ -53,8 +52,7 @@ func TestParser(t *testing.T) {
 	}
 }
 
-//nolint: tparallel
-func TestDataSourceName(t *testing.T) {
+func TestDataSourceName(t *testing.T) { //nolint: tparallel
 	t.Setenv(configurator.LicenseKeyEnvKey, "")
 	t.Setenv(configurator.DataSourceNameEnvKey, "")
 
@@ -84,8 +82,7 @@ newrelic_remote_write:
 	})
 }
 
-//nolint: tparallel
-func TestLicenseKey(t *testing.T) {
+func TestLicenseKey(t *testing.T) { //nolint: tparallel
 	t.Setenv(configurator.LicenseKeyEnvKey, "")
 	t.Setenv(configurator.DataSourceNameEnvKey, "")
 
