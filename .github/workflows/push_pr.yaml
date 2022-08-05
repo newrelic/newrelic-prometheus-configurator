@@ -70,8 +70,8 @@ jobs:
       #  if: steps.list-changed.outputs.changed == 'true'
       #  run: ct install --namespace ct --config .github/ct.yaml --debug --upgrade
 
-  tilt:
-    name: Check testing environment 
+  e2e-test:
+    name: E2e Tests 
     runs-on: ubuntu-latest
     # If the environment is broken this job could timeout since the default timeout for tilt ci is 30m.
     timeout-minutes: 10
@@ -91,9 +91,16 @@ jobs:
       - name: Install Tilt
         run: |
           curl -fsSL https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh | bash
-      - name: Run Tilt ci
-        run: |
-          make tilt-ci
+      - name: Run e2e-test
+        uses: newrelic/newrelic-integration-e2e-action@v1
+        with:
+          retry_seconds: 60
+          retry_attempts: 5
+          agent_enabled: false
+          spec_path: test/e2e/test-specs.yml
+          account_id: ${{ secrets.COREINT_E2E_ACCOUNT_ID }}
+          api_key: ${{ secrets.COREINT_E2E_API_KEY }}
+          license_key: ${{ secrets.COREINT_E2E_LICENSE_KEY }}
 
   test:
     name: Run tests

@@ -1,0 +1,21 @@
+description: Newrelic Prometheus Configurator E2E Test
+
+custom_test_key: cluster_name
+
+scenarios:
+  - description: Scrape test environment metrics
+    before:
+      - cd ../../ && NR_PROM_LICENSE_KEY=${LICENSE_KEY} NR_PROM_CLUSTER=${SCENARIO_TAG} make tilt-ci
+    after:
+      - tilt down
+    tests:
+      metrics:
+        - source: "metrics.yml"
+          except_metrics:
+            # TODO check why this ones don't appear 
+            - prometheus_remote_storage_dropped_samples_total
+            - prometheus_remote_storage_failed_samples_total
+            - scrape_pool_targets
+            
+            # Need to activate kubernetes_sd for this metric to appear
+            - prometheus_sd_kubernetes_http_request_total
