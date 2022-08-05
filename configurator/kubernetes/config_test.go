@@ -52,8 +52,7 @@ func TestBuildFailWhen(t *testing.T) {
 	}
 }
 
-//nolint: funlen
-func TestBuildFilter(t *testing.T) {
+func TestBuildFilter(t *testing.T) { //nolint: funlen
 	t.Parallel()
 
 	annotationsFilter := kubernetes.Filter{
@@ -78,28 +77,22 @@ func TestBuildFilter(t *testing.T) {
 		},
 	}
 
-	type args struct {
-		Input kubernetes.Config
-	}
-
 	type regexBySourceLabel map[string]string
 
 	tests := []struct {
-		name string
-		args args
-		want regexBySourceLabel
+		name  string
+		input kubernetes.Config
+		want  regexBySourceLabel
 	}{
 		{
 			name: "annotation pod filter",
-			args: args{
-				Input: kubernetes.Config{
-					Jobs: []kubernetes.Job{
-						{
-							JobNamePrefix: "test-pod",
-							TargetDiscovery: kubernetes.TargetDiscovery{
-								Pod:    true,
-								Filter: annotationsFilter,
-							},
+			input: kubernetes.Config{
+				Jobs: []kubernetes.Job{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
 						},
 					},
 				},
@@ -110,15 +103,13 @@ func TestBuildFilter(t *testing.T) {
 		},
 		{
 			name: "check pod label is present",
-			args: args{
-				Input: kubernetes.Config{
-					Jobs: []kubernetes.Job{
-						{
-							JobNamePrefix: "test-endpoints",
-							TargetDiscovery: kubernetes.TargetDiscovery{
-								Pod:    true,
-								Filter: emptyLabelFilter,
-							},
+			input: kubernetes.Config{
+				Jobs: []kubernetes.Job{
+					{
+						JobNamePrefix: "test-endpoints",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: emptyLabelFilter,
 						},
 					},
 				},
@@ -129,15 +120,13 @@ func TestBuildFilter(t *testing.T) {
 		},
 		{
 			name: "combined pod filter",
-			args: args{
-				Input: kubernetes.Config{
-					Jobs: []kubernetes.Job{
-						{
-							JobNamePrefix: "test-pod",
-							TargetDiscovery: kubernetes.TargetDiscovery{
-								Pod:    true,
-								Filter: combinedFilter,
-							},
+			input: kubernetes.Config{
+				Jobs: []kubernetes.Job{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: combinedFilter,
 						},
 					},
 				},
@@ -152,15 +141,13 @@ func TestBuildFilter(t *testing.T) {
 		},
 		{
 			name: "annotation service-endpoints filter",
-			args: args{
-				Input: kubernetes.Config{
-					Jobs: []kubernetes.Job{
-						{
-							JobNamePrefix: "test-endpoints",
-							TargetDiscovery: kubernetes.TargetDiscovery{
-								Endpoints: true,
-								Filter:    annotationsFilter,
-							},
+			input: kubernetes.Config{
+				Jobs: []kubernetes.Job{
+					{
+						JobNamePrefix: "test-endpoints",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Endpoints: true,
+							Filter:    annotationsFilter,
 						},
 					},
 				},
@@ -171,15 +158,13 @@ func TestBuildFilter(t *testing.T) {
 		},
 		{
 			name: "check service-endpoints label is present",
-			args: args{
-				Input: kubernetes.Config{
-					Jobs: []kubernetes.Job{
-						{
-							JobNamePrefix: "test-endpoints",
-							TargetDiscovery: kubernetes.TargetDiscovery{
-								Endpoints: true,
-								Filter:    emptyLabelFilter,
-							},
+			input: kubernetes.Config{
+				Jobs: []kubernetes.Job{
+					{
+						JobNamePrefix: "test-endpoints",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Endpoints: true,
+							Filter:    emptyLabelFilter,
 						},
 					},
 				},
@@ -190,15 +175,13 @@ func TestBuildFilter(t *testing.T) {
 		},
 		{
 			name: "combined service-endpoints filter",
-			args: args{
-				Input: kubernetes.Config{
-					Jobs: []kubernetes.Job{
-						{
-							JobNamePrefix: "test-pod",
-							TargetDiscovery: kubernetes.TargetDiscovery{
-								Endpoints: true,
-								Filter:    combinedFilter,
-							},
+			input: kubernetes.Config{
+				Jobs: []kubernetes.Job{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Endpoints: true,
+							Filter:    combinedFilter,
 						},
 					},
 				},
@@ -217,7 +200,7 @@ func TestBuildFilter(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			job, err := tt.args.Input.Build()
+			job, err := tt.input.Build()
 			require.NoError(t, err)
 
 			// tests should be independent and contain just one job entry.
