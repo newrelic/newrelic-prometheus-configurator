@@ -1,7 +1,7 @@
 // Copyright 2022 New Relic Corporation. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package configurator
+package remotewrite
 
 import "regexp"
 
@@ -17,6 +17,7 @@ func licenseIsRegionEU(license string) bool {
 	if len(r) > 1 && r[:2] == "eu" {
 		return true
 	}
+
 	return false
 }
 
