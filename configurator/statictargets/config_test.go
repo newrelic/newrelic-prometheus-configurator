@@ -29,7 +29,6 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 			Input: statictargets.Config{
 				Jobs: []statictargets.Job{
 					{
-						// nolint: dupl // TargetJob should be the same
 						Job: promcfg.Job{
 							JobName:               "fancy-job",
 							HonorLabels:           true,

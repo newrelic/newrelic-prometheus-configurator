@@ -5,6 +5,8 @@
 package configurator
 
 import (
+	"fmt"
+
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 )
 
@@ -34,7 +36,7 @@ func BuildOutput(input *Input) (Output, error) {
 
 	k8sJobs, err := input.Kubernetes.Build()
 	if err != nil {
-		return output, err
+		return output, fmt.Errorf("building k8s config: %w", err)
 	}
 
 	for _, job := range k8sJobs {

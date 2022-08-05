@@ -52,7 +52,7 @@ func TestBuildFailWhen(t *testing.T) {
 	}
 }
 
-//nolint:funlen
+//nolint: funlen
 func TestBuildFilter(t *testing.T) {
 	t.Parallel()
 
