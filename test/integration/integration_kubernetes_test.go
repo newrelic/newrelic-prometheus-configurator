@@ -9,12 +9,9 @@ import (
 	"path"
 	"strconv"
 	"testing"
-	"time"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator"
 	"github.com/newrelic-forks/newrelic-prometheus/test/integration/mocks"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/yaml.v3"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -253,43 +250,27 @@ func Test_EndpointsDiscovery(t *testing.T) {
 	failedPod = k8sEnv.addPodAndWaitOnPhase(t, failedPod, corev1.PodFailed)
 	svc = k8sEnv.addService(t, svc)
 
-	input := configurator.Input{
-		Common: configurator.GlobalConfig{
-			ScrapeInterval: 1 * time.Second,
-		},
-		Kubernetes: configurator.KubernetesInput{
-			Jobs: []configurator.KubernetesJob{
-				{
-					JobInput:      configurator.JobInput{},
-					JobNamePrefix: "test-k8s",
-					TargetDiscovery: configurator.KubernetesTargetDiscovery{
-						Pod:       false,
-						Endpoints: true,
-						Filter:    nil,
-						AdditionalConfig: &configurator.AdditionalConfig{
-							KubeconfigFile: k8sEnv.kubeconfigFullPath,
-							Namespaces: &configurator.KubernetesSdNamespace{
-								Names: []string{k8sEnv.testNamespace.Name},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
+	inputConfig := fmt.Sprintf(`
+newrelic_remote_write:
+  license_key: nrLicenseKey
+common:
+  scrape_interval: 1s
+kubernetes:
+  jobs:
+    - job_name_prefix: test-k8s
+      target_discovery:
+        endpoints: true
+        additional_config:
+         kubeconfig_file: %s
+         namespaces:
+          names:
+          - %s
+`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
-	output, err := configurator.BuildOutput(&input)
-	require.NoError(t, err)
-
-	file, err := yaml.Marshal(output)
-	require.NoError(t, err)
-
-	promConfig := path.Join(t.TempDir(), "test-config.yml")
-	err = ioutil.WriteFile(promConfig, file, 0o444)
-	require.NoError(t, err)
+	outputConfigPath := runConfigurator(t, inputConfig)
 
 	ps := newPrometheusServer(t)
-	ps.start(t, promConfig)
+	ps.start(t, outputConfigPath)
 
 	// Build scrapeURL
 	instance := net.JoinHostPort(pod.Status.PodIP, svc.Annotations["prometheus.io/port"])
@@ -306,10 +287,12 @@ func Test_EndpointsDiscovery(t *testing.T) {
 
 	// Active targets
 	asserter.activeTargetField(t, scrapeURLKey, scrapeURL)
-	asserter.activeTargetLabels(t, map[string]string{"namespace": k8sEnv.testNamespace.Name})
-	asserter.activeTargetLabels(t, map[string]string{"service": svc.Name})
-	asserter.activeTargetLabels(t, map[string]string{"node": pod.Spec.NodeName})
-	asserter.activeTargetLabels(t, map[string]string{"test_label": svc.Labels["test.label"]})
+	asserter.activeTargetLabels(t, map[string]string{
+		"namespace":  k8sEnv.testNamespace.Name,
+		"service":    svc.Name,
+		"node":       pod.Spec.NodeName,
+		"test_label": svc.Labels["test.label"],
+	})
 
 	// Dropped targets
 	asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_pod_name": failedPod.Name})
