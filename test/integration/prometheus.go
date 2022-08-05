@@ -42,7 +42,7 @@ func newPrometheusServer(t *testing.T) *prometheusServer {
 func (ps *prometheusServer) start(t *testing.T, configPath string) {
 	t.Helper()
 
-	// nolint: gosec
+	//nolint: gosec
 	prom := exec.Command(
 		prometheusBinaryPath,
 		"--enable-feature=agent",
@@ -119,7 +119,7 @@ func freePort(t *testing.T) string {
 
 	defer l.Close()
 
-	return fmt.Sprintf("%d", l.Addr().(*net.TCPAddr).Port) // nolint: forcetypeassert
+	return fmt.Sprintf("%d", l.Addr().(*net.TCPAddr).Port) //nolint: forcetypeassert
 }
 
 // fetchPrometheusBinary check that the binary on prometheusBinaryPath is correct or try to fetch it from Prometheus repo.

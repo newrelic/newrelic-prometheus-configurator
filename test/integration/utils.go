@@ -24,7 +24,7 @@ func runConfigurator(t *testing.T, inputConfig string) string {
 	err := ioutil.WriteFile(inputConfigPath, []byte(inputConfig), fs.FileMode(readOnly))
 	require.NoError(t, err)
 
-	// nolint:gosec
+	//nolint:gosec
 	configurator := exec.Command(
 		"go",
 		"run",
