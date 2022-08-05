@@ -27,9 +27,9 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 		{
 			Name: "All fields set",
 			Input: statictargets.Config{
-				Jobs: []statictargets.Job{
+				StaticTargetJobs: []statictargets.StaticTargetJob{
 					{
-						Job: promcfg.Job{
+						PromScrapeJob: promcfg.Job{
 							JobName:               "fancy-job",
 							HonorLabels:           true,
 							HonorTimestamps:       &trueValue,

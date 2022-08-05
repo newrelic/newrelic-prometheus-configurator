@@ -7,12 +7,12 @@ import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 
 // Config defines all the static targets jobs.
 type Config struct {
-	Jobs []Job `yaml:"jobs"`
+	StaticTargetJobs []StaticTargetJob `yaml:"jobs"`
 }
 
-// Job represents job config for configurator.
-type Job struct {
-	Job                       promcfg.Job             `yaml:",inline"`
+// StaticTargetJob represents job config for configurator.
+type StaticTargetJob struct {
+	PromScrapeJob             promcfg.Job             `yaml:",inline"`
 	Targets                   []string                `yaml:"targets"`
 	Labels                    map[string]string       `yaml:"labels"`
 	ExtraRelabelConfigs       []promcfg.RelabelConfig `yaml:"extra_relabel_config"`
@@ -21,24 +21,24 @@ type Job struct {
 
 // Build will create a Prometheus Job list based on the static targets configuration.
 func (c Config) Build() []promcfg.Job {
-	staticTargetsOutput := []promcfg.Job{}
+	promScrapeJobs := []promcfg.Job{}
 
-	for _, job := range c.Jobs {
-		jobOutput := job.Job
+	for _, staticTargetJob := range c.StaticTargetJobs {
+		promScrapeJob := staticTargetJob.PromScrapeJob
 
-		jobOutput.StaticConfigs = []promcfg.StaticConfig{
+		promScrapeJob.StaticConfigs = []promcfg.StaticConfig{
 			{
-				Targets: job.Targets,
-				Labels:  job.Labels,
+				Targets: staticTargetJob.Targets,
+				Labels:  staticTargetJob.Labels,
 			},
 		}
 
-		jobOutput.RelabelConfigs = append(jobOutput.RelabelConfigs, job.ExtraRelabelConfigs...)
+		promScrapeJob.RelabelConfigs = append(promScrapeJob.RelabelConfigs, staticTargetJob.ExtraRelabelConfigs...)
 
-		jobOutput.MetricRelabelConfigs = append(jobOutput.MetricRelabelConfigs, job.ExtraMetricRelabelConfigs...)
+		promScrapeJob.MetricRelabelConfigs = append(promScrapeJob.MetricRelabelConfigs, staticTargetJob.ExtraMetricRelabelConfigs...)
 
-		staticTargetsOutput = append(staticTargetsOutput, jobOutput)
+		promScrapeJobs = append(promScrapeJobs, promScrapeJob)
 	}
 
-	return staticTargetsOutput
+	return promScrapeJobs
 }
