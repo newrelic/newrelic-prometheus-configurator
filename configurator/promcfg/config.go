@@ -1,4 +1,4 @@
-package configurator
+package promcfg
 
 import (
 	"net/url"
@@ -7,8 +7,7 @@ import (
 	"github.com/alecthomas/units"
 )
 
-// PrometheusExtraConfig represents some configuration which will be included in prometheus as it is.
-type PrometheusExtraConfig any
+// ExtraConfig represents some configuration which will be included in prometheus as it is.
 
 // TLSConfig represents tls configuration, `prometheusCommonConfig.TLSConfig` cannot be used directly
 // because it does not Marshal to yaml properly.
@@ -67,6 +66,11 @@ type Job struct {
 	BasicAuth             *BasicAuth       `yaml:"basic_auth,omitempty"`
 	Authorization         Authorization    `yaml:"authorization,omitempty"`
 	OAuth2                OAuth2           `yaml:"oauth2,omitempty"`
+
+	StaticConfigs        []StaticConfig       `yaml:"static_configs,omitempty"`
+	RelabelConfigs       []RelabelConfig      `yaml:"relabel_configs,omitempty"`
+	MetricRelabelConfigs []RelabelConfig      `yaml:"metric_relabel_configs,omitempty"`
+	KubernetesSdConfigs  []KubernetesSdConfig `yaml:"kubernetes_sd_configs,omitempty"`
 }
 
 // StaticConfig defines each of the static_configs for the prometheus config.
@@ -121,4 +125,27 @@ type KubernetesSdSelector struct {
 	Role  string `yaml:"role,omitempty"`
 	Label string `yaml:"label,omitempty"`
 	Field string `yaml:"field,omitempty"`
+}
+
+// QueueConfig represents the remote-write queue config.
+type QueueConfig struct {
+	Capacity          int           `yaml:"capacity"`
+	MaxShards         int           `yaml:"max_shards"`
+	MinShards         int           `yaml:"min_shards"`
+	MaxSamplesPerSend int           `yaml:"max_samples_per_send"`
+	BatchSendDeadLine time.Duration `yaml:"batch_send_deadline"`
+	MinBackoff        time.Duration `yaml:"min_backoff"`
+	MaxBackoff        time.Duration `yaml:"max_backoff"`
+	RetryOnHTTP429    bool          `yaml:"retry_on_http_429"`
+}
+
+// RemoteWrite represents a prometheus remote_write config.
+type RemoteWrite struct {
+	URL                 string          `yaml:"url"`
+	RemoteTimeout       time.Duration   `yaml:"remote_timeout,omitempty"`
+	Authorization       Authorization   `yaml:"authorization"`
+	TLSConfig           *TLSConfig      `yaml:"tls_config,omitempty"`
+	ProxyURL            string          `yaml:"proxy_url,omitempty"`
+	QueueConfig         *QueueConfig    `yaml:"queue_config,omitempty"`
+	WriteRelabelConfigs []RelabelConfig `yaml:"write_relabel_configs,omitempty"`
 }

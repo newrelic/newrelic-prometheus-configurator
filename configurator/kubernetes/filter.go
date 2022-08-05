@@ -1,7 +1,9 @@
-package configurator
+package kubernetes
 
 import (
 	"regexp"
+
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 )
 
 const (
@@ -28,20 +30,25 @@ type Filter struct {
 }
 
 // Pod creates a RelabelConfig that will keep only the Pod targets specified in Filter.
-func (f Filter) Pod() RelabelConfig {
+func (f Filter) Pod() promcfg.RelabelConfig {
 	return f.build(podMetadata)
 }
 
 // Endpoints creates a RelabelConfig that will keep only the Endpoints targets specified in Filter.
-func (f Filter) Endpoints() RelabelConfig {
+func (f Filter) Endpoints() promcfg.RelabelConfig {
 	return f.build(serviceMetadata)
+}
+
+// Endpoints creates a RelabelConfig that will keep only the Endpoints targets specified in Filter.
+func (f Filter) Valid() bool {
+	return len(f.Annotations) != 0 || len(f.Labels) != 0
 }
 
 // build creates a RelabelConfig that will keep only the targets specified in Filter.
 // All conditions are concatenated with 'AND' operation.
 // If no value has been specified for the metadata, it will check that exists.
-func (f Filter) build(metadataSourcePrefix string) RelabelConfig {
-	filterCfg := RelabelConfig{
+func (f Filter) build(metadataSourcePrefix string) promcfg.RelabelConfig {
+	filterCfg := promcfg.RelabelConfig{
 		Separator: separator,
 		Action:    "keep",
 	}
@@ -54,7 +61,7 @@ func (f Filter) build(metadataSourcePrefix string) RelabelConfig {
 
 // addConditions iterates over the metadata and appends the conditions
 // to `source_labels` and `regex` of the filter.
-func addConditions(relabelConfig *RelabelConfig, metadata map[string]string, metadataPrefix string) {
+func addConditions(relabelConfig *promcfg.RelabelConfig, metadata map[string]string, metadataPrefix string) {
 	for prometheusLabels, regex := range metadata {
 		// Prometheus sanitize all metadata keys (like kubernetes label/annotations names) to comply
 		// with their naming conventions. We have to do the same so we can match in relabel configs.

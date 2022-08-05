@@ -1,6 +1,5 @@
 scrape_configs:
   - job_name: kubernetes-job-endpoints
-    honor_labels: true
     kubernetes_sd_configs:
       - role: endpoints
     relabel_configs:
@@ -41,7 +40,6 @@ scrape_configs:
         regex: (.+)
 
   - job_name: kubernetes-job-2-endpoints
-    honor_labels: true
     kubernetes_sd_configs:
       - role: endpoints
         kubeconfig_file: test_file

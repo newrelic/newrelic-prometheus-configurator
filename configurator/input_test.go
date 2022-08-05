@@ -8,6 +8,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
@@ -35,7 +37,7 @@ func testInputExpectation(t *testing.T) Input {
 	t.Helper()
 
 	return Input{
-		Common: GlobalConfig{
+		Common: promcfg.GlobalConfig{
 			ScrapeInterval: time.Second * 60,
 			ScrapeTimeout:  time.Second,
 			ExternalLabels: map[string]string{
@@ -44,11 +46,11 @@ func testInputExpectation(t *testing.T) Input {
 			},
 		},
 		DataSourceName: "data-source",
-		RemoteWrite: RemoteWriteInput{
+		RemoteWrite: remotewrite.Config{
 			LicenseKey: "nrLicenseKey",
 			Staging:    true,
 			ProxyURL:   "http://proxy.url.to.use:1234",
-			TLSConfig: &TLSConfig{
+			TLSConfig: &promcfg.TLSConfig{
 				InsecureSkipVerify: true,
 				CAFile:             "/path/to/ca.crt",
 				CertFile:           "/path/to/cert.crt",
@@ -56,7 +58,7 @@ func testInputExpectation(t *testing.T) Input {
 				ServerName:         "server.name",
 				MinVersion:         "TLS12",
 			},
-			QueueConfig: &QueueConfig{
+			QueueConfig: &promcfg.QueueConfig{
 				Capacity:          2500,
 				MaxShards:         200,
 				MinShards:         1,
@@ -67,15 +69,15 @@ func testInputExpectation(t *testing.T) Input {
 				RetryOnHTTP429:    false,
 			},
 			RemoteTimeout: 30 * time.Second,
-			ExtraWriteRelabelConfigs: []PrometheusExtraConfig{
-				map[string]any{
-					"source_labels": []any{"__name__", "instance"},
-					"regex":         "node_memory_active_bytes;localhost:9100",
-					"action":        "drop",
+			ExtraWriteRelabelConfigs: []promcfg.RelabelConfig{
+				{
+					SourceLabels: []string{"__name__", "instance"},
+					Regex:        "node_memory_active_bytes;localhost:9100",
+					Action:       "drop",
 				},
 			},
 		},
-		ExtraRemoteWrite: []PrometheusExtraConfig{
+		ExtraRemoteWrite: []RawPromConfig{
 			map[string]any{
 				"url": "https://extra.prometheus.remote.write",
 			},
