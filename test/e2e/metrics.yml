@@ -1,0 +1,24 @@
+entities:
+  - entityType: FakeSelfMetrics
+    metrics:
+      - name: prometheus_agent_active_series
+      - name: prometheus_target_interval_length_seconds
+      - name: prometheus_target_scrape_pool_targets
+      - name: prometheus_remote_storage_samples_pending
+      - name: prometheus_remote_storage_samples_in_total
+      - name: prometheus_remote_storage_samples_retried_total
+      - name: prometheus_agent_corruptions_total
+      - name: prometheus_remote_storage_shards
+      - name: prometheus_sd_kubernetes_events_total
+      - name: prometheus_agent_checkpoint_creations_failed_total
+      - name: prometheus_agent_checkpoint_deletions_failed_total
+      - name: prometheus_remote_storage_dropped_samples_total
+      - name: prometheus_remote_storage_failed_samples_total
+      - name: prometheus_sd_kubernetes_http_request_total
+      - name: prometheus_agent_truncate_duration_seconds_sum
+      - name: prometheus_build_info
+      - name: process_resident_memory_bytes
+      - name: process_virtual_memory_bytes
+      - name: process_cpu_seconds_total
+      - name: scrape_pool_targets
+      - name: scrape_duration_seconds

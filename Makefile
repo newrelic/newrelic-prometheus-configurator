@@ -74,3 +74,16 @@ chart-unit-test:
 	ct --config .github/ct.yaml lint --debug
 	helm dependency update ./charts/newrelic-prometheus
 	helm unittest ./charts/newrelic-prometheus -3
+
+.PHONY: e2e-test
+e2e-test:
+	newrelic-integration-e2e \
+		--commit_sha=test-string \
+		--retry_attempts=5 \
+		--retry_seconds=60 \
+        --account_id=${ACCOUNT_ID} \
+		--api_key=${API_REST_KEY} \
+		--license_key=${LICENSE_KEY} \
+        --spec_path=./test/e2e/test-specs.yml \
+		--verbose_mode=true \
+		--agent_enabled="false"
