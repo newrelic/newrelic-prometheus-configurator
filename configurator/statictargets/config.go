@@ -12,11 +12,11 @@ type Config struct {
 
 // Job represents job config for configurator.
 type Job struct {
-	Job                       promcfg.Job           `yaml:",inline"`
-	Targets                   []string              `yaml:"targets"`
-	Labels                    map[string]string     `yaml:"labels"`
-	ExtraRelabelConfigs       []promcfg.ExtraConfig `yaml:"extra_relabel_config"`
-	ExtraMetricRelabelConfigs []promcfg.ExtraConfig `yaml:"extra_metric_relabel_config"`
+	Job                       promcfg.Job             `yaml:",inline"`
+	Targets                   []string                `yaml:"targets"`
+	Labels                    map[string]string       `yaml:"labels"`
+	ExtraRelabelConfigs       []promcfg.RelabelConfig `yaml:"extra_relabel_config"`
+	ExtraMetricRelabelConfigs []promcfg.RelabelConfig `yaml:"extra_metric_relabel_config"`
 }
 
 // Build will create a Prometheus Job list based on the static targets configuration.
@@ -33,13 +33,9 @@ func (c Config) Build() []promcfg.Job {
 			},
 		}
 
-		for _, rc := range job.ExtraRelabelConfigs {
-			jobOutput.RelabelConfigs = append(jobOutput.RelabelConfigs, rc)
-		}
+		jobOutput.RelabelConfigs = append(jobOutput.RelabelConfigs, job.ExtraRelabelConfigs...)
 
-		for _, mrc := range job.ExtraMetricRelabelConfigs {
-			jobOutput.MetricRelabelConfigs = append(jobOutput.MetricRelabelConfigs, mrc)
-		}
+		jobOutput.MetricRelabelConfigs = append(jobOutput.MetricRelabelConfigs, job.ExtraMetricRelabelConfigs...)
 
 		staticTargetsOutput = append(staticTargetsOutput, jobOutput)
 	}

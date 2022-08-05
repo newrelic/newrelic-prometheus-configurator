@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/kubernetes"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 	"github.com/stretchr/testify/require"
 )
 
@@ -208,8 +207,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 			require.GreaterOrEqual(t, len(job[0].RelabelConfigs), 1)
 
 			// we expect the filter relabel config as first one.
-			actualRelabelConfig, ok := job[0].RelabelConfigs[0].(promcfg.RelabelConfig)
-			require.True(t, ok)
+			actualRelabelConfig := job[0].RelabelConfigs[0]
 
 			require.Equal(t, len(tt.want), len(actualRelabelConfig.SourceLabels))
 

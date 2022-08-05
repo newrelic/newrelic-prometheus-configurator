@@ -13,8 +13,8 @@ import (
 // Output holds all configuration information in prometheus format which can be directly marshaled to a valid yaml
 // configuration.
 type Output struct {
-	RemoteWrite   []any                `yaml:"remote_write"`
-	ScrapeConfigs []any                `yaml:"scrape_configs,omitempty"`
+	RemoteWrite   []RawPromConfig      `yaml:"remote_write"`
+	ScrapeConfigs []RawPromConfig      `yaml:"scrape_configs,omitempty"`
 	GlobalConfig  promcfg.GlobalConfig `yaml:"global"`
 }
 
@@ -22,13 +22,11 @@ type Output struct {
 // required to obtain a valid prometheus configuration.
 func BuildOutput(input *Input) (Output, error) {
 	output := Output{
-		RemoteWrite:  []any{input.RemoteWrite.Build(input.DataSourceName)},
+		RemoteWrite:  []RawPromConfig{input.RemoteWrite.Build(input.DataSourceName)},
 		GlobalConfig: input.Common,
 	}
 
-	for _, extraRemoteWriteConfig := range input.ExtraRemoteWrite {
-		output.RemoteWrite = append(output.RemoteWrite, extraRemoteWriteConfig)
-	}
+	output.RemoteWrite = append(output.RemoteWrite, input.ExtraRemoteWrite...)
 
 	for _, staticTargets := range input.StaticTargets.Build() {
 		output.ScrapeConfigs = append(output.ScrapeConfigs, staticTargets)
@@ -43,10 +41,7 @@ func BuildOutput(input *Input) (Output, error) {
 		output.ScrapeConfigs = append(output.ScrapeConfigs, job)
 	}
 
-	// Include "extra" scrape configuration
-	for _, extraScrapeConfig := range input.ExtraScrapeConfigs {
-		output.ScrapeConfigs = append(output.ScrapeConfigs, extraScrapeConfig)
-	}
+	output.ScrapeConfigs = append(output.ScrapeConfigs, input.ExtraScrapeConfigs...)
 
 	return output, nil
 }

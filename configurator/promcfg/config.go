@@ -8,7 +8,6 @@ import (
 )
 
 // ExtraConfig represents some configuration which will be included in prometheus as it is.
-type ExtraConfig any
 
 // TLSConfig represents tls configuration, `prometheusCommonConfig.TLSConfig` cannot be used directly
 // because it does not Marshal to yaml properly.
@@ -69,8 +68,8 @@ type Job struct {
 	OAuth2                OAuth2           `yaml:"oauth2,omitempty"`
 
 	StaticConfigs        []StaticConfig       `yaml:"static_configs,omitempty"`
-	RelabelConfigs       []any                `yaml:"relabel_configs,omitempty"`
-	MetricRelabelConfigs []any                `yaml:"metric_relabel_configs,omitempty"`
+	RelabelConfigs       []RelabelConfig      `yaml:"relabel_configs,omitempty"`
+	MetricRelabelConfigs []RelabelConfig      `yaml:"metric_relabel_configs,omitempty"`
 	KubernetesSdConfigs  []KubernetesSdConfig `yaml:"kubernetes_sd_configs,omitempty"`
 }
 
@@ -140,13 +139,13 @@ type QueueConfig struct {
 	RetryOnHTTP429    bool          `yaml:"retry_on_http_429"`
 }
 
-// RemoteWrite represents a prometheus remote_write config which can be obtained from input.
+// RemoteWrite represents a prometheus remote_write config.
 type RemoteWrite struct {
-	URL                 string        `yaml:"url"`
-	RemoteTimeout       time.Duration `yaml:"remote_timeout,omitempty"`
-	Authorization       Authorization `yaml:"authorization"`
-	TLSConfig           *TLSConfig    `yaml:"tls_config,omitempty"`
-	ProxyURL            string        `yaml:"proxy_url,omitempty"`
-	QueueConfig         *QueueConfig  `yaml:"queue_config,omitempty"`
-	WriteRelabelConfigs []ExtraConfig `yaml:"write_relabel_configs,omitempty"`
+	URL                 string          `yaml:"url"`
+	RemoteTimeout       time.Duration   `yaml:"remote_timeout,omitempty"`
+	Authorization       Authorization   `yaml:"authorization"`
+	TLSConfig           *TLSConfig      `yaml:"tls_config,omitempty"`
+	ProxyURL            string          `yaml:"proxy_url,omitempty"`
+	QueueConfig         *QueueConfig    `yaml:"queue_config,omitempty"`
+	WriteRelabelConfigs []RelabelConfig `yaml:"write_relabel_configs,omitempty"`
 }

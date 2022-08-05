@@ -20,13 +20,13 @@ const (
 
 // Config defines all the NewRelic's remote write endpoint fields.
 type Config struct {
-	LicenseKey               string                `yaml:"license_key"`
-	Staging                  bool                  `yaml:"staging"`
-	ProxyURL                 string                `yaml:"proxy_url"`
-	TLSConfig                *promcfg.TLSConfig    `yaml:"tls_config"`
-	QueueConfig              *promcfg.QueueConfig  `yaml:"queue_config"`
-	RemoteTimeout            time.Duration         `yaml:"remote_timeout"`
-	ExtraWriteRelabelConfigs []promcfg.ExtraConfig `yaml:"extra_write_relabel_configs"`
+	LicenseKey               string                  `yaml:"license_key"`
+	Staging                  bool                    `yaml:"staging"`
+	ProxyURL                 string                  `yaml:"proxy_url"`
+	TLSConfig                *promcfg.TLSConfig      `yaml:"tls_config"`
+	QueueConfig              *promcfg.QueueConfig    `yaml:"queue_config"`
+	RemoteTimeout            time.Duration           `yaml:"remote_timeout"`
+	ExtraWriteRelabelConfigs []promcfg.RelabelConfig `yaml:"extra_write_relabel_configs"`
 }
 
 // Build will create the Prometheus remote_write entry for NewRelic.

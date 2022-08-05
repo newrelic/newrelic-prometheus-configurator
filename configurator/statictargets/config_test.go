@@ -78,18 +78,18 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 						},
 						Targets: []string{"host:port"},
 						Labels:  map[string]string{"a": "b"},
-						ExtraRelabelConfigs: []promcfg.ExtraConfig{
-							map[string]any{
-								"source_labels": []any{"src.label"},
-								"regex":         "to_drop.*",
-								"action":        "drop",
+						ExtraRelabelConfigs: []promcfg.RelabelConfig{
+							{
+								SourceLabels: []string{"src.label"},
+								Regex:        "to_drop.*",
+								Action:       "drop",
 							},
 						},
-						ExtraMetricRelabelConfigs: []promcfg.ExtraConfig{
-							map[string]any{
-								"source_labels": []any{"src.label"},
-								"regex":         "to_drop.*",
-								"action":        "drop",
+						ExtraMetricRelabelConfigs: []promcfg.RelabelConfig{
+							{
+								SourceLabels: []string{"src.label"},
+								Regex:        "to_drop.*",
+								Action:       "drop",
 							},
 						},
 					},
@@ -150,18 +150,18 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 						},
 					},
 
-					RelabelConfigs: []any{
-						map[string]any{
-							"source_labels": []any{"src.label"},
-							"regex":         "to_drop.*",
-							"action":        "drop",
+					RelabelConfigs: []promcfg.RelabelConfig{
+						{
+							SourceLabels: []string{"src.label"},
+							Regex:        "to_drop.*",
+							Action:       "drop",
 						},
 					},
-					MetricRelabelConfigs: []any{
-						map[string]any{
-							"source_labels": []any{"src.label"},
-							"regex":         "to_drop.*",
-							"action":        "drop",
+					MetricRelabelConfigs: []promcfg.RelabelConfig{
+						{
+							SourceLabels: []string{"src.label"},
+							Regex:        "to_drop.*",
+							Action:       "drop",
 						},
 					},
 				},

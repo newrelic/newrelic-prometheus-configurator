@@ -69,15 +69,15 @@ func testInputExpectation(t *testing.T) Input {
 				RetryOnHTTP429:    false,
 			},
 			RemoteTimeout: 30 * time.Second,
-			ExtraWriteRelabelConfigs: []promcfg.ExtraConfig{
-				map[string]any{
-					"source_labels": []any{"__name__", "instance"},
-					"regex":         "node_memory_active_bytes;localhost:9100",
-					"action":        "drop",
+			ExtraWriteRelabelConfigs: []promcfg.RelabelConfig{
+				{
+					SourceLabels: []string{"__name__", "instance"},
+					Regex:        "node_memory_active_bytes;localhost:9100",
+					Action:       "drop",
 				},
 			},
 		},
-		ExtraRemoteWrite: []promcfg.ExtraConfig{
+		ExtraRemoteWrite: []RawPromConfig{
 			map[string]any{
 				"url": "https://extra.prometheus.remote.write",
 			},

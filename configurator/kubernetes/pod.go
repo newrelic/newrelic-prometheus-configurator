@@ -3,20 +3,16 @@ package kubernetes //nolint: dupl
 import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 
 // podRelabelConfigs returns all relabel configs for an Pod job.
-func podRelabelConfigs(job Job) []any {
-	rc := []any{}
+func podRelabelConfigs(job Job) []promcfg.RelabelConfig {
+	rc := []promcfg.RelabelConfig{}
 
 	if job.TargetDiscovery.Filter.Valid() {
 		rc = append(rc, job.TargetDiscovery.Filter.Pod())
 	}
 
-	for _, rcf := range podDefaultRelabelConfigs() {
-		rc = append(rc, rcf)
-	}
+	rc = append(rc, podDefaultRelabelConfigs()...)
 
-	for _, c := range job.ExtraRelabelConfigs {
-		rc = append(rc, c)
-	}
+	rc = append(rc, job.ExtraRelabelConfigs...)
 
 	return rc
 }

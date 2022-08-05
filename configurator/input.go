@@ -10,6 +10,8 @@ import (
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/statictargets"
 )
 
+type RawPromConfig any
+
 // Input represents the input configuration, it it used to load New Relic configuration so it can be parsed to
 // prometheus configuration.
 type Input struct {
@@ -23,11 +25,11 @@ type Input struct {
 	// RemoteWrite holds the New Relic remote write configuration.
 	RemoteWrite remotewrite.Config `yaml:"newrelic_remote_write"`
 	// ExtraRemoteWrite holds any additional remote write configuration to use as it is in prometheus configuration.
-	ExtraRemoteWrite []promcfg.ExtraConfig `yaml:"extra_remote_write"`
+	ExtraRemoteWrite []RawPromConfig `yaml:"extra_remote_write"`
 	// StaticTargets holds the static-target jobs configuration.
 	StaticTargets statictargets.Config `yaml:"static_targets"`
 	// ExtraScrapeConfigs holds any additional raw scrape configuration to use as it is in prometheus configuration.
-	ExtraScrapeConfigs []promcfg.ExtraConfig `yaml:"extra_scrape_configs"`
+	ExtraScrapeConfigs []RawPromConfig `yaml:"extra_scrape_configs"`
 	// Kubernetes holds the kubernetes-targets' configuration.
 	Kubernetes kubernetes.Config `yaml:"kubernetes"`
 }
