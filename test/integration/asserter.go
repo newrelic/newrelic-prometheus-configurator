@@ -12,6 +12,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const scrapeURLKey = "scrapeUrl"
+
 var ErrTimeout = errors.New("timeout Exceeded")
 
 type asserter struct {
@@ -85,9 +87,9 @@ func (a *asserter) prometheusServerReady(t *testing.T) {
 	require.NoError(t, err, "readiness probe failed")
 }
 
-// activeTargetDiscoveredLabels checks that Prometheus has at least one active target with all expected label for
-// discoveredLabels.
-func (a *asserter) activeTargetDiscoveredLabels(t *testing.T, expectedLabels map[string]string) {
+// activeTargetLabels checks that Prometheus has at least one active target with all expected labels for
+// discoveredLabels and labels fields.
+func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]string) {
 	t.Helper()
 
 	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
@@ -100,25 +102,7 @@ func (a *asserter) activeTargetDiscoveredLabels(t *testing.T, expectedLabels map
 			if containsLabels(at.DiscoveredLabels, expectedLabels) {
 				return true
 			}
-		}
 
-		return false
-	})
-
-	require.NoError(t, err)
-}
-
-// activeTargetLabels checks that Prometheus has at least one active target with all expected labels for labels.
-func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]string) {
-	t.Helper()
-
-	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
-		targets, ok := a.prometheusServer.targets(t)
-		if !ok {
-			return false
-		}
-
-		for _, at := range targets.ActiveTargets {
 			if containsLabels(at.Labels, expectedLabels) {
 				return true
 			}
@@ -140,10 +124,9 @@ func (a *asserter) activeTargetField(t *testing.T, key, value string) {
 			return false
 		}
 
-		// TODO: Add these values as constants
 		for _, at := range targets.ActiveTargets {
 			switch key {
-			case "scrapeUrl":
+			case scrapeURLKey:
 				return at.ScrapeURL == value
 			}
 		}
