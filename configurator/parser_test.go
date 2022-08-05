@@ -20,7 +20,7 @@ import (
 	_ "github.com/prometheus/prometheus/discovery/kubernetes"
 )
 
-//nolint: paralleltest,tparallel
+//nolint:paralleltest,tparallel
 func TestParser(t *testing.T) {
 	t.Setenv(configurator.LicenseKeyEnvKey, "")
 	t.Setenv(configurator.DataSourceNameEnvKey, "")
