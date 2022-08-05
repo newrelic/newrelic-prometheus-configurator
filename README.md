@@ -45,12 +45,32 @@ A license key and cluster name are required to run the environment. Configure th
 Start the local environment:
 ```shell
 export NR_PROM_CLUSTER=<cluster name>
-export NR_PROM_LICENSE_KEY=<Newrelic ingest key>
+export NR_PROM_LICENSE_KEY=<NewRelic ingest key>
 make start-local-cluster
 make tilt-up
 ```
 
 Notice that local images are build and pushed to docker running inside the minikube cluster since we are running `eval $(minikube docker-env)` before launching Tilt.
+
+### Running e2e tests
+
+This test are based on the `newrelic-integration-e2e`. This tool will start the local environment and check if the expected metrics has been reach the NewRelic platform.
+
+To run it locally you should already be able to run the local cluster and apart from that you must install the `newrelic-integration-e2e` binary:
+```bash
+git clone https://github.com/newrelic/newrelic-integration-e2e-action
+cd newrelic-integration-e2e-action/newrelic-integration-e2e
+go build -o  $GOPATH/bin/newrelic-integration-e2e ./cmd/...
+```
+
+Then run:
+```bash
+export ACCOUNT_ID=<NewRelic account number>
+export API_REST_KEY=<NewRelic api rest key>
+export LICENSE_KEY=<NewRelic ingest key>
+make start-local-cluster
+make e2e-test
+```
 
 ## Support
 
