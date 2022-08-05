@@ -108,9 +108,9 @@ type AdditionalConfig struct {
 	AttachMetadata *promcfg.AttachMetadata         `yaml:"attach_metadata,omitempty"`
 }
 
-func buildSdConfig(kind string, ac *AdditionalConfig) promcfg.KubernetesSdConfig {
+func buildSdConfig(jobKind string, ac *AdditionalConfig) promcfg.KubernetesSdConfig {
 	k8sSdConfig := promcfg.KubernetesSdConfig{
-		Role: kind,
+		Role: jobKind,
 	}
 
 	if ac == nil {
