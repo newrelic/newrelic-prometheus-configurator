@@ -18,7 +18,7 @@ func TestBuildFailWhen(t *testing.T) {
 		{
 			name: "JobNamePrefix is empty",
 			k8sConfig: kubernetes.Config{
-				Jobs: []kubernetes.Job{
+				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix:   "",
 						TargetDiscovery: kubernetes.TargetDiscovery{Pod: true},
@@ -30,7 +30,7 @@ func TestBuildFailWhen(t *testing.T) {
 		{
 			name: "All TargetKind are disabled",
 			k8sConfig: kubernetes.Config{
-				Jobs: []kubernetes.Job{
+				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test",
 					},
@@ -86,7 +86,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		{
 			name: "annotation pod filter",
 			input: kubernetes.Config{
-				Jobs: []kubernetes.Job{
+				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-pod",
 						TargetDiscovery: kubernetes.TargetDiscovery{
@@ -103,7 +103,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		{
 			name: "check pod label is present",
 			input: kubernetes.Config{
-				Jobs: []kubernetes.Job{
+				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-endpoints",
 						TargetDiscovery: kubernetes.TargetDiscovery{
@@ -120,7 +120,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		{
 			name: "combined pod filter",
 			input: kubernetes.Config{
-				Jobs: []kubernetes.Job{
+				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-pod",
 						TargetDiscovery: kubernetes.TargetDiscovery{
@@ -141,7 +141,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		{
 			name: "annotation service-endpoints filter",
 			input: kubernetes.Config{
-				Jobs: []kubernetes.Job{
+				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-endpoints",
 						TargetDiscovery: kubernetes.TargetDiscovery{
@@ -158,7 +158,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		{
 			name: "check service-endpoints label is present",
 			input: kubernetes.Config{
-				Jobs: []kubernetes.Job{
+				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-endpoints",
 						TargetDiscovery: kubernetes.TargetDiscovery{
@@ -175,7 +175,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		{
 			name: "combined service-endpoints filter",
 			input: kubernetes.Config{
-				Jobs: []kubernetes.Job{
+				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-pod",
 						TargetDiscovery: kubernetes.TargetDiscovery{

@@ -18,70 +18,66 @@ var (
 
 // Config defines all fields to set up prometheus to scrape k8s targets.
 type Config struct {
-	Jobs []Job `yaml:"jobs"`
+	K8sJobs []K8sJob `yaml:"jobs"`
 }
 
 // Build will create a Prometheus Job list based on the kubernetes configuration.
 func (c Config) Build() ([]promcfg.Job, error) {
-	var jobs []promcfg.Job
+	var promScrapeJobs []promcfg.Job
 
-	for _, job := range c.Jobs {
-		if err := c.validate(job); err != nil {
+	for _, k8sJob := range c.K8sJobs {
+		if err := c.validate(k8sJob); err != nil {
 			return nil, err
 		}
 
-		if job.TargetDiscovery.Pod {
-			podJob := job.Job
+		if k8sJob.TargetDiscovery.Pod {
+			podJob := k8sJob.PromScrapeJob
 
-			podJob.JobName = job.JobNamePrefix + "-" + podKind
+			podJob.JobName = k8sJob.JobNamePrefix + "-" + podKind
 
-			podJob.KubernetesSdConfigs = append(podJob.KubernetesSdConfigs, buildSdConfig(podKind, job.TargetDiscovery.AdditionalConfig))
+			podJob.KubernetesSdConfigs = append(podJob.KubernetesSdConfigs, buildSdConfig(podKind, k8sJob.TargetDiscovery.AdditionalConfig))
 
-			podJob.RelabelConfigs = append(podJob.RelabelConfigs, podRelabelConfigs(job)...)
+			podJob.RelabelConfigs = append(podJob.RelabelConfigs, podRelabelConfigs(k8sJob)...)
 
-			for _, mrc := range job.ExtraMetricRelabelConfigs {
-				podJob.MetricRelabelConfigs = append(podJob.MetricRelabelConfigs, mrc)
-			}
+			podJob.MetricRelabelConfigs = append(podJob.MetricRelabelConfigs, k8sJob.ExtraMetricRelabelConfigs...)
 
-			jobs = append(jobs, podJob)
+			promScrapeJobs = append(promScrapeJobs, podJob)
 		}
 
-		if job.TargetDiscovery.Endpoints {
-			endpointsJob := job.Job
+		if k8sJob.TargetDiscovery.Endpoints {
+			endpointsJob := k8sJob.PromScrapeJob
 
-			endpointsJob.JobName = job.JobNamePrefix + "-" + endpointsKind
+			endpointsJob.JobName = k8sJob.JobNamePrefix + "-" + endpointsKind
 
-			endpointsJob.KubernetesSdConfigs = append(endpointsJob.KubernetesSdConfigs, buildSdConfig(endpointsKind, job.TargetDiscovery.AdditionalConfig))
+			endpointsJob.KubernetesSdConfigs = append(endpointsJob.KubernetesSdConfigs, buildSdConfig(endpointsKind, k8sJob.TargetDiscovery.AdditionalConfig))
 
-			endpointsJob.RelabelConfigs = append(endpointsJob.RelabelConfigs, endpointsRelabelConfigs(job)...)
+			endpointsJob.RelabelConfigs = append(endpointsJob.RelabelConfigs, endpointsRelabelConfigs(k8sJob)...)
 
-			for _, mrc := range job.ExtraMetricRelabelConfigs {
-				endpointsJob.MetricRelabelConfigs = append(endpointsJob.MetricRelabelConfigs, mrc)
-			}
+			endpointsJob.MetricRelabelConfigs = append(endpointsJob.MetricRelabelConfigs, k8sJob.ExtraMetricRelabelConfigs...)
 
-			jobs = append(jobs, endpointsJob)
+			promScrapeJobs = append(promScrapeJobs, endpointsJob)
 		}
 	}
 
-	return jobs, nil
+	return promScrapeJobs, nil
 }
 
-func (c Config) validate(job Job) error {
-	if !job.TargetDiscovery.Valid() {
+func (c Config) validate(k8sJob K8sJob) error {
+	if !k8sJob.TargetDiscovery.Valid() {
 		return ErrInvalidK8sJobKinds
 	}
 
-	if job.JobNamePrefix == "" {
+	if k8sJob.JobNamePrefix == "" {
 		return ErrInvalidK8sJobPrefix
 	}
 
 	return nil
 }
 
-// Job holds the configuration which will parsed to a prometheus scrape job including the
+// K8sJob holds the configuration which will parsed to a prometheus scrape job including the
 // specific rules needed.
-type Job struct {
-	Job                       promcfg.Job             `yaml:",inline"`
+type K8sJob struct {
+	PromScrapeJob             promcfg.Job             `yaml:",inline"`
 	JobNamePrefix             string                  `yaml:"job_name_prefix"`
 	TargetDiscovery           TargetDiscovery         `yaml:"target_discovery"`
 	ExtraRelabelConfigs       []promcfg.RelabelConfig `yaml:"extra_relabel_config"`
@@ -96,8 +92,8 @@ type TargetDiscovery struct {
 }
 
 // Valid returns true when the defined configuration is valid.
-func (k *TargetDiscovery) Valid() bool {
-	return k.Pod || k.Endpoints
+func (td TargetDiscovery) Valid() bool {
+	return td.Pod || td.Endpoints
 }
 
 // AdditionalConfig holds additional config for the service discovery.
@@ -113,6 +109,7 @@ func buildSdConfig(jobKind string, ac *AdditionalConfig) promcfg.KubernetesSdCon
 		Role: jobKind,
 	}
 
+	// Check if Additional configs has been set in the config.
 	if ac == nil {
 		return k8sSdConfig
 	}

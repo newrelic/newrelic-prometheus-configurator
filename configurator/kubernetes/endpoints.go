@@ -3,7 +3,7 @@ package kubernetes //nolint: dupl
 import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 
 // endpointsRelabelConfigs returns all relabel configs for an Endpoints job.
-func endpointsRelabelConfigs(job Job) []promcfg.RelabelConfig {
+func endpointsRelabelConfigs(job K8sJob) []promcfg.RelabelConfig {
 	rc := []promcfg.RelabelConfig{}
 
 	if job.TargetDiscovery.Filter.Valid() {
