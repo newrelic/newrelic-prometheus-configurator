@@ -4,15 +4,11 @@ package integration
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net"
-	"path"
 	"strconv"
 	"testing"
 
 	"github.com/newrelic-forks/newrelic-prometheus/test/integration/mocks"
-	"github.com/stretchr/testify/require"
-
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -26,7 +22,7 @@ func Test_PodMetricsLabels(t *testing.T) {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "testpod",
 			Labels: map[string]string{
-				"pod.label": "Value.of.label",
+				"test.label": "test.value",
 			},
 			Annotations: map[string]string{
 				"prometheus.io/scrape": "true",
@@ -38,76 +34,55 @@ func Test_PodMetricsLabels(t *testing.T) {
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 
 	ps := newPrometheusServer(t)
-
 	asserter := newAsserter(ps)
-
-	exporter := mocks.StartExporter(t)
 
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 
-	// TODO this test is using a Prom config directly since pods targets
-	// are not implemented in the configurator yet.
-	promConfig := path.Join(t.TempDir(), "test-config.yml")
-	err := ioutil.WriteFile(promConfig, []byte(fmt.Sprintf(`
-remote_write:
-- url: https://foo:8999/write
-  # not actually needed here but is needed when the newrelic_remote_write is used.
+	inputConfig := fmt.Sprintf(`
+newrelic_remote_write:
+  license_key: nrLicenseKey
   proxy_url: %s
   tls_config:
     insecure_skip_verify: true
-
-global:
+common:
   scrape_interval: 1s
+kubernetes:
+  jobs:
+    - job_name_prefix: test-k8s
+      target_discovery:
+        pod: true
+        additional_config:
+         kubeconfig_file: %s
+         namespaces:
+          names:
+          - %s
+`, rw.URL, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
-scrape_configs:
-- job_name: test-k8s
-  # used to make prometheus use the test endpoint url instead of the real pod ip.
-  proxy_url: %s
-  kubernetes_sd_configs:
-  - role: pod
-    # used to connect to the testing cluster since prometheus is running outside of it.
-    kubeconfig_file: %s
-    # Filter only the current test namespace to make test independent.
-    namespaces:
-      names:
-      - %s
-  relabel_configs:
-  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-    action: keep
-    regex: true
+	outputConfigPath := runConfigurator(t, inputConfig)
 
-  - action: labelmap
-    regex: __meta_kubernetes_pod_label_(.+)
-  - source_labels: [__meta_kubernetes_namespace]
-    action: replace
-    target_label: namespace
-  - source_labels: [__meta_kubernetes_pod_name]
-    action: replace
-    target_label: pod
-`, rw.URL, exporter.URL, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)), 0o444)
-	require.NoError(t, err)
-
-	ps.start(t, promConfig)
+	ps.start(t, outputConfigPath)
 
 	instance := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
 	expectedLabels := map[string]string{
-		"pod_label": "Value.of.label",
-		"pod":       pod.Name,
-		"namespace": pod.Namespace,
-		"instance":  instance,
-		"job":       "test-k8s",
+		"test_label": "test.value",
+		"pod":        pod.Name,
+		"namespace":  pod.Namespace,
+		"instance":   instance,
+		"job":        "test-k8s-pod",
 	}
-	asserter.metricLabels(t, expectedLabels, "mock_gauge_metric")
+	asserter.metricLabels(t, expectedLabels, "scrape_duration_seconds")
 }
 
-func Test_PodDiscovery(t *testing.T) {
+func Test_PodPhaseDropRule(t *testing.T) {
 	t.Parallel()
 
 	k8sEnv := newK8sEnvironment(t)
+	terminationGracePeriodSeconds := int64(1)
 
-	pod := &corev1.Pod{
+	// Create running pod
+	runningPod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod",
+			Name: "testpod-running",
 			Labels: map[string]string{
 				"k8s.io/app": "myApp",
 			},
@@ -118,59 +93,150 @@ func Test_PodDiscovery(t *testing.T) {
 		Spec: fakePodSpec(),
 	}
 
-	podDropped := &corev1.Pod{
+	// Create failing pod
+	failedPod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod-dropped",
+			Name: "testpod-failed",
 			Labels: map[string]string{
-				"k8s.io/app": "myOtherAppIDontWantToMonitor",
+				"k8s.io/app": "myApp",
 			},
 			Annotations: map[string]string{
 				"prometheus.io/scrape": "true",
+			},
+		},
+		Spec: corev1.PodSpec{
+			ActiveDeadlineSeconds: &terminationGracePeriodSeconds,
+			Containers: []corev1.Container{
+				{
+					Name:  "fake-exporter",
+					Image: "this-image-dont-exist-pod-will-fail",
+				},
+			},
+		},
+	}
+
+	// Create a succeeded pod which will be added to dropped targets
+	succeededPod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "testpod-succeeded",
+			Labels: map[string]string{
+				"k8s.io/app": "myApp",
+			},
+			Annotations: map[string]string{
+				"prometheus.io/scrape": "true",
+			},
+		},
+		Spec: corev1.PodSpec{
+			RestartPolicy: corev1.RestartPolicyNever,
+			Containers: []corev1.Container{
+				{
+					Name:  "busybox",
+					Image: "busybox:latest",
+					Command: []string{
+						"sh",
+						"-c",
+						"exit 0",
+					},
+				},
+			},
+		},
+	}
+
+	runningPod = k8sEnv.addPodAndWaitOnPhase(t, runningPod, corev1.PodRunning)
+	failedPod = k8sEnv.addPodAndWaitOnPhase(t, failedPod, corev1.PodFailed)
+	succeededPod = k8sEnv.addPodAndWaitOnPhase(t, succeededPod, corev1.PodSucceeded)
+
+	inputConfig := fmt.Sprintf(`
+newrelic_remote_write:
+  license_key: nrLicenseKey
+common:
+  scrape_interval: 1s
+kubernetes:
+  jobs:
+    - job_name_prefix: test-k8s
+      target_discovery:
+        pod: true
+        additional_config:
+         kubeconfig_file: %s
+         namespaces:
+          names:
+          - %s
+`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
+
+	outputConfigPath := runConfigurator(t, inputConfig)
+
+	ps := newPrometheusServer(t)
+	ps.start(t, outputConfigPath)
+
+	asserter := newAsserter(ps)
+
+	asserter.activeTargetLabels(t, map[string]string{
+		"__meta_kubernetes_pod_name": runningPod.Name,
+	})
+	asserter.droppedTargetLabels(t, map[string]string{
+		"__meta_kubernetes_pod_name": failedPod.Name,
+	})
+	asserter.droppedTargetLabels(t, map[string]string{
+		"__meta_kubernetes_pod_name": succeededPod.Name,
+	})
+
+}
+
+func Test_PodRelabelRules(t *testing.T) {
+	t.Parallel()
+
+	k8sEnv := newK8sEnvironment(t)
+
+	// Create running pod
+	pod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "testpod-running",
+			Labels: map[string]string{
+				"k8s.io/app": "myApp",
+			},
+			Annotations: map[string]string{
+				"prometheus.io/scrape": "true",
+				"prometheus.io/scheme": "https",
+				"prometheus.io/port":   "8001",
+				"prometheus.io/path":   "/custom-path",
 			},
 		},
 		Spec: fakePodSpec(),
 	}
 
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
-	podDropped = k8sEnv.addPodAndWaitOnPhase(t, podDropped, corev1.PodRunning)
+
+	inputConfig := fmt.Sprintf(`
+newrelic_remote_write:
+  license_key: nrLicenseKey
+common:
+  scrape_interval: 1s
+kubernetes:
+  jobs:
+    - job_name_prefix: test-k8s
+      target_discovery:
+        pod: true
+        additional_config:
+         kubeconfig_file: %s
+         namespaces:
+          names:
+          - %s
+`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
+
+	outputConfigPath := runConfigurator(t, inputConfig)
 
 	ps := newPrometheusServer(t)
+	ps.start(t, outputConfigPath)
+
+	scrapeURL := fmt.Sprintf("%s://%s:%s%s",
+		pod.Annotations["prometheus.io/scheme"],
+		pod.Status.PodIP,
+		pod.Annotations["prometheus.io/port"],
+		pod.Annotations["prometheus.io/path"],
+	)
 
 	asserter := newAsserter(ps)
-
-	// TODO this test is using a Prom config directly since pods targets
-	// are not implemented in the configurator yet.
-	promConfig := path.Join(t.TempDir(), "test-config.yml")
-	err := ioutil.WriteFile(promConfig, []byte(fmt.Sprintf(`
-remote_write:
-- url: http://foo:8999/write
-
-global:
-  scrape_interval: 1s
-
-scrape_configs:
-- job_name: test-k8s
-  kubernetes_sd_configs:
-  - role: pod
-    # used to connect to the testing cluster since prometheus is running outside of it.
-    kubeconfig_file: %s
-    # Filter only the current test namespace to make test independent.
-    namespaces:
-      names:
-      - %s
-  relabel_configs:
-  - source_labels:
-    - __meta_kubernetes_pod_annotation_prometheus_io_scrape
-    - __meta_kubernetes_pod_label_k8s_io_app
-    action: keep
-    regex: true;%s
-`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name, pod.Labels["k8s.io/app"])), 0o444)
-	require.NoError(t, err)
-
-	ps.start(t, promConfig)
-
-	asserter.activeTargetLabels(t, map[string]string{"__meta_kubernetes_pod_label_k8s_io_app": pod.Labels["k8s.io/app"]})
-	asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_pod_label_k8s_io_app": podDropped.Labels["k8s.io/app"]})
+	asserter.activeTargetField(t, scrapeURLKey, scrapeURL)
 }
 
 func Test_EndpointsDiscovery(t *testing.T) {
