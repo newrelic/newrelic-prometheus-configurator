@@ -9,11 +9,9 @@ import (
 	"io"
 	"os"
 
-	configurator "github.com/newrelic-forks/newrelic-prometheus/configurator"
-
-	"gopkg.in/yaml.v3"
-
+	"github.com/newrelic-forks/newrelic-prometheus/configurator"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
 
 const (

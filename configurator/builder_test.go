@@ -8,9 +8,8 @@ import (
 	"io/ioutil"
 	"testing"
 
-	configurator "github.com/newrelic-forks/newrelic-prometheus/configurator"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
-
 	prometheusConfig "github.com/prometheus/prometheus/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
