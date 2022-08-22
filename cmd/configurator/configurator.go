@@ -4,7 +4,6 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -88,19 +87,11 @@ func readInput(inputPath string) (*configurator.Input, error) {
 }
 
 func writeOutput(outputPath string, output *configurator.Output) error {
-	const (
-		yamlEncoderIndent = 2
-	)
 
-	buffer := bytes.Buffer{}
-	encoder := yaml.NewEncoder(&buffer)
-	encoder.SetIndent(yamlEncoderIndent)
-
-	if err := encoder.Encode(output); err != nil {
-		return fmt.Errorf("could not encode to yaml %w", err)
+	data, err := yaml.Marshal(output)
+	if err != nil {
+		return fmt.Errorf("marshalling output", err)
 	}
-
-	data := buffer.Bytes()
 
 	if outputPath == "" {
 		if _, err := os.Stdout.Write(data); err != nil {
