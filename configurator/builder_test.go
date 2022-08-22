@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"github.com/newrelic-forks/newrelic-prometheus/configurator"
-
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
 	prometheusConfig "github.com/prometheus/prometheus/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -20,7 +20,7 @@ import (
 	_ "github.com/prometheus/prometheus/discovery/kubernetes"
 )
 
-func TestParser(t *testing.T) { //nolint: paralleltest,tparallel
+func TestBuilder(t *testing.T) { //nolint: paralleltest,tparallel
 	t.Setenv(configurator.LicenseKeyEnvKey, "")
 	t.Setenv(configurator.DataSourceNameEnvKey, "")
 
@@ -38,16 +38,24 @@ func TestParser(t *testing.T) { //nolint: paralleltest,tparallel
 		name := c
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
+
 			inputFile := "testdata/" + name + ".yaml"
 			expectedFile := "testdata/" + name + ".expected.yaml"
-			input, err := ioutil.ReadFile(inputFile)
+
+			data, err := ioutil.ReadFile(inputFile)
 			require.NoError(t, err)
 			expected, err := ioutil.ReadFile(expectedFile)
 			require.NoError(t, err)
-			output, err := configurator.Parse(input)
+			input := &configurator.Input{}
+			err = yaml.Unmarshal(data, input)
 			require.NoError(t, err)
-			assertYamlOutputsAreEqual(t, expected, output)
-			assertIsPrometheusConfig(t, output)
+			output, err := configurator.BuildOutput(input)
+			require.NoError(t, err)
+			outputData, err := yaml.Marshal(output)
+			require.NoError(t, err)
+
+			assertYamlOutputsAreEqual(t, expected, outputData)
+			assertIsPrometheusConfig(t, outputData)
 		})
 	}
 }
@@ -56,17 +64,21 @@ func TestDataSourceName(t *testing.T) { //nolint: tparallel
 	t.Setenv(configurator.LicenseKeyEnvKey, "")
 	t.Setenv(configurator.DataSourceNameEnvKey, "")
 
-	configWithDataSourceName := `
-data_source_name: %s
-newrelic_remote_write:
-  license_key: fake
-`
+	configWithDataSourceName := configurator.Input{
+		DataSourceName: "test",
+		RemoteWrite: remotewrite.Config{
+			LicenseKey: "fake",
+		},
+	}
+
 	//nolint: paralleltest // need clean env variables.
 	t.Run("IsSetFromConfig", func(t *testing.T) {
-		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithDataSourceName, "prom-instance-name")))
+		configWithDataSourceName.DataSourceName = "prom-instance-name"
+		prometheusConfig, err := configurator.BuildOutput(&configWithDataSourceName)
 		require.NoError(t, err)
 
-		require.Contains(t, string(prometheusConfig), fmt.Sprintf("prometheus_server=%s", "prom-instance-name"))
+		data, _ := yaml.Marshal(prometheusConfig)
+		require.Contains(t, string(data), fmt.Sprintf("prometheus_server=%s", "prom-instance-name"))
 	})
 
 	expectedName := "prom-instance-name-from-env"
@@ -75,10 +87,11 @@ newrelic_remote_write:
 	t.Run("IsSetFromEnvVar", func(t *testing.T) {
 		t.Parallel()
 
-		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithDataSourceName, "")))
+		prometheusConfig, err := configurator.BuildOutput(&configWithDataSourceName)
 		require.NoError(t, err)
 
-		require.Contains(t, string(prometheusConfig), fmt.Sprintf("prometheus_server=%s", expectedName))
+		data, _ := yaml.Marshal(prometheusConfig)
+		require.Contains(t, string(data), fmt.Sprintf("prometheus_server=%s", expectedName))
 	})
 }
 
@@ -86,22 +99,24 @@ func TestLicenseKey(t *testing.T) { //nolint: tparallel
 	t.Setenv(configurator.LicenseKeyEnvKey, "")
 	t.Setenv(configurator.DataSourceNameEnvKey, "")
 
-	configWithLicense := `
-newrelic_remote_write:
-  license_key: %s
-`
+	configWithDataSourceName := configurator.Input{
+		RemoteWrite: remotewrite.Config{},
+	}
+
 	//nolint: paralleltest // need clean env variables.
 	t.Run("FailIfNotSet", func(t *testing.T) {
-		_, err := configurator.Parse([]byte(fmt.Sprintf(configWithLicense, "")))
+		_, err := configurator.BuildOutput(&configWithDataSourceName)
 		require.ErrorIs(t, err, configurator.ErrNoLicenseKeyFound)
 	})
 
 	//nolint: paralleltest // need clean env variables.
 	t.Run("IsSetFromConfig", func(t *testing.T) {
-		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithLicense, "fake")))
+		configWithDataSourceName.RemoteWrite.LicenseKey = "fake"
+		prometheusConfig, err := configurator.BuildOutput(&configWithDataSourceName)
 		require.NoError(t, err)
 
-		require.Contains(t, string(prometheusConfig), fmt.Sprintf("credentials: %s", "fake"))
+		data, _ := yaml.Marshal(prometheusConfig)
+		require.Contains(t, string(data), fmt.Sprintf("credentials: %s", "fake"))
 	})
 
 	expectedLicenseKey := "license-key-from-env"
@@ -110,28 +125,12 @@ newrelic_remote_write:
 	t.Run("IsSetFromEnvVar", func(t *testing.T) {
 		t.Parallel()
 
-		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithLicense, "")))
+		prometheusConfig, err := configurator.BuildOutput(&configWithDataSourceName)
 		require.NoError(t, err)
 
-		require.Contains(t, string(prometheusConfig), fmt.Sprintf("credentials: %s", expectedLicenseKey))
+		data, _ := yaml.Marshal(prometheusConfig)
+		require.Contains(t, string(data), fmt.Sprintf("credentials: %s", expectedLicenseKey))
 	})
-
-	t.Run("IsOverrideByEnvVar", func(t *testing.T) {
-		t.Parallel()
-
-		prometheusConfig, err := configurator.Parse([]byte(fmt.Sprintf(configWithLicense, "fake")))
-		require.NoError(t, err)
-
-		require.Contains(t, string(prometheusConfig), fmt.Sprintf("credentials: %s", expectedLicenseKey))
-	})
-}
-
-func TestParserInvalidInputYamlError(t *testing.T) {
-	t.Parallel()
-
-	input := []byte(`}invalid-yml`)
-	_, err := configurator.Parse(input)
-	assert.Error(t, err)
 }
 
 func assertYamlOutputsAreEqual(t *testing.T, y1, y2 []byte) {
