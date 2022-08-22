@@ -4,6 +4,7 @@ package integration
 
 import (
 	"errors"
+	"golang.org/x/exp/maps"
 	"testing"
 	"time"
 
@@ -99,11 +100,8 @@ func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]st
 		}
 
 		for _, at := range targets.ActiveTargets {
+			maps.Copy(at.DiscoveredLabels, at.Labels)
 			if containsLabels(at.DiscoveredLabels, expectedLabels) {
-				return true
-			}
-
-			if containsLabels(at.Labels, expectedLabels) {
 				return true
 			}
 		}
