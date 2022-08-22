@@ -173,6 +173,7 @@ tests:
                 one: two
               scrape_interval: 15
   - it: config including static_targets overwritten with most possible sections
+
     set:
       licenseKey: license-key-test
       cluster: cluster-test
@@ -321,3 +322,33 @@ tests:
             common:
               external_labels:
                 cluster_name: cluster-test
+
+  - it: kubernetes config section is included
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      config:
+        static_targets:
+          jobs: []  # remove self-monitoring to keep the test simple
+        kubernetes:
+          jobs:
+            - job_name_prefix: k8s-job
+              target_discovery:
+                pod: true
+                endpoints: true
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            static_targets:
+              jobs: []
+            common:
+              external_labels:
+                cluster_name: cluster-test
+            kubernetes:
+              jobs:
+              - job_name_prefix: k8s-job
+                target_discovery:
+                  endpoints: true
+                  pod: true
