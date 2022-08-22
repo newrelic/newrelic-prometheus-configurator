@@ -79,9 +79,17 @@ func pipe(from net.Conn, to net.Conn) error {
 	defer from.Close()
 
 	_, err := io.Copy(from, to)
-	if err != nil && !strings.Contains(err.Error(), "closed network") {
-		return fmt.Errorf("error in pipe: %w", err)
+	if err == nil {
+		return nil
 	}
 
-	return nil
+	if pipeErrCanBeIgnored(err) {
+		return nil
+	}
+
+	return fmt.Errorf("error in pipe: %w", err)
+}
+
+func pipeErrCanBeIgnored(err error) bool {
+	return strings.Contains(err.Error(), "closed network") || strings.Contains(err.Error(), "connection reset by peer")
 }
