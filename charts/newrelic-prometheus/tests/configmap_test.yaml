@@ -24,6 +24,16 @@ tests:
             common:
               external_labels:
                 cluster_name: cluster-test
+            kubernetes:
+              jobs:
+              - job_name_prefix: kubernetes-job
+                target_discovery:
+                  endpoints: true
+                  filter:
+                    annotations:
+                      prometheus.io/scrape: true
+                  pod: true
+
 
   - it: staging is enabled
     set:
@@ -61,6 +71,7 @@ tests:
           - url: "https://second.remote.write"
         static_targets:
           jobs: []
+        kubernetes:
     asserts:
       - equal:
           path: data.config\.yaml
@@ -95,6 +106,7 @@ tests:
       config:
         static_targets:
           jobs: []
+        kubernetes:
     asserts:
       - equal:
           path: data.config\.yaml
@@ -113,6 +125,7 @@ tests:
       config:
         static_targets:
           jobs: []
+        kubernetes:
     asserts:
       - equal:
           path: data.config\.yaml
@@ -133,6 +146,7 @@ tests:
       config:
         static_targets:
           jobs: []
+        kubernetes:
     asserts:
       - equal:
           path: data.config\.yaml
@@ -159,6 +173,7 @@ tests:
           scrape_interval: 15
         static_targets:
           jobs: []
+        kubernetes:
     asserts:
       - equal:
           path: data.config\.yaml
@@ -178,6 +193,7 @@ tests:
       licenseKey: license-key-test
       cluster: cluster-test
       config:
+        kubernetes:
         static_targets:
           jobs:
             - job_name: my-custom-target-authorization-full
@@ -323,19 +339,29 @@ tests:
               external_labels:
                 cluster_name: cluster-test
 
-  - it: kubernetes config section is included
+  - it: kubernetes config section custom values
     set:
       licenseKey: license-key-test
       cluster: cluster-test
       config:
         static_targets:
-          jobs: []  # remove self-monitoring to keep the test simple
+          jobs: []
         kubernetes:
           jobs:
-            - job_name_prefix: k8s-job
+            - job_name_prefix: pod-job
               target_discovery:
                 pod: true
+                endpoints: false
+                filter:
+                  annotations:
+                    custom/scrape-pod: true
+            - job_name_prefix: endpoints-job
+              target_discovery:
+                pod: false
                 endpoints: true
+                filter:
+                  annotations:
+                    custom/scrape-endpoints: true
     asserts:
       - equal:
           path: data.config\.yaml
@@ -348,7 +374,17 @@ tests:
                 cluster_name: cluster-test
             kubernetes:
               jobs:
-              - job_name_prefix: k8s-job
+              - job_name_prefix: pod-job
+                target_discovery:
+                  endpoints: false
+                  filter:
+                    annotations:
+                      custom/scrape-pod: true
+                  pod: true
+              - job_name_prefix: endpoints-job
                 target_discovery:
                   endpoints: true
-                  pod: true
+                  filter:
+                    annotations:
+                      custom/scrape-endpoints: true
+                  pod: false
