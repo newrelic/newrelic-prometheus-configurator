@@ -87,14 +87,13 @@ func readInput(inputPath string) (*configurator.Input, error) {
 }
 
 func writeOutput(outputPath string, output *configurator.Output) error {
-
 	data, err := yaml.Marshal(output)
 	if err != nil {
-		return fmt.Errorf("marshalling output", err)
+		return fmt.Errorf("marshaling output: %w", err)
 	}
 
 	if outputPath == "" {
-		if _, err := os.Stdout.Write(data); err != nil {
+		if _, err = os.Stdout.Write(data); err != nil {
 			return fmt.Errorf("could not to stdout: %w", err)
 		}
 		return nil
