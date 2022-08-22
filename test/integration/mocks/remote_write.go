@@ -3,6 +3,7 @@
 package mocks
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -10,14 +11,14 @@ import (
 	"net/http/httptest"
 	"os"
 	"strings"
+	"syscall"
 	"testing"
-
-	"golang.org/x/sync/errgroup"
 
 	"github.com/go-kit/log"
 	"github.com/prometheus/prometheus/storage"
 	"github.com/prometheus/prometheus/storage/remote"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/sync/errgroup"
 )
 
 // StartRemoteWriteEndpoint start an remote write endpoint with proxy.
@@ -79,9 +80,14 @@ func pipe(from net.Conn, to net.Conn) error {
 	defer from.Close()
 
 	_, err := io.Copy(from, to)
-	if err != nil && !strings.Contains(err.Error(), "closed network") {
+	switch {
+	case err == nil:
+		return nil
+	case errors.Is(err, net.ErrClosed):
+		return nil
+	case errors.Is(err, syscall.ECONNRESET):
+		return nil
+	default:
 		return fmt.Errorf("error in pipe: %w", err)
 	}
-
-	return nil
 }
