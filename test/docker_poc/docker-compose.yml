@@ -21,6 +21,13 @@ services:
     labels:
       - prometheus.io/scrape=true
     ports:
-      - "80:80"
+      - "9000:80"
+    volumes:
+      - ./metrics:/usr/share/nginx/html/metrics
+
+  prometheus-exporter-no-label:
+    image: nginx
+    ports:
+      - "9001:80"
     volumes:
       - ./metrics:/usr/share/nginx/html/metrics
