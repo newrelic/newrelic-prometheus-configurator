@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 )
@@ -131,6 +132,36 @@ func fakePodSpec() corev1.PodSpec {
 					},
 				},
 			},
+		},
+	}
+}
+
+func fakePod(namePrefix string, annotations, labels map[string]string) *corev1.Pod {
+	return &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			GenerateName: namePrefix,
+			Annotations:  annotations,
+			Labels:       labels,
+		},
+		Spec: fakePodSpec(),
+	}
+}
+
+func fakeService(namePrefix string, selector, annotations, labels map[string]string) *corev1.Service {
+	return &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			GenerateName: namePrefix,
+			Annotations:  annotations,
+			Labels:       labels,
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: []corev1.ServicePort{
+				{
+					Port:       80,
+					TargetPort: intstr.FromInt(defaultPodPort),
+				},
+			},
+			Selector: selector,
 		},
 	}
 }
