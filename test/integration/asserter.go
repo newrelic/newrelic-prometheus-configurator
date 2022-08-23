@@ -4,7 +4,6 @@ package integration
 
 import (
 	"errors"
-	"golang.org/x/exp/maps"
 	"testing"
 	"time"
 
@@ -100,8 +99,8 @@ func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]st
 		}
 
 		for _, at := range targets.ActiveTargets {
-			maps.Copy(at.DiscoveredLabels, at.Labels)
-			if containsLabels(at.DiscoveredLabels, expectedLabels) {
+			allLabels := mergeLabels(at.DiscoveredLabels, at.Labels)
+			if containsLabels(allLabels, expectedLabels) {
 				return true
 			}
 		}
@@ -155,6 +154,16 @@ func (a *asserter) droppedTargetLabels(t *testing.T, expectedLabels map[string]s
 	})
 
 	require.NoError(t, err)
+}
+
+func mergeLabels(maps ...map[string]string) (result map[string]string) {
+	result = make(map[string]string)
+	for _, m := range maps {
+		for k, v := range m {
+			result[k] = v
+		}
+	}
+	return result
 }
 
 func containsLabels(labels, expectedLabels map[string]string) bool {
