@@ -178,32 +178,17 @@ func Test_EndpointsDiscovery(t *testing.T) {
 
 	k8sEnv := newK8sEnvironment(t)
 
+	serviceSelector := map[string]string{"k8s.io/app": "myApp"}
 	// Create initial pod
-	pod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod",
-			Labels: map[string]string{
-				"k8s.io/app": "myApp",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-			},
-		},
-		Spec: fakePodSpec(),
-	}
+	pod := fakePod("testpod", nil, serviceSelector)
 
 	terminationGracePeriodSeconds := int64(1)
 
 	// Create failing pod
 	failedPod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod-failed",
-			Labels: map[string]string{
-				"k8s.io/app": "myApp",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-			},
+			Name:   "testpod-failed",
+			Labels: serviceSelector,
 		},
 		Spec: corev1.PodSpec{
 			ActiveDeadlineSeconds: &terminationGracePeriodSeconds,
@@ -217,33 +202,20 @@ func Test_EndpointsDiscovery(t *testing.T) {
 	}
 
 	// Create service
-	svc := &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "testservice",
-			Namespace: k8sEnv.testNamespace.Name,
-			Labels: map[string]string{
-				"k8s.io/app": "myApp",
-				"test.label": "test.value",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scheme":     "https",
-				"prometheus.io/path":       "/custom-path",
-				"prometheus.io/port":       "8001",
-				"prometheus.io/param_test": "test-param",
-			},
+	svc := fakeService(
+		"test",
+		serviceSelector,
+		map[string]string{
+			"prometheus.io/scheme":     "https",
+			"prometheus.io/path":       "/custom-path",
+			"prometheus.io/port":       "8001",
+			"prometheus.io/param_test": "test-param",
 		},
-		Spec: corev1.ServiceSpec{
-			Ports: []corev1.ServicePort{
-				{
-					Port:     80,
-					Protocol: "TCP",
-				},
-			},
-			Selector: map[string]string{
-				"k8s.io/app": "myApp",
-			},
+		map[string]string{
+			"k8s.io/app": "myApp",
+			"test.label": "test.value",
 		},
-	}
+	)
 
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 	failedPod = k8sEnv.addPodAndWaitOnPhase(t, failedPod, corev1.PodFailed)
