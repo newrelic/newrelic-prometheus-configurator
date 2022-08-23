@@ -16,7 +16,7 @@ type TLSConfig struct {
 	CertFile           string `yaml:"cert_file,omitempty" json:"cert_file,omitempty"`
 	KeyFile            string `yaml:"key_file,omitempty" json:"key_file,omitempty"`
 	ServerName         string `yaml:"server_name,omitempty" json:"server_name,omitempty"`
-	InsecureSkipVerify bool   `yaml:"insecure_skip_verify" json:"insecure_skip_verify"`
+	InsecureSkipVerify *bool  `yaml:"insecure_skip_verify" json:"insecure_skip_verify"`
 	MinVersion         string `yaml:"min_version,omitempty" json:"min_version,omitempty"`
 }
 
@@ -49,7 +49,7 @@ type OAuth2 struct {
 // Job holds fields which do not change from input and output jobs.
 type Job struct {
 	JobName               string           `yaml:"job_name"`
-	HonorLabels           bool             `yaml:"honor_labels,omitempty"`
+	HonorLabels           *bool            `yaml:"honor_labels,omitempty"`
 	HonorTimestamps       *bool            `yaml:"honor_timestamps,omitempty"`
 	Params                url.Values       `yaml:"params,omitempty"`
 	Scheme                string           `yaml:"scheme,omitempty"`
@@ -136,7 +136,7 @@ type QueueConfig struct {
 	BatchSendDeadLine time.Duration `yaml:"batch_send_deadline"`
 	MinBackoff        time.Duration `yaml:"min_backoff"`
 	MaxBackoff        time.Duration `yaml:"max_backoff"`
-	RetryOnHTTP429    bool          `yaml:"retry_on_http_429"`
+	RetryOnHTTP429    *bool         `yaml:"retry_on_http_429"`
 }
 
 // RemoteWrite represents a prometheus remote_write config.
