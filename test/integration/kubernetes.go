@@ -64,14 +64,24 @@ func newK8sEnvironment(t *testing.T) k8sEnvirnoment {
 	}
 }
 
-// addPodAndWaitOnPhase creates the pod and waits until the specified podPhase.
-func (ke *k8sEnvirnoment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, podPhase corev1.PodPhase) *corev1.Pod {
+func (ke *k8sEnvirnoment) addPod(t *testing.T, pod *corev1.Pod) *corev1.Pod {
 	t.Helper()
 
 	p, err := ke.client.CoreV1().Pods(ke.testNamespace.Name).Create(context.Background(), pod, metav1.CreateOptions{})
 	require.NoError(t, err)
 
-	err = retryUntilTrue(ke.defaultTimeout, ke.defaultBackoff, func() bool {
+	return p
+}
+
+// addPodAndWaitOnPhase creates the pod and waits until the specified podPhase.
+func (ke *k8sEnvirnoment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, podPhase corev1.PodPhase) *corev1.Pod {
+	t.Helper()
+
+	p := ke.addPod(t, pod)
+
+	err := retryUntilTrue(ke.defaultTimeout, ke.defaultBackoff, func() bool {
+		var err error
+		// we want to override p with the latest pod retrieved.
 		p, err = ke.client.CoreV1().Pods(ke.testNamespace.Name).Get(context.Background(), p.Name, metav1.GetOptions{})
 		require.NoError(t, err)
 

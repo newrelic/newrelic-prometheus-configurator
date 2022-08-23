@@ -226,7 +226,6 @@ func Test_EndpointsDiscovery(t *testing.T) {
 				"test.label": "test.value",
 			},
 			Annotations: map[string]string{
-				"prometheus.io/scrape":     "true",
 				"prometheus.io/scheme":     "https",
 				"prometheus.io/path":       "/custom-path",
 				"prometheus.io/port":       "8001",
@@ -286,6 +285,7 @@ kubernetes:
 	asserter := newAsserter(ps)
 
 	// Active targets
+	asserter.activeTargetCount(t, 1)
 	asserter.activeTargetField(t, scrapeURLKey, scrapeURL)
 	asserter.activeTargetLabels(t, map[string]string{
 		"namespace":  k8sEnv.testNamespace.Name,
