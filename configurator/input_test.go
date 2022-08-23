@@ -36,6 +36,9 @@ func checkInput(t *testing.T, expected Input, inputData []byte) {
 func testInputExpectation(t *testing.T) Input {
 	t.Helper()
 
+	trueValue := true
+	falseValue := false
+
 	return Input{
 		Common: promcfg.GlobalConfig{
 			ScrapeInterval: time.Second * 60,
@@ -51,7 +54,7 @@ func testInputExpectation(t *testing.T) Input {
 			Staging:    true,
 			ProxyURL:   "http://proxy.url.to.use:1234",
 			TLSConfig: &promcfg.TLSConfig{
-				InsecureSkipVerify: true,
+				InsecureSkipVerify: &trueValue,
 				CAFile:             "/path/to/ca.crt",
 				CertFile:           "/path/to/cert.crt",
 				KeyFile:            "/path/to/key.crt",
@@ -66,7 +69,7 @@ func testInputExpectation(t *testing.T) Input {
 				BatchSendDeadLine: 5 * time.Second,
 				MinBackoff:        30 * time.Millisecond,
 				MaxBackoff:        5 * time.Second,
-				RetryOnHTTP429:    false,
+				RetryOnHTTP429:    &falseValue,
 			},
 			RemoteTimeout: 30 * time.Second,
 			ExtraWriteRelabelConfigs: []promcfg.RelabelConfig{

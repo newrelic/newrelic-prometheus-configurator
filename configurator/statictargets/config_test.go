@@ -31,7 +31,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 					{
 						PromScrapeJob: promcfg.Job{
 							JobName:               "fancy-job",
-							HonorLabels:           true,
+							HonorLabels:           &trueValue,
 							HonorTimestamps:       &trueValue,
 							Params:                url.Values{"q": {"puppies"}, "oe": {"utf8"}},
 							Scheme:                "https",
@@ -49,7 +49,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 								CertFile:           "cert-file",
 								KeyFile:            "key-file",
 								ServerName:         "server.name",
-								InsecureSkipVerify: true,
+								InsecureSkipVerify: &trueValue,
 								MinVersion:         "TLS12",
 							},
 							BasicAuth: nil,
@@ -70,7 +70,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 									CertFile:           "cert-file",
 									KeyFile:            "key-file",
 									ServerName:         "server.name",
-									InsecureSkipVerify: true,
+									InsecureSkipVerify: &trueValue,
 									MinVersion:         "TLS12",
 								},
 								ProxyURL: "",
@@ -98,7 +98,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 			Expected: []promcfg.Job{
 				{
 					JobName:               "fancy-job",
-					HonorLabels:           true,
+					HonorLabels:           &trueValue,
 					HonorTimestamps:       &trueValue,
 					Params:                url.Values{"q": {"puppies"}, "oe": {"utf8"}},
 					Scheme:                "https",
@@ -116,7 +116,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 						CertFile:           "cert-file",
 						KeyFile:            "key-file",
 						ServerName:         "server.name",
-						InsecureSkipVerify: true,
+						InsecureSkipVerify: &trueValue,
 						MinVersion:         "TLS12",
 					},
 					BasicAuth: nil,
@@ -137,7 +137,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 							CertFile:           "cert-file",
 							KeyFile:            "key-file",
 							ServerName:         "server.name",
-							InsecureSkipVerify: true,
+							InsecureSkipVerify: &trueValue,
 							MinVersion:         "TLS12",
 						},
 						ProxyURL: "",

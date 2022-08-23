@@ -21,6 +21,8 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 		dataSourceName string
 	}
 
+	trueValue := true
+
 	cases := []struct {
 		Name     string
 		Input    args
@@ -53,7 +55,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 						CertFile:           "cert-file",
 						KeyFile:            "key-file",
 						ServerName:         "server.name",
-						InsecureSkipVerify: true,
+						InsecureSkipVerify: &trueValue,
 						MinVersion:         "TLS12",
 					},
 					QueueConfig: &promcfg.QueueConfig{
@@ -64,7 +66,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 						BatchSendDeadLine: time.Second,
 						MinBackoff:        100 * time.Microsecond,
 						MaxBackoff:        time.Second,
-						RetryOnHTTP429:    true,
+						RetryOnHTTP429:    &trueValue,
 					},
 					RemoteTimeout: 10 * time.Second,
 					ExtraWriteRelabelConfigs: []promcfg.RelabelConfig{
@@ -88,7 +90,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 					CertFile:           "cert-file",
 					KeyFile:            "key-file",
 					ServerName:         "server.name",
-					InsecureSkipVerify: true,
+					InsecureSkipVerify: &trueValue,
 					MinVersion:         "TLS12",
 				},
 				QueueConfig: &promcfg.QueueConfig{
@@ -99,7 +101,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 					BatchSendDeadLine: time.Second,
 					MinBackoff:        100 * time.Microsecond,
 					MaxBackoff:        time.Second,
-					RetryOnHTTP429:    true,
+					RetryOnHTTP429:    &trueValue,
 				},
 				WriteRelabelConfigs: []promcfg.RelabelConfig{
 					{
