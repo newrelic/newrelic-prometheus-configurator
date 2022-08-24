@@ -32,3 +32,13 @@ entities:
       - name: mock_pod_histogram_metric_bucket
       - name: mock_pod_histogram_metric_sum
       - name: mock_pod_histogram_metric_count
+  - entityType: FakeEndpointsMetrics
+    metrics:
+      - name: mock_endpoints_gauge_metric
+      - name: mock_endpoints_counter_metric_total
+      - name: mock_endpoints_summary_metric
+      - name: mock_endpoints_summary_metric_sum
+      - name: mock_endpoints_summary_metric_count
+      - name: mock_endpoints_histogram_metric_bucket
+      - name: mock_endpoints_histogram_metric_sum
+      - name: mock_endpoints_histogram_metric_count
