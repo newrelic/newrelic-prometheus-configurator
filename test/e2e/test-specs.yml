@@ -11,8 +11,3 @@ scenarios:
     tests:
       metrics:
         - source: "metrics.yml"
-          except_metrics:
-            # TODO check why this ones don't appear
-            - prometheus_remote_storage_dropped_samples_total
-            - prometheus_remote_storage_failed_samples_total
-            - scrape_pool_targets
