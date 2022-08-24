@@ -117,6 +117,25 @@ config:
 
 #  extra_remote_write: []
 
+#  # kubernetes jobs allow defining scrape jobs for kubernetes in a simple way.
+  kubernetes:
+    jobs:
+    # By default all pods and endpoints with 'prometeus.io/scrape: true' annotation will be discovered.
+    # The job_name_prefix is mandatory and no other job using the same prefix should be used in the whole configuration.
+    - job_name_prefix: kubernetes-job
+      # Target discovery field allows customizing how kubernetes discovery works.
+      target_discovery:
+        # -- Whether pods should be discovered.
+        pod: true
+        # -- Whether endpoints should be discovered.
+        endpoints: true
+        # -- Define filtering criteria, it is possible to set labels and/or annotations. All filters will apply (defined
+        # filters are taken into account as an "and operation").
+        filter:
+          annotations:
+            prometheus.io/scrape: true
+          # labels: {}
+
 #  for more info about static_targets: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
   static_targets:
     jobs:

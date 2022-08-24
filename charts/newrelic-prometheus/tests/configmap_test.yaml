@@ -24,6 +24,16 @@ tests:
             common:
               external_labels:
                 cluster_name: cluster-test
+            kubernetes:
+              jobs:
+              - job_name_prefix: kubernetes-job
+                target_discovery:
+                  endpoints: true
+                  filter:
+                    annotations:
+                      prometheus.io/scrape: true
+                  pod: true
+
 
   - it: staging is enabled
     set:
@@ -31,8 +41,8 @@ tests:
       cluster: cluster-test
       nrStaging: true
       config:
+        # Set empty to make this test simple
         static_targets:
-          jobs: []
     asserts:
       - matchRegex:
           path: data.config\.yaml
@@ -59,8 +69,9 @@ tests:
               action: drop
         extra_remote_write:
           - url: "https://second.remote.write"
+        # Set empty to make this test simple
         static_targets:
-          jobs: []
+        kubernetes:
     asserts:
       - equal:
           path: data.config\.yaml
@@ -82,8 +93,6 @@ tests:
                 insecure_skip_verify: true
             extra_remote_write:
               - url: https://second.remote.write
-            static_targets:
-              jobs: []
             common:
               external_labels:
                 cluster_name: cluster-test
@@ -93,15 +102,14 @@ tests:
       global:
        cluster: "test"
       config:
+        # Set empty to make this test simple
         static_targets:
-          jobs: []
+        kubernetes:
     asserts:
       - equal:
           path: data.config\.yaml
           value: |-
             # Configuration for newrelic-prometheus-configurator
-            static_targets:
-              jobs: []
             common:
               external_labels:
                 cluster_name: test
@@ -111,15 +119,14 @@ tests:
         cluster: "test"
       cluster: "test2"
       config:
+        # Set empty to make this test simple
         static_targets:
-          jobs: []
+        kubernetes:
     asserts:
       - equal:
           path: data.config\.yaml
           value: |-
             # Configuration for newrelic-prometheus-configurator
-            static_targets:
-              jobs: []
             common:
               external_labels:
                 cluster_name: test2
@@ -131,15 +138,14 @@ tests:
       customAttributes:
         cluster_name: "test3"
       config:
+        # Set empty to make this test simple
         static_targets:
-          jobs: []
+        kubernetes:
     asserts:
       - equal:
           path: data.config\.yaml
           value: |-
             # Configuration for newrelic-prometheus-configurator
-            static_targets:
-              jobs: []
             common:
               external_labels:
                 cluster_name: test2
@@ -157,15 +163,14 @@ tests:
             one: two
             cluster_name: "different"
           scrape_interval: 15
+        # Set empty to make this test simple
         static_targets:
-          jobs: []
+        kubernetes:
     asserts:
       - equal:
           path: data.config\.yaml
           value: |-
             # Configuration for newrelic-prometheus-configurator
-            static_targets:
-              jobs: []
             common:
               external_labels:
                 attribute: value
@@ -173,6 +178,7 @@ tests:
                 one: two
               scrape_interval: 15
   - it: config including static_targets overwritten with most possible sections
+
     set:
       licenseKey: license-key-test
       cluster: cluster-test
@@ -240,6 +246,8 @@ tests:
               - source_labels: [ '__name__', 'instance' ]
                 regex: node_memory_active_bytes;localhost:9100
                 action: drop
+        # Set empty to make this test simple
+        kubernetes:
     asserts:
       - equal:
           path: data.config\.yaml
@@ -321,3 +329,51 @@ tests:
             common:
               external_labels:
                 cluster_name: cluster-test
+
+  - it: kubernetes config section custom values
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      config:
+        kubernetes:
+          jobs:
+            - job_name_prefix: pod-job
+              target_discovery:
+                pod: true
+                endpoints: false
+                filter:
+                  annotations:
+                    custom/scrape-pod: true
+            - job_name_prefix: endpoints-job
+              target_discovery:
+                pod: false
+                endpoints: true
+                filter:
+                  annotations:
+                    custom/scrape-endpoints: true
+        # Set empty to make this test simple
+        static_targets:
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            common:
+              external_labels:
+                cluster_name: cluster-test
+            kubernetes:
+              jobs:
+              - job_name_prefix: pod-job
+                target_discovery:
+                  endpoints: false
+                  filter:
+                    annotations:
+                      custom/scrape-pod: true
+                  pod: true
+              - job_name_prefix: endpoints-job
+                target_discovery:
+                  endpoints: true
+                  filter:
+                    annotations:
+                      custom/scrape-endpoints: true
+                  pod: false
