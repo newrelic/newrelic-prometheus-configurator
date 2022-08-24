@@ -66,3 +66,12 @@ extra_scrape_configs:
   {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "newrelic-prometheus.configurator.kubernetes" -}}
+{{- if .Values.config -}}
+  {{- if .Values.config.kubernetes  -}}
+kubernetes:
+  {{- .Values.config.kubernetes | toYaml | nindent 2 -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
