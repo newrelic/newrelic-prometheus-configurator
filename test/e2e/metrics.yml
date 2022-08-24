@@ -17,7 +17,6 @@ entities:
       - name: prometheus_sd_kubernetes_http_request_total
       - name: prometheus_agent_truncate_duration_seconds_sum
       - name: prometheus_build_info
-      - name: prometheus_targets_scrape_pool_targets
       - name: process_resident_memory_bytes
       - name: process_virtual_memory_bytes
       - name: process_cpu_seconds_total
