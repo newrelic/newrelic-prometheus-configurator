@@ -87,6 +87,28 @@ func (a *asserter) prometheusServerReady(t *testing.T) {
 	require.NoError(t, err, "readiness probe failed")
 }
 
+// activeTargetCount check that that count of active targets match expectations.
+func (a *asserter) activeTargetCount(t *testing.T, expectedLen int) {
+	t.Helper()
+
+	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
+		targets, ok := a.prometheusServer.targets(t)
+		if !ok {
+			return false
+		}
+
+		if len(targets.ActiveTargets) == expectedLen {
+			return true
+		}
+
+		t.Logf("Active targets found: %d, expected:%d", len(targets.ActiveTargets), expectedLen)
+
+		return false
+	})
+
+	require.NoError(t, err)
+}
+
 // activeTargetLabels checks that Prometheus has at least one active target with all expected labels for
 // discoveredLabels and labels fields.
 func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]string) {
