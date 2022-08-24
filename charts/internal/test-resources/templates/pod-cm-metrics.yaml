@@ -1,0 +1,35 @@
+kind: ConfigMap
+metadata:
+  name: prometheus-pod-metrics
+  namespace: {{ .Release.Namespace }}
+apiVersion: v1
+data:
+  metrics-sample: |
+    # HELP mock_pod_gauge_metric A gauge test metric.
+    # TYPE mock_pod_gauge_metric gauge
+    mock_pod_gauge_metric 9
+    # HELP mock_pod_counter_metric_total A counter test metric.
+    # TYPE mock_pod_counter_metric_total counter
+    mock_pod_counter_metric_total 6.091341461e+09
+    # HELP mock_pod_summary_metric A summary test metric.
+    # TYPE mock_pod_summary_metric summary
+    mock_pod_summary_metric{quantile="0"} 0.000113449
+    mock_pod_summary_metric{quantile="0.25"} 0.000176755
+    mock_pod_summary_metric{quantile="0.5"} 0.000241507
+    mock_pod_summary_metric{quantile="0.75"} 0.000298159
+    mock_pod_summary_metric{quantile="1"} 0.000363451
+    mock_pod_summary_metric_sum 0.001193321
+    mock_pod_summary_metric_count 5
+    # HELP mock_pod_histogram_metric A histogram test metric.
+    # TYPE mock_pod_histogram_metric histogram
+    mock_pod_histogram_metric_bucket{le="100"} 2
+    mock_pod_histogram_metric_bucket{le="1000"} 2
+    mock_pod_histogram_metric_bucket{le="10000"} 2
+    mock_pod_histogram_metric_bucket{le="100000"} 2
+    mock_pod_histogram_metric_bucket{le="1e+06"} 2
+    mock_pod_histogram_metric_bucket{le="1e+07"} 2
+    mock_pod_histogram_metric_bucket{le="1e+08"} 2
+    mock_pod_histogram_metric_bucket{le="1e+09"} 2
+    mock_pod_histogram_metric_bucket{le="+Inf"} 2
+    mock_pod_histogram_metric_sum 58
+    mock_pod_histogram_metric_count 2
