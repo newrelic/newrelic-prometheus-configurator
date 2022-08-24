@@ -7,7 +7,7 @@ cluster_context = 'minikube'
 # Only use explicitly allowed kubeconfigs as a safety measure.
 allow_k8s_contexts(cluster_context)
 
-local_resource('Configurator binary', 'make compile-multiarch', deps=[
+local_resource('Configurator binary', 'make build-multiarch', deps=[
   './cmd',
   './configurator',
 ])

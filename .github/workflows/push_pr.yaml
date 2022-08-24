@@ -61,7 +61,7 @@ jobs:
       - name: Create image for chart testing
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          make build
+          make build-multiarch
           GOOS=linux GOARCH=amd64 DOCKER_BUILDKIT=1 docker build -t ct/prometheus-configurator:ct  .
           minikube image load ct/prometheus-configurator:ct
           kubectl create ns ct

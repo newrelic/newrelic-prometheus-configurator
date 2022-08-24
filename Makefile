@@ -1,6 +1,6 @@
 BIN_DIR = ./bin
 TOOLS_DIR := $(BIN_DIR)/dev-tools
-BINARY_NAME = configurator
+BINARY_NAME = prometheus-configurator
 
 GOOS ?=
 GOARCH ?=
@@ -13,19 +13,8 @@ COMMIT ?= $(shell git rev-parse HEAD || echo "unknown")
 
 LDFLAGS ?= -ldflags="-X 'main.integrationVersion=$(TAG)' -X 'main.gitCommit=$(COMMIT)' -X 'main.buildDate=$(BUILD_DATE)' "
 
-ifneq ($(strip $(GOOS)), )
-BINARY_NAME := $(BINARY_NAME)-$(GOOS)
-endif
-
-ifneq ($(strip $(GOARCH)), )
-BINARY_NAME := $(BINARY_NAME)-$(GOARCH)
-endif
-
 .PHONY: all
-all: build
-
-.PHONY: build
-build: clean test compile-multiarch
+all: clean build-multiarch
 
 .PHONY: clean
 clean:
@@ -35,15 +24,17 @@ clean:
 test:
 	go test ./... -count=1 -race
 
-.PHONY: compile
-compile:
-	CGO_ENABLED=$(CGO_ENABLED) go build $(LDFLAGS) -o $(BIN_DIR)/$(BINARY_NAME) ./cmd/configurator/configurator.go
+.PHONY: build
+build: BINARY_NAME := $(if $(GOOS),$(BINARY_NAME)-$(GOOS),$(BINARY_NAME))
+build: BINARY_NAME := $(if $(GOARCH),$(BINARY_NAME)-$(GOARCH),$(BINARY_NAME))
+build: ## Compiles operator binary.
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) GOARCH=$(GOARCH) go build $(LD_FLAGS) -o $(BIN_DIR)/$(BINARY_NAME) ./cmd/configurator/configurator.go
 
-.PHONY: compile-multiarch
-compile-multiarch:
-	$(MAKE) compile GOOS=linux GOARCH=amd64
-	$(MAKE) compile GOOS=linux GOARCH=arm64
-	$(MAKE) compile GOOS=linux GOARCH=arm
+.PHONY: build-multiarch
+build-multiarch: clean
+	$(MAKE) build GOOS=linux GOARCH=amd64
+	$(MAKE) build GOOS=linux GOARCH=arm64
+	$(MAKE) build GOOS=linux GOARCH=arm
 
 .PHONY: start-local-cluster
 start-local-cluster:
