@@ -9,13 +9,13 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
+type metadata struct {
+	annotations map[string]string
+	labels      map[string]string
+}
+
 func Test_TargetDiscoveryFilter(t *testing.T) {
 	t.Parallel()
-
-	type metadata struct {
-		annotations map[string]string
-		labels      map[string]string
-	}
 
 	testsCases := []struct {
 		name   string
@@ -23,13 +23,13 @@ func Test_TargetDiscoveryFilter(t *testing.T) {
 
 		// When matchPod/Endpoint is added, the test will generate a pod/endpoint
 		// with specified metadata and check if is an Active Target.
-		matchPod      *metadata
-		matchEndpoint *metadata
+		matchPod       *metadata
+		matchEndpoints *metadata
 
 		// When dropPod/Endpoint is added, the test will generate a pod/endpoint
 		// with specified metadata and check if is a Dropped Target.
-		dropPod      *metadata
-		dropEndpoint *metadata
+		dropPod       *metadata
+		dropEndpoints *metadata
 	}{
 		{
 			name: "no filter match any pod",
@@ -47,7 +47,7 @@ func Test_TargetDiscoveryFilter(t *testing.T) {
 					"single.annotation": "value not matching the filter",
 				},
 			},
-			dropEndpoint: &metadata{
+			dropEndpoints: &metadata{
 				annotations: map[string]string{
 					"single.annotation": "value not matching the filter",
 				},
@@ -61,7 +61,7 @@ func Test_TargetDiscoveryFilter(t *testing.T) {
 					"single.annotation": "true",
 				},
 			},
-			matchEndpoint: &metadata{
+			matchEndpoints: &metadata{
 				annotations: map[string]string{
 					"single.annotation": "true",
 				},
@@ -78,7 +78,7 @@ func Test_TargetDiscoveryFilter(t *testing.T) {
 					"k8s.io/app": "foo",
 				},
 			},
-			matchEndpoint: &metadata{
+			matchEndpoints: &metadata{
 				annotations: map[string]string{
 					"prometheus.io/scrape": "true",
 				},
@@ -95,7 +95,7 @@ func Test_TargetDiscoveryFilter(t *testing.T) {
 					"empty.annotation": "Value doesn't care",
 				},
 			},
-			matchEndpoint: &metadata{
+			matchEndpoints: &metadata{
 				annotations: map[string]string{
 					"empty.annotation": "Value doesn't care",
 				},
@@ -111,50 +111,11 @@ func Test_TargetDiscoveryFilter(t *testing.T) {
 
 			k8sEnv := newK8sEnvironment(t)
 
-			var matchPod *corev1.Pod
-			if testCase.matchPod != nil {
-				matchPod = k8sEnv.addPod(
-					t,
-					fakePod("match-pod-", testCase.matchPod.annotations, testCase.matchPod.labels),
-				)
-			}
-
-			var dropPod *corev1.Pod
-			if testCase.dropPod != nil {
-				dropPod = k8sEnv.addPod(
-					t,
-					fakePod("drop-pod-", testCase.dropPod.annotations, testCase.dropPod.labels),
-				)
-			}
-
-			var matchEndpointService *corev1.Service
-			if testCase.matchEndpoint != nil {
-				selector := map[string]string{"k8s.io/app": "myApp"}
-				k8sEnv.addPod(
-					t,
-					fakePod("match-endpoint-pod-", map[string]string{}, selector),
-				)
-
-				matchEndpointService = k8sEnv.addService(
-					t,
-					fakeService("test", selector, testCase.matchEndpoint.annotations, testCase.matchEndpoint.labels),
-				)
-			}
-
-			var dropEndpointService *corev1.Service
-			if testCase.dropEndpoint != nil {
-				selector := map[string]string{"k8s.io/app": "myDroppedApp"}
-				k8sEnv.addPod(
-					t,
-					fakePod("drop-endpoint-pod-", map[string]string{}, selector),
-				)
-
-				dropEndpointService = k8sEnv.addService(
-					t,
-					fakeService("test", selector, testCase.dropEndpoint.annotations, testCase.dropEndpoint.labels),
-				)
-
-			}
+			// Resources are only generated when metadata is specified in the test.
+			matchPod := addPodToEnv(t, testCase.matchPod, "match-", k8sEnv)
+			dropPod := addPodToEnv(t, testCase.dropPod, "drop-", k8sEnv)
+			matchEndpointService := addEndpointsToEnv(t, testCase.matchEndpoints, "match-endpoint-", k8sEnv)
+			dropEndpointService := addEndpointsToEnv(t, testCase.dropEndpoints, "drop-endpoint-", k8sEnv)
 
 			inputConfig := fmt.Sprintf(`
 newrelic_remote_write:
@@ -189,7 +150,7 @@ kubernetes:
 				targetCount++
 			}
 
-			if testCase.matchEndpoint != nil {
+			if testCase.matchEndpoints != nil {
 				asserter.activeTargetLabels(t, map[string]string{
 					"service": matchEndpointService.Name,
 				})
@@ -205,7 +166,7 @@ kubernetes:
 				})
 			}
 
-			if testCase.dropEndpoint != nil {
+			if testCase.dropEndpoints != nil {
 				asserter.droppedTargetLabels(t, map[string]string{
 					"__meta_kubernetes_service_name": dropEndpointService.Name,
 				})
@@ -228,4 +189,37 @@ func filter(annotation, label string) string {
           labels:
             %s
 `, annotation, label)
+}
+
+func addPodToEnv(t *testing.T, podMetadata *metadata, prefix string, k8sEnv k8sEnvironment) *corev1.Pod {
+	t.Helper()
+
+	if podMetadata == nil {
+		return nil
+	}
+
+	return k8sEnv.addPod(
+		t,
+		fakePod(prefix, podMetadata.annotations, podMetadata.labels),
+	)
+}
+
+func addEndpointsToEnv(t *testing.T, endpointsMetadata *metadata, prefix string, k8sEnv k8sEnvironment) *corev1.Service {
+	t.Helper()
+
+	if endpointsMetadata == nil {
+		return nil
+	}
+
+	selector := map[string]string{"k8s.io/app": "myApp"}
+	k8sEnv.addPod(
+		t,
+		fakePod(prefix, map[string]string{}, selector),
+	)
+
+	return k8sEnv.addService(
+		t,
+		fakeService(prefix, selector, endpointsMetadata.annotations, endpointsMetadata.labels),
+	)
+
 }
