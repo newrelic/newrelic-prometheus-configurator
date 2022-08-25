@@ -198,9 +198,10 @@ func addPodToEnv(t *testing.T, podMetadata *metadata, prefix string, k8sEnv k8sE
 		return nil
 	}
 
-	return k8sEnv.addPod(
+	return k8sEnv.addPodAndWaitOnPhase(
 		t,
 		fakePod(prefix, podMetadata.annotations, podMetadata.labels),
+		corev1.PodRunning,
 	)
 }
 
@@ -212,9 +213,10 @@ func addEndpointsToEnv(t *testing.T, endpointsMetadata *metadata, prefix string,
 	}
 
 	selector := map[string]string{"k8s.io/app": "myApp"}
-	k8sEnv.addPod(
+	k8sEnv.addPodAndWaitOnPhase(
 		t,
 		fakePod(prefix, map[string]string{}, selector),
+		corev1.PodRunning,
 	)
 
 	return k8sEnv.addService(
