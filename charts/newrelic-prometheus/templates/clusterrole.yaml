@@ -10,6 +10,7 @@ rules:
       - ""
     resources:
       - endpoints
+      - services
       - pods
     verbs:
       - get
