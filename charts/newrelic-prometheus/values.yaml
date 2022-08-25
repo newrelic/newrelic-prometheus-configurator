@@ -18,7 +18,7 @@ images:
 
   configurator:
     registry: ""
-    repository: newrelic/prometheus-configurator
+    repository: newrelic/newrelic-prometheus-configurator
     pullPolicy: IfNotPresent
     tag: ""
   prometheus:

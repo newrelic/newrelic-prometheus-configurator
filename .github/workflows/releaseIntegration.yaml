@@ -44,7 +44,7 @@ jobs:
     needs: [ build ]
     runs-on: ubuntu-latest
     env:
-      DOCKER_IMAGE_NAME: newrelic/prometheus-configurator
+      DOCKER_IMAGE_NAME: newrelic/newrelic-prometheus-configurator
       DOCKER_PLATFORMS: "linux/amd64,linux/arm64,linux/arm" # Must be consistent with the matrix from the job above
     steps:
       - uses: actions/checkout@v2
