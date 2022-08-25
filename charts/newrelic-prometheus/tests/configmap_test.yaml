@@ -24,6 +24,7 @@ tests:
             common:
               external_labels:
                 cluster_name: cluster-test
+              scrape_interval: 30s
             kubernetes:
               jobs:
               - job_name_prefix: kubernetes-job
@@ -96,6 +97,7 @@ tests:
             common:
               external_labels:
                 cluster_name: cluster-test
+              scrape_interval: 30s
 
   - it: cluster_name is set from global
     set:
@@ -113,6 +115,7 @@ tests:
             common:
               external_labels:
                 cluster_name: test
+              scrape_interval: 30s
   - it: cluster_name local value has precedence over global precedence
     set:
       global:
@@ -130,6 +133,7 @@ tests:
             common:
               external_labels:
                 cluster_name: test2
+              scrape_interval: 30s
   - it: cluster_name is not overwritten from customAttributes
     set:
       global:
@@ -149,6 +153,7 @@ tests:
             common:
               external_labels:
                 cluster_name: test2
+              scrape_interval: 30s
 
   - it: cluster_name has precedence over extra labels has precedence over customAttributes
     set:
@@ -329,6 +334,7 @@ tests:
             common:
               external_labels:
                 cluster_name: cluster-test
+              scrape_interval: 30s
 
   - it: kubernetes config section custom values
     set:
@@ -361,6 +367,7 @@ tests:
             common:
               external_labels:
                 cluster_name: cluster-test
+              scrape_interval: 30s
             kubernetes:
               jobs:
               - job_name_prefix: pod-job
