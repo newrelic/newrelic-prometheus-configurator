@@ -24,9 +24,12 @@ const (
 )
 
 var (
+	//nolint:gochecknoglobals
 	integrationVersion = "0.0.0"
-	gitCommit          = ""
-	buildDate          = ""
+	//nolint:gochecknoglobals
+	gitCommit = ""
+	//nolint:gochecknoglobals
+	buildDate = ""
 )
 
 func main() {
