@@ -11,7 +11,7 @@ COMMIT := $(shell git rev-parse HEAD)
 TAG ?= dev
 COMMIT ?= $(shell git rev-parse HEAD || echo "unknown")
 
-LDFLAGS ?= -ldflags="-X 'main.integrationVersion=$(TAG)' -X 'main.gitCommit=$(COMMIT)' -X 'main.buildDate=$(BUILD_DATE)' "
+LD_FLAGS ?= -ldflags="-X 'main.integrationVersion=$(TAG)' -X 'main.gitCommit=$(COMMIT)' -X 'main.buildDate=$(BUILD_DATE)' "
 
 .PHONY: all
 all: clean build-multiarch
@@ -27,7 +27,7 @@ test:
 .PHONY: build
 build: BINARY_NAME := $(if $(GOOS),$(BINARY_NAME)-$(GOOS),$(BINARY_NAME))
 build: BINARY_NAME := $(if $(GOARCH),$(BINARY_NAME)-$(GOARCH),$(BINARY_NAME))
-build: ## Compiles operator binary.
+build:
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) GOARCH=$(GOARCH) go build $(LD_FLAGS) -o $(BIN_DIR)/$(BINARY_NAME) ./cmd/configurator/configurator.go
 
 .PHONY: build-multiarch
