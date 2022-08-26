@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
@@ -18,14 +19,33 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/yaml.v2"
 )
 
 const (
 	prometheusBinaryPath = "./prometheus"
+	chartDefinitionFile  = "../../charts/newrelic-prometheus/Chart.yaml"
 )
 
 type prometheusServer struct {
 	port string
+}
+
+func prometheusChartVersion() (string, error) {
+	f, err := ioutil.ReadFile(chartDefinitionFile)
+	if err != nil {
+		return "", fmt.Errorf("reading Chart.yaml: %w", err)
+	}
+
+	input := &struct {
+		AppVersion string `yaml:"appVersion"`
+	}{}
+
+	if err = yaml.Unmarshal(f, input); err != nil {
+		return "", fmt.Errorf("unmarshalling Chart.yaml: %w", err)
+	}
+
+	return input.AppVersion, nil
 }
 
 func newPrometheusServer(t *testing.T) *prometheusServer {
