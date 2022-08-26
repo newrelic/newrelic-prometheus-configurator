@@ -49,7 +49,6 @@ spec:
       initContainers:
         - name: configurator
           image: {{ include "newrelic.common.images.image" ( dict "imageRoot" .Values.images.configurator "context" .) }}
-          command: ["/configurator"]
           args: ["-input", "/etc/configurator/config.yaml", "-output", "/etc/prometheus/config/config.yaml"]
           volumeMounts:
             - name: configurator-config

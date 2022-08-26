@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 
 	"github.com/newrelic-forks/newrelic-prometheus/configurator"
 	log "github.com/sirupsen/logrus"
@@ -15,9 +16,20 @@ import (
 )
 
 const (
+	integrationName = "Prometheus-Configurator"
+
 	inputErrCode = iota + 1
 	outputErrCode
 	parseErrCode
+)
+
+var (
+	//nolint:gochecknoglobals
+	integrationVersion = "0.0.0"
+	//nolint:gochecknoglobals
+	gitCommit = ""
+	//nolint:gochecknoglobals
+	buildDate = ""
 )
 
 func main() {
@@ -26,6 +38,15 @@ func main() {
 	inputFlag := flag.String("input", "", "Input file to load the configuration from, defaults to stdin.")
 	outputFlag := flag.String("output", "", "Output file to use as output, defaults to stdout.")
 	flag.Parse()
+
+	logger.Infof(
+		"New Relic %s integration Version: %s, Platform: %s, GoVersion: %s, GitCommit: %s, BuildDate: %s\n",
+		integrationName,
+		integrationVersion,
+		fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
+		runtime.Version(),
+		gitCommit,
+		buildDate)
 
 	input, err := readInput(*inputFlag)
 	if err != nil {
