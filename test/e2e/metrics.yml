@@ -12,13 +12,46 @@ entities:
       - name: prometheus_sd_kubernetes_events_total
       - name: prometheus_agent_checkpoint_creations_failed_total
       - name: prometheus_agent_checkpoint_deletions_failed_total
-      - name: prometheus_remote_storage_dropped_samples_total
-      - name: prometheus_remote_storage_failed_samples_total
+      - name: prometheus_remote_storage_samples_dropped_total
+      - name: prometheus_remote_storage_samples_failed_total
       - name: prometheus_sd_kubernetes_http_request_total
       - name: prometheus_agent_truncate_duration_seconds_sum
       - name: prometheus_build_info
       - name: process_resident_memory_bytes
       - name: process_virtual_memory_bytes
       - name: process_cpu_seconds_total
-      - name: scrape_pool_targets
       - name: scrape_duration_seconds
+  - entityType: FakePodMetrics
+    metrics:
+      - name: mock_pod_gauge_metric
+      - name: mock_pod_counter_metric_total
+      - name: mock_pod_summary_metric
+      - name: mock_pod_summary_metric_sum
+      - name: mock_pod_summary_metric_count
+      - name: mock_pod_histogram_metric_bucket
+      - name: mock_pod_histogram_metric_sum
+      - name: mock_pod_histogram_metric_count
+  - entityType: FakeEndpointsMetrics
+    metrics:
+      - name: mock_endpoints_gauge_metric
+      - name: mock_endpoints_counter_metric_total
+      - name: mock_endpoints_summary_metric
+      - name: mock_endpoints_summary_metric_sum
+      - name: mock_endpoints_summary_metric_count
+      - name: mock_endpoints_histogram_metric_bucket
+      - name: mock_endpoints_histogram_metric_sum
+      - name: mock_endpoints_histogram_metric_count
+  - entityType: FakeOpenmetricsMetrics
+    metrics:
+    - name: fake_openmetrics_counter_created
+    - name: fake_openmetrics_counter_total
+    - name: fake_openmetrics_gauge
+    - name: fake_openmetrics_histogram_bucket
+    - name: fake_openmetrics_histogram_count
+    - name: fake_openmetrics_histogram_created
+    - name: fake_openmetrics_histogram_sum
+    - name: fake_openmetrics_info
+    - name: fake_openmetrics_stateset
+    - name: fake_openmetrics_summary_count
+    - name: fake_openmetrics_summary_created
+    - name: fake_openmetrics_summary_sum

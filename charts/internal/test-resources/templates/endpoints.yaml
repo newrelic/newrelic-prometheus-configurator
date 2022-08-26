@@ -25,7 +25,7 @@ spec:
       volumes:
         - name: metrics
           configMap:
-            name: prometheus-metrics
+            name: prometheus-endpoints-metrics
             items:
             - key: metrics-sample
               path: metrics
