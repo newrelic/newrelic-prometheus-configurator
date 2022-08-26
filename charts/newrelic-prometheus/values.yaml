@@ -74,15 +74,19 @@ tolerations: []
 # @default -- `false`
 nrStaging:
 
+# -- (bool) Reduces number of metrics sent in order to reduce costs. Can be configured also with `global.lowDataMode`
+# @default -- false
+lowDataMode:
+
 # -- New Relic prometheus configuration.
 # TODO: we need to set default values only when those values are not the same than prometheus agent defaults'.
 config:
-#  common:
+  common:
 #    The labels to add to any timeseries that this Prometheus instance scrapes.
 #    external_labels:
 #      one: two
 #    How frequently to scrape targets by default.
-#    scrape_interval: 1m
+    scrape_interval: 30s
 #    The default timeout when scraping targets.
 #    scrape_timeout: 10s
 

@@ -24,13 +24,23 @@ common:
 {{- $tmp := dict -}}
 
 {{- if (include "newrelic.common.nrStaging" . ) -}}
-  {{- $tmp = dict "staging" true  -}}
+  {{- $tmp = set $tmp "staging" true  -}}
 {{- end -}}
 
-{{- if .Values.config -}}
-  {{- if .Values.config.newrelic_remote_write  -}}
-    {{- $tmp = mustMerge $tmp .Values.config.newrelic_remote_write  -}}
+{{- if (include "newrelic.common.lowDataMode" .) -}}
+  {{- $lowDataModeRelabelConfig := .Files.Get "static/lowdatamodedefaults.yaml" | fromYaml -}}
+  {{- $tmp = set $tmp "extra_write_relabel_configs" (list $lowDataModeRelabelConfig)  -}}
+{{- end -}}
+
+{{- if and .Values.config .Values.config.newrelic_remote_write -}}
+  {{- /* it concatenates the defined 'extra_write_relabel_configs' to the ones defined in lowDataMode  */ -}}
+  {{- if and .Values.config.newrelic_remote_write.extra_write_relabel_configs  $tmp.extra_write_relabel_configs -}}
+      {{- $concatenated := concat $tmp.extra_write_relabel_configs .Values.config.newrelic_remote_write.extra_write_relabel_configs -}}
+      {{- $tmp = set $tmp "extra_write_relabel_configs" $concatenated  -}}
   {{- end -}}
+
+  {{- $tmp = mustMerge $tmp .Values.config.newrelic_remote_write  -}}
+
 {{- end -}}
 
 {{- if not (empty $tmp) -}}
