@@ -199,16 +199,14 @@ config:
             prometheus_sd_kubernetes_events_total|\
             prometheus_agent_checkpoint_creations_failed_total|\
             prometheus_agent_checkpoint_deletions_failed_total|\
-            prometheus_remote_storage_dropped_samples_total|\
-            prometheus_remote_storage_failed_samples_total|\
+            prometheus_remote_storage_samples_dropped_total|\
+            prometheus_remote_storage_samples_failed_total|\
             prometheus_sd_kubernetes_http_request_total|\
             prometheus_agent_truncate_duration_seconds_sum|\
             prometheus_build_info|\
             process_resident_memory_bytes|\
             process_virtual_memory_bytes|\
-            process_cpu_seconds_total|\
-            scrape_pool_targets|\
-            scrape_duration_seconds"
+            process_cpu_seconds_total"
           action: keep
 #  # extra scrape configs in prometheus format https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
 #  extra_scrape_configs: {}
