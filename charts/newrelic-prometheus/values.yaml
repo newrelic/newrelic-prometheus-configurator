@@ -3,7 +3,9 @@ nameOverride: ""
 # -- Override the full name of the release
 fullnameOverride: ""
 
-# -- Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster`
+# -- Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster`.
+# Note it will be set as an external label in prometheus configuration, it will have precedence over `config.common.external_labels.cluster_name`
+# and `customAttributes.cluster_name``.
 cluster: ""
 # -- This set this license key to use. Can be configured also with `global.licenseKey`
 licenseKey: ""
@@ -12,20 +14,32 @@ customSecretName: ""
 # -- In case you don't want to have the license key in you values, this allows you to point to which secret key is the license key located. Can be configured also with `global.customSecretLicenseKey`
 customSecretLicenseKey: ""
 
+# -- Adds extra attributes to prometheus external labels. Can be configured also with `global.customAttributes`. Please note, values defined
+# in `common.config.externar_labels` will have precedence over `customAttributes`.
+customAttributes: {}
+
+# Images used by the chart for prometheus and New Relic configurator.
+# @default See `values.yaml`
 images:
   # -- The secrets that are needed to pull images from a custom registry.
   pullSecrets: []
 
+  # -- Image for New Relic configurator.
+  # @default See `values.yaml`
   configurator:
     registry: ""
     repository: newrelic/newrelic-prometheus-configurator
     pullPolicy: IfNotPresent
-    tag: ""  # Defaults to 'Chart.yaml' annotation.configuratorVersion
+    # @default It defaults to `annotation.configuratorVersion` in `Chart.yaml`.
+    tag: ""
+  # -- Image for prometheus which is executed in agent mode.
+  # @default See `values.yaml`
   prometheus:
     registry: ""
     repository: quay.io/prometheus/prometheus
     pullPolicy: IfNotPresent
-    tag: ""  # Defaults to 'Chart.yaml' appVersion
+    # @default It defaults to `appVersion` in `Chart.yaml`.
+    tag: ""
 
 # -- Settings controlling ServiceAccount creation.
 # @default -- See `values.yaml`
@@ -74,23 +88,30 @@ tolerations: []
 # @default -- `false`
 nrStaging:
 
-# -- (bool) Reduces number of metrics sent in order to reduce costs. Can be configured also with `global.lowDataMode`
+# -- (bool) Reduces number of metrics sent in order to reduce costs. It can be configured also with `global.lowDataMode`.
+# Specifically, it makes prometheus stop reporting some kubernetes cluster specific metrics, you can see details in `static/lowdatamodedefaults.yaml`.
 # @default -- false
 lowDataMode:
 
-# -- New Relic prometheus configuration.
-# TODO: we need to set default values only when those values are not the same than prometheus agent defaults'.
+# -- It holds the New Relic prometheus configuration. Check `values.yaml` for details.
+# @default -- It sets self metrics and target scraping for pod and endpoints kubernetes objects which include a specific annotation. Check `values.yaml` for details.
 config:
+  # -- Include global configuration for prometheus agent. See `values.yaml` for details.
   common:
-#    The labels to add to any timeseries that this Prometheus instance scrapes.
+#    # The labels to add to any timeseries that this Prometheus instance scrapes.
 #    external_labels:
 #      one: two
-#    How frequently to scrape targets by default.
+#   # How frequently to scrape targets by default.
     scrape_interval: 30s
-#    The default timeout when scraping targets.
+#    # The default timeout when scraping targets.
 #    scrape_timeout: 10s
 
-#  newrelic_remote_write:
+  # -- (object) Newrelic remote-write configuration settings. It should work with the default value but if you need to
+  # set it up you can customize most [prometheus remote_write](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
+  # values, as described in `values.yaml`.
+  newrelic_remote_write:
+#    # Includes additional relabel configs for the New Relic remote write. Please note, this field is not parsed so it should
+#    # include valid [prometheus write_relabel_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
 #    extra_write_relabel_configs: []
 #    proxy_url: ""
 #    remote_timeout: 30s
@@ -119,12 +140,16 @@ config:
 #       # Retry upon receiving a 429 status code from the remote-write storage.
 #       retry_on_http_429: false
 
-#  extra_remote_write: []
+  # -- (object) It includes additional remote-write configuration. Note this configuration is not parsed, so valid
+  # [prometheus remote_write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
+  # should be provided.
+  extra_remote_write:
 
-#  # kubernetes jobs allow defining scrape jobs for kubernetes in a simple way.
+  # -- It allows defining scrape jobs for kubernetes in a simple way.
+  # @default -- By default it defines jobs to scrape all pod and endpoints objects with `"prometheus.io/scrape"` annotation.
   kubernetes:
     jobs:
-    # By default all pods and endpoints with 'prometeus.io/scrape: true' annotation will be discovered.
+    # By default all pods and endpoints with `prometeus.io/scrape: true` annotation will be discovered.
     # The job_name_prefix is mandatory and no other job using the same prefix should be used in the whole configuration.
     - job_name_prefix: kubernetes-job
       # Target discovery field allows customizing how kubernetes discovery works.
@@ -140,8 +165,13 @@ config:
             prometheus.io/scrape: true
           # labels: {}
 
-#  for more info about static_targets: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
+  # -- For more info about static_targets, see `values.yaml` and
+  # [scrape_config prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config).
+  # Please note, if you define `static_target.jobs` and still need self metrics you should also include the job to do so
+  # (as defined by default).
+  # @default -- Includes a self-metrics job, for more info see `values.yaml`.
   static_targets:
+    # @ignore
     jobs:
 #    # The job name assigned to scraped metrics by default.
 #    - job_name: ""
@@ -185,7 +215,7 @@ config:
 #      extra_relabel_config: []
 #      # List of metric relabel configurations.
 #      extra_metric_relabel_config: []
-    # prometheus self-metrics job is always active reporting only the metrics on the regex list.
+    # @ignore
     - job_name: self-metrics
       targets:
         - "localhost:9090"
@@ -212,5 +242,6 @@ config:
             process_virtual_memory_bytes|\
             process_cpu_seconds_total"
           action: keep
-#  # extra scrape configs in prometheus format https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
-#  extra_scrape_configs: {}
+  # -- It is possible to include extra scrape configuration in [prometheus format](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config).
+  # Please note, it should be valid prometheus configuration which will not be parsed by the chart.
+  extra_scrape_configs: {}
