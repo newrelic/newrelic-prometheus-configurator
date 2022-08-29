@@ -11,11 +11,12 @@ import (
 	"github.com/newrelic-forks/newrelic-prometheus/test/integration/mocks"
 )
 
-const (
-	prometheusVersion = "2.36.2"
-)
-
 func TestMain(m *testing.M) {
+	prometheusVersion, err := prometheusChartVersion()
+	if err != nil {
+		log.Fatalf("fail to fetch prometheus version: %s", err)
+	}
+
 	if err := fetchPrometheusBinary(prometheusVersion); err != nil {
 		log.Fatalf("fail to fetch prometheus binary: %s", err)
 	}

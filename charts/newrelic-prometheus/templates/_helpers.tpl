@@ -85,3 +85,28 @@ kubernetes:
   {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{- /*
+Return the proper configurator image name
+{{ include "newrelic-prometheus.configurator.images.configurator_image" ( dict "imageRoot" .Values.path.to.the.image "context" .) }}
+*/ -}}
+{{- define "newrelic-prometheus.configurator.configurator_image" -}}
+    {{- $registryName := include "newrelic.common.images.registry" ( dict "imageRoot" .imageRoot "context" .context) -}}
+    {{- $repositoryName := include "newrelic.common.images.repository" .imageRoot -}}
+    {{- $tag := include "newrelic-prometheus.configurator.configurator_image.tag" ( dict "imageRoot" .imageRoot "context" .context) -}}
+
+    {{- if $registryName -}}
+        {{- printf "%s/%s:%s" $registryName $repositoryName $tag | quote -}}
+    {{- else -}}
+        {{- printf "%s:%s" $repositoryName $tag | quote -}}
+    {{- end -}}
+{{- end -}}
+
+
+{{- /*
+Return the proper image tag for the configurator image
+{{ include "newrelic-prometheus.configurator.configurator_image.tag" ( dict "imageRoot" .Values.path.to.the.image "context" .) }}
+*/ -}}
+{{- define "newrelic-prometheus.configurator.configurator_image.tag" -}}
+    {{- .imageRoot.tag | default .context.Chart.Annotations.configuratorVersion | toString -}}
+{{- end -}}

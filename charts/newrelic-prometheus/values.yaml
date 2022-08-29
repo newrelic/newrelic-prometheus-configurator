@@ -20,12 +20,12 @@ images:
     registry: ""
     repository: newrelic/newrelic-prometheus-configurator
     pullPolicy: IfNotPresent
-    tag: ""
+    tag: ""  # Defaults to 'Chart.yaml' annotation.configuratorVersion
   prometheus:
     registry: ""
     repository: quay.io/prometheus/prometheus
     pullPolicy: IfNotPresent
-    tag: v2.36.2
+    tag: ""  # Defaults to 'Chart.yaml' appVersion
 
 # -- Settings controlling ServiceAccount creation.
 # @default -- See `values.yaml`
