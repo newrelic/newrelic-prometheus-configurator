@@ -152,6 +152,8 @@ jobs:
         continue-on-error: ${{ github.event_name != 'pull_request' }}
         with:
           args: --verbose
+      - name: Prometheus versions match
+        run: make check-prometheus-version
 
   codespell:
     name: Codespell

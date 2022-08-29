@@ -48,7 +48,7 @@ spec:
 
       initContainers:
         - name: configurator
-          image: {{ include "newrelic.common.images.image" ( dict "imageRoot" .Values.images.configurator "context" .) }}
+          image: {{ include "newrelic-prometheus.configurator.configurator_image" ( dict "imageRoot" .Values.images.configurator "context" .) }}
           args: ["-input", "/etc/configurator/config.yaml", "-output", "/etc/prometheus/config/config.yaml"]
           volumeMounts:
             - name: configurator-config
@@ -82,7 +82,7 @@ spec:
               path: /-/healthy
               port: 9090
               scheme: HTTP
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 3
@@ -92,7 +92,7 @@ spec:
               path: /-/ready
               port: 9090
               scheme: HTTP
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 5
             timeoutSeconds: 4
             failureThreshold: 3
