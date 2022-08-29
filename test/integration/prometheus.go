@@ -45,7 +45,7 @@ func prometheusChartVersion() (string, error) {
 		return "", fmt.Errorf("unmarshalling Chart.yaml: %w", err)
 	}
 
-	return input.AppVersion, nil
+	return strings.TrimPrefix(input.AppVersion, "v"), nil
 }
 
 func newPrometheusServer(t *testing.T) *prometheusServer {
