@@ -23,11 +23,18 @@ kubernetes:
         # Sets the credentials. It is mutually exclusive with
         # `credentials_file`, we add both for testing purposes
         credentials: "fancy-credentials"
-      # Kubernetes specific configuration
-      kubernetes_sd_configs:
+      # Kubernetes job specific configuration
       target_discovery:
         pod: true
         endpoints: true
+        additional_config:
+          namespaces:
+            own_namespace: true
+            names:
+              - n1
+          selectors:
+            - role: pod
+              label: label-name
 
 newrelic_remote_write:
   license_key: nrLicenseKey

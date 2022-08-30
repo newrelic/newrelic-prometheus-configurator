@@ -23,6 +23,13 @@ scrape_configs:
 
     kubernetes_sd_configs:
       - role: pod
+        namespaces:
+          own_namespace: true
+          names:
+            - n1
+        selectors:
+          - role: pod
+            label: label-name
 
     relabel_configs:
      # Pod builder configs
@@ -81,6 +88,13 @@ scrape_configs:
 
     kubernetes_sd_configs:
       - role: endpoints
+        namespaces:
+          own_namespace: true
+          names:
+            - n1
+        selectors:
+          - role: pod
+            label: label-name
 
     relabel_configs:
     # Endpoints builder configs
