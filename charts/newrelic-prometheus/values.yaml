@@ -80,7 +80,7 @@ lowDataMode:
 
 # Sharding configuration
 sharding:
-  total_shard_count: 1 # Sets the number of prometheus replicas
+  total_shard_count: 1  # Sets the number of prometheus replicas
 
 # -- New Relic prometheus configuration.
 # TODO: we need to set default values only when those values are not the same than prometheus agent defaults'.

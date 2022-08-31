@@ -25,7 +25,7 @@ func endpointsRelabelConfigs(job K8sJob, sharding promcfg.Sharding) []promcfg.Re
 	return rc
 }
 
-func endpointsDefaultRelabelConfigs() []promcfg.RelabelConfig {
+func endpointsDefaultRelabelConfigs() []promcfg.RelabelConfig { //nolint: dupl
 	return []promcfg.RelabelConfig{
 		{
 			SourceLabels: []string{"__meta_kubernetes_pod_phase"},
