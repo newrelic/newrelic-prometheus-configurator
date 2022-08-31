@@ -1,13 +1,21 @@
-package kubernetes //nolint: dupl
+package kubernetes
 
-import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+import (
+	"fmt"
+
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+)
 
 // endpointsRelabelConfigs returns all relabel configs for an Endpoints job.
-func endpointsRelabelConfigs(job K8sJob) []promcfg.RelabelConfig {
+func endpointsRelabelConfigs(job K8sJob, sharding promcfg.Sharding) []promcfg.RelabelConfig {
 	rc := []promcfg.RelabelConfig{}
 
 	if job.TargetDiscovery.Filter.Valid() {
 		rc = append(rc, job.TargetDiscovery.Filter.Endpoints())
+	}
+
+	if sharding.TotalShardsCount > 1 {
+		rc = append(rc, shardingEndpointsRelabelConfigs(sharding)...)
 	}
 
 	rc = append(rc, endpointsDefaultRelabelConfigs()...)
@@ -66,6 +74,26 @@ func endpointsDefaultRelabelConfigs() []promcfg.RelabelConfig {
 			SourceLabels: []string{"__meta_kubernetes_pod_node_name"},
 			Action:       "replace",
 			TargetLabel:  "node",
+		},
+	}
+}
+
+func shardingEndpointsRelabelConfigs(sharding promcfg.Sharding) []promcfg.RelabelConfig {
+	if sharding.ShardIndex == "" {
+		return []promcfg.RelabelConfig{}
+	}
+
+	return []promcfg.RelabelConfig{
+		{
+			SourceLabels: []string{"__address__", "_meta_kubernetes_service_name"},
+			Modulus:      sharding.TotalShardsCount,
+			Action:       "hashmod",
+			TargetLabel:  "__tmp_hash",
+		},
+		{
+			SourceLabels: []string{"__tmp_hash"},
+			Regex:        fmt.Sprintf("^%v$", sharding.ShardIndex),
+			Action:       "keep",
 		},
 	}
 }

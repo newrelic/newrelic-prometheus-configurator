@@ -3,6 +3,7 @@ package configurator
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 const (
@@ -30,11 +31,14 @@ func BuildOutput(input *Input) (*Output, error) {
 
 	output.RemoteWrite = append(output.RemoteWrite, input.ExtraRemoteWrite...)
 
-	for _, staticTargets := range input.StaticTargets.Build() {
+	// Set the shard index
+	input.Sharding.ShardIndex = getShardIndex()
+
+	for _, staticTargets := range input.StaticTargets.Build(input.Sharding) {
 		output.ScrapeConfigs = append(output.ScrapeConfigs, staticTargets)
 	}
 
-	k8sJobs, err := input.Kubernetes.Build()
+	k8sJobs, err := input.Kubernetes.Build(input.Sharding)
 	if err != nil {
 		return output, fmt.Errorf("building k8s config: %w", err)
 	}
@@ -65,4 +69,14 @@ func validate(config *Input) error {
 	}
 
 	return nil
+}
+
+// getShardIndex returns the corresponding shard index from the DataSourceNameEnvKey env var.
+func getShardIndex() string {
+	parts := strings.Split(os.Getenv(DataSourceNameEnvKey), "-")
+	if len(parts) < 3 { //nolint: gomnd
+		return ""
+	}
+
+	return parts[2]
 }

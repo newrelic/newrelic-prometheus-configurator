@@ -12,7 +12,7 @@ import (
 
 type RawPromConfig any
 
-// Input represents the input configuration, it it used to load New Relic configuration so it can be parsed to
+// Input represents the input configuration, it is used to load New Relic configuration, so it can be parsed to
 // prometheus configuration.
 type Input struct {
 	// Common holds configuration for all options common to all scrape methods.
@@ -22,6 +22,8 @@ type Input struct {
 	// <https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-remote-write/set-your-prometheus-remote-write-integration/>
 	// for details.
 	DataSourceName string `yaml:"data_source_name"`
+	// Sharding holds the configuration for the sharding.
+	Sharding promcfg.Sharding `yaml:"sharding"`
 	// RemoteWrite holds the New Relic remote write configuration.
 	RemoteWrite remotewrite.Config `yaml:"newrelic_remote_write"`
 	// ExtraRemoteWrite holds any additional remote write configuration to use as it is in prometheus configuration.
