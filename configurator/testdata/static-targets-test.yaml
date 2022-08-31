@@ -7,6 +7,7 @@ static_targets:
       labels:
         label1: value1
         label2: value2
+      proxy_url: http://proxy.url
       metrics_path: /metrics-custom
       honor_labels: true
       honor_timestamps: true
