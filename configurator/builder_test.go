@@ -10,6 +10,7 @@ import (
 
 	"github.com/newrelic-forks/newrelic-prometheus/configurator"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/sharding"
 	prometheusConfig "github.com/prometheus/prometheus/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -32,6 +33,7 @@ func TestBuilder(t *testing.T) { //nolint: paralleltest,tparallel
 		"endpoints-test",
 		"filter-test",
 		"pods-test",
+		"sharding-test",
 	}
 
 	for _, c := range testCases {
@@ -130,6 +132,42 @@ func TestLicenseKey(t *testing.T) { //nolint: tparallel
 
 		data, _ := yaml.Marshal(prometheusConfig)
 		require.Contains(t, string(data), fmt.Sprintf("credentials: %s", expectedLicenseKey))
+	})
+}
+
+func TestShardingIndex(t *testing.T) { //nolint: tparallel
+	t.Setenv(configurator.LicenseKeyEnvKey, "fake")
+
+	configWithSharding := configurator.Input{
+		Sharding: sharding.Config{
+			Kind:             "hash",
+			TotalShardsCount: 2,
+		},
+	}
+
+	t.Setenv(configurator.DataSourceNameEnvKey, "newrelic-prometheus-1")
+	//nolint: paralleltest
+	t.Run("IsSetFromEnvVar", func(t *testing.T) {
+		_, err := configurator.BuildOutput(&configWithSharding)
+		require.NoError(t, err)
+		assert.Equal(t, "1", configWithSharding.Sharding.ShardIndex)
+	})
+
+	t.Setenv(configurator.DataSourceNameEnvKey, "invalid_name")
+	//nolint: paralleltest
+	t.Run("IsSetToEmptyWhenInvalidEnvVaR", func(t *testing.T) {
+		_, err := configurator.BuildOutput(&configWithSharding)
+		require.NoError(t, err)
+		assert.Equal(t, "", configWithSharding.Sharding.ShardIndex)
+	})
+
+	t.Setenv(configurator.DataSourceNameEnvKey, "")
+	configWithSharding.Sharding.ShardIndex = "3"
+	//nolint: paralleltest
+	t.Run("HonoursConfigWhenInvalidOrEmptyEnvVar", func(t *testing.T) {
+		_, err := configurator.BuildOutput(&configWithSharding)
+		require.NoError(t, err)
+		assert.Equal(t, "3", configWithSharding.Sharding.ShardIndex)
 	})
 }
 

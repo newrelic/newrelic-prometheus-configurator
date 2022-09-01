@@ -4,8 +4,6 @@
 package statictargets
 
 import (
-	"fmt"
-
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 )
 
@@ -23,7 +21,7 @@ type StaticTargetJob struct {
 }
 
 // Build will create a Prometheus Job list based on the static targets configuration.
-func (c Config) Build(sharding promcfg.Sharding) []promcfg.Job {
+func (c Config) Build() []promcfg.Job {
 	promScrapeJobs := []promcfg.Job{}
 
 	for _, staticTargetJob := range c.StaticTargetJobs {
@@ -36,10 +34,6 @@ func (c Config) Build(sharding promcfg.Sharding) []promcfg.Job {
 			},
 		}
 
-		if sharding.TotalShardsCount > 1 {
-			promScrapeJob.RelabelConfigs = append(promScrapeJob.RelabelConfigs, shardingRelabelConfigs(sharding)...)
-		}
-
 		promScrapeJob.RelabelConfigs = append(promScrapeJob.RelabelConfigs, staticTargetJob.ExtraRelabelConfigs...)
 
 		promScrapeJob.MetricRelabelConfigs = append(promScrapeJob.MetricRelabelConfigs, staticTargetJob.ExtraMetricRelabelConfigs...)
@@ -48,24 +42,4 @@ func (c Config) Build(sharding promcfg.Sharding) []promcfg.Job {
 	}
 
 	return promScrapeJobs
-}
-
-func shardingRelabelConfigs(sharding promcfg.Sharding) []promcfg.RelabelConfig {
-	if sharding.ShardIndex == "" {
-		return []promcfg.RelabelConfig{}
-	}
-
-	return []promcfg.RelabelConfig{
-		{
-			SourceLabels: []string{"__address__"},
-			Modulus:      sharding.TotalShardsCount,
-			Action:       "hashmod",
-			TargetLabel:  "__tmp_hash",
-		},
-		{
-			SourceLabels: []string{"__tmp_hash"},
-			Regex:        fmt.Sprintf("^%v$", sharding.ShardIndex),
-			Action:       "keep",
-		},
-	}
 }

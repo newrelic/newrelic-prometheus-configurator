@@ -7,6 +7,7 @@ import (
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/kubernetes"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/sharding"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/statictargets"
 )
 
@@ -23,7 +24,7 @@ type Input struct {
 	// for details.
 	DataSourceName string `yaml:"data_source_name"`
 	// Sharding holds the configuration for the sharding.
-	Sharding promcfg.Sharding `yaml:"sharding"`
+	Sharding sharding.Config `yaml:"sharding"`
 	// RemoteWrite holds the New Relic remote write configuration.
 	RemoteWrite remotewrite.Config `yaml:"newrelic_remote_write"`
 	// ExtraRemoteWrite holds any additional remote write configuration to use as it is in prometheus configuration.

@@ -173,7 +173,7 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 		c := tc
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			output := c.Input.Build(promcfg.Sharding{})
+			output := c.Input.Build()
 			assert.EqualValues(t, c.Expected, output)
 		})
 	}

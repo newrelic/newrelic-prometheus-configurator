@@ -31,20 +31,19 @@ func BuildOutput(input *Input) (*Output, error) {
 
 	output.RemoteWrite = append(output.RemoteWrite, input.ExtraRemoteWrite...)
 
-	// Set the shard index
-	input.Sharding.ShardIndex = getShardIndex()
-
-	for _, staticTargets := range input.StaticTargets.Build(input.Sharding) {
-		output.ScrapeConfigs = append(output.ScrapeConfigs, staticTargets)
+	for _, staticTargets := range input.StaticTargets.Build() {
+		job := input.Sharding.IncludeShardingRules(staticTargets)
+		output.ScrapeConfigs = append(output.ScrapeConfigs, job)
 	}
 
-	k8sJobs, err := input.Kubernetes.Build(input.Sharding)
+	k8sJobs, err := input.Kubernetes.Build()
 	if err != nil {
 		return output, fmt.Errorf("building k8s config: %w", err)
 	}
 
-	for _, job := range k8sJobs {
-		output.ScrapeConfigs = append(output.ScrapeConfigs, job)
+	for _, K8sJob := range k8sJobs {
+		j := input.Sharding.IncludeShardingRules(K8sJob)
+		output.ScrapeConfigs = append(output.ScrapeConfigs, j)
 	}
 
 	output.ScrapeConfigs = append(output.ScrapeConfigs, input.ExtraScrapeConfigs...)
@@ -58,8 +57,15 @@ func expand(config *Input) {
 		config.RemoteWrite.LicenseKey = licenseKey
 	}
 
-	if dataSourceName := os.Getenv(DataSourceNameEnvKey); dataSourceName != "" {
+	dataSourceName := os.Getenv(DataSourceNameEnvKey)
+
+	if dataSourceName != "" {
 		config.DataSourceName = dataSourceName
+	}
+
+	if dataSourceName != "" && config.Sharding.TotalShardsCount > 1 {
+		shardIndex := getIndexFromDataSourceName()
+		config.Sharding.ShardIndex = shardIndex
 	}
 }
 
@@ -71,8 +77,8 @@ func validate(config *Input) error {
 	return nil
 }
 
-// getShardIndex returns the corresponding shard index from the DataSourceNameEnvKey env var.
-func getShardIndex() string {
+// getIndexFromDataSourceName returns the corresponding shard index from the DataSourceNameEnvKey env var.
+func getIndexFromDataSourceName() string {
 	parts := strings.Split(os.Getenv(DataSourceNameEnvKey), "-")
 	if len(parts) < 3 { //nolint: gomnd
 		return ""

@@ -149,10 +149,3 @@ type RemoteWrite struct {
 	QueueConfig         *QueueConfig    `yaml:"queue_config,omitempty"`
 	WriteRelabelConfigs []RelabelConfig `yaml:"write_relabel_configs,omitempty"`
 }
-
-// Sharding for the prometheus sharding.
-type Sharding struct {
-	Kind             string `yaml:"kind"`
-	TotalShardsCount int    `yaml:"total_shards_count"`
-	ShardIndex       string `yaml:"shard_index"`
-}

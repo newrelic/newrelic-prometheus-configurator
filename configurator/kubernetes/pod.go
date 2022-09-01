@@ -1,21 +1,15 @@
-package kubernetes
+package kubernetes //nolint: dupl
 
 import (
-	"fmt"
-
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 )
 
 // podRelabelConfigs returns all relabel configs for an Pod job.
-func podRelabelConfigs(job K8sJob, sharding promcfg.Sharding) []promcfg.RelabelConfig {
+func podRelabelConfigs(job K8sJob) []promcfg.RelabelConfig {
 	rc := []promcfg.RelabelConfig{}
 
 	if job.TargetDiscovery.Filter.Valid() {
 		rc = append(rc, job.TargetDiscovery.Filter.Pod())
-	}
-
-	if sharding.TotalShardsCount > 1 {
-		rc = append(rc, shardingPodRelabelConfigs(sharding)...)
 	}
 
 	rc = append(rc, podDefaultRelabelConfigs()...)
@@ -25,7 +19,7 @@ func podRelabelConfigs(job K8sJob, sharding promcfg.Sharding) []promcfg.RelabelC
 	return rc
 }
 
-func podDefaultRelabelConfigs() []promcfg.RelabelConfig { //nolint: dupl
+func podDefaultRelabelConfigs() []promcfg.RelabelConfig {
 	return []promcfg.RelabelConfig{
 		{
 			SourceLabels: []string{"__meta_kubernetes_pod_phase"},
@@ -74,26 +68,6 @@ func podDefaultRelabelConfigs() []promcfg.RelabelConfig { //nolint: dupl
 			SourceLabels: []string{"__meta_kubernetes_pod_name"},
 			Action:       "replace",
 			TargetLabel:  "pod",
-		},
-	}
-}
-
-func shardingPodRelabelConfigs(sharding promcfg.Sharding) []promcfg.RelabelConfig {
-	if sharding.ShardIndex == "" {
-		return []promcfg.RelabelConfig{}
-	}
-
-	return []promcfg.RelabelConfig{
-		{
-			SourceLabels: []string{"__address__"},
-			Modulus:      sharding.TotalShardsCount,
-			Action:       "hashmod",
-			TargetLabel:  "__tmp_hash",
-		},
-		{
-			SourceLabels: []string{"__tmp_hash"},
-			Regex:        fmt.Sprintf("^%v$", sharding.ShardIndex),
-			Action:       "keep",
 		},
 	}
 }

@@ -22,7 +22,7 @@ type Config struct {
 }
 
 // Build will create a Prometheus Job list based on the kubernetes configuration.
-func (c Config) Build(sharding promcfg.Sharding) ([]promcfg.Job, error) {
+func (c Config) Build() ([]promcfg.Job, error) {
 	var promScrapeJobs []promcfg.Job
 
 	for _, k8sJob := range c.K8sJobs {
@@ -37,7 +37,7 @@ func (c Config) Build(sharding promcfg.Sharding) ([]promcfg.Job, error) {
 
 			podJob.KubernetesSdConfigs = append(podJob.KubernetesSdConfigs, buildSdConfig(podKind, k8sJob.TargetDiscovery.AdditionalConfig))
 
-			podJob.RelabelConfigs = append(podJob.RelabelConfigs, podRelabelConfigs(k8sJob, sharding)...)
+			podJob.RelabelConfigs = append(podJob.RelabelConfigs, podRelabelConfigs(k8sJob)...)
 
 			podJob.MetricRelabelConfigs = append(podJob.MetricRelabelConfigs, k8sJob.ExtraMetricRelabelConfigs...)
 
@@ -51,7 +51,7 @@ func (c Config) Build(sharding promcfg.Sharding) ([]promcfg.Job, error) {
 
 			endpointsJob.KubernetesSdConfigs = append(endpointsJob.KubernetesSdConfigs, buildSdConfig(endpointsKind, k8sJob.TargetDiscovery.AdditionalConfig))
 
-			endpointsJob.RelabelConfigs = append(endpointsJob.RelabelConfigs, endpointsRelabelConfigs(k8sJob, sharding)...)
+			endpointsJob.RelabelConfigs = append(endpointsJob.RelabelConfigs, endpointsRelabelConfigs(k8sJob)...)
 
 			endpointsJob.MetricRelabelConfigs = append(endpointsJob.MetricRelabelConfigs, k8sJob.ExtraMetricRelabelConfigs...)
 
