@@ -6,6 +6,7 @@ scrape_configs:
         labels:
           label1: value1
           label2: value2
+    proxy_url: http://proxy.url
     scrape_interval: 15s
     scrape_timeout: 15s
     metrics_path: /metrics-custom
