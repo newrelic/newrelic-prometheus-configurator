@@ -25,6 +25,7 @@ func TestConfig_IncludeShardingRules(t *testing.T) {
 			name: "NotAddingRulesWhenShardsNotSet",
 			job:  promcfg.Job{},
 			assert: func(t *testing.T, job promcfg.Job, expectedRelabelConfigs []promcfg.RelabelConfig) {
+				t.Helper()
 				assert.Equal(t, 0, len(job.RelabelConfigs))
 			},
 		},
@@ -50,6 +51,7 @@ func TestConfig_IncludeShardingRules(t *testing.T) {
 				},
 			},
 			assert: func(t *testing.T, job promcfg.Job, expectedRelabelConfigs []promcfg.RelabelConfig) {
+				t.Helper()
 				assert.Equal(t, expectedRelabelConfigs, job.RelabelConfigs)
 			},
 		},
@@ -81,6 +83,7 @@ func TestConfig_IncludeShardingRules(t *testing.T) {
 				},
 			},
 			assert: func(t *testing.T, job promcfg.Job, expectedRelabelConfigs []promcfg.RelabelConfig) {
+				t.Helper()
 				assert.Equal(t, expectedRelabelConfigs, job.RelabelConfigs)
 			},
 		},

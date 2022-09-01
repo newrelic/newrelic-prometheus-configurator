@@ -142,7 +142,7 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 		name     string
 		config   configurator.Input
 		expected string
-		setEnv   func(t *testing.T)
+		setEnv   func()
 	}{
 		{
 			name: "IsSetFromEnvVar",
@@ -153,7 +153,7 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 				},
 			},
 			expected: "1",
-			setEnv: func(t *testing.T) {
+			setEnv: func() {
 				t.Setenv(configurator.DataSourceNameEnvKey, "newrelic-prometheus-1")
 			},
 		},
@@ -166,7 +166,7 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 				},
 			},
 			expected: "",
-			setEnv: func(t *testing.T) {
+			setEnv: func() {
 				t.Setenv(configurator.DataSourceNameEnvKey, "invalid_name")
 			},
 		},
@@ -180,7 +180,7 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 				},
 			},
 			expected: "3",
-			setEnv: func(t *testing.T) {
+			setEnv: func() {
 				t.Setenv(configurator.DataSourceNameEnvKey, "")
 			},
 		},
@@ -188,7 +188,7 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 
 	for _, c := range testCases { //nolint: paralleltest
 		t.Run("", func(t *testing.T) {
-			c.setEnv(t)
+			c.setEnv()
 
 			_, err := configurator.BuildOutput(&c.config)
 			require.NoError(t, err)
