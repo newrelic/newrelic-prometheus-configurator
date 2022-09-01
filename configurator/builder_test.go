@@ -135,7 +135,7 @@ func TestLicenseKey(t *testing.T) { //nolint: tparallel
 	})
 }
 
-func TestShardingIndex(t *testing.T) { //nolint: paralleltest,tparallel
+func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 	t.Setenv(configurator.LicenseKeyEnvKey, "fake")
 
 	configWithSharding := configurator.Input{

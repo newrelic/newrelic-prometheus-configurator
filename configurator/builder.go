@@ -1,6 +1,7 @@
 package configurator
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -11,8 +12,11 @@ const (
 	LicenseKeyEnvKey     = "NR_PROM_LICENSE_KEY"
 )
 
-var ErrNoLicenseKeyFound = fmt.Errorf(
-	"licenseKey was not set neither in yaml config or %s environment variable", LicenseKeyEnvKey,
+var (
+	ErrNoLicenseKeyFound = fmt.Errorf(
+		"licenseKey was not set neither in yaml config or %s environment variable", LicenseKeyEnvKey,
+	)
+	ErrInvalidShardingKind = errors.New("the only supported kind of sharding is hash")
 )
 
 // BuildOutput builds the prometheus config output from the provided input, it holds "first level" transformations
@@ -72,6 +76,15 @@ func expand(config *Input) {
 func validate(config *Input) error {
 	if config.RemoteWrite.LicenseKey == "" {
 		return ErrNoLicenseKeyFound
+	}
+
+	// Defaults to kind hash in case it's empty.
+	if config.Sharding.Kind == "" {
+		config.Sharding.Kind = "hash"
+	}
+
+	if config.Sharding.Kind != "hash" {
+		return ErrInvalidShardingKind
 	}
 
 	return nil

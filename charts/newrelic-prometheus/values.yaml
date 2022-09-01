@@ -78,7 +78,7 @@ nrStaging:
 # @default -- false
 lowDataMode:
 
-# Sharding configuration
+# Sharding allows to configure newrelic sharding
 sharding:
   # total_shards_count:  # Sets the number of prometheus replicas
 
