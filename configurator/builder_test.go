@@ -33,6 +33,7 @@ func TestBuilder(t *testing.T) { //nolint: paralleltest,tparallel
 		"endpoints-test",
 		"filter-test",
 		"pods-test",
+		"kubernetes-scrape-fields-test",
 		"sharding-test",
 	}
 

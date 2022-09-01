@@ -38,6 +38,10 @@ func Test_PodMetricsLabels(t *testing.T) {
 
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 
+	ex := mocks.StartExporter(t)
+
+	exporterURL := ex.Listener.Addr().String()
+
 	inputConfig := fmt.Sprintf(`
 newrelic_remote_write:
   license_key: nrLicenseKey
@@ -49,6 +53,7 @@ common:
 kubernetes:
   jobs:
     - job_name_prefix: test-k8s
+      proxy_url: http://%s
       target_discovery:
         pod: true
         additional_config:
@@ -56,8 +61,9 @@ kubernetes:
          namespaces:
           names:
           - %s
-`, rw.URL, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
+`, rw.URL, exporterURL, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
+	t.Log(inputConfig)
 	outputConfigPath := runConfigurator(t, inputConfig)
 
 	ps.start(t, outputConfigPath)
@@ -70,7 +76,7 @@ kubernetes:
 		"instance":   instance,
 		"job":        "test-k8s-pod",
 	}
-	asserter.metricLabels(t, expectedLabels, "scrape_duration_seconds")
+	asserter.metricLabels(t, expectedLabels, "mock_gauge_metric")
 }
 
 func Test_PodPhaseDropRule(t *testing.T) {
