@@ -26,3 +26,6 @@ data:
     {{- with (include "newrelic-prometheus.configurator.kubernetes" . ) -}}
       {{- . | nindent 4 }}
     {{- end -}}
+    {{- with (include "newrelic-prometheus.configurator.sharding" . ) -}}
+      {{- . | nindent 4 }}
+    {{- end -}}

@@ -1,8 +1,10 @@
 package configurator
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"strings"
 )
 
 const (
@@ -10,8 +12,11 @@ const (
 	LicenseKeyEnvKey     = "NR_PROM_LICENSE_KEY"
 )
 
-var ErrNoLicenseKeyFound = fmt.Errorf(
-	"licenseKey was not set neither in yaml config or %s environment variable", LicenseKeyEnvKey,
+var (
+	ErrNoLicenseKeyFound = fmt.Errorf(
+		"licenseKey was not set neither in yaml config or %s environment variable", LicenseKeyEnvKey,
+	)
+	ErrInvalidShardingKind = errors.New("the only supported kind of sharding is hash")
 )
 
 // BuildOutput builds the prometheus config output from the provided input, it holds "first level" transformations
@@ -31,7 +36,8 @@ func BuildOutput(input *Input) (*Output, error) {
 	output.RemoteWrite = append(output.RemoteWrite, input.ExtraRemoteWrite...)
 
 	for _, staticTargets := range input.StaticTargets.Build() {
-		output.ScrapeConfigs = append(output.ScrapeConfigs, staticTargets)
+		job := input.Sharding.IncludeShardingRules(staticTargets)
+		output.ScrapeConfigs = append(output.ScrapeConfigs, job)
 	}
 
 	k8sJobs, err := input.Kubernetes.Build()
@@ -39,8 +45,9 @@ func BuildOutput(input *Input) (*Output, error) {
 		return output, fmt.Errorf("building k8s config: %w", err)
 	}
 
-	for _, job := range k8sJobs {
-		output.ScrapeConfigs = append(output.ScrapeConfigs, job)
+	for _, K8sJob := range k8sJobs {
+		j := input.Sharding.IncludeShardingRules(K8sJob)
+		output.ScrapeConfigs = append(output.ScrapeConfigs, j)
 	}
 
 	output.ScrapeConfigs = append(output.ScrapeConfigs, input.ExtraScrapeConfigs...)
@@ -54,8 +61,15 @@ func expand(config *Input) {
 		config.RemoteWrite.LicenseKey = licenseKey
 	}
 
-	if dataSourceName := os.Getenv(DataSourceNameEnvKey); dataSourceName != "" {
+	dataSourceName := os.Getenv(DataSourceNameEnvKey)
+
+	if dataSourceName != "" {
 		config.DataSourceName = dataSourceName
+	}
+
+	if dataSourceName != "" && config.Sharding.TotalShardsCount > 1 {
+		shardIndex := getIndexFromDataSourceName(dataSourceName)
+		config.Sharding.ShardIndex = shardIndex
 	}
 }
 
@@ -64,5 +78,24 @@ func validate(config *Input) error {
 		return ErrNoLicenseKeyFound
 	}
 
+	// Defaults to kind hash in case it's empty.
+	if config.Sharding.Kind == "" {
+		config.Sharding.Kind = "hash"
+	}
+
+	if config.Sharding.Kind != "hash" {
+		return ErrInvalidShardingKind
+	}
+
 	return nil
+}
+
+// getIndexFromDataSourceName returns the corresponding shard index from the DataSourceNameEnvKey env var.
+func getIndexFromDataSourceName(dataSourceName string) string {
+	parts := strings.Split(dataSourceName, "-")
+	if len(parts) < 3 { //nolint: gomnd
+		return ""
+	}
+
+	return parts[2]
 }

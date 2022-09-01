@@ -3,9 +3,10 @@
 
 package statictargets
 
-import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+import (
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+)
 
-// Config defines all the static targets jobs.
 type Config struct {
 	StaticTargetJobs []StaticTargetJob `yaml:"jobs"`
 }

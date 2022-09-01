@@ -10,6 +10,7 @@ import (
 
 	"github.com/newrelic-forks/newrelic-prometheus/configurator"
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/sharding"
 	prometheusConfig "github.com/prometheus/prometheus/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -33,6 +34,7 @@ func TestBuilder(t *testing.T) { //nolint: paralleltest,tparallel
 		"filter-test",
 		"pods-test",
 		"kubernetes-scrape-fields-test",
+		"sharding-test",
 	}
 
 	for _, c := range testCases {
@@ -132,6 +134,69 @@ func TestLicenseKey(t *testing.T) { //nolint: tparallel
 		data, _ := yaml.Marshal(prometheusConfig)
 		require.Contains(t, string(data), fmt.Sprintf("credentials: %s", expectedLicenseKey))
 	})
+}
+
+func TestShardingIndex(t *testing.T) { //nolint: paralleltest
+	t.Setenv(configurator.LicenseKeyEnvKey, "fake")
+
+	testCases := []struct {
+		name     string
+		config   configurator.Input
+		expected string
+		setEnv   func()
+	}{
+		{
+			name: "IsSetFromEnvVar",
+			config: configurator.Input{
+				Sharding: sharding.Config{
+					Kind:             "hash",
+					TotalShardsCount: 2,
+				},
+			},
+			expected: "1",
+			setEnv: func() {
+				t.Setenv(configurator.DataSourceNameEnvKey, "newrelic-prometheus-1")
+			},
+		},
+		{
+			name: "IsSetToEmptyWhenInvalidEnvVaR",
+			config: configurator.Input{
+				Sharding: sharding.Config{
+					Kind:             "hash",
+					TotalShardsCount: 2,
+				},
+			},
+			expected: "",
+			setEnv: func() {
+				t.Setenv(configurator.DataSourceNameEnvKey, "invalid_name")
+			},
+		},
+		{
+			name: "HonoursConfigWhenInvalidOrEmptyEnvVar",
+			config: configurator.Input{
+				Sharding: sharding.Config{
+					Kind:             "hash",
+					TotalShardsCount: 2,
+					ShardIndex:       "3",
+				},
+			},
+			expected: "3",
+			setEnv: func() {
+				t.Setenv(configurator.DataSourceNameEnvKey, "")
+			},
+		},
+	}
+
+	for _, c := range testCases { //nolint: paralleltest
+		t.Run("", func(t *testing.T) {
+			c.setEnv()
+
+			_, err := configurator.BuildOutput(&c.config)
+			require.NoError(t, err)
+
+			require.Equal(t, c.expected, c.config.Sharding.ShardIndex)
+		})
+	}
 }
 
 func assertYamlOutputsAreEqual(t *testing.T, y1, y2 []byte) {
