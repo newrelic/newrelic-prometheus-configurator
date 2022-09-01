@@ -89,13 +89,13 @@ kubernetes:
 {{- define "newrelic-prometheus.configurator.sharding" -}}
   {{- if .Values.sharding  -}}
 sharding:
-  {{- .Values.sharding | toYaml | nindent 2 -}}
+  total_shards_count: {{ include "newrelic-prometheus.configurator.replicas" . }}
   {{- end -}}
 {{- end -}}
 
 {{- define "newrelic-prometheus.configurator.replicas" -}}
   {{- if .Values.sharding  -}}
-{{- .Values.sharding }}
+{{- .Values.sharding.total_shards_count | default 1 }}
   {{- else -}}
 1
   {{- end -}}

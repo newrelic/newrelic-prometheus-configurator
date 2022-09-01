@@ -68,7 +68,7 @@ func expand(config *Input) {
 	}
 
 	if dataSourceName != "" && config.Sharding.TotalShardsCount > 1 {
-		shardIndex := getIndexFromDataSourceName()
+		shardIndex := getIndexFromDataSourceName(dataSourceName)
 		config.Sharding.ShardIndex = shardIndex
 	}
 }
@@ -91,8 +91,8 @@ func validate(config *Input) error {
 }
 
 // getIndexFromDataSourceName returns the corresponding shard index from the DataSourceNameEnvKey env var.
-func getIndexFromDataSourceName() string {
-	parts := strings.Split(os.Getenv(DataSourceNameEnvKey), "-")
+func getIndexFromDataSourceName(dataSourceName string) string {
+	parts := strings.Split(dataSourceName, "-")
 	if len(parts) < 3 { //nolint: gomnd
 		return ""
 	}

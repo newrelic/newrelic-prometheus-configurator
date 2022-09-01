@@ -138,37 +138,64 @@ func TestLicenseKey(t *testing.T) { //nolint: tparallel
 func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 	t.Setenv(configurator.LicenseKeyEnvKey, "fake")
 
-	configWithSharding := configurator.Input{
-		Sharding: sharding.Config{
-			Kind:             "hash",
-			TotalShardsCount: 2,
+	testCases := []struct {
+		name     string
+		config   configurator.Input
+		expected string
+		setEnv   func(t *testing.T)
+	}{
+		{
+			name: "IsSetFromEnvVar",
+			config: configurator.Input{
+				Sharding: sharding.Config{
+					Kind:             "hash",
+					TotalShardsCount: 2,
+				},
+			},
+			expected: "1",
+			setEnv: func(t *testing.T) {
+				t.Setenv(configurator.DataSourceNameEnvKey, "newrelic-prometheus-1")
+			},
+		},
+		{
+			name: "IsSetToEmptyWhenInvalidEnvVaR",
+			config: configurator.Input{
+				Sharding: sharding.Config{
+					Kind:             "hash",
+					TotalShardsCount: 2,
+				},
+			},
+			expected: "",
+			setEnv: func(t *testing.T) {
+				t.Setenv(configurator.DataSourceNameEnvKey, "invalid_name")
+			},
+		},
+		{
+			name: "HonoursConfigWhenInvalidOrEmptyEnvVar",
+			config: configurator.Input{
+				Sharding: sharding.Config{
+					Kind:             "hash",
+					TotalShardsCount: 2,
+					ShardIndex:       "3",
+				},
+			},
+			expected: "3",
+			setEnv: func(t *testing.T) {
+				t.Setenv(configurator.DataSourceNameEnvKey, "")
+			},
 		},
 	}
 
-	t.Setenv(configurator.DataSourceNameEnvKey, "newrelic-prometheus-1")
-	//nolint: paralleltest
-	t.Run("IsSetFromEnvVar", func(t *testing.T) {
-		_, err := configurator.BuildOutput(&configWithSharding)
-		require.NoError(t, err)
-		assert.Equal(t, "1", configWithSharding.Sharding.ShardIndex)
-	})
+	for _, c := range testCases { //nolint: paralleltest
+		t.Run("", func(t *testing.T) {
+			c.setEnv(t)
 
-	t.Setenv(configurator.DataSourceNameEnvKey, "invalid_name")
-	//nolint: paralleltest
-	t.Run("IsSetToEmptyWhenInvalidEnvVaR", func(t *testing.T) {
-		_, err := configurator.BuildOutput(&configWithSharding)
-		require.NoError(t, err)
-		assert.Equal(t, "", configWithSharding.Sharding.ShardIndex)
-	})
+			_, err := configurator.BuildOutput(&c.config)
+			require.NoError(t, err)
 
-	t.Setenv(configurator.DataSourceNameEnvKey, "")
-	configWithSharding.Sharding.ShardIndex = "3"
-	//nolint: paralleltest
-	t.Run("HonoursConfigWhenInvalidOrEmptyEnvVar", func(t *testing.T) {
-		_, err := configurator.BuildOutput(&configWithSharding)
-		require.NoError(t, err)
-		assert.Equal(t, "3", configWithSharding.Sharding.ShardIndex)
-	})
+			require.Equal(t, c.expected, c.config.Sharding.ShardIndex)
+		})
+	}
 }
 
 func assertYamlOutputsAreEqual(t *testing.T, y1, y2 []byte) {
