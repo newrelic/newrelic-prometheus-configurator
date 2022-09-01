@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       {{- include "newrelic.common.labels.selectorLabels" . | nindent 6 }}
-  replicas: {{ .Values.sharding.total_shard_count }}
+  replicas: {{ include "newrelic-prometheus.configurator.replicas" . }}
   template:
     metadata:
       annotations:

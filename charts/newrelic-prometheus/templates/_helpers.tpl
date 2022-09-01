@@ -86,6 +86,21 @@ kubernetes:
 {{- end -}}
 {{- end -}}
 
+{{- define "newrelic-prometheus.configurator.sharding" -}}
+  {{- if .Values.sharding  -}}
+sharding:
+  {{- .Values.sharding | toYaml | nindent 2 -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "newrelic-prometheus.configurator.replicas" -}}
+  {{- if .Values.sharding  -}}
+{{- .Values.sharding }}
+  {{- else -}}
+1
+  {{- end -}}
+{{- end -}}
+
 {{- /*
 Return the proper configurator image name
 {{ include "newrelic-prometheus.configurator.images.configurator_image" ( dict "imageRoot" .Values.path.to.the.image "context" .) }}
