@@ -384,3 +384,42 @@ tests:
                     annotations:
                       custom/scrape-endpoints: true
                   pod: false
+
+  - it: sharding empty not propagated
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      sharding:
+      config:
+        kubernetes:
+        static_targets:
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            common:
+              external_labels:
+                cluster_name: cluster-test
+              scrape_interval: 30s
+
+  - it: sharding config custom values
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      sharding:
+        total_shards_count: 2
+      config:
+        kubernetes:
+        static_targets:
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            common:
+              external_labels:
+                cluster_name: cluster-test
+              scrape_interval: 30s
+            sharding:
+              total_shards_count: 2

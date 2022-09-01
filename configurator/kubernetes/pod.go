@@ -1,6 +1,8 @@
 package kubernetes //nolint: dupl
 
-import "github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+import (
+	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+)
 
 // podRelabelConfigs returns all relabel configs for an Pod job.
 func podRelabelConfigs(job K8sJob) []promcfg.RelabelConfig {
