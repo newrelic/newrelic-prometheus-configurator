@@ -66,6 +66,7 @@ type Job struct {
 	BasicAuth             *BasicAuth       `yaml:"basic_auth,omitempty"`
 	Authorization         Authorization    `yaml:"authorization,omitempty"`
 	OAuth2                OAuth2           `yaml:"oauth2,omitempty"`
+	ProxyURL              string           `yaml:"proxy_url,omitempty"`
 
 	StaticConfigs        []StaticConfig       `yaml:"static_configs,omitempty"`
 	RelabelConfigs       []RelabelConfig      `yaml:"relabel_configs,omitempty"`
