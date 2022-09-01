@@ -2,6 +2,7 @@ package sharding
 
 import (
 	"fmt"
+
 	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
 )
 

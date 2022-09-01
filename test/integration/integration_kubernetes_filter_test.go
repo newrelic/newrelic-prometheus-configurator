@@ -175,7 +175,6 @@ kubernetes:
 			// no counting on dropped targets since there are more than the ones specified.
 			// For instance the endpoints pod discovered by the Pod target kind will be dropped
 			// since doesn't have any label/annotation.
-
 		})
 
 	}
@@ -223,5 +222,4 @@ func addEndpointsToEnv(t *testing.T, endpointsMetadata *metadata, prefix string,
 		t,
 		fakeService(prefix, selector, endpointsMetadata.annotations, endpointsMetadata.labels),
 	)
-
 }

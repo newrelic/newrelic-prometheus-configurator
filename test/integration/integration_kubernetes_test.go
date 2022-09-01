@@ -179,7 +179,6 @@ kubernetes:
 	asserter.droppedTargetLabels(t, map[string]string{
 		"__meta_kubernetes_pod_name": succeededPod.Name,
 	})
-
 }
 
 func Test_PodRelabelRules(t *testing.T) {
