@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConfig_IncludeShardingRules(t *testing.T) { //nolint: paralleltest
+func TestConfig_IncludeShardingRules(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
@@ -86,7 +86,7 @@ func TestConfig_IncludeShardingRules(t *testing.T) { //nolint: paralleltest
 		},
 	}
 
-	for _, c := range testCases { //nolint: paralleltest
+	for _, c := range testCases {
 		c := c
 		t.Run(c.name, func(t *testing.T) {
 			t.Parallel()
