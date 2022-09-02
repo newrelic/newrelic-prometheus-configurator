@@ -91,11 +91,16 @@ func validate(config *Input) error {
 }
 
 // getIndexFromDataSourceName returns the corresponding shard index from the DataSourceNameEnvKey env var.
+// This function assumes the name follows the k8s name convention being `-` separated.
+// E.g. by running two shards the pod names will be the following:
+//
+//	1: newrelic-prometheus-0
+//	2: newrelic-prometheus-1
 func getIndexFromDataSourceName(dataSourceName string) string {
 	parts := strings.Split(dataSourceName, "-")
-	if len(parts) < 3 { //nolint: gomnd
+	if len(parts) <= 1 {
 		return ""
 	}
 
-	return parts[2]
+	return parts[len(parts)-1]
 }
