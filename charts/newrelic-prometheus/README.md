@@ -24,7 +24,7 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 
 ### Default kubernetes jobs configuration
 
-By default some kubernetes objects are discovered and scraped by prometheus. Taking into account the snippet from `values.yaml` bellow:
+By default some kubernetes objects are discovered and scraped by prometheus. Taking into account the snippet from `values.yaml` below:
 
 ```yaml
 config:
@@ -44,7 +44,7 @@ All pod and endpoints with the `prometheus.io/scrape: true` annotation will be s
 ### Self metrics
 
 By default it is defined a job in `static_target.jobs` to obtain self-metrics. Particularlly, a snippet like the one
-bellow is used.
+below is used.
 
 ```yaml
 config:
@@ -146,7 +146,7 @@ The order to set the affinity is to set `affinity` field (at root level), if tha
 | rbac.pspEnabled | bool | `false` | Whether the chart should create Pod Security Policy objects. |
 | serviceAccount | object | See `values.yaml` | Settings controlling ServiceAccount creation. |
 | serviceAccount.create | bool | `true` | Whether the chart should automatically create the ServiceAccount objects required to run. |
-| sharding.total_shards_count | int | 1 | Sets the number of prometheus replicas |
+| sharding.total_shards_count | int | 1 | Sets the number of prometheus replicas. |
 | tolerations | list | `[]` | Sets pod's tolerations to node taints almost globally. (See [Affinities and tolerations](README.md#affinities-and-tolerations)) |
 
 ## Maintainers
