@@ -88,8 +88,10 @@ kubernetes:
 
 {{- define "newrelic-prometheus.configurator.sharding" -}}
   {{- if .Values.sharding  -}}
+    {{- if .Values.sharding.total_shards_count  -}}
 sharding:
   total_shards_count: {{ include "newrelic-prometheus.configurator.replicas" . }}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 
