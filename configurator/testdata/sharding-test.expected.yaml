@@ -70,7 +70,7 @@ scrape_configs:
     kubernetes_sd_configs:
       - role: endpoints
     relabel_configs:
-      - source_labels: [ '__address__', '_meta_kubernetes_service_name' ]
+      - source_labels: [ '__address__' ]
         modulus: 2
         action: hashmod
         target_label: __tmp_hash
