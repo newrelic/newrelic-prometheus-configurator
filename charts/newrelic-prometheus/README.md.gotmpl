@@ -49,7 +49,8 @@ All pod and endpoints with the `prometheus.io/scrape: true` annotation will be s
 ### Self metrics
 
 By default it is defined a job in `static_target.jobs` to obtain self-metrics. Particularlly, a snippet like the one
-below is used.
+below is used. If you define your own static_targets jobs, it is important to also include this kind of job in order
+to keep getting self-metrics.
 
 ```yaml
 config:
@@ -60,26 +61,7 @@ config:
         - "localhost:9090"
       extra_metric_relabel_config:
         - source_labels: [__name__]
-          regex: "\
-            prometheus_agent_active_series|\
-            prometheus_target_interval_length_seconds|\
-            prometheus_target_scrape_pool_targets|\
-            prometheus_remote_storage_samples_pending|\
-            prometheus_remote_storage_samples_in_total|\
-            prometheus_remote_storage_samples_retried_total|\
-            prometheus_agent_corruptions_total|\
-            prometheus_remote_storage_shards|\
-            prometheus_sd_kubernetes_events_total|\
-            prometheus_agent_checkpoint_creations_failed_total|\
-            prometheus_agent_checkpoint_deletions_failed_total|\
-            prometheus_remote_storage_samples_dropped_total|\
-            prometheus_remote_storage_samples_failed_total|\
-            prometheus_sd_kubernetes_http_request_total|\
-            prometheus_agent_truncate_duration_seconds_sum|\
-            prometheus_build_info|\
-            process_resident_memory_bytes|\
-            process_virtual_memory_bytes|\
-            process_cpu_seconds_total"
+          regex: "<metrics to include defined in values.yaml>"
           action: keep
 ```
 

@@ -160,6 +160,11 @@ config:
     # to discover and scrape kubernetes objects. Besides, a set of relabel_configs are included in order to include some kubernetes metadata as
     # Labels. For example, address, metrics_path, url scheme, prometheus_io_parameters, namespace, pod name, service name and labels are taken
     # to seth the corresponding labels.
+    # Please note, some the relabeling allows configuring the pod/endpoints scrape using the following annotations:
+    # - `prometheus.io/scheme`: If the metrics endpoint is secured then you will need to set this to `https`
+    # - `prometheus.io/path`: If the metrics path is not `/metrics` override this.
+    # - `prometheus.io/port`: If the metrics are exposed on a different port to the service for service endpoints or to
+    #   the default 9102 for pods.
     - job_name_prefix: kubernetes-job
       # Target discovery field allows customizing how kubernetes discovery works.
       target_discovery:
@@ -187,8 +192,11 @@ config:
 #    # honor_timestamps controls whether Prometheus respects the timestamps present n scraped data.
 #    honor_timestamps: true
 #    # Optional HTTP URL parameters.
+#    # The HTTP resource path on which to fetch metrics from targets.
+#    metrics_path: /metrics
 #    params: {}
-#    # Configures the protocol scheme used for requests.
+#    # Configures the protocol scheme used for requests
+#    # in the pod or service.
 #    scheme: "http"
 #    # An uncompressed response body larger than this many bytes will cause the scrape to fail. 0 means no limit.
 #    # Example: 100MB.
@@ -213,6 +221,12 @@ config:
 #    tls_config:
 #    # Sets the `Authorization` header on every scrape request
 #    authorization:
+#    # List of target relabel configurations.
+#    # Please note, it should be valid prometheus configuration which will not be parsed by the chart.
+#    extra_relabel_config: []
+#    # List of metric relabel configurations.
+#    # Please note, it should be valid prometheus configuration which will not be parsed by the chart.
+#    extra_metric_relabel_config: []
 
   # Static target settings.
   static_targets:
@@ -263,8 +277,10 @@ config:
 #      # Sets the `Authorization` header on every scrape request
 #      authorization:
 #      # List of target relabel configurations.
+#      # Please note, it should be valid prometheus configuration which will not be parsed by the chart.
 #      extra_relabel_config: []
 #      # List of metric relabel configurations.
+#      # Please note, it should be valid prometheus configuration which will not be parsed by the chart.
 #      extra_metric_relabel_config: []
     # Self-metrics job definition
     - job_name: self-metrics
