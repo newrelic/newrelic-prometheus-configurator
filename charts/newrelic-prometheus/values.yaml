@@ -25,7 +25,7 @@ images:
   pullSecrets: []
 
   # -- Image for New Relic configurator.
-  # @default See `values.yaml`
+  # @default -- See `values.yaml`
   configurator:
     registry: ""
     repository: newrelic/newrelic-prometheus-configurator
@@ -33,7 +33,7 @@ images:
     # @default It defaults to `annotation.configuratorVersion` in `Chart.yaml`.
     tag: ""
   # -- Image for prometheus which is executed in agent mode.
-  # @default See `values.yaml`
+  # @default -- See `values.yaml`
   prometheus:
     registry: ""
     repository: quay.io/prometheus/prometheus
@@ -70,7 +70,7 @@ containerSecurityContext: {}
 # -- Sets pod's dnsConfig. Can be configured also with `global.dnsConfig`
 dnsConfig: {}
 
-# -- Settings controlling RBAC objects creation.
+# Settings controlling RBAC objects creation.
 rbac:
   # -- Whether the chart should automatically create the RBAC objects required to run.
   create: true
@@ -93,8 +93,9 @@ nrStaging:
 # @default -- false
 lowDataMode:
 
-# -- It holds the New Relic prometheus configuration. Check `values.yaml` for details.
-# @default -- It sets self metrics and target scraping for pod and endpoints kubernetes objects which include a specific annotation. Check `values.yaml` for details.
+# -- It holds the New Relic Prometheus configuration. Here you can easily set up prometheus to get set metrics, discover
+# ponds and endpoints Kubernetes and send metrics to New Relic using remote-write.
+# @default -- See `values.yaml`
 config:
   # -- Include global configuration for prometheus agent. See `values.yaml` for details.
   common:
@@ -145,33 +146,76 @@ config:
   # should be provided.
   extra_remote_write:
 
-  # -- It allows defining scrape jobs for kubernetes in a simple way.
-  # @default -- By default it defines jobs to scrape all pod and endpoints objects with `"prometheus.io/scrape"` annotation.
+  # -- It allows defining scrape jobs for kubernetes in a simple way. See `values.yaml` for details.
+  # @default -- See `values.yaml`
   kubernetes:
     jobs:
     # By default all pods and endpoints with `prometeus.io/scrape: true` annotation will be discovered.
-    # The job_name_prefix is mandatory and no other job using the same prefix should be used in the whole configuration.
+    # Kubernetes jobs define [kubernetes_sd_configs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)
+    # to discover and scrape kubernetes objects. Besides, a set of relabel_configs are included in order to include some kubernetes metadata as
+    # Labels. For example, address, metrics_path, url scheme, prometheus_io_parameters, namespace, pod name, service name and labels are taken
+    # to seth the corresponding labels.
     - job_name_prefix: kubernetes-job
       # Target discovery field allows customizing how kubernetes discovery works.
       target_discovery:
-        # -- Whether pods should be discovered.
+        # Whether pods should be discovered.
         pod: true
-        # -- Whether endpoints should be discovered.
+        # Whether endpoints should be discovered.
         endpoints: true
-        # -- Define filtering criteria, it is possible to set labels and/or annotations. All filters will apply (defined
+        # Define filtering criteria, it is possible to set labels and/or annotations. All filters will apply (defined
         # filters are taken into account as an "and operation").
         filter:
           annotations:
             prometheus.io/scrape: true
-          # labels: {}
+#           labels: {}
+#       # Additional_config fields allows setting up some kuberentes_sd_config options, check [prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)
+#       # for details.
+#       additional_config:
+#          kubeconfig_file: ""
+#          namespaces:
+#          selectors:
+#          attach_metadata:
+#    # Additional scrape_config fields can also be used:
+#    # honor_labels controls how Prometheus handles conflicts between label,
+#    # more info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
+#    honor_labels: true
+#    # honor_timestamps controls whether Prometheus respects the timestamps present n scraped data.
+#    honor_timestamps: true
+#    # Optional HTTP URL parameters.
+#    params: {}
+#    # Configures the protocol scheme used for requests.
+#    scheme: "http"
+#    # An uncompressed response body larger than this many bytes will cause the scrape to fail. 0 means no limit.
+#    # Example: 100MB.
+#    body_size_limit: 0
+#    # Per-scrape limit on number of scraped samples that will be accepted. 0 means no limit.
+#    sample_limit: 0
+#    # Per-scrape config limit on number of unique targets that will be accepted. 0 means no limit.
+#    target_limit: 0
+#    # Per-scrape limit on number of labels that will be accepted for a sample. 0 means no limit.
+#    label_limit: 0
+#    # Per-scrape limit on length of labels name that will be accepted for a sample. 0 means no limit.
+#    label_name_length_limit: 0
+#    # Per-scrape limit on length of labels value that will be accepted for a sample. 0 means no limit
+#    label_value_length_limit: 0
+#    # How frequently to scrape targets from this job.
+#    scrape_interval: 30s
+#    # Per-scrape timeout when scraping this job.
+#    scrape_timeout: 30s
+#    # Configures a proxy url
+#    proxy_url: ""
+#    # Configures the scrape request's TLS settings.
+#    tls_config:
+#    # Sets the `Authorization` header on every scrape request
+#    authorization:
 
-  # -- For more info about static_targets, see `values.yaml` and
-  # [scrape_config prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config).
-  # Please note, if you define `static_target.jobs` and still need self metrics you should also include the job to do so
-  # (as defined by default).
-  # @default -- Includes a self-metrics job, for more info see `values.yaml`.
+  # Static target settings.
   static_targets:
-    # @ignore
+    # -- For more info about static_targets, see `values.yaml` and
+    # [scrape_config prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config).
+    # By default it defines a job to get self-metrics. Please note, if you define `static_target.jobs` and would like to keep
+    # self-metrics you need to include a job like the one defined by default.
+    # @default -- See `values.yaml`.
     jobs:
 #    # The job name assigned to scraped metrics by default.
 #    - job_name: ""
@@ -207,6 +251,8 @@ config:
 #      scrape_interval: 30s
 #      # Per-scrape timeout when scraping this job.
 #      scrape_timeout: 30s
+#      # Configures a proxy url
+#      proxy_url: ""
 #      # Configures the scrape request's TLS settings.
 #      tls_config:
 #      # Sets the `Authorization` header on every scrape request
@@ -215,7 +261,7 @@ config:
 #      extra_relabel_config: []
 #      # List of metric relabel configurations.
 #      extra_metric_relabel_config: []
-    # @ignore
+    # Self-metrics job definition
     - job_name: self-metrics
       targets:
         - "localhost:9090"
