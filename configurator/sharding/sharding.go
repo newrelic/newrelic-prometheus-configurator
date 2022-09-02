@@ -16,27 +16,19 @@ type Config struct {
 // IncludeShardingRules prepends the proper sharding relabel configs for the given job.
 func (c Config) IncludeShardingRules(job promcfg.Job) promcfg.Job {
 	// Skip the relabeling if at least there are not 2 shards.
-	if c.TotalShardsCount < 2 { //nolint: gomnd
+	if c.TotalShardsCount <= 1 {
 		return job
 	}
 
-	var additionalHashModLabels []string
-
-	// In case of a kubernetes job and the role being endpoints, we need to add an extra source
-	// label for the hash mod relabel config.
-	if len(job.KubernetesSdConfigs) > 0 && job.KubernetesSdConfigs[0].Role == "endpoints" {
-		additionalHashModLabels = []string{"_meta_kubernetes_service_name"}
-	}
-
-	job.RelabelConfigs = append(c.RelabelConfigs(additionalHashModLabels), job.RelabelConfigs...)
+	job.RelabelConfigs = append(c.RelabelConfigs(), job.RelabelConfigs...)
 
 	return job
 }
 
-func (c Config) RelabelConfigs(additionalHashModLabels []string) []promcfg.RelabelConfig {
+func (c Config) RelabelConfigs() []promcfg.RelabelConfig {
 	return []promcfg.RelabelConfig{
 		{
-			SourceLabels: append([]string{"__address__"}, additionalHashModLabels...),
+			SourceLabels: []string{"__address__"},
 			Modulus:      c.TotalShardsCount,
 			Action:       "hashmod",
 			TargetLabel:  "__tmp_hash",
