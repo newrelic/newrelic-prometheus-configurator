@@ -146,6 +146,7 @@ The order to set the affinity is to set `affinity` field (at root level), if tha
 | rbac.pspEnabled | bool | `false` | Whether the chart should create Pod Security Policy objects. |
 | serviceAccount | object | See `values.yaml` | Settings controlling ServiceAccount creation. |
 | serviceAccount.create | bool | `true` | Whether the chart should automatically create the ServiceAccount objects required to run. |
+| sharding.total_shards_count | int | 1 | Sets the number of prometheus replicas |
 | tolerations | list | `[]` | Sets pod's tolerations to node taints almost globally. (See [Affinities and tolerations](README.md#affinities-and-tolerations)) |
 
 ## Maintainers

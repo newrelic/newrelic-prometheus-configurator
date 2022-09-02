@@ -86,6 +86,21 @@ kubernetes:
 {{- end -}}
 {{- end -}}
 
+{{- define "newrelic-prometheus.configurator.sharding" -}}
+  {{- if .Values.sharding  -}}
+sharding:
+  total_shards_count: {{ include "newrelic-prometheus.configurator.replicas" . }}
+  {{- end -}}
+{{- end -}}
+
+{{- define "newrelic-prometheus.configurator.replicas" -}}
+  {{- if .Values.sharding  -}}
+{{- .Values.sharding.total_shards_count | default 1 }}
+  {{- else -}}
+1
+  {{- end -}}
+{{- end -}}
+
 {{- /*
 Return the proper configurator image name
 {{ include "newrelic-prometheus.configurator.images.configurator_image" ( dict "imageRoot" .Values.path.to.the.image "context" .) }}
