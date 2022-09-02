@@ -1,0 +1,113 @@
+{{ template "chart.header" . }}
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+# Helm installation
+
+You can install this chart using [`nri-bundle`](https://github.com/newrelic/helm-charts/tree/master/charts/nri-bundle) located in the
+[helm-charts repository](https://github.com/newrelic/helm-charts) or directly from this repository by adding this Helm repository:
+
+```shell
+helm repo add nri-kubernetes https://newrelic.github.io/newrelic-prometheus-configurator
+helm upgrade --install newrelic-prometheus-configurator/newrelic-prometheus -f your-custom-values.yaml
+```
+
+{{ template "chart.sourcesSection" . }}
+
+## Values managed globally
+
+This chart implements the [New Relic's common Helm library](https://github.com/newrelic/helm-charts/tree/master/library/common-library) which
+means that it honors a wide range of defaults and globals common to most New Relic Helm charts.
+
+Options that can be defined globally include `affinity`, `nodeSelector`, `tolerations`, `proxy` and others. The full list can be found at
+[user's guide of the common library](https://github.com/newrelic/helm-charts/blob/master/library/common-library/README.md).
+
+## Chart particularities
+
+### Default kubernetes jobs configuration
+
+By default some kubernetes objects are discovered and scraped by prometheus. Taking into account the snippet from `values.yaml` below:
+
+```yaml
+config:
+  kubernetes:
+    jobs:
+    - job_name_prefix: kubernetes-job
+      target_discovery:
+        pod: true
+        endpoints: true
+        filter:
+          annotations:
+            prometheus.io/scrape: true
+```
+
+All pod and endpoints with the `prometheus.io/scrape: true` annotation will be scraped by default.
+
+### Self metrics
+
+By default it is defined a job in `static_target.jobs` to obtain self-metrics. Particularlly, a snippet like the one
+below is used. If you define your own static_targets jobs, it is important to also include this kind of job in order
+to keep getting self-metrics.
+
+```yaml
+config:
+  startic_targets:
+    jobs:
+    - job_name: self-metrics
+      targets:
+        - "localhost:9090"
+      extra_metric_relabel_config:
+        - source_labels: [__name__]
+          regex: "<metrics to include defined in values.yaml>"
+          action: keep
+```
+
+### Low data mode
+
+There are two mechanisms to reduce the amount of data that this integration sends to New Relic. See this snippet from the `values.yaml` file:
+```yaml
+lowDataMode: false
+
+config:
+  common:
+    scrape_interval: 30s
+```
+
+You might set `lowDataMode` flag to `true` (it will filter some metrics which an also be collected using New Relic Kubernetes integration), check
+`values.yaml` for details.
+
+It is also possible to adjust how frequently prometheus scrapes the targets by setting up `config.common.scrape_interval` value.
+
+
+### Affinities and tolerations
+
+The New Relic common library allows to set affinities, tolerations, and node selectors globally using e.g. `.global.affinity` to ease the configuration
+when you use this chart using `nri-bundle`. This chart has an extra level of granularity to the components that it deploys:
+control plane, ksm, and kubelet.
+
+Take this snippet as an example:
+```yaml
+global:
+  affinity: {}
+affinity: {}
+```
+
+The order to set the affinity is to set `affinity` field (at root level), if that value is empty, the chart fallbacks to `global.affinity`.
+
+{{ template "chart.valuesSection" . }}
+
+{{ if .Maintainers }}
+## Maintainers
+{{ range .Maintainers }}
+{{- if .Name }}
+{{- if .Url }}
+* [{{ .Name }}]({{ .Url }})
+{{- else }}
+* {{ .Name }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
