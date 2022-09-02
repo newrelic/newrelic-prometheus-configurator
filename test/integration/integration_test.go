@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/newrelic-forks/newrelic-prometheus/test/integration/mocks"
+	"github.com/newrelic/newrelic-prometheus-configurator/test/integration/mocks"
 )
 
 func TestMain(m *testing.M) {
@@ -31,15 +31,15 @@ func Test_ServerReady(t *testing.T) {
 
 	asserter := newAsserter(ps)
 
-	inputConfig := `
+	nrConfigConfig := `
 data_source_name: "data-source"
 newrelic_remote_write:
   license_key: nrLicenseKey
 `
 
-	outputConfigPath := runConfigurator(t, inputConfig)
+	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
-	ps.start(t, outputConfigPath)
+	ps.start(t, promConfigConfigPath)
 
 	asserter.prometheusServerReady(t)
 }
@@ -53,7 +53,7 @@ func Test_SelfMetricsAreScrapedCorrectly(t *testing.T) {
 
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 
-	inputConfig := fmt.Sprintf(`
+	nrConfigConfig := fmt.Sprintf(`
 static_targets:
   jobs:
     - job_name: self-metrics
@@ -70,9 +70,9 @@ common:
   scrape_interval: 1s
 `, ps.port, rw.URL)
 
-	outputConfigPath := runConfigurator(t, inputConfig)
+	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
-	ps.start(t, outputConfigPath)
+	ps.start(t, promConfigConfigPath)
 
 	asserter.metricName(t, "prometheus_build_info")
 }
@@ -88,7 +88,7 @@ func Test_ExtraScapeConfig(t *testing.T) {
 	ex := mocks.StartExporter(t)
 
 	mockExporterTarget := ex.Listener.Addr().String()
-	inputConfig := fmt.Sprintf(`
+	nrConfigConfig := fmt.Sprintf(`
 static_targets:
   jobs:
     - job_name: metrics-a
@@ -115,9 +115,9 @@ newrelic_remote_write:
     insecure_skip_verify: true
 `, mockExporterTarget, mockExporterTarget, rw.URL)
 
-	outputConfigPath := runConfigurator(t, inputConfig)
+	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
-	ps.start(t, outputConfigPath)
+	ps.start(t, promConfigConfigPath)
 
 	asserter.metricLabels(t, map[string]string{"custom_label": "foo", "instance": mockExporterTarget, "job": "metrics-a"}, "custom_metric_a")
 	asserter.metricLabels(t, map[string]string{"instance": mockExporterTarget, "job": "metrics-b"}, "custom_metric_b")
@@ -130,7 +130,7 @@ func Test_ExternalLabelsAreAddedToEachSample(t *testing.T) {
 	asserter := newAsserter(ps)
 	rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 
-	inputConfig := fmt.Sprintf(`
+	nrConfigConfig := fmt.Sprintf(`
 static_targets:
   jobs:
     - job_name: self-metrics
@@ -151,9 +151,9 @@ common:
     three: four
 `, ps.port, rw.URL)
 
-	outputConfigPath := runConfigurator(t, inputConfig)
+	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
-	ps.start(t, outputConfigPath)
+	ps.start(t, promConfigConfigPath)
 
 	asserter.metricName(t, "prometheus_build_info")
 	asserter.metricLabels(t, map[string]string{"cluster_name": "test", "one": "two", "three": "four"}, "prometheus_build_info")

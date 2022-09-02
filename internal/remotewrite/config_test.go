@@ -7,13 +7,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/remotewrite"
+
 	"github.com/stretchr/testify/assert"
 )
 
 //nolint:funlen
-func TestBuildRemoteWriteOutput(t *testing.T) {
+func TestBuildRemoteWritePromConfig(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
@@ -25,12 +26,12 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 
 	cases := []struct {
 		Name     string
-		Input    args
+		NrConfig args
 		Expected promcfg.RemoteWrite
 	}{
 		{
 			Name: "Prod,  non-eu and only mandatory fields",
-			Input: args{
+			NrConfig: args{
 				remoteConfig: remotewrite.Config{
 					LicenseKey: "fake-prod",
 				},
@@ -44,7 +45,7 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 		},
 		{
 			Name: "Staging, eu and all fields set",
-			Input: args{
+			NrConfig: args{
 				dataSourceName: "source-of-metrics",
 				remoteConfig: remotewrite.Config{
 					LicenseKey: "eu-fake-staging",
@@ -118,8 +119,8 @@ func TestBuildRemoteWriteOutput(t *testing.T) {
 		c := tc
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			output := c.Input.remoteConfig.Build(c.Input.dataSourceName)
-			assert.EqualValues(t, c.Expected, output)
+			promConfig := c.NrConfig.remoteConfig.Build(c.NrConfig.dataSourceName)
+			assert.EqualValues(t, c.Expected, promConfig)
 		})
 	}
 }

@@ -8,7 +8,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/newrelic-forks/newrelic-prometheus/test/integration/mocks"
+	"github.com/newrelic/newrelic-prometheus-configurator/test/integration/mocks"
+
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -42,7 +43,7 @@ func Test_PodMetricsLabels(t *testing.T) {
 
 	exporterURL := ex.Listener.Addr().String()
 
-	inputConfig := fmt.Sprintf(`
+	nrConfigConfig := fmt.Sprintf(`
 newrelic_remote_write:
   license_key: nrLicenseKey
   proxy_url: %s
@@ -63,10 +64,10 @@ kubernetes:
           - %s
 `, rw.URL, exporterURL, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
-	t.Log(inputConfig)
-	outputConfigPath := runConfigurator(t, inputConfig)
+	t.Log(nrConfigConfig)
+	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
-	ps.start(t, outputConfigPath)
+	ps.start(t, promConfigConfigPath)
 
 	instance := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
 	expectedLabels := map[string]string{
@@ -152,7 +153,7 @@ func Test_PodPhaseDropRule(t *testing.T) {
 	failedPod = k8sEnv.addPodAndWaitOnPhase(t, failedPod, corev1.PodFailed)
 	succeededPod = k8sEnv.addPodAndWaitOnPhase(t, succeededPod, corev1.PodSucceeded)
 
-	inputConfig := fmt.Sprintf(`
+	nrConfigConfig := fmt.Sprintf(`
 newrelic_remote_write:
   license_key: nrLicenseKey
 common:
@@ -169,10 +170,10 @@ kubernetes:
           - %s
 `, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
-	outputConfigPath := runConfigurator(t, inputConfig)
+	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
 	ps := newPrometheusServer(t)
-	ps.start(t, outputConfigPath)
+	ps.start(t, promConfigConfigPath)
 
 	asserter := newAsserter(ps)
 
@@ -211,7 +212,7 @@ func Test_PodRelabelRules(t *testing.T) {
 
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 
-	inputConfig := fmt.Sprintf(`
+	nrConfigConfig := fmt.Sprintf(`
 newrelic_remote_write:
   license_key: nrLicenseKey
 common:
@@ -228,10 +229,10 @@ kubernetes:
           - %s
 `, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
-	outputConfigPath := runConfigurator(t, inputConfig)
+	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
 	ps := newPrometheusServer(t)
-	ps.start(t, outputConfigPath)
+	ps.start(t, promConfigConfigPath)
 
 	scrapeURL := fmt.Sprintf("%s://%s:%s%s",
 		pod.Annotations["prometheus.io/scheme"],
@@ -292,7 +293,7 @@ func Test_EndpointsDiscovery(t *testing.T) {
 	failedPod = k8sEnv.addPodAndWaitOnPhase(t, failedPod, corev1.PodFailed)
 	svc = k8sEnv.addService(t, svc)
 
-	inputConfig := fmt.Sprintf(`
+	nrConfigConfig := fmt.Sprintf(`
 newrelic_remote_write:
   license_key: nrLicenseKey
 common:
@@ -309,10 +310,10 @@ kubernetes:
           - %s
 `, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
-	outputConfigPath := runConfigurator(t, inputConfig)
+	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
 	ps := newPrometheusServer(t)
-	ps.start(t, outputConfigPath)
+	ps.start(t, promConfigConfigPath)
 
 	// Build scrapeURL
 	instance := net.JoinHostPort(pod.Status.PodIP, svc.Annotations["prometheus.io/port"])

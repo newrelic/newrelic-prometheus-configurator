@@ -7,26 +7,27 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/statictargets"
+
 	"github.com/alecthomas/units"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/statictargets"
 	"github.com/stretchr/testify/assert"
 )
 
 //nolint:funlen
-func TestBuildStaticTargetsOutput(t *testing.T) {
+func TestBuildStaticTargetsPromConfig(t *testing.T) {
 	t.Parallel()
 
 	trueValue := true
 
 	cases := []struct {
 		Name     string
-		Input    statictargets.Config
+		NrConfig statictargets.Config
 		Expected []promcfg.Job
 	}{
 		{
 			Name: "All fields set",
-			Input: statictargets.Config{
+			NrConfig: statictargets.Config{
 				StaticTargetJobs: []statictargets.StaticTargetJob{
 					{
 						PromScrapeJob: promcfg.Job{
@@ -173,8 +174,8 @@ func TestBuildStaticTargetsOutput(t *testing.T) {
 		c := tc
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			output := c.Input.Build()
-			assert.EqualValues(t, c.Expected, output)
+			promConfig := c.NrConfig.Build()
+			assert.EqualValues(t, c.Expected, promConfig)
 		})
 	}
 }

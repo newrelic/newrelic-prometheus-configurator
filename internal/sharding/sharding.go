@@ -3,7 +3,7 @@ package sharding
 import (
 	"fmt"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
 )
 
 // Config defines all the NewRelic's sharding options.

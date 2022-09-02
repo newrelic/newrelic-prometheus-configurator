@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic-forks/newrelic-prometheus/test/integration/mocks"
+	"github.com/newrelic/newrelic-prometheus-configurator/test/integration/mocks"
 
 	"github.com/stretchr/testify/require"
 )

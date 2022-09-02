@@ -8,9 +8,9 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/sharding"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/configurator"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/remotewrite"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
 	prometheusConfig "github.com/prometheus/prometheus/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -42,23 +42,23 @@ func TestBuilder(t *testing.T) { //nolint: paralleltest,tparallel
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			inputFile := "testdata/" + name + ".yaml"
+			nrConfigFile := "testdata/" + name + ".yaml"
 			expectedFile := "testdata/" + name + ".expected.yaml"
 
-			data, err := ioutil.ReadFile(inputFile)
+			data, err := ioutil.ReadFile(nrConfigFile)
 			require.NoError(t, err)
 			expected, err := ioutil.ReadFile(expectedFile)
 			require.NoError(t, err)
-			input := &configurator.Input{}
-			err = yaml.Unmarshal(data, input)
+			nrConfig := &configurator.NrConfig{}
+			err = yaml.Unmarshal(data, nrConfig)
 			require.NoError(t, err)
-			output, err := configurator.BuildOutput(input)
+			promConfig, err := configurator.BuildPromConfig(nrConfig)
 			require.NoError(t, err)
-			outputData, err := yaml.Marshal(output)
+			promConfigData, err := yaml.Marshal(promConfig)
 			require.NoError(t, err)
 
-			assertYamlOutputsAreEqual(t, expected, outputData)
-			assertIsPrometheusConfig(t, outputData)
+			assertYamlPromConfigsAreEqual(t, expected, promConfigData)
+			assertIsPrometheusConfig(t, promConfigData)
 		})
 	}
 }
@@ -67,7 +67,7 @@ func TestDataSourceName(t *testing.T) { //nolint: tparallel
 	t.Setenv(configurator.LicenseKeyEnvKey, "")
 	t.Setenv(configurator.DataSourceNameEnvKey, "")
 
-	configWithDataSourceName := configurator.Input{
+	configWithDataSourceName := configurator.NrConfig{
 		DataSourceName: "test",
 		RemoteWrite: remotewrite.Config{
 			LicenseKey: "fake",
@@ -77,10 +77,10 @@ func TestDataSourceName(t *testing.T) { //nolint: tparallel
 	//nolint: paralleltest // need clean env variables.
 	t.Run("IsSetFromConfig", func(t *testing.T) {
 		configWithDataSourceName.DataSourceName = "prom-instance-name"
-		prometheusConfig, err := configurator.BuildOutput(&configWithDataSourceName)
+		promConf, err := configurator.BuildPromConfig(&configWithDataSourceName)
 		require.NoError(t, err)
 
-		data, _ := yaml.Marshal(prometheusConfig)
+		data, _ := yaml.Marshal(promConf)
 		require.Contains(t, string(data), fmt.Sprintf("prometheus_server=%s", "prom-instance-name"))
 	})
 
@@ -90,10 +90,10 @@ func TestDataSourceName(t *testing.T) { //nolint: tparallel
 	t.Run("IsSetFromEnvVar", func(t *testing.T) {
 		t.Parallel()
 
-		prometheusConfig, err := configurator.BuildOutput(&configWithDataSourceName)
+		promConf, err := configurator.BuildPromConfig(&configWithDataSourceName)
 		require.NoError(t, err)
 
-		data, _ := yaml.Marshal(prometheusConfig)
+		data, _ := yaml.Marshal(promConf)
 		require.Contains(t, string(data), fmt.Sprintf("prometheus_server=%s", expectedName))
 	})
 }
@@ -102,23 +102,23 @@ func TestLicenseKey(t *testing.T) { //nolint: tparallel
 	t.Setenv(configurator.LicenseKeyEnvKey, "")
 	t.Setenv(configurator.DataSourceNameEnvKey, "")
 
-	configWithDataSourceName := configurator.Input{
+	configWithDataSourceName := configurator.NrConfig{
 		RemoteWrite: remotewrite.Config{},
 	}
 
 	//nolint: paralleltest // need clean env variables.
 	t.Run("FailIfNotSet", func(t *testing.T) {
-		_, err := configurator.BuildOutput(&configWithDataSourceName)
+		_, err := configurator.BuildPromConfig(&configWithDataSourceName)
 		require.ErrorIs(t, err, configurator.ErrNoLicenseKeyFound)
 	})
 
 	//nolint: paralleltest // need clean env variables.
 	t.Run("IsSetFromConfig", func(t *testing.T) {
 		configWithDataSourceName.RemoteWrite.LicenseKey = "fake"
-		prometheusConfig, err := configurator.BuildOutput(&configWithDataSourceName)
+		promConf, err := configurator.BuildPromConfig(&configWithDataSourceName)
 		require.NoError(t, err)
 
-		data, _ := yaml.Marshal(prometheusConfig)
+		data, _ := yaml.Marshal(promConf)
 		require.Contains(t, string(data), fmt.Sprintf("credentials: %s", "fake"))
 	})
 
@@ -128,10 +128,10 @@ func TestLicenseKey(t *testing.T) { //nolint: tparallel
 	t.Run("IsSetFromEnvVar", func(t *testing.T) {
 		t.Parallel()
 
-		prometheusConfig, err := configurator.BuildOutput(&configWithDataSourceName)
+		promConf, err := configurator.BuildPromConfig(&configWithDataSourceName)
 		require.NoError(t, err)
 
-		data, _ := yaml.Marshal(prometheusConfig)
+		data, _ := yaml.Marshal(promConf)
 		require.Contains(t, string(data), fmt.Sprintf("credentials: %s", expectedLicenseKey))
 	})
 }
@@ -141,13 +141,13 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 
 	testCases := []struct {
 		name     string
-		config   configurator.Input
+		config   configurator.NrConfig
 		expected string
 		setEnv   func()
 	}{
 		{
 			name: "IsSetFromEnvVar",
-			config: configurator.Input{
+			config: configurator.NrConfig{
 				Sharding: sharding.Config{
 					Kind:             "hash",
 					TotalShardsCount: 2,
@@ -160,7 +160,7 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 		},
 		{
 			name: "IsSetToEmptyWhenInvalidEnvVaR",
-			config: configurator.Input{
+			config: configurator.NrConfig{
 				Sharding: sharding.Config{
 					Kind:             "hash",
 					TotalShardsCount: 2,
@@ -173,7 +173,7 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 		},
 		{
 			name: "HonoursConfigWhenInvalidOrEmptyEnvVar",
-			config: configurator.Input{
+			config: configurator.NrConfig{
 				Sharding: sharding.Config{
 					Kind:             "hash",
 					TotalShardsCount: 2,
@@ -188,10 +188,10 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 	}
 
 	for _, c := range testCases { //nolint: paralleltest
-		t.Run("", func(t *testing.T) {
+		t.Run(c.name, func(t *testing.T) {
 			c.setEnv()
 
-			_, err := configurator.BuildOutput(&c.config)
+			_, err := configurator.BuildPromConfig(&c.config)
 			require.NoError(t, err)
 
 			require.Equal(t, c.expected, c.config.Sharding.ShardIndex)
@@ -199,10 +199,10 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 	}
 }
 
-func assertYamlOutputsAreEqual(t *testing.T, y1, y2 []byte) {
+func assertYamlPromConfigsAreEqual(t *testing.T, y1, y2 []byte) {
 	t.Helper()
 
-	var o1, o2 configurator.Output
+	var o1, o2 configurator.PromConfig
 
 	require.NoError(t, yaml.Unmarshal(y1, &o1))
 	require.NoError(t, yaml.Unmarshal(y2, &o2))
