@@ -4,18 +4,18 @@
 package configurator
 
 import (
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/kubernetes"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/sharding"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/statictargets"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/kubernetes"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/remotewrite"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/statictargets"
 )
 
 type RawPromConfig any
 
-// Input represents the input configuration, it is used to load New Relic configuration, so it can be parsed to
+// NrConfig represents the nrConfig configuration, it is used to load New Relic configuration, so it can be parsed to
 // prometheus configuration.
-type Input struct {
+type NrConfig struct {
 	// Common holds configuration for all options common to all scrape methods.
 	Common promcfg.GlobalConfig `yaml:"common"`
 	// DataSourceName holds the source name which will be used as `prometheus_server` parameter in New Relic remote

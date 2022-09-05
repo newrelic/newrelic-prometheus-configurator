@@ -8,38 +8,38 @@ import (
 	"testing"
 	"time"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/remotewrite"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/remotewrite"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 )
 
-func TestInput(t *testing.T) {
+func TestNrConfig(t *testing.T) {
 	t.Parallel()
 
-	expected := testInputExpectation(t)
-	inputData, err := ioutil.ReadFile("testdata/input-test.yaml")
+	expected := testNrConfigExpectation(t)
+	nrConfigData, err := ioutil.ReadFile("testdata/nr-config-test.yaml")
 	require.NoError(t, err)
 
-	checkInput(t, expected, inputData)
+	checkNrConfig(t, expected, nrConfigData)
 }
 
-func checkInput(t *testing.T, expected Input, inputData []byte) {
+func checkNrConfig(t *testing.T, expected NrConfig, nrConfigData []byte) {
 	t.Helper()
 
-	input := Input{}
-	err := yaml.Unmarshal(inputData, &input)
+	nrConfig := NrConfig{}
+	err := yaml.Unmarshal(nrConfigData, &nrConfig)
 	require.NoError(t, err)
-	require.EqualValues(t, expected, input)
+	require.EqualValues(t, expected, nrConfig)
 }
 
-func testInputExpectation(t *testing.T) Input {
+func testNrConfigExpectation(t *testing.T) NrConfig {
 	t.Helper()
 
 	trueValue := true
 	falseValue := false
 
-	return Input{
+	return NrConfig{
 		Common: promcfg.GlobalConfig{
 			ScrapeInterval: time.Second * 60,
 			ScrapeTimeout:  time.Second,

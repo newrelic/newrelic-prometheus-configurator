@@ -7,14 +7,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
 )
 
 const (
 	remoteWriteBaseURL       = "https://%smetric-api.%snewrelic.com/prometheus/v1/write"
 	environmentStagingPrefix = "staging-"
 	regionEUPrefix           = "eu."
-	// prometheusServerQueryParam is added to remoteWrite url when input's name is defined.
+	// prometheusServerQueryParam is added to remoteWrite url when nrConfig's name is defined.
 	prometheusServerQueryParam = "prometheus_server"
 )
 

@@ -5,12 +5,12 @@
 package configurator
 
 import (
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
 )
 
-// Output holds all configuration information in prometheus format which can be directly marshaled to a valid yaml
+// PromConfig holds all configuration information in prometheus format which can be directly marshaled to a valid yaml
 // configuration.
-type Output struct {
+type PromConfig struct {
 	RemoteWrite   []RawPromConfig      `yaml:"remote_write"`
 	ScrapeConfigs []RawPromConfig      `yaml:"scrape_configs,omitempty"`
 	GlobalConfig  promcfg.GlobalConfig `yaml:"global"`

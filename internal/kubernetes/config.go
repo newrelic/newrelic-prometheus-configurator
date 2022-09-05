@@ -3,7 +3,7 @@ package kubernetes
 import (
 	"errors"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
 )
 
 const (

@@ -19,44 +19,44 @@ var (
 	ErrInvalidShardingKind = errors.New("the only supported kind of sharding is hash")
 )
 
-// BuildOutput builds the prometheus config output from the provided input, it holds "first level" transformations
+// BuildPromConfig builds the prometheus config prometheusConfig from the provided nrConfig, it holds "first level" transformations
 // required to obtain a valid prometheus configuration.
-func BuildOutput(input *Input) (*Output, error) {
-	expand(input)
+func BuildPromConfig(nrConfig *NrConfig) (*PromConfig, error) {
+	expand(nrConfig)
 
-	if err := validate(input); err != nil {
+	if err := validate(nrConfig); err != nil {
 		return nil, fmt.Errorf("invalid config: %w", err)
 	}
 
-	output := &Output{
-		RemoteWrite:  []RawPromConfig{input.RemoteWrite.Build(input.DataSourceName)},
-		GlobalConfig: input.Common,
+	prometheusConfig := &PromConfig{
+		RemoteWrite:  []RawPromConfig{nrConfig.RemoteWrite.Build(nrConfig.DataSourceName)},
+		GlobalConfig: nrConfig.Common,
 	}
 
-	output.RemoteWrite = append(output.RemoteWrite, input.ExtraRemoteWrite...)
+	prometheusConfig.RemoteWrite = append(prometheusConfig.RemoteWrite, nrConfig.ExtraRemoteWrite...)
 
-	for _, staticTargets := range input.StaticTargets.Build() {
-		job := input.Sharding.IncludeShardingRules(staticTargets)
-		output.ScrapeConfigs = append(output.ScrapeConfigs, job)
+	for _, staticTargets := range nrConfig.StaticTargets.Build() {
+		job := nrConfig.Sharding.IncludeShardingRules(staticTargets)
+		prometheusConfig.ScrapeConfigs = append(prometheusConfig.ScrapeConfigs, job)
 	}
 
-	k8sJobs, err := input.Kubernetes.Build()
+	k8sJobs, err := nrConfig.Kubernetes.Build()
 	if err != nil {
-		return output, fmt.Errorf("building k8s config: %w", err)
+		return prometheusConfig, fmt.Errorf("building k8s config: %w", err)
 	}
 
 	for _, K8sJob := range k8sJobs {
-		j := input.Sharding.IncludeShardingRules(K8sJob)
-		output.ScrapeConfigs = append(output.ScrapeConfigs, j)
+		j := nrConfig.Sharding.IncludeShardingRules(K8sJob)
+		prometheusConfig.ScrapeConfigs = append(prometheusConfig.ScrapeConfigs, j)
 	}
 
-	output.ScrapeConfigs = append(output.ScrapeConfigs, input.ExtraScrapeConfigs...)
+	prometheusConfig.ScrapeConfigs = append(prometheusConfig.ScrapeConfigs, nrConfig.ExtraScrapeConfigs...)
 
-	return output, nil
+	return prometheusConfig, nil
 }
 
 // expand replace some specifics configs that can be defined by env variables.
-func expand(config *Input) {
+func expand(config *NrConfig) {
 	if licenseKey := os.Getenv(LicenseKeyEnvKey); licenseKey != "" {
 		config.RemoteWrite.LicenseKey = licenseKey
 	}
@@ -73,7 +73,7 @@ func expand(config *Input) {
 	}
 }
 
-func validate(config *Input) error {
+func validate(config *NrConfig) error {
 	if config.RemoteWrite.LicenseKey == "" {
 		return ErrNoLicenseKeyFound
 	}

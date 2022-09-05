@@ -13,15 +13,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func runConfigurator(t *testing.T, inputConfig string) string {
+func runConfigurator(t *testing.T, nrConfigConfig string) string {
 	t.Helper()
 
 	tempDir := t.TempDir()
-	inputConfigPath := path.Join(tempDir, "input.yml")
-	outputConfigPath := path.Join(tempDir, "output.yml")
+	nrConfigConfigPath := path.Join(tempDir, "nrConfig.yml")
+	prometheusConfigConfigPath := path.Join(tempDir, "prometheusConfig.yml")
 
 	readOnly := 0o444
-	err := ioutil.WriteFile(inputConfigPath, []byte(inputConfig), fs.FileMode(readOnly))
+	err := ioutil.WriteFile(nrConfigConfigPath, []byte(nrConfigConfig), fs.FileMode(readOnly))
 	require.NoError(t, err)
 
 	//nolint:gosec
@@ -29,12 +29,12 @@ func runConfigurator(t *testing.T, inputConfig string) string {
 		"go",
 		"run",
 		"../../cmd/configurator",
-		fmt.Sprintf("--input=%s", inputConfigPath),
-		fmt.Sprintf("--output=%s", outputConfigPath),
+		fmt.Sprintf("--input=%s", nrConfigConfigPath),
+		fmt.Sprintf("--output=%s", prometheusConfigConfigPath),
 	)
 
 	out, err := configurator.CombinedOutput()
 	require.NoError(t, err, string(out))
 
-	return outputConfigPath
+	return prometheusConfigConfigPath
 }

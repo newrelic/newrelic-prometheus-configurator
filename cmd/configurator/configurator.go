@@ -10,7 +10,8 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/configurator"
+
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
@@ -18,8 +19,8 @@ import (
 const (
 	integrationName = "Prometheus-Configurator"
 
-	inputErrCode = iota + 1
-	outputErrCode
+	nrConfigErrCode = iota + 1
+	prometheusConfigErrCode
 	parseErrCode
 )
 
@@ -35,8 +36,8 @@ var (
 func main() {
 	logger := log.StandardLogger()
 
-	inputFlag := flag.String("input", "", "Input file to load the configuration from, defaults to stdin.")
-	outputFlag := flag.String("output", "", "Output file to use as output, defaults to stdout.")
+	nrConfigFlag := flag.String("input", "", "Input file to load the configuration from, defaults to stdin.")
+	prometheusConfigFlag := flag.String("output", "", "Output file to use as prometheus config, defaults to stdout.")
 	flag.Parse()
 
 	logger.Infof(
@@ -48,87 +49,87 @@ func main() {
 		gitCommit,
 		buildDate)
 
-	input, err := readInput(*inputFlag)
+	nrConfig, err := readNrConfig(*nrConfigFlag)
 	if err != nil {
-		logger.Errorf("Error loading the input: %s", err)
-		os.Exit(inputErrCode)
+		logger.Errorf("Error loading the nrConfig: %s", err)
+		os.Exit(nrConfigErrCode)
 	}
 
-	output, err := configurator.BuildOutput(input)
+	prometheusConfig, err := configurator.BuildPromConfig(nrConfig)
 	if err != nil {
 		logger.Errorf("Error parsing the configuration: %s", err)
 		os.Exit(parseErrCode)
 	}
 
-	if err := writeOutput(*outputFlag, output); err != nil {
-		logger.Errorf("Error writing the output configuration: %s", err)
-		os.Exit(outputErrCode)
+	if err := writePromConfig(*prometheusConfigFlag, prometheusConfig); err != nil {
+		logger.Errorf("Error writing the prometheusConfig configuration: %s", err)
+		os.Exit(prometheusConfigErrCode)
 	}
 }
 
-func readInput(inputPath string) (*configurator.Input, error) {
-	input := &configurator.Input{}
+func readNrConfig(nrConfigPath string) (*configurator.NrConfig, error) {
+	nrConfig := &configurator.NrConfig{}
 
-	if inputPath == "" {
+	if nrConfigPath == "" {
 		data, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			return nil, fmt.Errorf("could not read from stdin: %w", err)
 		}
 
-		err = yaml.Unmarshal(data, input)
+		err = yaml.Unmarshal(data, nrConfig)
 		if err != nil {
-			return nil, fmt.Errorf("yaml input could not be loaded: %w", err)
+			return nil, fmt.Errorf("yaml nrConfig could not be loaded: %w", err)
 		}
 
-		return input, nil
+		return nrConfig, nil
 	}
 
-	fileReader, err := os.Open(inputPath)
+	fileReader, err := os.Open(nrConfigPath)
 	if err != nil {
-		return nil, fmt.Errorf("the input file could not be opened: %w", err)
+		return nil, fmt.Errorf("the nrConfig file could not be opened: %w", err)
 	}
 
 	data, err := io.ReadAll(fileReader)
 	if err != nil {
-		return nil, fmt.Errorf("could not read from the input file: %w", err)
+		return nil, fmt.Errorf("could not read from the nrConfig file: %w", err)
 	}
 
 	if err = fileReader.Close(); err != nil {
-		return nil, fmt.Errorf("could not close the input file: %w", err)
+		return nil, fmt.Errorf("could not close the nrConfig file: %w", err)
 	}
 
-	err = yaml.Unmarshal(data, input)
+	err = yaml.Unmarshal(data, nrConfig)
 	if err != nil {
-		return nil, fmt.Errorf("yaml input could not be loaded: %w", err)
+		return nil, fmt.Errorf("yaml nrConfig could not be loaded: %w", err)
 	}
 
-	return input, nil
+	return nrConfig, nil
 }
 
-func writeOutput(outputPath string, output *configurator.Output) error {
-	data, err := yaml.Marshal(output)
+func writePromConfig(prometheusConfigPath string, prometheusConfig *configurator.PromConfig) error {
+	data, err := yaml.Marshal(prometheusConfig)
 	if err != nil {
-		return fmt.Errorf("marshaling output: %w", err)
+		return fmt.Errorf("marshaling prometheusConfig: %w", err)
 	}
 
-	if outputPath == "" {
+	if prometheusConfigPath == "" {
 		if _, err = os.Stdout.Write(data); err != nil {
 			return fmt.Errorf("could not to stdout: %w", err)
 		}
 		return nil
 	}
 
-	fileWriter, err := os.Create(outputPath)
+	fileWriter, err := os.Create(prometheusConfigPath)
 	if err != nil {
-		return fmt.Errorf("the output file cannot be created: %w", err)
+		return fmt.Errorf("the prometheusConfig file cannot be created: %w", err)
 	}
 
 	if _, err := fileWriter.Write(data); err != nil {
-		return fmt.Errorf("could not write the output: %w", err)
+		return fmt.Errorf("could not write the prometheusConfig: %w", err)
 	}
 
 	if err := fileWriter.Close(); err != nil {
-		return fmt.Errorf("could not close the output file: %w", err)
+		return fmt.Errorf("could not close the prometheusConfig file: %w", err)
 	}
 
 	return nil
