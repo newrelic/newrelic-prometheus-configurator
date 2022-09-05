@@ -119,8 +119,8 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 		c := tc
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			promConfig := c.NrConfig.remoteConfig.Build(c.NrConfig.dataSourceName)
-			assert.EqualValues(t, c.Expected, promConfig)
+			prometheusConfig := c.NrConfig.remoteConfig.Build(c.NrConfig.dataSourceName)
+			assert.EqualValues(t, c.Expected, prometheusConfig)
 		})
 	}
 }

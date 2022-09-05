@@ -19,7 +19,7 @@ var (
 	ErrInvalidShardingKind = errors.New("the only supported kind of sharding is hash")
 )
 
-// BuildPromConfig builds the prometheus config promConfig from the provided nrConfig, it holds "first level" transformations
+// BuildPromConfig builds the prometheus config prometheusConfig from the provided nrConfig, it holds "first level" transformations
 // required to obtain a valid prometheus configuration.
 func BuildPromConfig(nrConfig *NrConfig) (*PromConfig, error) {
 	expand(nrConfig)
@@ -28,31 +28,31 @@ func BuildPromConfig(nrConfig *NrConfig) (*PromConfig, error) {
 		return nil, fmt.Errorf("invalid config: %w", err)
 	}
 
-	promConfig := &PromConfig{
+	prometheusConfig := &PromConfig{
 		RemoteWrite:  []RawPromConfig{nrConfig.RemoteWrite.Build(nrConfig.DataSourceName)},
 		GlobalConfig: nrConfig.Common,
 	}
 
-	promConfig.RemoteWrite = append(promConfig.RemoteWrite, nrConfig.ExtraRemoteWrite...)
+	prometheusConfig.RemoteWrite = append(prometheusConfig.RemoteWrite, nrConfig.ExtraRemoteWrite...)
 
 	for _, staticTargets := range nrConfig.StaticTargets.Build() {
 		job := nrConfig.Sharding.IncludeShardingRules(staticTargets)
-		promConfig.ScrapeConfigs = append(promConfig.ScrapeConfigs, job)
+		prometheusConfig.ScrapeConfigs = append(prometheusConfig.ScrapeConfigs, job)
 	}
 
 	k8sJobs, err := nrConfig.Kubernetes.Build()
 	if err != nil {
-		return promConfig, fmt.Errorf("building k8s config: %w", err)
+		return prometheusConfig, fmt.Errorf("building k8s config: %w", err)
 	}
 
 	for _, K8sJob := range k8sJobs {
 		j := nrConfig.Sharding.IncludeShardingRules(K8sJob)
-		promConfig.ScrapeConfigs = append(promConfig.ScrapeConfigs, j)
+		prometheusConfig.ScrapeConfigs = append(prometheusConfig.ScrapeConfigs, j)
 	}
 
-	promConfig.ScrapeConfigs = append(promConfig.ScrapeConfigs, nrConfig.ExtraScrapeConfigs...)
+	prometheusConfig.ScrapeConfigs = append(prometheusConfig.ScrapeConfigs, nrConfig.ExtraScrapeConfigs...)
 
-	return promConfig, nil
+	return prometheusConfig, nil
 }
 
 // expand replace some specifics configs that can be defined by env variables.

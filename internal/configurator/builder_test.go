@@ -52,13 +52,13 @@ func TestBuilder(t *testing.T) { //nolint: paralleltest,tparallel
 			nrConfig := &configurator.NrConfig{}
 			err = yaml.Unmarshal(data, nrConfig)
 			require.NoError(t, err)
-			promConfig, err := configurator.BuildPromConfig(nrConfig)
+			prometheusConfig, err := configurator.BuildPromConfig(nrConfig)
 			require.NoError(t, err)
-			promConfigData, err := yaml.Marshal(promConfig)
+			prometheusConfigData, err := yaml.Marshal(prometheusConfig)
 			require.NoError(t, err)
 
-			assertYamlPromConfigsAreEqual(t, expected, promConfigData)
-			assertIsPrometheusConfig(t, promConfigData)
+			assertYamlPromConfigsAreEqual(t, expected, prometheusConfigData)
+			assertIsPrometheusConfig(t, prometheusConfigData)
 		})
 	}
 }

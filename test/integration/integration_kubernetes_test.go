@@ -65,9 +65,9 @@ kubernetes:
 `, rw.URL, exporterURL, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
 	t.Log(nrConfigConfig)
-	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
+	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
-	ps.start(t, promConfigConfigPath)
+	ps.start(t, prometheusConfigConfigPath)
 
 	instance := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
 	expectedLabels := map[string]string{
@@ -170,10 +170,10 @@ kubernetes:
           - %s
 `, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
-	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
+	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
 	ps := newPrometheusServer(t)
-	ps.start(t, promConfigConfigPath)
+	ps.start(t, prometheusConfigConfigPath)
 
 	asserter := newAsserter(ps)
 
@@ -229,10 +229,10 @@ kubernetes:
           - %s
 `, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
-	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
+	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
 	ps := newPrometheusServer(t)
-	ps.start(t, promConfigConfigPath)
+	ps.start(t, prometheusConfigConfigPath)
 
 	scrapeURL := fmt.Sprintf("%s://%s:%s%s",
 		pod.Annotations["prometheus.io/scheme"],
@@ -310,10 +310,10 @@ kubernetes:
           - %s
 `, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
-	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
+	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
 	ps := newPrometheusServer(t)
-	ps.start(t, promConfigConfigPath)
+	ps.start(t, prometheusConfigConfigPath)
 
 	// Build scrapeURL
 	instance := net.JoinHostPort(pod.Status.PodIP, svc.Annotations["prometheus.io/port"])

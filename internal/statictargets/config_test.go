@@ -174,8 +174,8 @@ func TestBuildStaticTargetsPromConfig(t *testing.T) {
 		c := tc
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			promConfig := c.NrConfig.Build()
-			assert.EqualValues(t, c.Expected, promConfig)
+			prometheusConfig := c.NrConfig.Build()
+			assert.EqualValues(t, c.Expected, prometheusConfig)
 		})
 	}
 }

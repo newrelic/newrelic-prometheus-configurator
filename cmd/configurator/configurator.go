@@ -20,7 +20,7 @@ const (
 	integrationName = "Prometheus-Configurator"
 
 	nrConfigErrCode = iota + 1
-	promConfigErrCode
+	prometheusConfigErrCode
 	parseErrCode
 )
 
@@ -37,7 +37,7 @@ func main() {
 	logger := log.StandardLogger()
 
 	nrConfigFlag := flag.String("input", "", "Input file to load the configuration from, defaults to stdin.")
-	promConfigFlag := flag.String("output", "", "Output file to use as prometheus config, defaults to stdout.")
+	prometheusConfigFlag := flag.String("output", "", "Output file to use as prometheus config, defaults to stdout.")
 	flag.Parse()
 
 	logger.Infof(
@@ -55,15 +55,15 @@ func main() {
 		os.Exit(nrConfigErrCode)
 	}
 
-	promConfig, err := configurator.BuildPromConfig(nrConfig)
+	prometheusConfig, err := configurator.BuildPromConfig(nrConfig)
 	if err != nil {
 		logger.Errorf("Error parsing the configuration: %s", err)
 		os.Exit(parseErrCode)
 	}
 
-	if err := writePromConfig(*promConfigFlag, promConfig); err != nil {
-		logger.Errorf("Error writing the promConfig configuration: %s", err)
-		os.Exit(promConfigErrCode)
+	if err := writePromConfig(*prometheusConfigFlag, prometheusConfig); err != nil {
+		logger.Errorf("Error writing the prometheusConfig configuration: %s", err)
+		os.Exit(prometheusConfigErrCode)
 	}
 }
 
@@ -106,30 +106,30 @@ func readNrConfig(nrConfigPath string) (*configurator.NrConfig, error) {
 	return nrConfig, nil
 }
 
-func writePromConfig(promConfigPath string, promConfig *configurator.PromConfig) error {
-	data, err := yaml.Marshal(promConfig)
+func writePromConfig(prometheusConfigPath string, prometheusConfig *configurator.PromConfig) error {
+	data, err := yaml.Marshal(prometheusConfig)
 	if err != nil {
-		return fmt.Errorf("marshaling promConfig: %w", err)
+		return fmt.Errorf("marshaling prometheusConfig: %w", err)
 	}
 
-	if promConfigPath == "" {
+	if prometheusConfigPath == "" {
 		if _, err = os.Stdout.Write(data); err != nil {
 			return fmt.Errorf("could not to stdout: %w", err)
 		}
 		return nil
 	}
 
-	fileWriter, err := os.Create(promConfigPath)
+	fileWriter, err := os.Create(prometheusConfigPath)
 	if err != nil {
-		return fmt.Errorf("the promConfig file cannot be created: %w", err)
+		return fmt.Errorf("the prometheusConfig file cannot be created: %w", err)
 	}
 
 	if _, err := fileWriter.Write(data); err != nil {
-		return fmt.Errorf("could not write the promConfig: %w", err)
+		return fmt.Errorf("could not write the prometheusConfig: %w", err)
 	}
 
 	if err := fileWriter.Close(); err != nil {
-		return fmt.Errorf("could not close the promConfig file: %w", err)
+		return fmt.Errorf("could not close the prometheusConfig file: %w", err)
 	}
 
 	return nil

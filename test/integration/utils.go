@@ -18,7 +18,7 @@ func runConfigurator(t *testing.T, nrConfigConfig string) string {
 
 	tempDir := t.TempDir()
 	nrConfigConfigPath := path.Join(tempDir, "nrConfig.yml")
-	promConfigConfigPath := path.Join(tempDir, "promConfig.yml")
+	prometheusConfigConfigPath := path.Join(tempDir, "prometheusConfig.yml")
 
 	readOnly := 0o444
 	err := ioutil.WriteFile(nrConfigConfigPath, []byte(nrConfigConfig), fs.FileMode(readOnly))
@@ -30,11 +30,11 @@ func runConfigurator(t *testing.T, nrConfigConfig string) string {
 		"run",
 		"../../cmd/configurator",
 		fmt.Sprintf("--input=%s", nrConfigConfigPath),
-		fmt.Sprintf("--output=%s", promConfigConfigPath),
+		fmt.Sprintf("--output=%s", prometheusConfigConfigPath),
 	)
 
 	out, err := configurator.CombinedOutput()
 	require.NoError(t, err, string(out))
 
-	return promConfigConfigPath
+	return prometheusConfigConfigPath
 }

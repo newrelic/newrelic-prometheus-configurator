@@ -37,9 +37,9 @@ newrelic_remote_write:
   license_key: nrLicenseKey
 `
 
-	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
+	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
-	ps.start(t, promConfigConfigPath)
+	ps.start(t, prometheusConfigConfigPath)
 
 	asserter.prometheusServerReady(t)
 }
@@ -70,9 +70,9 @@ common:
   scrape_interval: 1s
 `, ps.port, rw.URL)
 
-	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
+	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
-	ps.start(t, promConfigConfigPath)
+	ps.start(t, prometheusConfigConfigPath)
 
 	asserter.metricName(t, "prometheus_build_info")
 }
@@ -115,9 +115,9 @@ newrelic_remote_write:
     insecure_skip_verify: true
 `, mockExporterTarget, mockExporterTarget, rw.URL)
 
-	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
+	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
-	ps.start(t, promConfigConfigPath)
+	ps.start(t, prometheusConfigConfigPath)
 
 	asserter.metricLabels(t, map[string]string{"custom_label": "foo", "instance": mockExporterTarget, "job": "metrics-a"}, "custom_metric_a")
 	asserter.metricLabels(t, map[string]string{"instance": mockExporterTarget, "job": "metrics-b"}, "custom_metric_b")
@@ -151,9 +151,9 @@ common:
     three: four
 `, ps.port, rw.URL)
 
-	promConfigConfigPath := runConfigurator(t, nrConfigConfig)
+	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
-	ps.start(t, promConfigConfigPath)
+	ps.start(t, prometheusConfigConfigPath)
 
 	asserter.metricName(t, "prometheus_build_info")
 	asserter.metricLabels(t, map[string]string{"cluster_name": "test", "one": "two", "three": "four"}, "prometheus_build_info")

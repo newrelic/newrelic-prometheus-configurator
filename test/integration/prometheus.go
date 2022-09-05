@@ -161,7 +161,7 @@ func fetchPrometheusBinary(version string) error {
 		"-L", tarURL,
 		"--output", tarPath)
 	if out, err := fetchTar.CombinedOutput(); err != nil {
-		return fmt.Errorf("downloading the prometheus binary: command %s: promConfig %s: %w", fetchTar.String(), out, err)
+		return fmt.Errorf("downloading the prometheus binary: command %s: prometheusConfig %s: %w", fetchTar.String(), out, err)
 	}
 
 	extract := exec.Command(
@@ -171,7 +171,7 @@ func fetchPrometheusBinary(version string) error {
 		"-C", ".", // change directory.
 		path.Join(binaryTarget, "prometheus")) // selects only the 'prometheus' file to be extracted.
 	if out, err := extract.CombinedOutput(); err != nil {
-		return fmt.Errorf("un-compressing the prometheus binary: command %s: promConfig %s: %w", extract.String(), out, err)
+		return fmt.Errorf("un-compressing the prometheus binary: command %s: prometheusConfig %s: %w", extract.String(), out, err)
 	}
 
 	if ok, err := checkVersion(prometheusBinaryPath, version); !ok {
@@ -190,7 +190,7 @@ func checkVersion(path string, version string) (bool, error) {
 
 	out, err := checkVersion.CombinedOutput()
 	if err != nil {
-		return false, fmt.Errorf("executing the prometheus binary: command %s: promConfig %s: %w", checkVersion.String(), out, err)
+		return false, fmt.Errorf("executing the prometheus binary: command %s: prometheusConfig %s: %w", checkVersion.String(), out, err)
 	}
 
 	return strings.Contains(string(out), version), nil
