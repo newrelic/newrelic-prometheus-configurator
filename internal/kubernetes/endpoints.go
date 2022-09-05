@@ -1,7 +1,7 @@
 package kubernetes //nolint: dupl
 
 import (
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
 )
 
 // endpointsRelabelConfigs returns all relabel configs for an Endpoints job.

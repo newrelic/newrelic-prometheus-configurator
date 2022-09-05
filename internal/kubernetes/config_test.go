@@ -3,7 +3,7 @@ package kubernetes_test
 import (
 	"testing"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/kubernetes"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/kubernetes"
 	"github.com/stretchr/testify/require"
 )
 
@@ -79,13 +79,13 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 	type regexBySourceLabel map[string]string
 
 	tests := []struct {
-		name  string
-		input kubernetes.Config
-		want  regexBySourceLabel
+		name     string
+		nrConfig kubernetes.Config
+		want     regexBySourceLabel
 	}{
 		{
 			name: "annotation pod filter",
-			input: kubernetes.Config{
+			nrConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-pod",
@@ -102,7 +102,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		},
 		{
 			name: "check pod label is present",
-			input: kubernetes.Config{
+			nrConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-endpoints",
@@ -119,7 +119,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		},
 		{
 			name: "combined pod filter",
-			input: kubernetes.Config{
+			nrConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-pod",
@@ -140,7 +140,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		},
 		{
 			name: "annotation service-endpoints filter",
-			input: kubernetes.Config{
+			nrConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-endpoints",
@@ -157,7 +157,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		},
 		{
 			name: "check service-endpoints label is present",
-			input: kubernetes.Config{
+			nrConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-endpoints",
@@ -174,7 +174,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		},
 		{
 			name: "combined service-endpoints filter",
-			input: kubernetes.Config{
+			nrConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
 						JobNamePrefix: "test-pod",
@@ -199,7 +199,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			job, err := tt.input.Build()
+			job, err := tt.nrConfig.Build()
 			require.NoError(t, err)
 
 			// tests should be independent and contain just one job entry.

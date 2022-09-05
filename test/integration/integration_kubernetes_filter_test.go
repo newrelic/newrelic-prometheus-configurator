@@ -117,7 +117,7 @@ func Test_TargetDiscoveryFilter(t *testing.T) {
 			matchEndpointService := addEndpointsToEnv(t, testCase.matchEndpoints, "match-endpoint-", k8sEnv)
 			dropEndpointService := addEndpointsToEnv(t, testCase.dropEndpoints, "drop-endpoint-", k8sEnv)
 
-			inputConfig := fmt.Sprintf(`
+			nrConfigConfig := fmt.Sprintf(`
 newrelic_remote_write:
   license_key: nrLicenseKey
 common:
@@ -137,7 +137,7 @@ kubernetes:
 `, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name, testCase.filter)
 
 			ps := newPrometheusServer(t)
-			ps.start(t, runConfigurator(t, inputConfig))
+			ps.start(t, runConfigurator(t, nrConfigConfig))
 
 			asserter := newAsserter(ps)
 

@@ -6,8 +6,9 @@ package sharding_test
 import (
 	"testing"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/sharding"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
+
 	"github.com/stretchr/testify/assert"
 )
 

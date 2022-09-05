@@ -46,7 +46,7 @@ type OAuth2 struct {
 	ProxyURL         string            `yaml:"proxy_url,omitempty"`
 }
 
-// Job holds fields which do not change from input and output jobs.
+// Job holds fields which do not change from nrConfig and prometheusConfig jobs.
 type Job struct {
 	JobName               string           `yaml:"job_name"`
 	HonorLabels           *bool            `yaml:"honor_labels,omitempty"`

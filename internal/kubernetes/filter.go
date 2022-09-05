@@ -3,7 +3,7 @@ package kubernetes
 import (
 	"regexp"
 
-	"github.com/newrelic-forks/newrelic-prometheus/configurator/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
 )
 
 const (
@@ -39,7 +39,7 @@ func (f Filter) Endpoints() promcfg.RelabelConfig {
 	return f.build(serviceMetadata)
 }
 
-// Endpoints creates a RelabelConfig that will keep only the Endpoints targets specified in Filter.
+// Valid creates a RelabelConfig that will keep only the Endpoints targets specified in Filter.
 func (f Filter) Valid() bool {
 	return len(f.Annotations) != 0 || len(f.Labels) != 0
 }
