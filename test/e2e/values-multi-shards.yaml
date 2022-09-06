@@ -12,6 +12,8 @@ images:
 config:
   common:
     scrape_interval: 15s
+    external_labels:
+      collector_type: multi-sharding
 
 
 sharding:
