@@ -1,0 +1,18 @@
+images:
+  configurator:
+    repository: prometheus-configurator
+    pullPolicy: Never
+    tag: "latest"
+
+# Configure your <cluster name> and <license key> by the env vars NR_PROM_CLUSTER and NR_PROM_LICENSE_KEY
+# cluster: <cluster name>
+# licenseKey: <license key>
+# nrStaging: true
+
+config:
+  common:
+    scrape_interval: 15s
+
+
+sharding:
+ total_shards_count: 7

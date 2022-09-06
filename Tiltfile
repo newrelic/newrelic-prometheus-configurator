@@ -1,6 +1,10 @@
 # -*- mode: Python -*-
 
+config.define_string('helm_values_file')
+cfg = config.parse()
+
 # Settings and defaults.
+helm_values_file=cfg.get('helm_values_file', '.values-dev.yaml')
 project_name = 'newrelic-prometheus'
 cluster_context = 'minikube'
 
@@ -21,7 +25,7 @@ k8s_yaml(
   helm(
     './charts/%s' % project_name,
     name=project_name,
-    values=['values-dev.yaml'],
+    values=helm_values_file,
     set=['licenseKey=%s' % os.getenv('NR_PROM_LICENSE_KEY'), 'cluster=%s' % os.getenv('NR_PROM_CLUSTER')],
     ))
 k8s_yaml(helm('./charts/internal/test-resources', name='test-resources'))
