@@ -11,3 +11,11 @@ scenarios:
     tests:
       metrics:
         - source: "metrics.yml"
+  - description: Scrape test environment metrics from 7 replicas
+    before:
+      - cd ../../ && NR_PROM_LICENSE_KEY=${LICENSE_KEY} NR_PROM_CLUSTER=${SCENARIO_TAG} make tilt-ci HELM_VALUES_FILE="./test/e2e/values-multi-shards.yaml"
+    after:
+      - tilt down
+    tests:
+      metrics:
+        - source: "metrics.yml"
