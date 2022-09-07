@@ -4,7 +4,7 @@ config.define_string('helm_values_file')
 cfg = config.parse()
 
 # Settings and defaults.
-helm_values_file=cfg.get('helm_values_file', '.values-dev.yaml')
+helm_values_file=cfg.get('helm_values_file', './values-dev.yaml')
 project_name = 'newrelic-prometheus'
 cluster_context = 'minikube'
 
