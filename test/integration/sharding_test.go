@@ -48,7 +48,7 @@ func Test_Sharding_Pod(t *testing.T) {
 func Test_Sharding_Endpoints(t *testing.T) {
 	t.Parallel()
 
-	numberOfShards := 3
+	numberOfShards := 2
 
 	k8sEnv := newK8sEnvironment(t)
 
@@ -64,7 +64,7 @@ func Test_Sharding_Endpoints(t *testing.T) {
 	svc = k8sEnv.addService(t, svc)
 
 	// Create many pods with the corresponding service selector.
-	numberOfPods := 10
+	numberOfPods := 5
 	pods := make([]*corev1.Pod, numberOfPods)
 	hashMods := map[uint64]struct{}{}
 	for i := 0; i < numberOfPods; i++ {
