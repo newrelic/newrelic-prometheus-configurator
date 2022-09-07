@@ -13,6 +13,8 @@ COMMIT ?= $(shell git rev-parse HEAD || echo "unknown")
 
 LD_FLAGS ?= -ldflags="-X 'main.integrationVersion=$(TAG)' -X 'main.gitCommit=$(COMMIT)' -X 'main.buildDate=$(BUILD_DATE)' "
 
+HELM_VALUES_FILE ?= "./values-dev.yaml"
+
 .PHONY: all
 all: clean build-multiarch
 
@@ -48,12 +50,12 @@ helm-deps:
 .PHONY: tilt-up
 tilt-up:
 	$(MAKE) helm-deps
-	eval $$(minikube docker-env) && tilt up ; tilt down
+	eval $$(minikube docker-env) && tilt up -- --helm_values_file=$(HELM_VALUES_FILE) ; tilt down -- --helm_values_file=$(HELM_VALUES_FILE)
 
 .PHONY: tilt-ci
 tilt-ci:
 	$(MAKE) helm-deps
-	eval $$(minikube docker-env) && tilt ci
+	eval $$(minikube docker-env) && tilt ci -- --helm_values_file=$(HELM_VALUES_FILE)
 
 .PHONY: integration-test
 integration-test:
