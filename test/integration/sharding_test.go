@@ -66,7 +66,7 @@ func Test_Sharding_Endpoints(t *testing.T) {
 	// Create many pods with the corresponding service selector.
 	numberOfPods := 10
 	pods := make([]*corev1.Pod, numberOfPods)
-	hashMods := make(map[uint64]struct{}, 10)
+	hashMods := map[uint64]struct{}{}
 	for i := 0; i < numberOfPods; i++ {
 		pod := fakePod(fmt.Sprintf("test-pod-%d", i), nil, serviceSelector)
 		pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
