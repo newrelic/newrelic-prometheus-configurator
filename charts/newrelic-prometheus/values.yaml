@@ -41,6 +41,11 @@ images:
     # @default It defaults to `appVersion` in `Chart.yaml`.
     tag: ""
 
+# -- Volumes to mount in the containers
+extraVolumes: []
+# -- Defines where to mount volumes specified with `extraVolumes`
+extraVolumeMounts: []
+
 # -- Settings controlling ServiceAccount creation.
 # @default -- See `values.yaml`
 serviceAccount:
@@ -56,6 +61,10 @@ labels: {}
 podAnnotations: {}
 # -- Additional labels for chart pods. Can be configured also with `global.podLabels`
 podLabels: {}
+
+# -- Resource limits to be added to all pods created by the integration.
+resources:
+  prometheus: {}
 
 # -- Sets pod's priorityClassName. Can be configured also with `global.priorityClassName`
 priorityClassName: ""

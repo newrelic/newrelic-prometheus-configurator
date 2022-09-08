@@ -103,11 +103,17 @@ spec:
             - --storage.agent.retention.max-time=30m
             - --storage.agent.wal-truncate-frequency=30m
             - --storage.agent.path=/etc/prometheus/storage
+          {{- with .Values.resources.prometheus }}
+          resources: {{ toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: prometheus-config
               mountPath: /etc/prometheus/config
             - name: prometheus-storage
               mountPath: /etc/prometheus/storage
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
 
       volumes:
         - name: configurator-config
@@ -117,6 +123,9 @@ spec:
           emptyDir: {}
         - name: prometheus-storage
           emptyDir: {}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- with include "newrelic.common.nodeSelector" . }}
       nodeSelector:
         {{- . | nindent 8 }}
