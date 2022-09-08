@@ -5,6 +5,42 @@ entries:
       configuratorVersion: main
     apiVersion: v2
     appVersion: v2.37.0
+    created: "2022-09-08T13:25:22.939863728Z"
+    dependencies:
+    - name: common-library
+      repository: https://helm-charts.newrelic.com
+      version: 1.0.6
+    description: A Helm chart to deploy Prometheus.
+    digest: f7d9790fd7a65c8a31f05e84da8fa7e740ca60b5be35f21354c6258e9667df68
+    keywords:
+    - newrelic
+    - prometheus
+    maintainers:
+    - name: alvarocabanas
+      url: https://github.com/alvarocabanas
+    - name: carlossscastro
+      url: https://github.com/carlossscastro
+    - name: sigilioso
+      url: https://github.com/sigilioso
+    - name: gsanchezgavier
+      url: https://github.com/gsanchezgavier
+    - name: kang-makes
+      url: https://github.com/kang-makes
+    - name: marcsanmi
+      url: https://github.com/marcsanmi
+    - name: paologallinaharbur
+      url: https://github.com/paologallinaharbur
+    - name: roobre
+      url: https://github.com/roobre
+    name: newrelic-prometheus
+    type: application
+    urls:
+    - https://github.com/newrelic/newrelic-prometheus-configurator/releases/download/newrelic-prometheus-0.0.15-devel/newrelic-prometheus-0.0.15-devel.tgz
+    version: 0.0.15-devel
+  - annotations:
+      configuratorVersion: main
+    apiVersion: v2
+    appVersion: v2.37.0
     created: "2022-09-05T13:48:19.537299473Z"
     dependencies:
     - name: common-library
@@ -213,4 +249,4 @@ entries:
     urls:
     - https://github.com/newrelic/newrelic-prometheus-configurator/releases/download/newrelic-prometheus-0.0.9-devel/newrelic-prometheus-0.0.9-devel.tgz
     version: 0.0.9-devel
-generated: "2022-09-05T13:48:19.537331673Z"
+generated: "2022-09-08T13:25:22.939934032Z"
