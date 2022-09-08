@@ -1,23 +1,53 @@
 [![Community Project header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Community_Project.png)](https://opensource.newrelic.com/oss-category/#community-project)
 
-# [Name of Project] [build badges go here when available]
+# Newrelic Prometheus Configurator
 
->[Brief description - what is the project and value does it provide? How often should users expect to get releases? How is versioning set up? Where does this project want to go?]
+Newrelic Prometheus Configurator gives you full observability of your services exposing [Prometheus](https://github.com/prometheus/prometheus) metrics.
+
+This repo contains the code base of the `newrelic-prometheus-configurator` and the [Helm Chart](/charts/newrelic-prometheus/README.md) to install the solution in Kubernetes.
+
+The `newrelic-prometheus-configurator` uses a custom configuration that simplifies the experience related to configure features like discovery, filtering, metrics decoration, and sharding.
+
+```mermaid
+flowchart LR
+    id1>NewRelic Config]   --> Configurator
+    Configurator           --> id2>Prometheus Config]
+    id2>Prometheus Config] --> id3(Prometheus Agent)
+
+style id1 stroke:#333,stroke-width:2px
+style id2 stroke:#333,stroke-width:2px
+```
+
+The `Configurator` generates a configuration file that is used to run a [Prometheus Server](https://github.com/prometheus/prometheus) in Agent mode, and send metrics to the New Relic Remote Write Endpoint.
 
 ## Installation
 
-> [Include a step-by-step procedure on how to get your code installed. Be sure to include any third-party dependencies that need to be installed separately]
+### Helm chart
+
+You can install this chart using [`nri-bundle`](https://github.com/newrelic/helm-charts/tree/master/charts/nri-bundle) located in the
+[helm-charts repository](https://github.com/newrelic/helm-charts) or directly from this repository by adding this Helm repository:
+
+```shell
+helm repo add newrelic-prometheus https://newrelic.github.io/newrelic-prometheus-configurator
+helm upgrade --install newrelic newrelic-prometheus/newrelic-prometheus -f your-custom-values.yaml
+```
+
+For further information of the configuration needed for the chart just read the [chart's README](/charts/newrelic-prometheus/README.md).
 
 ## Getting Started
->[Simple steps to start working with the software similar to a "Hello World"]
-
-## Usage
->[**Optional** - Include more thorough instructions on how to use the software. This section might not be needed if the Getting Started section is enough. Remove this section if it's not needed.]
-
+The simplest way to start working with this project is to install the [Chart](/charts/newrelic-prometheus/README.md) in your Kubernetes cluster which by default will scrape the Prometheus targets having the `'prometheus.io/scrape: true'` annotation.
 
 ## Building
 
->[**Optional** - Include this section if users will need to follow specific instructions to build the software from source. Be sure to include any third party build dependencies that need to be installed separately. Remove this section if it's not needed.]
+Golang is required to build the integration. We recommend the Golang version that is used by the `go.mod` file.
+
+After cloning this repository, go to the directory and build it:
+
+```bash
+make build
+```
+
+If you plan modify the code of the configurator, charts or tests we recommend you to [run the local environment](#run-local-environment)
 
 ## Testing
 
@@ -30,6 +60,19 @@ make test
 ### Running integration tests
 
 Detailed info about integration tests [here](./test/integration/README.md).
+
+### Running Helm chart testing
+
+Make sure you have these tools or install them before running the tests:
+- [Install Helm](https://helm.sh/docs/intro/install/)
+- [Install Chart Testing](https://github.com/helm/chart-testing#installation)
+- [Install unit test plugin](https://github.com/quintush/helm-unittest#install)
+
+Then run: 
+
+```bash
+make chart-unit-test
+```
 
 ## Run local environment
 
