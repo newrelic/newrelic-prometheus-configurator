@@ -133,8 +133,8 @@ func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]st
 	require.NoError(t, err)
 }
 
-// activeTargetField checks that Prometheus has at least one active target with the given value for that specific key.
-func (a *asserter) activeTargetField(t *testing.T, key, value string) {
+// activeTargetWithScrapeURL checks that Prometheus has at least one active target with the given scrapeURL field value.
+func (a *asserter) activeTargetWithScrapeURL(t *testing.T, value string) {
 	t.Helper()
 
 	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
@@ -144,9 +144,8 @@ func (a *asserter) activeTargetField(t *testing.T, key, value string) {
 		}
 
 		for _, at := range targets.ActiveTargets {
-			switch key {
-			case scrapeURLKey:
-				return at.ScrapeURL == value
+			if at.ScrapeURL == value {
+				return true
 			}
 		}
 

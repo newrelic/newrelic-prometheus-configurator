@@ -242,7 +242,7 @@ kubernetes:
 	)
 
 	asserter := newAsserter(ps)
-	asserter.activeTargetField(t, scrapeURLKey, scrapeURL)
+	asserter.activeTargetWithScrapeURL(t, scrapeURL)
 }
 
 func Test_EndpointsDiscovery(t *testing.T) {
@@ -330,7 +330,7 @@ kubernetes:
 
 	// Active targets
 	asserter.activeTargetCount(t, 1)
-	asserter.activeTargetField(t, scrapeURLKey, scrapeURL)
+	asserter.activeTargetWithScrapeURL(t, scrapeURL)
 	asserter.activeTargetLabels(t, map[string]string{
 		"namespace":  k8sEnv.testNamespace.Name,
 		"service":    svc.Name,

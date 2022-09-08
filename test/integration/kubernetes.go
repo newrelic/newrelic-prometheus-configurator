@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"sync"
 	"testing"
 	"time"
 
@@ -91,6 +92,29 @@ func (ke *k8sEnvironment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 	require.NoError(t, err)
 
 	return p
+}
+
+// addManyPodsWaitingOnPhase creates and waits for many pods (built by `buildPod` function), until the specified
+// podPhase. It runs in parallel and returns a buffered closed channel containing the corresponding pods.
+func (ke *k8sEnvironment) addManyPodsWaitingOnPhase(
+	t *testing.T, numberOfPods int, podPhase corev1.PodPhase,
+	buildPod func(i int) *corev1.Pod,
+) chan *corev1.Pod {
+	t.Helper()
+
+	added := make(chan *corev1.Pod, numberOfPods)
+	var wg sync.WaitGroup
+	for i := 0; i < numberOfPods; i++ {
+		wg.Add(1)
+		go func(i int) {
+			added <- ke.addPodAndWaitOnPhase(t, buildPod(i), podPhase)
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+	close(added)
+
+	return added
 }
 
 // addService adds a service using the k8s client.
