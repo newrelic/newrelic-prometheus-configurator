@@ -62,14 +62,14 @@ func Test_Sharding_Endpoints(t *testing.T) {
 	// Create many pods with the corresponding service selector.
 	numberOfPods := 5
 	pods := make([]*corev1.Pod, numberOfPods)
-	hashMods := map[uint64]struct{}{}
+	scrapeURLHashMod := map[string]uint64{}
 	for i := 0; i < numberOfPods; i++ {
 		pod := fakePod(fmt.Sprintf("test-pod-%d", i), nil, serviceSelector)
 		pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 		pods[i] = pod
 		address := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
 		mod := shardingHashMod(address, uint64(numberOfShards))
-		hashMods[mod] = struct{}{}
+		scrapeURLHashMod[fmt.Sprintf("http://%s/metrics", address)] = mod
 	}
 
 	// Start a prometheus server for each shard.
@@ -78,13 +78,20 @@ func Test_Sharding_Endpoints(t *testing.T) {
 		prometheusConfigPath := runConfigurator(t, nrConfig)
 		ps.start(t, prometheusConfigPath)
 
-		// Only the servers whose shardIndex is equal to any address hash-mod should scrape the service.
-		if _, ok := hashMods[uint64(shardIndex)]; ok {
-			asserter.activeTargetLabels(t, map[string]string{"service": svc.Name})
-		} else {
+		shouldScrapeAny := false
+		for scrapeURL, mod := range scrapeURLHashMod {
+			// The server whose shardIndex corresponds to an address hash-mod should scrape the corresponding target url.
+			if mod == uint64(shardIndex) {
+				shouldScrapeAny = true
+				asserter.activeTargetLabels(t, map[string]string{"service": svc.Name})
+				asserter.activeTargetWithScrapeURL(t, scrapeURL)
+			}
+		}
+		// If the index does not correspond to any address hash-mod, it should not have any active-targets.
+		if !shouldScrapeAny {
 			asserter.activeTargetCount(t, 0)
 			// The droppedTargetLabel is '__meta_kubernetes_service_name' instead of 'service' because the has-mod
-			// rule is applied first.
+			// rule should be applied first.
 			asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_service_name": svc.Name})
 		}
 	})
