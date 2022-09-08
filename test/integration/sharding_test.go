@@ -5,6 +5,7 @@ package integration
 import (
 	"fmt"
 	"net"
+	"net/http/httptest"
 	"strconv"
 	"testing"
 
@@ -26,12 +27,7 @@ func Test_Sharding_Pod(t *testing.T) {
 	podAddress := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
 	mod := shardingHashMod(podAddress, uint64(numberOfShards))
 
-	// Start a prometheus server for each shard.
-	for shardIndex := 0; shardIndex < numberOfShards; shardIndex++ {
-		ps := newPrometheusServer(t)
-		asserter := newAsserter(ps)
-		rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
-
+	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, rw *httptest.Server, shardIndex int) {
 		nrConfig := k8sShardingNRConfig(rw.URL, numberOfShards, shardIndex, k8sEnv, true, false)
 		prometheusConfigPath := runConfigurator(t, nrConfig)
 		ps.start(t, prometheusConfigPath)
@@ -42,13 +38,13 @@ func Test_Sharding_Pod(t *testing.T) {
 		} else {
 			asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_pod_name": pod.Name})
 		}
-	}
+	})
 }
 
 func Test_Sharding_Endpoints(t *testing.T) {
 	t.Parallel()
 
-	numberOfShards := 2
+	numberOfShards := 3
 
 	k8sEnv := newK8sEnvironment(t)
 
@@ -77,11 +73,7 @@ func Test_Sharding_Endpoints(t *testing.T) {
 	}
 
 	// Start a prometheus server for each shard.
-	for shardIndex := 0; shardIndex < numberOfShards; shardIndex++ {
-		ps := newPrometheusServer(t)
-		asserter := newAsserter(ps)
-		rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
-
+	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, rw *httptest.Server, shardIndex int) {
 		nrConfig := k8sShardingNRConfig(rw.URL, numberOfShards, shardIndex, k8sEnv, false, true)
 		prometheusConfigPath := runConfigurator(t, nrConfig)
 		ps.start(t, prometheusConfigPath)
@@ -95,7 +87,7 @@ func Test_Sharding_Endpoints(t *testing.T) {
 			// rule is applied first.
 			asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_service_name": svc.Name})
 		}
-	}
+	})
 }
 
 func Test_Sharding_Endpoints_Services_Sharing_Address(t *testing.T) {
@@ -126,12 +118,7 @@ func Test_Sharding_Endpoints_Services_Sharing_Address(t *testing.T) {
 		k8sEnv.addService(t, svc)
 	}
 
-	// Start a prometheus server for each shard.
-	for shardIndex := 0; shardIndex < numberOfShards; shardIndex++ {
-		ps := newPrometheusServer(t)
-		asserter := newAsserter(ps)
-		rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
-
+	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, rw *httptest.Server, shardIndex int) {
 		nrConfig := k8sShardingNRConfig(rw.URL, numberOfShards, shardIndex, k8sEnv, false, true)
 		prometheusConfigPath := runConfigurator(t, nrConfig)
 		ps.start(t, prometheusConfigPath)
@@ -145,7 +132,7 @@ func Test_Sharding_Endpoints_Services_Sharing_Address(t *testing.T) {
 		} else {
 			asserter.activeTargetCount(t, 0)
 		}
-	}
+	})
 }
 
 func Test_Sharding_Static_Targets(t *testing.T) {
@@ -158,12 +145,7 @@ func Test_Sharding_Static_Targets(t *testing.T) {
 	address := ex.Listener.Addr().String()
 	mod := shardingHashMod(address, uint64(numberOfShards))
 
-	// Start a prometheus server for each shard.
-	for shardIndex := 0; shardIndex < numberOfShards; shardIndex++ {
-		ps := newPrometheusServer(t)
-		asserter := newAsserter(ps)
-		rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
-
+	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, rw *httptest.Server, shardIndex int) {
 		nrConfig := fmt.Sprintf(`
 sharding:
   total_shards_count: %d
@@ -195,5 +177,5 @@ newrelic_remote_write:
 		} else {
 			asserter.activeTargetCount(t, 0)
 		}
-	}
+	})
 }
