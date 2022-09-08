@@ -97,7 +97,7 @@ func Test_Sharding_Endpoints(t *testing.T) {
 	})
 }
 
-func Test_Sharding_Endpoints_Services_Sharing_Address(t *testing.T) {
+func Test_Sharding_Endpoints_Sharing_Services(t *testing.T) {
 	t.Parallel()
 
 	numberOfShards := 2
