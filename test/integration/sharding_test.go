@@ -59,14 +59,11 @@ func Test_Sharding_Endpoints(t *testing.T) {
 	)
 	svc = k8sEnv.addService(t, svc)
 
-	// Create many pods with the corresponding service selector.
-	numberOfPods := 5
-	pods := make([]*corev1.Pod, numberOfPods)
+	pods := k8sEnv.addManyPodsWaitingOnPhase(t, 5, corev1.PodRunning, func(index int) *corev1.Pod {
+		return fakePod(fmt.Sprintf("test-pod-%d", index), nil, serviceSelector)
+	})
 	scrapeURLHashMod := map[string]uint64{}
-	for i := 0; i < numberOfPods; i++ {
-		pod := fakePod(fmt.Sprintf("test-pod-%d", i), nil, serviceSelector)
-		pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
-		pods[i] = pod
+	for pod := range pods {
 		address := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
 		mod := shardingHashMod(address, uint64(numberOfShards))
 		scrapeURLHashMod[fmt.Sprintf("http://%s/metrics", address)] = mod
