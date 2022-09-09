@@ -5,11 +5,8 @@ package integration
 import (
 	"crypto/md5"
 	"fmt"
-	"net/http/httptest"
 	"sync"
 	"testing"
-
-	"github.com/newrelic/newrelic-prometheus-configurator/test/integration/mocks"
 )
 
 // checkPrometheus shards sets up as many prometheus servers as defined in `numberOfShards` in parallel and it
@@ -17,7 +14,7 @@ import (
 // any check.
 func checkPrometheusShards(
 	t *testing.T, numberOfShards int,
-	checkFn func(ps *prometheusServer, asserter *asserter, rw *httptest.Server, shardIndex int),
+	checkFn func(ps *prometheusServer, asserter *asserter, shardIndex int),
 ) {
 	t.Helper()
 
@@ -31,9 +28,8 @@ func checkPrometheusShards(
 
 			ps := newPrometheusServer(t)
 			asserter := newAsserter(ps)
-			rw := mocks.StartRemoteWriteEndpoint(t, asserter.appendable)
 
-			checkFn(ps, asserter, rw, shardIndex)
+			checkFn(ps, asserter, shardIndex)
 		}(shardIndex)
 	}
 
@@ -41,13 +37,10 @@ func checkPrometheusShards(
 }
 
 // k8sShardingNRConfig is a helper to provide NR config to sharding tests involving k8s
-func k8sShardingNRConfig(rwURL string, nShards int, shardIndex int, k8sEnv k8sEnvironment, pod, endpoints bool) string {
+func k8sShardingNRConfig(nShards int, shardIndex int, k8sEnv k8sEnvironment, pod, endpoints bool) string {
 	return fmt.Sprintf(`
 newrelic_remote_write:
   license_key: nrLicenseKey
-  proxy_url: %s
-  tls_config:
-    insecure_skip_verify: true
 common:
   scrape_interval: 1s
 sharding:
@@ -64,7 +57,7 @@ kubernetes:
          namespaces:
           names:
           - %s
-`, rwURL, nShards, shardIndex, pod, endpoints, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
+`, nShards, shardIndex, pod, endpoints, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 }
 
 // shardingHashMod returns the modulus of hash sum, as it is done in prometheus.
