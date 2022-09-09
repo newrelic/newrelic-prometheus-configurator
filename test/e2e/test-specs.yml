@@ -7,6 +7,8 @@ scenarios:
     before:
       - cd ../../ && NR_PROM_LICENSE_KEY=${LICENSE_KEY} NR_PROM_CLUSTER=${SCENARIO_TAG} make tilt-ci
     after:
+      - kubectl logs -l app.kubernetes.io/name=newrelic-prometheus --all-containers --prefix=true
+      - kubectl get all -o wide
       - cd ../../ && tilt down
     tests:
       metrics:
@@ -15,6 +17,8 @@ scenarios:
     before:
       - cd ../../ && NR_PROM_LICENSE_KEY=${LICENSE_KEY} NR_PROM_CLUSTER=${SCENARIO_TAG} make tilt-ci HELM_VALUES_FILE="./test/e2e/values-multi-shards.yaml"
     after:
+      - kubectl logs -l app.kubernetes.io/name=newrelic-prometheus --all-containers --prefix=true
+      - kubectl get all -o wide
       - cd ../../ && tilt down
     tests:
       metrics:
