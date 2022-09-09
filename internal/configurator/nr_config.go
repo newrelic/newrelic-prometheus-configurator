@@ -18,11 +18,6 @@ type RawPromConfig any
 type NrConfig struct {
 	// Common holds configuration for all options common to all scrape methods.
 	Common promcfg.GlobalConfig `yaml:"common"`
-	// DataSourceName holds the source name which will be used as `prometheus_server` parameter in New Relic remote
-	// write endpoint. See:
-	// <https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-remote-write/set-your-prometheus-remote-write-integration/>
-	// for details.
-	DataSourceName string `yaml:"data_source_name"`
 	// Sharding holds the configuration for the sharding.
 	Sharding sharding.Config `yaml:"sharding"`
 	// RemoteWrite holds the New Relic remote write configuration.

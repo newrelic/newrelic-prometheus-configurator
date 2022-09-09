@@ -28,7 +28,7 @@ func BuildPromConfig(nrConfig *NrConfig) (*PromConfig, error) {
 		return nil, fmt.Errorf("invalid config: %w", err)
 	}
 
-	remoteWrite, err := nrConfig.RemoteWrite.Build(nrConfig.DataSourceName)
+	remoteWrite, err := nrConfig.RemoteWrite.Build()
 	if err != nil {
 		return nil, fmt.Errorf("invalid config: %w", err)
 	}
@@ -69,7 +69,7 @@ func expand(config *NrConfig) {
 	dataSourceName := os.Getenv(DataSourceNameEnvKey)
 
 	if dataSourceName != "" {
-		config.DataSourceName = dataSourceName
+		config.RemoteWrite.DataSourceName = dataSourceName
 	}
 
 	if dataSourceName != "" && config.Sharding.TotalShardsCount > 1 {

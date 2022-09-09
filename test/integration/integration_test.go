@@ -32,8 +32,8 @@ func Test_ServerReady(t *testing.T) {
 	asserter := newAsserter(ps)
 
 	nrConfigConfig := `
-data_source_name: "data-source"
 newrelic_remote_write:
+  data_source_name: "data-source"
   license_key: nrLicenseKey
 `
 
@@ -137,8 +137,8 @@ static_targets:
       scrape_interval: 1s
       targets:
         - "localhost:%s"
-data_source_name: "data-source"
 newrelic_remote_write:
+  data_source_name: "data-source"
   license_key: nrLicenseKey
   proxy_url: %s
   tls_config:
