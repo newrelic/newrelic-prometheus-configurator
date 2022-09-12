@@ -83,27 +83,27 @@ func WithDataSourceName(dataSourceName string) URLOption {
 	}
 }
 
-func (rwu *URL) Build() (string, error) {
-	if rwu.Staging && rwu.FedRAMP {
+func (u *URL) Build() (string, error) {
+	if u.Staging && u.FedRAMP {
 		return "", ErrFedRAMPStaging
 	}
-	if rwu.RegionPrefix == regionEUPrefix && rwu.FedRAMP {
+	if u.RegionPrefix == regionEUPrefix && u.FedRAMP {
 		return "", ErrEuFedRAMP
 	}
 
 	var prefix string
-	if rwu.Staging {
+	if u.Staging {
 		prefix = environmentStagingPrefix
 	}
-	if rwu.FedRAMP {
+	if u.FedRAMP {
 		prefix = environmentFedRAMPPrefix
 	}
 
 	url := url.URL{
 		Scheme:   remoteWriteScheme,
-		Host:     fmt.Sprintf(remoteWriteHostTemplate, prefix, rwu.RegionPrefix),
+		Host:     fmt.Sprintf(remoteWriteHostTemplate, prefix, u.RegionPrefix),
 		Path:     remoteWritePath,
-		RawQuery: rwu.Values.Encode(),
+		RawQuery: u.Values.Encode(),
 	}
 
 	return url.String(), nil
