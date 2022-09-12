@@ -17,7 +17,6 @@ import (
 	"github.com/go-kit/log"
 	"github.com/prometheus/prometheus/storage"
 	"github.com/prometheus/prometheus/storage/remote"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/sync/errgroup"
 )
@@ -73,7 +72,9 @@ func handlerWithProxy(t *testing.T, handler http.Handler, url *string) http.Hand
 		g.Go(func() error { return pipe(conn, reqConn) })
 
 		err = g.Wait()
-		assert.NoError(t, err)
+		if err != nil {
+			t.Logf("Error while waiting for the pipe copying: %s", err.Error())
+		}
 	})
 }
 
