@@ -13,7 +13,7 @@ import (
 type Config struct {
 	LicenseKey               string                  `yaml:"license_key"`
 	Staging                  bool                    `yaml:"staging"`
-	FedRAMP                  bool                    `yaml:"fedramp"`
+	FedRAMP                  FedRAMP                 `yaml:"fedramp"`
 	ProxyURL                 string                  `yaml:"proxy_url"`
 	TLSConfig                *promcfg.TLSConfig      `yaml:"tls_config"`
 	QueueConfig              *promcfg.QueueConfig    `yaml:"queue_config"`
@@ -21,10 +21,16 @@ type Config struct {
 	ExtraWriteRelabelConfigs []promcfg.RelabelConfig `yaml:"extra_write_relabel_configs"`
 }
 
+// FedRAMP in charts are configured like `.fedramp.enabled: true` just in case we have to
+// add more options to fedramp dictionary. So we add a strict for it
+type FedRAMP struct {
+	Enabled bool `yaml:"enabled"`
+}
+
 // Build will create the Prometheus remote_write entry for NewRelic.
 func (c Config) Build(dataSourceName string) (promcfg.RemoteWrite, error) {
 	rwu := NewURL(
-		WithFedRAMP(c.FedRAMP),
+		WithFedRAMP(c.FedRAMP.Enabled),
 		WithLicense(c.LicenseKey),
 		WithStaging(c.Staging),
 		WithDataSourceName(dataSourceName),
