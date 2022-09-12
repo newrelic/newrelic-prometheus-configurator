@@ -5,7 +5,6 @@ package integration
 import (
 	"fmt"
 	"net"
-	"net/http/httptest"
 	"strconv"
 	"testing"
 
@@ -27,8 +26,8 @@ func Test_Sharding_Pod(t *testing.T) {
 	podAddress := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
 	mod := shardingHashMod(podAddress, uint64(numberOfShards))
 
-	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, rw *httptest.Server, shardIndex int) {
-		nrConfig := k8sShardingNRConfig(rw.URL, numberOfShards, shardIndex, k8sEnv, true, false)
+	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
+		nrConfig := k8sShardingNRConfig(numberOfShards, shardIndex, k8sEnv, true, false)
 		prometheusConfigPath := runConfigurator(t, nrConfig)
 		ps.start(t, prometheusConfigPath)
 
@@ -70,8 +69,8 @@ func Test_Sharding_Endpoints(t *testing.T) {
 	}
 
 	// Start a prometheus server for each shard.
-	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, rw *httptest.Server, shardIndex int) {
-		nrConfig := k8sShardingNRConfig(rw.URL, numberOfShards, shardIndex, k8sEnv, false, true)
+	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
+		nrConfig := k8sShardingNRConfig(numberOfShards, shardIndex, k8sEnv, false, true)
 		prometheusConfigPath := runConfigurator(t, nrConfig)
 		ps.start(t, prometheusConfigPath)
 
@@ -122,8 +121,8 @@ func Test_Sharding_Endpoints_Sharing_Services(t *testing.T) {
 		k8sEnv.addService(t, svc)
 	}
 
-	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, rw *httptest.Server, shardIndex int) {
-		nrConfig := k8sShardingNRConfig(rw.URL, numberOfShards, shardIndex, k8sEnv, false, true)
+	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
+		nrConfig := k8sShardingNRConfig(numberOfShards, shardIndex, k8sEnv, false, true)
 		prometheusConfigPath := runConfigurator(t, nrConfig)
 		ps.start(t, prometheusConfigPath)
 
@@ -149,7 +148,7 @@ func Test_Sharding_Static_Targets(t *testing.T) {
 	address := ex.Listener.Addr().String()
 	mod := shardingHashMod(address, uint64(numberOfShards))
 
-	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, rw *httptest.Server, shardIndex int) {
+	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
 		nrConfig := fmt.Sprintf(`
 sharding:
   total_shards_count: %d
@@ -167,10 +166,7 @@ static_targets:
 
 newrelic_remote_write:
   license_key: nrLicenseKey
-  proxy_url: %s
-  tls_config:
-    insecure_skip_verify: true
-`, numberOfShards, shardIndex, address, rw.URL)
+`, numberOfShards, shardIndex, address)
 
 		prometheusConfigPath := runConfigurator(t, nrConfig)
 		ps.start(t, prometheusConfigPath)
