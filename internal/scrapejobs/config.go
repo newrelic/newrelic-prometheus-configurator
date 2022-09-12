@@ -9,6 +9,7 @@ import "github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
 type Config struct {
 	promcfg.Job `yaml:",inline"`
 
+	SkipSharding              bool                    `yaml:"skip_sharding"`
 	ExtraRelabelConfigs       []promcfg.RelabelConfig `yaml:"extra_relabel_config"`
 	ExtraMetricRelabelConfigs []promcfg.RelabelConfig `yaml:"extra_metric_relabel_config"`
 }
@@ -27,6 +28,8 @@ func (c Config) WithName(name string) Config {
 
 // BuildPrometheusJob returns the underlying `promcfg.Job` setting up the extra fields.
 func (c Config) BuildPrometheusJob() promcfg.Job {
+	c.Job.SetSkipSharding(c.SkipSharding)
+
 	c.Job.RelabelConfigs = append(c.Job.RelabelConfigs, c.ExtraRelabelConfigs...)
 	c.Job.MetricRelabelConfigs = append(c.Job.MetricRelabelConfigs, c.ExtraMetricRelabelConfigs...)
 

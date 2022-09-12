@@ -76,8 +76,14 @@ type Job struct {
 	KubernetesSdConfigs  []KubernetesSdConfig `yaml:"kubernetes_sd_configs,omitempty"`
 }
 
+// SkipSharding returns true when sharding rules should not be added to this job.
 func (j *Job) SkipSharding() bool {
 	return j.skipSharding
+}
+
+// SetSkipSharding sets the skipSharding flag value to this job.
+func (j *Job) SetSkipSharding(v bool) {
+	j.skipSharding = v
 }
 
 // StaticConfig defines each of the static_configs for the prometheus config.

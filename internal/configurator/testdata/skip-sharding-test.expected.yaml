@@ -1,0 +1,93 @@
+# sharding-test.expected
+scrape_configs:
+  # static_targets
+  - job_name: my-custom-target-authorization-full
+    static_configs:
+      - targets:
+          - "192.168.3.1:2379"
+    metrics_path: /metrics-custom
+    relabel_configs:
+      - source_labels: [ '__name__', 'instance' ]
+        regex: node_memory_active_bytes;localhost:9100
+        action: drop
+    metric_relabel_configs:
+      - source_labels: [ '__name__', 'instance' ]
+        regex: node_memory_active_bytes;localhost:9100
+        action: drop
+
+  # pod
+  - job_name: kubernetes-job-pod
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels: [ __meta_kubernetes_pod_phase ]
+        regex: Pending|Succeeded|Failed|Completed
+        action: drop
+      - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scheme ]
+        action: replace
+        regex: (https?)
+        target_label: __scheme__
+      - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_path ]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [ __address__, __meta_kubernetes_pod_annotation_prometheus_io_port ]
+        action: replace
+        regex: (.+?)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      - action: labelmap
+        regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+        replacement: __param_$1
+      - action: labelmap
+        regex: __meta_kubernetes_pod_label_(.+)
+      - source_labels: [ __meta_kubernetes_namespace ]
+        action: replace
+        target_label: namespace
+      - source_labels: [ __meta_kubernetes_pod_node_name ]
+        action: replace
+        target_label: node
+      - source_labels: [ __meta_kubernetes_pod_name ]
+        action: replace
+        target_label: pod
+
+  # endpoints
+  - job_name: kubernetes-job-endpoints
+    kubernetes_sd_configs:
+      - role: endpoints
+    relabel_configs:
+      - source_labels: [ __meta_kubernetes_pod_phase ]
+        action: drop
+        regex: Pending|Succeeded|Failed|Completed
+      - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_scheme ]
+        action: replace
+        target_label: __scheme__
+        regex: (https?)
+      - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_path ]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [ __address__, __meta_kubernetes_service_annotation_prometheus_io_port ]
+        action: replace
+        regex: (.+?)(?::\d+)?;(\d+)
+        target_label: __address__
+        replacement: $1:$2
+      - action: labelmap
+        regex: __meta_kubernetes_service_annotation_prometheus_io_param_(.+)
+        replacement: __param_$1
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
+      - source_labels: [ __meta_kubernetes_namespace ]
+        action: replace
+        target_label: namespace
+      - source_labels: [ __meta_kubernetes_service_name ]
+        action: replace
+        target_label: service
+      - source_labels: [ __meta_kubernetes_pod_node_name ]
+        action: replace
+        target_label: node
+
+remote_write:
+  - url: https://metric-api.newrelic.com/prometheus/v1/write
+    authorization:
+      credentials: nrLicenseKey
