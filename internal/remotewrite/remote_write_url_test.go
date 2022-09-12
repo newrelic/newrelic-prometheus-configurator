@@ -1,8 +1,9 @@
-package remotewrite
+package remotewrite_test
 
 import (
 	"testing"
 
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/remotewrite"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -66,11 +67,11 @@ func TestRemoteWriteURL(t *testing.T) {
 		c := testCase
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			rwu := NewURL(
-				WithFedRAMP(c.FedRAMP),
-				WithLicense(c.LicenseKey),
-				WithStaging(c.Staging),
-				WithDataSourceName(c.DataSourceName),
+			rwu := remotewrite.NewURL(
+				remotewrite.WithFedRAMP(c.FedRAMP),
+				remotewrite.WithLicense(c.LicenseKey),
+				remotewrite.WithStaging(c.Staging),
+				remotewrite.WithDataSourceName(c.DataSourceName),
 			)
 			result, err := rwu.Build()
 			if assert.NoError(t, err) {
@@ -95,14 +96,14 @@ func TestRemoteWriteURLErrors(t *testing.T) {
 			Name:     "staging FedRAMP",
 			Staging:  true,
 			FedRAMP:  true,
-			Expected: ErrFedRAMPStaging,
+			Expected: remotewrite.ErrFedRAMPStaging,
 		},
 		{
 			Name:       "European FedRAMP",
 			Staging:    false,
 			FedRAMP:    true,
 			LicenseKey: "eu-license-key",
-			Expected:   ErrEuFedRAMP,
+			Expected:   remotewrite.ErrEuFedRAMP,
 		},
 	}
 
@@ -110,11 +111,11 @@ func TestRemoteWriteURLErrors(t *testing.T) {
 		c := testCase
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			rwu := NewURL(
-				WithFedRAMP(c.FedRAMP),
-				WithLicense(c.LicenseKey),
-				WithStaging(c.Staging),
-				WithDataSourceName(c.DataSourceName),
+			rwu := remotewrite.NewURL(
+				remotewrite.WithFedRAMP(c.FedRAMP),
+				remotewrite.WithLicense(c.LicenseKey),
+				remotewrite.WithStaging(c.Staging),
+				remotewrite.WithDataSourceName(c.DataSourceName),
 			)
 			_, err := rwu.Build()
 			assert.Equal(t, c.Expected, err)
