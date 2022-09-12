@@ -179,3 +179,54 @@ newrelic_remote_write:
 		}
 	})
 }
+
+func Test_Sharding_Skip_Sharding(t *testing.T) {
+	t.Parallel()
+
+	numberOfShards := 2
+
+	// Create a mock for each static target.
+	exSkip := mocks.StartExporter(t)
+	addressSkip := exSkip.Listener.Addr().String()
+	scrapeURLSkip := fmt.Sprintf("http://%s/metrics", addressSkip)
+	exRegular := mocks.StartExporter(t)
+	addressRegular := exRegular.Listener.Addr().String()
+	scrapeURLRegular := fmt.Sprintf("http://%s/metrics-a", addressRegular)
+
+	mod := shardingHashMod(addressRegular, uint64(numberOfShards))
+
+	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
+		nrConfig := fmt.Sprintf(`
+sharding:
+  total_shards_count: %d
+  shard_index: %d
+
+static_targets:
+  jobs:
+    - job_name: skip-sharding-job
+      skip_sharding: true
+      targets:
+        - "%s"
+    - job_name: regular-job
+      targets:
+        - "%s"
+      metrics_path: /metrics-a
+
+newrelic_remote_write:
+  license_key: nrLicenseKey
+`, numberOfShards, shardIndex, addressSkip, addressRegular)
+
+		prometheusConfigPath := runConfigurator(t, nrConfig)
+		ps.start(t, prometheusConfigPath)
+
+		// The skip-sharding-job should be scrapped by all servers
+		asserter.activeTargetWithScrapeURL(t, scrapeURLSkip)
+
+		// The regular job should be scrapped only for the server whose shard-index is equal to the corresponding mod.
+		if mod == uint64(shardIndex) {
+			asserter.activeTargetWithScrapeURL(t, scrapeURLRegular)
+		} else {
+			asserter.droppedTargetLabels(t, map[string]string{"__metrics_path__": "/metrics-a"})
+		}
+	})
+}
