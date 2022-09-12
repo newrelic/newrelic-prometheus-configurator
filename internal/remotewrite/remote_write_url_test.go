@@ -72,8 +72,10 @@ func TestRemoteWriteURL(t *testing.T) {
 				WithStaging(c.Staging),
 				WithDataSourceName(c.DataSourceName),
 			)
-			result, _ := rwu.Build()
-			assert.Equal(t, c.Expected, result)
+			result, err := rwu.Build()
+			if assert.NoError(t, err) {
+				assert.Equal(t, c.Expected, result)
+			}
 		})
 	}
 }
