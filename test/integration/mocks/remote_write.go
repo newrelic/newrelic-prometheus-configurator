@@ -99,6 +99,6 @@ type mockLog struct {
 }
 
 func (ml mockLog) Log(keys ...interface{}) error {
-	ml.t.Log(keys)
+	ml.t.Log(keys...)
 	return nil
 }
