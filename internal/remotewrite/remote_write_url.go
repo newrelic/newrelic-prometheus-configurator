@@ -35,47 +35,47 @@ type URL struct {
 }
 
 func NewURL(opts ...URLOption) *URL {
-	rwu := &URL{}
+	u := &URL{}
 
 	for _, opt := range opts {
-		opt(rwu)
+		opt(u)
 	}
 
-	return rwu
+	return u
 }
 
 func WithLicense(license string) URLOption {
-	return func(rwu *URL) {
+	return func(u *URL) {
 		if licenseIsRegionEU(license) {
-			rwu.RegionPrefix = regionEUPrefix
+			u.RegionPrefix = regionEUPrefix
 		} else {
-			rwu.RegionPrefix = ""
+			u.RegionPrefix = ""
 		}
 	}
 }
 
 func WithStaging(staging bool) URLOption {
-	return func(rwu *URL) {
-		rwu.Staging = staging
+	return func(u *URL) {
+		u.Staging = staging
 	}
 }
 
 func WithFedRAMP(fedramp bool) URLOption {
-	return func(rwu *URL) {
-		rwu.FedRAMP = fedramp
+	return func(u *URL) {
+		u.FedRAMP = fedramp
 	}
 }
 
 func WithDataSourceName(dataSourceName string) URLOption {
-	return func(rwu *URL) {
+	return func(u *URL) {
 		if dataSourceName == "" {
 			return
 		}
 
-		if rwu.Values != nil {
-			rwu.Values.Add(prometheusServerQueryParam, dataSourceName)
+		if u.Values != nil {
+			u.Values.Add(prometheusServerQueryParam, dataSourceName)
 		} else {
-			rwu.Values = url.Values{
+			u.Values = url.Values{
 				prometheusServerQueryParam: []string{dataSourceName},
 			}
 		}
