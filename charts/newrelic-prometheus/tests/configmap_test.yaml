@@ -42,12 +42,24 @@ tests:
       cluster: cluster-test
       nrStaging: true
       config:
-        # Set empty to make this test simple
-        static_targets:
+        static_targets:  # Set empty to make this test simple
     asserts:
       - matchRegex:
           path: data.config\.yaml
-          pattern: ".*staging: true.*"
+          pattern: "newrelic_remote_write:\n  staging: true"  # We do not want to test the whole YAML
+
+  - it: fedramp is enabled
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      fedramp:
+        enabled: true
+      config:
+        static_targets:  # Set empty to make this test simple
+    asserts:
+      - matchRegex:
+          path: data.config\.yaml
+          pattern: "newrelic_remote_write:\n  fedramp:\n    enabled: true"  # We do not want to test the whole YAML
 
   - it: config including remote_write most possible sections
     set:
@@ -182,8 +194,8 @@ tests:
                 cluster_name: test
                 one: two
               scrape_interval: 15
-  - it: config including static_targets overwritten with most possible sections
 
+  - it: config including static_targets overwritten with most possible sections
     set:
       licenseKey: license-key-test
       cluster: cluster-test
