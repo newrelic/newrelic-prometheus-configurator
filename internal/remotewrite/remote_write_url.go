@@ -46,7 +46,6 @@ func NewURL(opts ...URLOption) *URL {
 
 func WithLicense(license string) URLOption {
 	return func(rwu *URL) {
-		// only EU supported
 		if licenseIsRegionEU(license) {
 			rwu.RegionPrefix = regionEUPrefix
 		} else {
