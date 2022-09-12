@@ -28,8 +28,13 @@ func BuildPromConfig(nrConfig *NrConfig) (*PromConfig, error) {
 		return nil, fmt.Errorf("invalid config: %w", err)
 	}
 
+	remoteWrite, err := nrConfig.RemoteWrite.Build(nrConfig.DataSourceName)
+	if err != nil {
+		return nil, fmt.Errorf("invalid config: %w", err)
+	}
+
 	prometheusConfig := &PromConfig{
-		RemoteWrite:  []RawPromConfig{nrConfig.RemoteWrite.Build(nrConfig.DataSourceName)},
+		RemoteWrite:  []RawPromConfig{remoteWrite},
 		GlobalConfig: nrConfig.Common,
 	}
 

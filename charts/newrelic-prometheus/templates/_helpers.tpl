@@ -6,12 +6,12 @@
 
 {{- if .Values.config  -}}
   {{- if .Values.config.common -}}
-      {{- $tmp := mustMerge $tmp .Values.config.common -}}
+      {{- $_ := mustMerge $tmp .Values.config.common -}}
   {{- end -}}
 {{- end -}}
 
 {{- $tmpCustomAttribute := dict "external_labels" (include "newrelic.common.customAttributes" . | fromYaml ) -}}
-{{- $tmp := mustMerge $tmp $tmpCustomAttribute  -}}
+{{- $tmp = mustMerge $tmp $tmpCustomAttribute  -}}
 
 common:
 {{- $tmp | toYaml | nindent 2 -}}
@@ -23,20 +23,24 @@ common:
 {{- define "newrelic-prometheus.configurator.newrelic_remote_write" -}}
 {{- $tmp := dict -}}
 
-{{- if (include "newrelic.common.nrStaging" . ) -}}
-  {{- $tmp = set $tmp "staging" true  -}}
+{{- if include "newrelic.common.nrStaging" . -}}
+  {{- $_ := set $tmp "staging" true  -}}
+{{- end -}}
+
+{{- if include "newrelic.common.fedramp.enabled" . -}}
+  {{- $_ := set $tmp "fedramp" (dict "enabled" true)  -}}
 {{- end -}}
 
 {{- if (include "newrelic.common.lowDataMode" .) -}}
   {{- $lowDataModeRelabelConfig := .Files.Get "static/lowdatamodedefaults.yaml" | fromYaml -}}
-  {{- $tmp = set $tmp "extra_write_relabel_configs" (list $lowDataModeRelabelConfig)  -}}
+  {{- $_ := set $tmp "extra_write_relabel_configs" (list $lowDataModeRelabelConfig)  -}}
 {{- end -}}
 
 {{- if and .Values.config .Values.config.newrelic_remote_write -}}
   {{- /* it concatenates the defined 'extra_write_relabel_configs' to the ones defined in lowDataMode  */ -}}
   {{- if and .Values.config.newrelic_remote_write.extra_write_relabel_configs  $tmp.extra_write_relabel_configs -}}
       {{- $concatenated := concat $tmp.extra_write_relabel_configs .Values.config.newrelic_remote_write.extra_write_relabel_configs -}}
-      {{- $tmp = set $tmp "extra_write_relabel_configs" $concatenated  -}}
+      {{- $_ := set $tmp "extra_write_relabel_configs" $concatenated  -}}
   {{- end -}}
 
   {{- $tmp = mustMerge $tmp .Values.config.newrelic_remote_write  -}}
