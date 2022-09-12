@@ -9,12 +9,10 @@ import (
 	"net"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"syscall"
 	"testing"
 
-	"github.com/go-kit/log"
 	"github.com/prometheus/prometheus/storage"
 	"github.com/prometheus/prometheus/storage/remote"
 	"github.com/stretchr/testify/require"
@@ -25,7 +23,7 @@ import (
 func StartRemoteWriteEndpoint(t *testing.T, appendable storage.Appendable) *httptest.Server {
 	t.Helper()
 
-	handler := remote.NewWriteHandler(log.NewJSONLogger(os.Stderr), appendable)
+	handler := remote.NewWriteHandler(mockLog{t}, appendable)
 
 	url := ""
 	remoteWriteServer := httptest.NewTLSServer(handlerWithProxy(t, handler, &url))
@@ -73,6 +71,8 @@ func handlerWithProxy(t *testing.T, handler http.Handler, url *string) http.Hand
 
 		err = g.Wait()
 		if err != nil {
+			// We cannot check it with assert.NoError since at this point the test is usually completed and merely
+			// releasing all resources and calling t.Fail would trigger a panic.
 			t.Logf("Error while waiting for the pipe copying: %s", err.Error())
 		}
 	})
@@ -92,4 +92,13 @@ func pipe(from net.Conn, to net.Conn) error {
 	default:
 		return fmt.Errorf("error in pipe: %w", err)
 	}
+}
+
+type mockLog struct {
+	t *testing.T
+}
+
+func (ml mockLog) Log(keys ...interface{}) error {
+	ml.t.Log(keys)
+	return nil
 }
