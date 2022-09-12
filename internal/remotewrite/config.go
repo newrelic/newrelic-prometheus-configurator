@@ -22,7 +22,7 @@ type Config struct {
 }
 
 // FedRAMP in charts are configured like `.fedramp.enabled: true` just in case we have to
-// add more options to fedramp dictionary. So we add a strict for it
+// add more options to fedramp dictionary. So we add a strict for it.
 type FedRAMP struct {
 	Enabled bool `yaml:"enabled"`
 }
