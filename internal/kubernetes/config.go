@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejobs"
 )
 
 const (
@@ -31,29 +32,23 @@ func (c Config) Build() ([]promcfg.Job, error) {
 		}
 
 		if k8sJob.TargetDiscovery.Pod {
-			podJob := k8sJob.PromScrapeJob
-
-			podJob.JobName = k8sJob.JobNamePrefix + "-" + podKind
+			podJob := k8sJob.ScrapeJob.
+				WithName(k8sJob.JobNamePrefix + "-" + podKind).
+				WithRelabelConfigs(podRelabelConfigs(k8sJob)).
+				BuildPrometheusJob()
 
 			podJob.KubernetesSdConfigs = append(podJob.KubernetesSdConfigs, buildSdConfig(podKind, k8sJob.TargetDiscovery.AdditionalConfig))
-
-			podJob.RelabelConfigs = append(podJob.RelabelConfigs, podRelabelConfigs(k8sJob)...)
-
-			podJob.MetricRelabelConfigs = append(podJob.MetricRelabelConfigs, k8sJob.ExtraMetricRelabelConfigs...)
 
 			promScrapeJobs = append(promScrapeJobs, podJob)
 		}
 
 		if k8sJob.TargetDiscovery.Endpoints {
-			endpointsJob := k8sJob.PromScrapeJob
-
-			endpointsJob.JobName = k8sJob.JobNamePrefix + "-" + endpointsKind
+			endpointsJob := k8sJob.ScrapeJob.
+				WithName(k8sJob.JobNamePrefix + "-" + endpointsKind).
+				WithRelabelConfigs(endpointsRelabelConfigs(k8sJob)).
+				BuildPrometheusJob()
 
 			endpointsJob.KubernetesSdConfigs = append(endpointsJob.KubernetesSdConfigs, buildSdConfig(endpointsKind, k8sJob.TargetDiscovery.AdditionalConfig))
-
-			endpointsJob.RelabelConfigs = append(endpointsJob.RelabelConfigs, endpointsRelabelConfigs(k8sJob)...)
-
-			endpointsJob.MetricRelabelConfigs = append(endpointsJob.MetricRelabelConfigs, k8sJob.ExtraMetricRelabelConfigs...)
 
 			promScrapeJobs = append(promScrapeJobs, endpointsJob)
 		}
@@ -77,11 +72,9 @@ func (c Config) validate(k8sJob K8sJob) error {
 // K8sJob holds the configuration which will parsed to a prometheus scrape job including the
 // specific rules needed.
 type K8sJob struct {
-	PromScrapeJob             promcfg.Job             `yaml:",inline"`
-	JobNamePrefix             string                  `yaml:"job_name_prefix"`
-	TargetDiscovery           TargetDiscovery         `yaml:"target_discovery"`
-	ExtraRelabelConfigs       []promcfg.RelabelConfig `yaml:"extra_relabel_config"`
-	ExtraMetricRelabelConfigs []promcfg.RelabelConfig `yaml:"extra_metric_relabel_config"`
+	ScrapeJob       scrapejobs.Config `yaml:",inline"`
+	JobNamePrefix   string            `yaml:"job_name_prefix"`
+	TargetDiscovery TargetDiscovery   `yaml:"target_discovery"`
 }
 
 type TargetDiscovery struct {

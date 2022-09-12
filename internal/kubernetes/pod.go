@@ -14,8 +14,6 @@ func podRelabelConfigs(job K8sJob) []promcfg.RelabelConfig {
 
 	rc = append(rc, podDefaultRelabelConfigs()...)
 
-	rc = append(rc, job.ExtraRelabelConfigs...)
-
 	return rc
 }
 

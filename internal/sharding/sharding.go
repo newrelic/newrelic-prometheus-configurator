@@ -15,8 +15,8 @@ type Config struct {
 
 // IncludeShardingRules prepends the proper sharding relabel configs for the given job.
 func (c Config) IncludeShardingRules(job promcfg.Job) promcfg.Job {
-	// Skip the relabeling if at least there are not 2 shards.
-	if c.TotalShardsCount <= 1 {
+	// Skip the relabeling if at least there are not 2 shards or the job is configured to skip sharding or the job is configured to skip sharding.
+	if c.TotalShardsCount <= 1 || job.SkipSharding() {
 		return job
 	}
 

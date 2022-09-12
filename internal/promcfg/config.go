@@ -48,6 +48,8 @@ type OAuth2 struct {
 
 // Job holds fields which do not change from nrConfig and prometheusConfig jobs.
 type Job struct {
+	skipSharding bool
+
 	JobName               string           `yaml:"job_name"`
 	HonorLabels           *bool            `yaml:"honor_labels,omitempty"`
 	HonorTimestamps       *bool            `yaml:"honor_timestamps,omitempty"`
@@ -72,6 +74,10 @@ type Job struct {
 	RelabelConfigs       []RelabelConfig      `yaml:"relabel_configs,omitempty"`
 	MetricRelabelConfigs []RelabelConfig      `yaml:"metric_relabel_configs,omitempty"`
 	KubernetesSdConfigs  []KubernetesSdConfig `yaml:"kubernetes_sd_configs,omitempty"`
+}
+
+func (j *Job) SkipSharding() bool {
+	return j.skipSharding
 }
 
 // StaticConfig defines each of the static_configs for the prometheus config.
