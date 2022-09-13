@@ -107,6 +107,10 @@ sharding:
   # (int) Sets the number of prometheus replicas, defaults to 1.
   # total_shards_count:
 
+# -- (bool) Sets the debug log to prometheus and prometheus-configurator or all integrations if it is set globally. Can be configured also with `global.verboseLog`
+# @default -- `false`
+verboseLog:
+
 # -- It holds the New Relic Prometheus configuration. Here you can easily set up prometheus to get set metrics, discover
 # ponds and endpoints Kubernetes and send metrics to New Relic using remote-write.
 # @default -- See `values.yaml`

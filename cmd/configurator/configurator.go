@@ -38,7 +38,12 @@ func main() {
 
 	nrConfigFlag := flag.String("input", "", "Input file to load the configuration from, defaults to stdin.")
 	prometheusConfigFlag := flag.String("output", "", "Output file to use as prometheus config, defaults to stdout.")
+	verboseLog := flag.Bool("verbose", false, "Sets log level to debug.")
 	flag.Parse()
+
+	if *verboseLog {
+		logger.SetLevel(log.DebugLevel)
+	}
 
 	logger.Infof(
 		"New Relic %s integration Version: %s, Platform: %s, GoVersion: %s, GitCommit: %s, BuildDate: %s\n",
