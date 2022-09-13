@@ -14,8 +14,9 @@ const (
 )
 
 var (
-	ErrInvalidK8sJobKinds  = errors.New("at least one kind should be set in target_kinds field")
-	ErrInvalidK8sJobPrefix = errors.New("prefix cannot be empty in kubernetes jobs")
+	ErrInvalidK8sJobKinds      = errors.New("at least one kind should be set in target_kinds field")
+	ErrInvalidK8sJobPrefix     = errors.New("prefix cannot be empty in kubernetes jobs")
+	ErrInvalidSkipShardingFlag = errors.New("kubernetes jobs do not support skip_sharding flag")
 )
 
 // Config defines all fields to set up prometheus to scrape k8s targets.
@@ -65,6 +66,10 @@ func (c Config) validate(k8sJob K8sJob) error {
 
 	if k8sJob.JobNamePrefix == "" {
 		return ErrInvalidK8sJobPrefix
+	}
+
+	if k8sJob.ScrapeJob.SkipSharding {
+		return ErrInvalidSkipShardingFlag
 	}
 
 	return nil
