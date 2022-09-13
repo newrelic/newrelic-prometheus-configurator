@@ -8,44 +8,44 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestIncludeShardingConfig(t *testing.T) {
+func TestIncludeShardingRuleRules(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		Name           string
-		Job            Job
-		ShardingConfig sharding.Config
-		RulesExpected  bool
+		name           string
+		job            Job
+		shardingConfig sharding.Config
+		rulesExpected  bool
 	}{
 		{
-			Name:           "Skip sharding",
-			Job:            Job{SkipSharding: true},
-			ShardingConfig: sharding.Config{TotalShardsCount: 2, ShardIndex: "0"},
-			RulesExpected:  false,
+			name:           "Skip sharding",
+			job:            Job{SkipSharding: true},
+			shardingConfig: sharding.Config{TotalShardsCount: 2, ShardIndex: "0"},
+			rulesExpected:  false,
 		},
 		{
-			Name:           "Only one shard",
-			Job:            Job{SkipSharding: false},
-			ShardingConfig: sharding.Config{TotalShardsCount: 1, ShardIndex: "0"},
-			RulesExpected:  false,
+			name:           "Only one shard",
+			job:            Job{SkipSharding: false},
+			shardingConfig: sharding.Config{TotalShardsCount: 1, ShardIndex: "0"},
+			rulesExpected:  false,
 		},
 		{
-			Name:           "Include rules",
-			Job:            Job{SkipSharding: false},
-			ShardingConfig: sharding.Config{TotalShardsCount: 2, ShardIndex: "0"},
-			RulesExpected:  true,
+			name:           "Include rules",
+			job:            Job{SkipSharding: false},
+			shardingConfig: sharding.Config{TotalShardsCount: 2, ShardIndex: "0"},
+			rulesExpected:  true,
 		},
 	}
 
 	for _, tc := range cases {
 		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			relabelConfigCount := len(tc.Job.RelabelConfigs)
-			promJob := tc.Job.includeShardingRules(tc.ShardingConfig, tc.Job.Job)
-			if tc.RulesExpected {
+			relabelConfigCount := len(tc.job.RelabelConfigs)
+			promJob := tc.job.includeShardingRules(tc.shardingConfig, tc.job.Job)
+			if tc.rulesExpected {
 				require.Greater(t, len(promJob.RelabelConfigs), relabelConfigCount)
-				assert.Equal(t, tc.ShardingConfig.RelabelConfigs(), promJob.RelabelConfigs[:2])
+				assert.Equal(t, tc.shardingConfig.RelabelConfigs(), promJob.RelabelConfigs[:2])
 			} else {
 				assert.Len(t, promJob.RelabelConfigs, relabelConfigCount)
 			}
