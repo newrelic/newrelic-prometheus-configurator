@@ -109,6 +109,8 @@ The order to set the affinity is to set `affinity` field (at root level), if tha
 | customSecretLicenseKey | string | `""` | In case you don't want to have the license key in you values, this allows you to point to which secret key is the license key located. Can be configured also with `global.customSecretLicenseKey` |
 | customSecretName | string | `""` | In case you don't want to have the license key in you values, this allows you to point to a user created secret to get the key from there. Can be configured also with `global.customSecretName` |
 | dnsConfig | object | `{}` | Sets pod's dnsConfig. Can be configured also with `global.dnsConfig` |
+| extraVolumeMounts | list | `[]` | Defines where to mount volumes specified with `extraVolumes` |
+| extraVolumes | list | `[]` | Volumes to mount in the containers |
 | fullnameOverride | string | `""` | Override the full name of the release |
 | hostNetwork | bool | `false` | Sets pod's hostNetwork. Can be configured also with `global.hostNetwork` |
 | images.configurator | object | See `values.yaml` | Image for New Relic configurator. |
@@ -126,10 +128,12 @@ The order to set the affinity is to set `affinity` field (at root level), if tha
 | priorityClassName | string | `""` | Sets pod's priorityClassName. Can be configured also with `global.priorityClassName` |
 | rbac.create | bool | `true` | Whether the chart should automatically create the RBAC objects required to run. |
 | rbac.pspEnabled | bool | `false` | Whether the chart should create Pod Security Policy objects. |
+| resources | object | `{"prometheus":{}}` | Resource limits to be added to all pods created by the integration. |
 | serviceAccount | object | See `values.yaml` | Settings controlling ServiceAccount creation. |
 | serviceAccount.create | bool | `true` | Whether the chart should automatically create the ServiceAccount objects required to run. |
 | sharding | string | `nil` | Set up prometheus replicas to allow horizontal scalability. See `values.yaml` to set it up. |
 | tolerations | list | `[]` | Sets pod's tolerations to node taints almost globally. (See [Affinities and tolerations](README.md#affinities-and-tolerations)) |
+| verboseLog | bool | `false` | Sets the debug log to prometheus and prometheus-configurator or all integrations if it is set globally. Can be configured also with `global.verboseLog` |
 
 ## Maintainers
 

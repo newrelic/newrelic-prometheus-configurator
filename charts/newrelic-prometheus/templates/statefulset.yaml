@@ -49,7 +49,12 @@ spec:
       initContainers:
         - name: configurator
           image: {{ include "newrelic-prometheus.configurator.configurator_image" ( dict "imageRoot" .Values.images.configurator "context" .) }}
-          args: ["-input", "/etc/configurator/config.yaml", "-output", "/etc/prometheus/config/config.yaml"]
+          args:
+            - --input=/etc/configurator/config.yaml
+            - --output=/etc/prometheus/config/config.yaml
+            {{- if include "newrelic.common.verboseLog" . }}
+            - --verbose=true
+            {{- end }}
           volumeMounts:
             - name: configurator-config
               mountPath: /etc/configurator/
@@ -103,6 +108,9 @@ spec:
             - --storage.agent.retention.max-time=30m
             - --storage.agent.wal-truncate-frequency=30m
             - --storage.agent.path=/etc/prometheus/storage
+            {{- if include "newrelic.common.verboseLog" . }}
+            - --log.level=debug
+            {{- end }}
           {{- with .Values.resources.prometheus }}
           resources: {{ toYaml . | nindent 12 }}
           {{- end }}
