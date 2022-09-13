@@ -109,6 +109,28 @@ func (a *asserter) activeTargetCount(t *testing.T, expectedLen int) {
 	require.NoError(t, err)
 }
 
+// droppedTargetCount check that that count of dropped targets match expectations.
+func (a *asserter) droppedTargetCount(t *testing.T, expectedLen int) {
+	t.Helper()
+
+	err := retryUntilTrue(a.defaultTimeout, a.defaultBackoff, func() bool {
+		targets, ok := a.prometheusServer.targets(t)
+		if !ok {
+			return false
+		}
+
+		if len(targets.DroppedTargets) == expectedLen {
+			return true
+		}
+
+		t.Logf("Dropped targets found: %d, expected:%d", len(targets.DroppedTargets), expectedLen)
+
+		return false
+	})
+
+	require.NoError(t, err)
+}
+
 // activeTargetLabels checks that Prometheus has at least one active target with all expected labels for
 // discoveredLabels and labels fields.
 func (a *asserter) activeTargetLabels(t *testing.T, expectedLabels map[string]string) {
