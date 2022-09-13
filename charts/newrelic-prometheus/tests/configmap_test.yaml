@@ -19,6 +19,7 @@ tests:
                   source_labels:
                   - __name__
                 job_name: self-metrics
+                skip_sharding: true
                 targets:
                 - localhost:9090
             common:
