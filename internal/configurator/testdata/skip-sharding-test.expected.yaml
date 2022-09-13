@@ -19,7 +19,14 @@ scrape_configs:
   - job_name: kubernetes-job-pod
     kubernetes_sd_configs:
       - role: pod
-    relabel_configs:
+    relabel_configs: # this includes relabel configs as it is not skipped
+      - source_labels: [ '__address__' ]
+        modulus: 2
+        action: hashmod
+        target_label: __tmp_hash
+      - source_labels: [ '__tmp_hash' ]
+        regex: ^1$
+        action: keep
       - source_labels: [ __meta_kubernetes_pod_phase ]
         regex: Pending|Succeeded|Failed|Completed
         action: drop
