@@ -19,18 +19,7 @@ func Test_PodMetricsLabels(t *testing.T) {
 
 	k8sEnv := newK8sEnvironment(t)
 
-	pod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod",
-			Labels: map[string]string{
-				"test.label": "test.value",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-			},
-		},
-		Spec: fakePodSpec(),
-	}
+	pod := fakePod("testpod", nil, map[string]string{"test.label": "test.value"})
 
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 
@@ -87,30 +76,11 @@ func Test_PodPhaseDropRule(t *testing.T) {
 	terminationGracePeriodSeconds := int64(1)
 
 	// Create running pod
-	runningPod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod-running",
-			Labels: map[string]string{
-				"k8s.io/app": "myApp",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-			},
-		},
-		Spec: fakePodSpec(),
-	}
+	runningPod := fakePod("testpod-running", nil, nil)
 
 	// Create failing pod
 	failedPod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod-failed",
-			Labels: map[string]string{
-				"k8s.io/app": "myApp",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-			},
-		},
+		ObjectMeta: metav1.ObjectMeta{Name: "testpod-failed"},
 		Spec: corev1.PodSpec{
 			ActiveDeadlineSeconds: &terminationGracePeriodSeconds,
 			Containers: []corev1.Container{
@@ -124,26 +94,13 @@ func Test_PodPhaseDropRule(t *testing.T) {
 
 	// Create a succeeded pod which will be added to dropped targets
 	succeededPod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod-succeeded",
-			Labels: map[string]string{
-				"k8s.io/app": "myApp",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-			},
-		},
+		ObjectMeta: metav1.ObjectMeta{Name: "testpod-succeeded"},
 		Spec: corev1.PodSpec{
 			RestartPolicy: corev1.RestartPolicyNever,
 			Containers: []corev1.Container{
 				{
-					Name:  "busybox",
-					Image: "busybox:latest",
-					Command: []string{
-						"sh",
-						"-c",
-						"exit 0",
-					},
+					Name:  "alpine",
+					Image: "alpine:latest",
 				},
 			},
 		},
@@ -254,25 +211,6 @@ func Test_EndpointsDiscovery(t *testing.T) {
 	// Create initial pod
 	pod := fakePod("testpod", nil, serviceSelector)
 
-	terminationGracePeriodSeconds := int64(1)
-
-	// Create failing pod
-	failedPod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:   "testpod-failed",
-			Labels: serviceSelector,
-		},
-		Spec: corev1.PodSpec{
-			ActiveDeadlineSeconds: &terminationGracePeriodSeconds,
-			Containers: []corev1.Container{
-				{
-					Name:  "fake-exporter",
-					Image: "this-image-dont-exist-pod-will-fail",
-				},
-			},
-		},
-	}
-
 	// Create service
 	svc := fakeService(
 		"test",
@@ -290,7 +228,6 @@ func Test_EndpointsDiscovery(t *testing.T) {
 	)
 
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
-	failedPod = k8sEnv.addPodAndWaitOnPhase(t, failedPod, corev1.PodFailed)
 	svc = k8sEnv.addService(t, svc)
 
 	nrConfigConfig := fmt.Sprintf(`
@@ -337,7 +274,94 @@ kubernetes:
 		"node":       pod.Spec.NodeName,
 		"test_label": svc.Labels["test.label"],
 	})
+}
 
-	// Dropped targets
-	asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_pod_name": failedPod.Name})
+func Test_EndpointsPhaseDropRule(t *testing.T) {
+	t.Parallel()
+
+	k8sEnv := newK8sEnvironment(t)
+	terminationGracePeriodSeconds := int64(1)
+
+	serviceSelector := map[string]string{"k8s.io/app": "myApp"}
+
+	// Create running pod
+	runningPod := fakePod("testpod-running", nil, serviceSelector)
+
+	// Create failing pod
+	failedPod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:   "testpod-failed",
+			Labels: serviceSelector,
+		},
+		Spec: corev1.PodSpec{
+			ActiveDeadlineSeconds: &terminationGracePeriodSeconds,
+			Containers: []corev1.Container{
+				{
+					Name:  "fake-exporter",
+					Image: "this-image-dont-exist-pod-will-fail",
+				},
+			},
+		},
+	}
+
+	// Create a succeeded pod which will be added to dropped targets
+	succeededPod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:   "testpod-succeeded",
+			Labels: serviceSelector,
+		},
+		Spec: corev1.PodSpec{
+			RestartPolicy: corev1.RestartPolicyNever,
+			Containers: []corev1.Container{
+				{
+					Name:  "alpine",
+					Image: "alpine:latest",
+				},
+			},
+		},
+	}
+
+	svc := k8sEnv.addService(t, fakeService("test", serviceSelector, nil, nil))
+
+	runningPod = k8sEnv.addPodAndWaitOnPhase(t, runningPod, corev1.PodRunning)
+	failedPod = k8sEnv.addPodAndWaitOnPhase(t, failedPod, corev1.PodFailed)
+	succeededPod = k8sEnv.addPodAndWaitOnPhase(t, succeededPod, corev1.PodSucceeded)
+
+	nrConfigConfig := fmt.Sprintf(`
+newrelic_remote_write:
+  license_key: nrLicenseKey
+common:
+  scrape_interval: 1s
+kubernetes:
+  jobs:
+    - job_name_prefix: test-k8s
+      target_discovery:
+        endpoints: true
+        additional_config:
+         kubeconfig_file: %s
+         namespaces:
+          names:
+          - %s
+`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
+
+	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
+
+	ps := newPrometheusServer(t)
+	ps.start(t, prometheusConfigConfigPath)
+
+	asserter := newAsserter(ps)
+
+	asserter.activeTargetLabels(t, map[string]string{
+		"__meta_kubernetes_pod_name":     runningPod.Name,
+		"__meta_kubernetes_service_name": svc.Name,
+	})
+	asserter.droppedTargetLabels(t, map[string]string{
+		"__meta_kubernetes_pod_name":     succeededPod.Name,
+		"__meta_kubernetes_service_name": svc.Name,
+	})
+
+	// Failed Pods are not added as endpoints of the service in K8s.
+	// This could fail if not using a patched version of k8s to executed the test.
+	// https://github.com/kubernetes/kubernetes/pull/110479
+	asserter.droppedTargetCount(t, 1)
 }
