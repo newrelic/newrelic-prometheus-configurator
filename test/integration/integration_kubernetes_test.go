@@ -19,18 +19,7 @@ func Test_PodMetricsLabels(t *testing.T) {
 
 	k8sEnv := newK8sEnvironment(t)
 
-	pod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod",
-			Labels: map[string]string{
-				"test.label": "test.value",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-			},
-		},
-		Spec: fakePodSpec(),
-	}
+	pod := fakePod("testpod", nil, map[string]string{"test.label": "test.value"})
 
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 
@@ -87,30 +76,11 @@ func Test_PodPhaseDropRule(t *testing.T) {
 	terminationGracePeriodSeconds := int64(1)
 
 	// Create running pod
-	runningPod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod-running",
-			Labels: map[string]string{
-				"k8s.io/app": "myApp",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-			},
-		},
-		Spec: fakePodSpec(),
-	}
+	runningPod := fakePod("testpod-running", nil, nil)
 
 	// Create failing pod
 	failedPod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod-failed",
-			Labels: map[string]string{
-				"k8s.io/app": "myApp",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-			},
-		},
+		ObjectMeta: metav1.ObjectMeta{Name: "testpod-failed"},
 		Spec: corev1.PodSpec{
 			ActiveDeadlineSeconds: &terminationGracePeriodSeconds,
 			Containers: []corev1.Container{
@@ -124,26 +94,13 @@ func Test_PodPhaseDropRule(t *testing.T) {
 
 	// Create a succeeded pod which will be added to dropped targets
 	succeededPod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "testpod-succeeded",
-			Labels: map[string]string{
-				"k8s.io/app": "myApp",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-			},
-		},
+		ObjectMeta: metav1.ObjectMeta{Name: "testpod-succeeded"},
 		Spec: corev1.PodSpec{
 			RestartPolicy: corev1.RestartPolicyNever,
 			Containers: []corev1.Container{
 				{
-					Name:  "busybox",
-					Image: "busybox:latest",
-					Command: []string{
-						"sh",
-						"-c",
-						"exit 0",
-					},
+					Name:  "alpine",
+					Image: "alpine:latest",
 				},
 			},
 		},
