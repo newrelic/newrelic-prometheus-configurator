@@ -13,16 +13,9 @@ type Config struct {
 	ShardIndex       string `yaml:"shard_index"`
 }
 
-// IncludeShardingRules prepends the proper sharding relabel configs for the given job.
-func (c Config) IncludeShardingRules(job promcfg.Job) promcfg.Job {
-	// Skip the relabeling if at least there are not 2 shards or the job is configured to skip sharding or the job is configured to skip sharding.
-	if c.TotalShardsCount <= 1 || job.SkipSharding() {
-		return job
-	}
-
-	job.RelabelConfigs = append(c.RelabelConfigs(), job.RelabelConfigs...)
-
-	return job
+// ShouldIncludeShardingRules returns true when additional rules are needed for the current configuration.
+func (c Config) ShouldIncludeShardingRules() bool {
+	return c.TotalShardsCount > 1
 }
 
 func (c Config) RelabelConfigs() []promcfg.RelabelConfig {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejobs"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
 )
 
 const (
@@ -23,7 +24,7 @@ type Config struct {
 }
 
 // Build will create a Prometheus Job list based on the kubernetes configuration.
-func (c Config) Build() ([]promcfg.Job, error) {
+func (c Config) Build(shardingConfig sharding.Config) ([]promcfg.Job, error) {
 	var promScrapeJobs []promcfg.Job
 
 	for _, k8sJob := range c.K8sJobs {
@@ -35,7 +36,7 @@ func (c Config) Build() ([]promcfg.Job, error) {
 			podJob := k8sJob.ScrapeJob.
 				WithName(k8sJob.JobNamePrefix + "-" + podKind).
 				WithRelabelConfigs(podRelabelConfigs(k8sJob)).
-				BuildPrometheusJob()
+				BuildPrometheusJob(shardingConfig)
 
 			podJob.KubernetesSdConfigs = append(podJob.KubernetesSdConfigs, buildSdConfig(podKind, k8sJob.TargetDiscovery.AdditionalConfig))
 
@@ -46,7 +47,7 @@ func (c Config) Build() ([]promcfg.Job, error) {
 			endpointsJob := k8sJob.ScrapeJob.
 				WithName(k8sJob.JobNamePrefix + "-" + endpointsKind).
 				WithRelabelConfigs(endpointsRelabelConfigs(k8sJob)).
-				BuildPrometheusJob()
+				BuildPrometheusJob(shardingConfig)
 
 			endpointsJob.KubernetesSdConfigs = append(endpointsJob.KubernetesSdConfigs, buildSdConfig(endpointsKind, k8sJob.TargetDiscovery.AdditionalConfig))
 
@@ -72,9 +73,9 @@ func (c Config) validate(k8sJob K8sJob) error {
 // K8sJob holds the configuration which will parsed to a prometheus scrape job including the
 // specific rules needed.
 type K8sJob struct {
-	ScrapeJob       scrapejobs.Config `yaml:",inline"`
-	JobNamePrefix   string            `yaml:"job_name_prefix"`
-	TargetDiscovery TargetDiscovery   `yaml:"target_discovery"`
+	ScrapeJob       scrapejobs.Job  `yaml:",inline"`
+	JobNamePrefix   string          `yaml:"job_name_prefix"`
+	TargetDiscovery TargetDiscovery `yaml:"target_discovery"`
 }
 
 type TargetDiscovery struct {

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/kubernetes"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
 	"github.com/stretchr/testify/require"
 )
 
@@ -45,7 +46,7 @@ func TestBuildFailWhen(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			_, err := tt.k8sConfig.Build()
+			_, err := tt.k8sConfig.Build(sharding.Config{})
 			require.ErrorIs(t, err, tt.want)
 		})
 	}
@@ -199,7 +200,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			job, err := tt.nrConfig.Build()
+			job, err := tt.nrConfig.Build(sharding.Config{})
 			require.NoError(t, err)
 
 			// tests should be independent and contain just one job entry.

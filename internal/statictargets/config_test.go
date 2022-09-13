@@ -9,6 +9,7 @@ import (
 
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejobs"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/statictargets"
 
 	"github.com/alecthomas/units"
@@ -31,7 +32,7 @@ func TestBuildStaticTargetsPromConfig(t *testing.T) {
 			NrConfig: statictargets.Config{
 				StaticTargetJobs: []statictargets.StaticTargetJob{
 					{
-						ScrapeJob: scrapejobs.Config{
+						ScrapeJob: scrapejobs.Job{
 							Job: promcfg.Job{
 								JobName:               "fancy-job",
 								HonorLabels:           &trueValue,
@@ -177,7 +178,7 @@ func TestBuildStaticTargetsPromConfig(t *testing.T) {
 		c := tc
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			prometheusConfig := c.NrConfig.Build()
+			prometheusConfig := c.NrConfig.Build(sharding.Config{})
 			assert.EqualValues(t, c.Expected, prometheusConfig)
 		})
 	}
