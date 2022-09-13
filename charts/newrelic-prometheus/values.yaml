@@ -304,7 +304,7 @@ config:
 #      skip_sharding: false
     # Self-metrics job definition
     - job_name: self-metrics
-      skip_sharding: true
+      skip_sharding: true  # sharding is skipped to obtain self-metrics from all prometheus servers.
       targets:
         - "localhost:9090"
       extra_metric_relabel_config:
