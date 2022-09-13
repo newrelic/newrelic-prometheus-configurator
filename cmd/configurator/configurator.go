@@ -38,7 +38,12 @@ func main() {
 
 	nrConfigFlag := flag.String("input", "", "Input file to load the configuration from, defaults to stdin.")
 	prometheusConfigFlag := flag.String("output", "", "Output file to use as prometheus config, defaults to stdout.")
+	verboseLog := flag.Bool("verbose", false, "Sets log level to debug.")
 	flag.Parse()
+
+	if *verboseLog {
+		logger.SetLevel(log.DebugLevel)
+	}
 
 	logger.Infof(
 		"New Relic %s integration Version: %s, Platform: %s, GoVersion: %s, GitCommit: %s, BuildDate: %s\n",
@@ -55,11 +60,15 @@ func main() {
 		os.Exit(nrConfigErrCode)
 	}
 
+	logger.Debugf("nrConfig: %+v", nrConfig)
+
 	prometheusConfig, err := configurator.BuildPromConfig(nrConfig)
 	if err != nil {
 		logger.Errorf("Error parsing the configuration: %s", err)
 		os.Exit(parseErrCode)
 	}
+
+	logger.Debugf("prometheusConfig: %+v", prometheusConfig)
 
 	if err := writePromConfig(*prometheusConfigFlag, prometheusConfig); err != nil {
 		logger.Errorf("Error writing the prometheusConfig configuration: %s", err)
