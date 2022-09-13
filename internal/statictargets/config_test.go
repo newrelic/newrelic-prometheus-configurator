@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
-	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejobs"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejob"
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/statictargets"
 
@@ -32,7 +32,7 @@ func TestBuildStaticTargetsPromConfig(t *testing.T) {
 			NrConfig: statictargets.Config{
 				StaticTargetJobs: []statictargets.StaticTargetJob{
 					{
-						ScrapeJob: scrapejobs.Job{
+						ScrapeJob: scrapejob.Job{
 							Job: promcfg.Job{
 								JobName:               "fancy-job",
 								HonorLabels:           &trueValue,

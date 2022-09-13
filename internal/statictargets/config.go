@@ -5,7 +5,7 @@ package statictargets
 
 import (
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
-	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejobs"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejob"
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
 )
 
@@ -15,7 +15,7 @@ type Config struct {
 
 // StaticTargetJob represents job config for configurator.
 type StaticTargetJob struct {
-	ScrapeJob scrapejobs.Job    `yaml:",inline"`
+	ScrapeJob scrapejob.Job     `yaml:",inline"`
 	Targets   []string          `yaml:"targets"`
 	Labels    map[string]string `yaml:"labels"`
 }

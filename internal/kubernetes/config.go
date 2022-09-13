@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
-	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejobs"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejob"
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
 )
 
@@ -78,7 +78,7 @@ func (c Config) validate(k8sJob K8sJob) error {
 // K8sJob holds the configuration which will parsed to a prometheus scrape job including the
 // specific rules needed.
 type K8sJob struct {
-	ScrapeJob       scrapejobs.Job  `yaml:",inline"`
+	ScrapeJob       scrapejob.Job   `yaml:",inline"`
 	JobNamePrefix   string          `yaml:"job_name_prefix"`
 	TargetDiscovery TargetDiscovery `yaml:"target_discovery"`
 }

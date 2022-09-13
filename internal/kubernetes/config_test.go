@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/kubernetes"
-	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejobs"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejob"
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
 	"github.com/stretchr/testify/require"
 )
@@ -45,7 +45,7 @@ func TestBuildFailWhen(t *testing.T) {
 			k8sConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
-						ScrapeJob:       scrapejobs.Job{SkipSharding: true},
+						ScrapeJob:       scrapejob.Job{SkipSharding: true},
 						JobNamePrefix:   "test",
 						TargetDiscovery: kubernetes.TargetDiscovery{Pod: true},
 					},

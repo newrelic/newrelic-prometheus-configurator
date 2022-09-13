@@ -1,4 +1,4 @@
-package scrapejobs
+package scrapejob
 
 import (
 	"testing"
