@@ -60,11 +60,15 @@ func main() {
 		os.Exit(nrConfigErrCode)
 	}
 
+	logger.Debugf("nrConfig: %+v", nrConfig)
+
 	prometheusConfig, err := configurator.BuildPromConfig(nrConfig)
 	if err != nil {
 		logger.Errorf("Error parsing the configuration: %s", err)
 		os.Exit(parseErrCode)
 	}
+
+	logger.Debugf("prometheusConfig: %+v", prometheusConfig)
 
 	if err := writePromConfig(*prometheusConfigFlag, prometheusConfig); err != nil {
 		logger.Errorf("Error writing the prometheusConfig configuration: %s", err)
