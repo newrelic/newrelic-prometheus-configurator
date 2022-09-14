@@ -122,10 +122,21 @@ func (ke *k8sEnvironment) addManyPodsWaitingOnPhase(
 func (ke *k8sEnvironment) addService(t *testing.T, srv *corev1.Service) *corev1.Service {
 	t.Helper()
 
-	p, err := ke.client.CoreV1().Services(ke.testNamespace.Name).Create(context.Background(), srv, metav1.CreateOptions{})
+	s, err := ke.client.CoreV1().Services(ke.testNamespace.Name).Create(context.Background(), srv, metav1.CreateOptions{})
 	require.NoError(t, err)
 
-	return p
+	return s
+}
+
+// addEndpoints adds a endpoints using the k8s client.
+// It fails in case the endpoints can't be added.
+func (ke *k8sEnvironment) addEndpoints(t *testing.T, e *corev1.Endpoints) *corev1.Endpoints {
+	t.Helper()
+
+	e, err := ke.client.CoreV1().Endpoints(ke.testNamespace.Name).Create(context.Background(), e, metav1.CreateOptions{})
+	require.NoError(t, err)
+
+	return e
 }
 
 //nolint:goerr113
@@ -168,6 +179,33 @@ func fakePod(namePrefix string, annotations, labels map[string]string) *corev1.P
 			Labels:       labels,
 		},
 		Spec: fakePodSpec(),
+	}
+}
+
+func fakeEndpoint(serviceName string, nodeName string, annotations, labels map[string]string) *corev1.Endpoints {
+	return &corev1.Endpoints{
+		ObjectMeta: metav1.ObjectMeta{
+			// this name has to match with the service to have them associated.
+			Name:        serviceName,
+			Annotations: annotations,
+			Labels:      labels,
+		},
+		Subsets: []corev1.EndpointSubset{
+			{
+				Addresses: []corev1.EndpointAddress{
+					{
+						// fake address
+						IP:       "192.168.168.10",
+						NodeName: &nodeName,
+					},
+				},
+				Ports: []corev1.EndpointPort{
+					{
+						Port: 9999,
+					},
+				},
+			},
+		},
 	}
 }
 

@@ -276,6 +276,56 @@ kubernetes:
 	})
 }
 
+func Test_EndpointsNotBackedByPodDiscovery(t *testing.T) {
+	t.Parallel()
+
+	k8sEnv := newK8sEnvironment(t)
+
+	// Endpoints can be manually created without having a Pod.
+	// https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
+
+	// Create service
+	svc := fakeService("service-without-selector", nil, nil, nil)
+
+	svc = k8sEnv.addService(t, svc)
+
+	nodeName := "fake-node"
+	endpoints := fakeEndpoint(svc.Name, nodeName, nil, nil)
+	endpoints = k8sEnv.addEndpoints(t, endpoints)
+
+	nrConfigConfig := fmt.Sprintf(`
+newrelic_remote_write:
+  license_key: nrLicenseKey
+common:
+  scrape_interval: 1s
+kubernetes:
+  jobs:
+    - job_name_prefix: test-k8s
+      target_discovery:
+        endpoints: true
+        additional_config:
+         kubeconfig_file: %s
+         namespaces:
+          names:
+          - %s
+`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
+
+	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
+
+	ps := newPrometheusServer(t)
+	ps.start(t, prometheusConfigConfigPath)
+
+	asserter := newAsserter(ps)
+
+	// Active targets
+	asserter.activeTargetCount(t, 1)
+	asserter.activeTargetLabels(t, map[string]string{
+		"namespace": k8sEnv.testNamespace.Name,
+		"service":   svc.Name,
+		"node":      nodeName,
+	})
+}
+
 func Test_EndpointsPhaseDropRule(t *testing.T) {
 	t.Parallel()
 

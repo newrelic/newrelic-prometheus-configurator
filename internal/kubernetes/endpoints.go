@@ -65,10 +65,38 @@ func endpointsDefaultRelabelConfigs() []promcfg.RelabelConfig {
 			Action:       "replace",
 			TargetLabel:  "service",
 		},
+		// Following rules picks the node name which is not empty.
+		// If both exists, use the pod_node_name.
 		{
-			SourceLabels: []string{"__meta_kubernetes_pod_node_name"},
-			Action:       "replace",
-			TargetLabel:  "node",
+			SourceLabels: []string{
+				"__meta_kubernetes_endpoint_node_name",
+				"__meta_kubernetes_pod_node_name",
+			},
+			Separator:   ";",
+			Regex:       "(.+);",
+			Action:      "replace",
+			TargetLabel: "node",
+		},
+		{
+			SourceLabels: []string{
+				"__meta_kubernetes_endpoint_node_name",
+				"__meta_kubernetes_pod_node_name",
+			},
+			Separator:   ";",
+			Regex:       ";(.+)",
+			Action:      "replace",
+			TargetLabel: "node",
+		},
+		{
+			SourceLabels: []string{
+				"__meta_kubernetes_endpoint_node_name",
+				"__meta_kubernetes_pod_node_name",
+			},
+			Separator:   ";",
+			Regex:       "(.+);(.+)",
+			Replacement: "$2",
+			Action:      "replace",
+			TargetLabel: "node",
 		},
 	}
 }
