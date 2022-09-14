@@ -241,9 +241,6 @@ config:
 #    # List of metric relabel configurations.
 #    # Please note, it should be valid prometheus configuration which will not be parsed by the chart.
 #    extra_metric_relabel_config: []
-#    # Optional flag to skip sharding rules for a particular job, if it is set to true the targets will
-#    # be scrapped by all the prometheus shards. Defaults to false.
-#    skip_sharding: false
 
   # Static target settings.
   static_targets:
