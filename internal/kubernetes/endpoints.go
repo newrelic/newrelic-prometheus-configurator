@@ -24,7 +24,8 @@ func endpointsDefaultRelabelConfigs() []promcfg.RelabelConfig {
 		{
 			SourceLabels: []string{"__meta_kubernetes_pod_phase"},
 			Action:       "drop",
-			Regex:        "Pending|Succeeded|Failed|Completed",
+			// Removed Pending status since #75.
+			Regex: "Succeeded|Failed|Completed",
 		},
 		{
 			SourceLabels: []string{"__meta_kubernetes_service_annotation_prometheus_io_scheme"},
