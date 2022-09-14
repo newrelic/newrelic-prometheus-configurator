@@ -1,4 +1,4 @@
-package kubernetes //nolint: dupl
+package kubernetes
 
 import (
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
