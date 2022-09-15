@@ -1,0 +1,24 @@
+# skip sharding test
+sharding:
+  kind: hash
+  total_shards_count: 2
+  shard_index: 1
+
+static_targets:
+  jobs:
+    - job_name: static-target-job
+      skip_sharding: true
+      targets:
+        - "192.168.3.1:2379"
+      metrics_path: /metrics-custom
+      extra_relabel_config:
+        - source_labels: [ '__name__', 'instance' ]
+          regex: node_memory_active_bytes;localhost:9100
+          action: drop
+      extra_metric_relabel_config:
+        - source_labels: [ '__name__', 'instance' ]
+          regex: node_memory_active_bytes;localhost:9100
+          action: drop
+
+newrelic_remote_write:
+  license_key: nrLicenseKey

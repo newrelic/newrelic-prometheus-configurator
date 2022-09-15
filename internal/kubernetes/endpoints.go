@@ -14,8 +14,6 @@ func endpointsRelabelConfigs(job K8sJob) []promcfg.RelabelConfig {
 
 	rc = append(rc, endpointsDefaultRelabelConfigs()...)
 
-	rc = append(rc, job.ExtraRelabelConfigs...)
-
 	return rc
 }
 

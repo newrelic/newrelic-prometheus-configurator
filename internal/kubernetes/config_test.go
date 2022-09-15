@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/kubernetes"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejob"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
 	"github.com/stretchr/testify/require"
 )
 
@@ -38,6 +40,19 @@ func TestBuildFailWhen(t *testing.T) {
 			},
 			want: kubernetes.ErrInvalidK8sJobKinds,
 		},
+		{
+			name: "skip_sharding flag is set",
+			k8sConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						ScrapeJob:       scrapejob.Job{SkipSharding: true},
+						JobNamePrefix:   "test",
+						TargetDiscovery: kubernetes.TargetDiscovery{Pod: true},
+					},
+				},
+			},
+			want: kubernetes.ErrInvalidSkipShardingFlag,
+		},
 	}
 
 	for _, tt := range tests {
@@ -45,7 +60,7 @@ func TestBuildFailWhen(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			_, err := tt.k8sConfig.Build()
+			_, err := tt.k8sConfig.Build(sharding.Config{})
 			require.ErrorIs(t, err, tt.want)
 		})
 	}
@@ -199,7 +214,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			job, err := tt.nrConfig.Build()
+			job, err := tt.nrConfig.Build(sharding.Config{})
 			require.NoError(t, err)
 
 			// tests should be independent and contain just one job entry.
