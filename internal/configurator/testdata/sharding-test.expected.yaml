@@ -79,7 +79,7 @@ scrape_configs:
         action: keep
       - source_labels: [ __meta_kubernetes_pod_phase ]
         action: drop
-        regex: Pending|Succeeded|Failed|Completed
+        regex: Succeeded|Failed|Completed
       - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_scheme ]
         action: replace
         target_label: __scheme__
@@ -104,8 +104,11 @@ scrape_configs:
       - source_labels: [ __meta_kubernetes_service_name ]
         action: replace
         target_label: service
-      - source_labels: [ __meta_kubernetes_pod_node_name ]
+      - source_labels: [ __meta_kubernetes_endpoint_node_name, __meta_kubernetes_pod_node_name ]
+        separator: ;
         action: replace
+        regex: ".*;(.+)|(.+);"
+        replacement: "$1$2"
         target_label: node
 
 remote_write:

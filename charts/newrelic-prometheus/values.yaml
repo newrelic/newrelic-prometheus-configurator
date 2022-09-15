@@ -63,6 +63,7 @@ podAnnotations: {}
 podLabels: {}
 
 # -- Resource limits to be added to all pods created by the integration.
+# @default -- `{}`
 resources:
   prometheus: {}
 
@@ -116,6 +117,7 @@ verboseLog:
 # @default -- See `values.yaml`
 config:
   # -- Include global configuration for prometheus agent. See `values.yaml` for details.
+  # @default -- See `values.yaml`
   common:
 #    # The labels to add to any timeseries that this Prometheus instance scrapes.
 #    external_labels:
@@ -192,8 +194,8 @@ config:
           annotations:
             prometheus.io/scrape: true
 #           labels: {}
-#       # Additional_config fields allows setting up some kuberentes_sd_config options, check [prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)
-#       # for details.
+#       # Additional_config fields allows setting up some `kuberentes_sd_config` options, check [prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)
+#       # for details. Notice that using `filter` is the recommended way to filter targets to avoid adding load to the API Server.
 #       additional_config:
 #          kubeconfig_file: ""
 #          namespaces:
