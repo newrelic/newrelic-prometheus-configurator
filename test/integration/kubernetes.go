@@ -183,6 +183,7 @@ func fakePod(namePrefix string, annotations, labels map[string]string) *corev1.P
 }
 
 func fakeEndpoint(serviceName string, nodeName string, annotations, labels map[string]string) *corev1.Endpoints {
+	fakeAddress := "192.168.168.10"
 	return &corev1.Endpoints{
 		ObjectMeta: metav1.ObjectMeta{
 			// this name has to match with the service to have them associated.
@@ -194,14 +195,13 @@ func fakeEndpoint(serviceName string, nodeName string, annotations, labels map[s
 			{
 				Addresses: []corev1.EndpointAddress{
 					{
-						// fake address
-						IP:       "192.168.168.10",
+						IP:       fakeAddress,
 						NodeName: &nodeName,
 					},
 				},
 				Ports: []corev1.EndpointPort{
 					{
-						Port: 9999,
+						Port: defaultPodPort,
 					},
 				},
 			},
