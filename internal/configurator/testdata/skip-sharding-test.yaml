@@ -1,19 +1,12 @@
-# sharding test
-# default metadata is added to the metrics (targetName, scrapeJob, ...)
+# skip sharding test
 sharding:
   kind: hash
   total_shards_count: 2
   shard_index: 1
 
-kubernetes:
-  jobs:
-    - job_name_prefix: kubernetes-job
-      target_discovery:
-        pod: true
-
 static_targets:
   jobs:
-    - job_name: my-custom-target-authorization-full
+    - job_name: static-target-job
       skip_sharding: true
       targets:
         - "192.168.3.1:2379"
