@@ -4,6 +4,8 @@ on:
     branches:
       - main
 
+concurrency: release
+
 jobs:
   # Sometimes chart-releaser might fetch an outdated index.yaml from gh-pages, causing a WAW hazard on the repo
   # This job checks the remote file is up to date with the local one on release
@@ -28,15 +30,40 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
+          ref: main
+      - uses: newrelic/release-toolkit/generate-changelog@v1
+        with:
+          included-dirs: charts
+          tag-prefix: newrelic-prometheus-
+          markdown: charts/newrelic-prometheus/CHANGELOG.md
+      - uses: newrelic/release-toolkit/link-changelog@v1
+        with:
+          dictionary: .github/dictionary.yaml
+      - uses: newrelic/release-toolkit/next-version@v1
+        id: version
+        with:
+          tag-prefix: newrelic-prometheus-
       - name: Configure Git
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - uses: newrelic/release-toolkit/update-changelog@v1
+        with:
+          markdown: charts/newrelic-prometheus/CHANGELOG.md
+          version: ${{ steps.version.outputs.next-version }}
+      - name: Commit updated changelog
+        run: |
+          git add charts/newrelic-prometheus/CHANGELOG.md
+          git commit -m "Update chart changelog with changes from ${{ steps.version.outputs.next-version }}"
+          git push -u origin main
+      - uses: newrelic/release-toolkit/render@v1
+      - name: Create chart release notes
+        run: |
+          mv ${GITHUB_WORKSPACE}/CHANGELOG.partial.md ${GITHUB_WORKSPACE}/charts/newrelic-prometheus/RELEASE-NOTES.md
       - name: Add newrelic repository
         run: helm repo add newrelic https://helm-charts.newrelic.com
-
       - name: Release workload charts
         uses: helm/chart-releaser-action@v1.3.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_RELEASE_NOTES_FILE: RELEASE-NOTES.md

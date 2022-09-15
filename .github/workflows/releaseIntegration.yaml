@@ -1,99 +1,49 @@
-name: Release prometheus-configurator image
+name: Release prometheus-configurator
 
 on:
-  release:
-    types: [prereleased, released]
+  schedule:
+    - cron: "0 4 * * 3"
+  workflow_dispatch:
+
+concurrency: release
 
 env:
-  GO_VERSION: '1.18'
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  build:
-    name: Build integration for
+  prerelease:
+    name: Create prerelease
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        goos: [ linux ]
-        goarch: [ amd64, arm64, arm ]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
         with:
-          go-version: ${{ env.GO_VERSION }}
-      - uses: actions/cache@v3
+          fetch-depth: 0
+          ref: main
+      - uses: newrelic/release-toolkit/generate-changelog@v1
         with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: Build integration
-        env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
-          TAG: ${{ github.event.release.tag_name }} # Will be picked up by make and used as version
+          excluded-dirs: charts
+      - uses: newrelic/release-toolkit/is-held@v1
+      - uses: newrelic/release-toolkit/link-changelog@v1
+        with:
+          dictionary: .github/dictionary.yaml
+      - uses: newrelic/release-toolkit/next-version@v1
+        id: version
+      - name: Configure Git
         run: |
-          make build
-      - name: Upload artifact for docker build step
-        uses: actions/upload-artifact@v2
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - uses: newrelic/release-toolkit/update-changelog@v1
         with:
-          retention-days: 1
-          name: prometheus-configurator-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: bin/prometheus-configurator-${{ matrix.goos }}-${{ matrix.goarch }}
-
-  docker-release:
-    name: Release docker images
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    env:
-      DOCKER_IMAGE_NAME: newrelic/newrelic-prometheus-configurator
-      DOCKER_PLATFORMS: "linux/amd64,linux/arm64,linux/arm" # Must be consistent with the matrix from the job above
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Download all artifacts from build job
-        uses: actions/download-artifact@v2
-        with:
-          path: bin
-      - uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.FSI_DOCKERHUB_USERNAME }}
-          password: ${{ secrets.FSI_DOCKERHUB_TOKEN }}
-      - name: Generate docker image version from git tag
+          version: ${{ steps.version.outputs.next-version }}
+      - name: Commit updated changelog
         run: |
-          echo "${{ github.event.release.tag_name }}" | grep -E '^v[0-9.]*[0-9]$'
-          DOCKER_IMAGE_TAG=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
-          echo "DOCKER_IMAGE_TAG=$DOCKER_IMAGE_TAG" >> $GITHUB_ENV
-      - name: Build and load x64 image for security scanning
-        # We need to build a single-arch image again to be able to --load it into the host
+          git add CHANGELOG.md
+          git commit -m "Update changelog with changes from ${{ steps.version.outputs.next-version }}"
+          git push -u origin main
+      - uses: newrelic/release-toolkit/render@v1
+      - name: Create Prerelease
         run: |
-          docker buildx build --load --platform=linux/amd64 \
-            -t $DOCKER_IMAGE_NAME:ci-scan \
-            .
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.6.2
-        with:
-          image-ref: '${{ env.DOCKER_IMAGE_NAME }}:ci-scan'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          severity: 'HIGH,CRITICAL'
-
-      - name: Push pre-release images
-        if: ${{ github.event.release.prerelease }}
+          gh release create ${{ steps.version.outputs.next-version }} --prerelease --target $GITHUB_SHA --notes-file CHANGELOG.partial.md
+      - name: Dispatch releaseImages workflow for prerelease
         run: |
-          DOCKER_IMAGE_TAG=${DOCKER_IMAGE_TAG}-pre
-          docker buildx build --push --platform=$DOCKER_PLATFORMS \
-            -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
-            .
-      - name: Push release images
-        if: ${{ ! github.event.release.prerelease }}
-        run: |
-          docker buildx build --push --platform=$DOCKER_PLATFORMS \
-            -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
-            -t $DOCKER_IMAGE_NAME:latest \
-            .
+          gh workflow run releaseImages.yaml -f releaseType=prerelease -f version=${{ steps.version.outputs.next-version }}

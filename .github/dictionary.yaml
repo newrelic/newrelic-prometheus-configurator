@@ -1,0 +1,2 @@
+dictionary:
+  common-library: "https://github.com/newrelic/helm-charts/releases/tag/common-library-{{.To}}"
