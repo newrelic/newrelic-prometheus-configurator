@@ -68,15 +68,15 @@ func TestDataSourceName(t *testing.T) { //nolint: tparallel
 	t.Setenv(configurator.DataSourceNameEnvKey, "")
 
 	configWithDataSourceName := configurator.NrConfig{
-		DataSourceName: "test",
 		RemoteWrite: remotewrite.Config{
-			LicenseKey: "fake",
+			DataSourceName: "test",
+			LicenseKey:     "fake",
 		},
 	}
 
 	//nolint: paralleltest // need clean env variables.
 	t.Run("IsSetFromConfig", func(t *testing.T) {
-		configWithDataSourceName.DataSourceName = "prom-instance-name"
+		configWithDataSourceName.RemoteWrite.DataSourceName = "prom-instance-name"
 		promConf, err := configurator.BuildPromConfig(&configWithDataSourceName)
 		require.NoError(t, err)
 
