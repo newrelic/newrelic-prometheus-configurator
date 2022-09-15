@@ -11,8 +11,16 @@ import (
 
 // Config defines all the NewRelic's remote write endpoint fields.
 type Config struct {
-	LicenseKey               string                  `yaml:"license_key"`
-	Staging                  bool                    `yaml:"staging"`
+	// LicenseKey holds the New Relic ingest license key of the account where metrics will be sent.
+	LicenseKey string `yaml:"license_key"`
+	// Staging configures the remote write url to point to the New Relic staging endpoint.
+	Staging bool `yaml:"staging"`
+	// DataSourceName holds the source name which will be used as `prometheus_server` parameter in New Relic remote
+	// write endpoint. See:
+	// <https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-remote-write/set-your-prometheus-remote-write-integration/>
+	// for details.
+	DataSourceName string `yaml:"data_source_name"`
+	// FedRAMP configures the remote write url to point to the New Relic FedRAMP endpoint.
 	FedRAMP                  FedRAMP                 `yaml:"fedramp"`
 	ProxyURL                 string                  `yaml:"proxy_url"`
 	TLSConfig                *promcfg.TLSConfig      `yaml:"tls_config"`
@@ -28,12 +36,12 @@ type FedRAMP struct {
 }
 
 // Build will create the Prometheus remote_write entry for NewRelic.
-func (c Config) Build(dataSourceName string) (promcfg.RemoteWrite, error) {
+func (c Config) Build() (promcfg.RemoteWrite, error) {
 	rwu := NewURL(
 		WithFedRAMP(c.FedRAMP.Enabled),
 		WithLicense(c.LicenseKey),
 		WithStaging(c.Staging),
-		WithDataSourceName(dataSourceName),
+		WithDataSourceName(c.DataSourceName),
 	)
 
 	url, err := rwu.Build()

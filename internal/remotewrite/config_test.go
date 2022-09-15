@@ -18,8 +18,7 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 	t.Parallel()
 
 	type args struct {
-		remoteConfig   remotewrite.Config
-		dataSourceName string
+		remoteConfig remotewrite.Config
 	}
 
 	trueValue := true
@@ -46,11 +45,11 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 		{
 			Name: "Staging, eu and all fields set",
 			NrConfig: args{
-				dataSourceName: "source-of-metrics",
 				remoteConfig: remotewrite.Config{
-					LicenseKey: "eu-fake-staging",
-					Staging:    true,
-					ProxyURL:   "http://proxy.url",
+					DataSourceName: "source-of-metrics",
+					LicenseKey:     "eu-fake-staging",
+					Staging:        true,
+					ProxyURL:       "http://proxy.url",
 					TLSConfig: &promcfg.TLSConfig{
 						CAFile:             "ca-file",
 						CertFile:           "cert-file",
@@ -119,7 +118,8 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 		c := tc
 		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
-			prometheusConfig, _ := c.NrConfig.remoteConfig.Build(c.NrConfig.dataSourceName)
+			prometheusConfig, err := c.NrConfig.remoteConfig.Build()
+			assert.NoError(t, err)
 			assert.EqualValues(t, c.Expected, prometheusConfig)
 		})
 	}
