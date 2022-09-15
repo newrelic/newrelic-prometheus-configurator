@@ -40,19 +40,17 @@ func BuildPromConfig(nrConfig *NrConfig) (*PromConfig, error) {
 
 	prometheusConfig.RemoteWrite = append(prometheusConfig.RemoteWrite, nrConfig.ExtraRemoteWrite...)
 
-	for _, staticTargets := range nrConfig.StaticTargets.Build() {
-		job := nrConfig.Sharding.IncludeShardingRules(staticTargets)
+	for _, job := range nrConfig.StaticTargets.Build(nrConfig.Sharding) {
 		prometheusConfig.ScrapeConfigs = append(prometheusConfig.ScrapeConfigs, job)
 	}
 
-	k8sJobs, err := nrConfig.Kubernetes.Build()
+	k8sJobs, err := nrConfig.Kubernetes.Build(nrConfig.Sharding)
 	if err != nil {
 		return prometheusConfig, fmt.Errorf("building k8s config: %w", err)
 	}
 
-	for _, K8sJob := range k8sJobs {
-		j := nrConfig.Sharding.IncludeShardingRules(K8sJob)
-		prometheusConfig.ScrapeConfigs = append(prometheusConfig.ScrapeConfigs, j)
+	for _, job := range k8sJobs {
+		prometheusConfig.ScrapeConfigs = append(prometheusConfig.ScrapeConfigs, job)
 	}
 
 	prometheusConfig.ScrapeConfigs = append(prometheusConfig.ScrapeConfigs, nrConfig.ExtraScrapeConfigs...)

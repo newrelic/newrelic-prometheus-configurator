@@ -5,6 +5,8 @@ package statictargets
 
 import (
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejob"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
 )
 
 type Config struct {
@@ -13,19 +15,17 @@ type Config struct {
 
 // StaticTargetJob represents job config for configurator.
 type StaticTargetJob struct {
-	PromScrapeJob             promcfg.Job             `yaml:",inline"`
-	Targets                   []string                `yaml:"targets"`
-	Labels                    map[string]string       `yaml:"labels"`
-	ExtraRelabelConfigs       []promcfg.RelabelConfig `yaml:"extra_relabel_config"`
-	ExtraMetricRelabelConfigs []promcfg.RelabelConfig `yaml:"extra_metric_relabel_config"`
+	ScrapeJob scrapejob.Job     `yaml:",inline"`
+	Targets   []string          `yaml:"targets"`
+	Labels    map[string]string `yaml:"labels"`
 }
 
 // Build will create a Prometheus Job list based on the static targets configuration.
-func (c Config) Build() []promcfg.Job {
+func (c Config) Build(shardingConfig sharding.Config) []promcfg.Job {
 	promScrapeJobs := []promcfg.Job{}
 
 	for _, staticTargetJob := range c.StaticTargetJobs {
-		promScrapeJob := staticTargetJob.PromScrapeJob
+		promScrapeJob := staticTargetJob.ScrapeJob.BuildPrometheusJob(shardingConfig)
 
 		promScrapeJob.StaticConfigs = []promcfg.StaticConfig{
 			{
@@ -33,10 +33,6 @@ func (c Config) Build() []promcfg.Job {
 				Labels:  staticTargetJob.Labels,
 			},
 		}
-
-		promScrapeJob.RelabelConfigs = append(promScrapeJob.RelabelConfigs, staticTargetJob.ExtraRelabelConfigs...)
-
-		promScrapeJob.MetricRelabelConfigs = append(promScrapeJob.MetricRelabelConfigs, staticTargetJob.ExtraMetricRelabelConfigs...)
 
 		promScrapeJobs = append(promScrapeJobs, promScrapeJob)
 	}

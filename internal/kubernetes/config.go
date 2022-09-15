@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejob"
+	"github.com/newrelic/newrelic-prometheus-configurator/internal/sharding"
 )
 
 const (
@@ -12,8 +14,9 @@ const (
 )
 
 var (
-	ErrInvalidK8sJobKinds  = errors.New("at least one kind should be set in target_kinds field")
-	ErrInvalidK8sJobPrefix = errors.New("prefix cannot be empty in kubernetes jobs")
+	ErrInvalidK8sJobKinds      = errors.New("at least one kind should be set in target_kinds field")
+	ErrInvalidK8sJobPrefix     = errors.New("prefix cannot be empty in kubernetes jobs")
+	ErrInvalidSkipShardingFlag = errors.New("kubernetes jobs do not support skip_sharding flag")
 )
 
 // Config defines all fields to set up prometheus to scrape k8s targets.
@@ -22,7 +25,7 @@ type Config struct {
 }
 
 // Build will create a Prometheus Job list based on the kubernetes configuration.
-func (c Config) Build() ([]promcfg.Job, error) {
+func (c Config) Build(shardingConfig sharding.Config) ([]promcfg.Job, error) {
 	var promScrapeJobs []promcfg.Job
 
 	for _, k8sJob := range c.K8sJobs {
@@ -31,29 +34,23 @@ func (c Config) Build() ([]promcfg.Job, error) {
 		}
 
 		if k8sJob.TargetDiscovery.Pod {
-			podJob := k8sJob.PromScrapeJob
-
-			podJob.JobName = k8sJob.JobNamePrefix + "-" + podKind
+			podJob := k8sJob.ScrapeJob.
+				WithName(k8sJob.JobNamePrefix + "-" + podKind).
+				WithRelabelConfigs(podRelabelConfigs(k8sJob)).
+				BuildPrometheusJob(shardingConfig)
 
 			podJob.KubernetesSdConfigs = append(podJob.KubernetesSdConfigs, buildSdConfig(podKind, k8sJob.TargetDiscovery.AdditionalConfig))
-
-			podJob.RelabelConfigs = append(podJob.RelabelConfigs, podRelabelConfigs(k8sJob)...)
-
-			podJob.MetricRelabelConfigs = append(podJob.MetricRelabelConfigs, k8sJob.ExtraMetricRelabelConfigs...)
 
 			promScrapeJobs = append(promScrapeJobs, podJob)
 		}
 
 		if k8sJob.TargetDiscovery.Endpoints {
-			endpointsJob := k8sJob.PromScrapeJob
-
-			endpointsJob.JobName = k8sJob.JobNamePrefix + "-" + endpointsKind
+			endpointsJob := k8sJob.ScrapeJob.
+				WithName(k8sJob.JobNamePrefix + "-" + endpointsKind).
+				WithRelabelConfigs(endpointsRelabelConfigs(k8sJob)).
+				BuildPrometheusJob(shardingConfig)
 
 			endpointsJob.KubernetesSdConfigs = append(endpointsJob.KubernetesSdConfigs, buildSdConfig(endpointsKind, k8sJob.TargetDiscovery.AdditionalConfig))
-
-			endpointsJob.RelabelConfigs = append(endpointsJob.RelabelConfigs, endpointsRelabelConfigs(k8sJob)...)
-
-			endpointsJob.MetricRelabelConfigs = append(endpointsJob.MetricRelabelConfigs, k8sJob.ExtraMetricRelabelConfigs...)
 
 			promScrapeJobs = append(promScrapeJobs, endpointsJob)
 		}
@@ -71,17 +68,19 @@ func (c Config) validate(k8sJob K8sJob) error {
 		return ErrInvalidK8sJobPrefix
 	}
 
+	if k8sJob.ScrapeJob.SkipSharding {
+		return ErrInvalidSkipShardingFlag
+	}
+
 	return nil
 }
 
 // K8sJob holds the configuration which will parsed to a prometheus scrape job including the
 // specific rules needed.
 type K8sJob struct {
-	PromScrapeJob             promcfg.Job             `yaml:",inline"`
-	JobNamePrefix             string                  `yaml:"job_name_prefix"`
-	TargetDiscovery           TargetDiscovery         `yaml:"target_discovery"`
-	ExtraRelabelConfigs       []promcfg.RelabelConfig `yaml:"extra_relabel_config"`
-	ExtraMetricRelabelConfigs []promcfg.RelabelConfig `yaml:"extra_metric_relabel_config"`
+	ScrapeJob       scrapejob.Job   `yaml:",inline"`
+	JobNamePrefix   string          `yaml:"job_name_prefix"`
+	TargetDiscovery TargetDiscovery `yaml:"target_discovery"`
 }
 
 type TargetDiscovery struct {
