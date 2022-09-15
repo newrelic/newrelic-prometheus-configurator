@@ -1,4 +1,4 @@
-package kubernetes //nolint: dupl
+package kubernetes
 
 import (
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
@@ -24,7 +24,8 @@ func endpointsDefaultRelabelConfigs() []promcfg.RelabelConfig {
 		{
 			SourceLabels: []string{"__meta_kubernetes_pod_phase"},
 			Action:       "drop",
-			Regex:        "Pending|Succeeded|Failed|Completed",
+			// Removed Pending status since #75.
+			Regex: "Succeeded|Failed|Completed",
 		},
 		{
 			SourceLabels: []string{"__meta_kubernetes_service_annotation_prometheus_io_scheme"},
@@ -64,10 +65,19 @@ func endpointsDefaultRelabelConfigs() []promcfg.RelabelConfig {
 			Action:       "replace",
 			TargetLabel:  "service",
 		},
+		// Following rule picks the node name which is not empty.
+		// If both exists, use the pod_node_name.
 		{
-			SourceLabels: []string{"__meta_kubernetes_pod_node_name"},
-			Action:       "replace",
-			TargetLabel:  "node",
+			SourceLabels: []string{
+				"__meta_kubernetes_endpoint_node_name",
+				"__meta_kubernetes_pod_node_name",
+			},
+			Separator: ";",
+			Regex:     ".*;(.+)|(.+);",
+			// only one of the groups will match.
+			Replacement: "$1$2",
+			Action:      "replace",
+			TargetLabel: "node",
 		},
 	}
 }
