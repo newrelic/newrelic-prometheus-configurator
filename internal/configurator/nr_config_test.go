@@ -48,11 +48,11 @@ func testNrConfigExpectation(t *testing.T) NrConfig {
 				"three": "four",
 			},
 		},
-		DataSourceName: "data-source",
 		RemoteWrite: remotewrite.Config{
-			LicenseKey: "nrLicenseKey",
-			Staging:    true,
-			ProxyURL:   "http://proxy.url.to.use:1234",
+			DataSourceName: "data-source",
+			LicenseKey:     "nrLicenseKey",
+			Staging:        true,
+			ProxyURL:       "http://proxy.url.to.use:1234",
 			TLSConfig: &promcfg.TLSConfig{
 				InsecureSkipVerify: &trueValue,
 				CAFile:             "/path/to/ca.crt",

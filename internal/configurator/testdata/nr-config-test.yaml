@@ -6,8 +6,8 @@ common:
   scrape_timeout: 1s
   query_log_file: none
 
-data_source_name: data-source
 newrelic_remote_write:
+  data_source_name: data-source
   license_key: nrLicenseKey
   staging: true
   extra_write_relabel_configs:
