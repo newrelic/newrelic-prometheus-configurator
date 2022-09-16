@@ -112,6 +112,18 @@ sharding:
 # @default -- `false`
 verboseLog:
 
+# -- Reads metric metadata from Prometheus and generates/updates relabel configurations for automatically tagging metrics with the correct metric type. See `values.yaml` to set it up.
+metricTypeMapper:
+  # -- (bool) Enables the metricTypeMapper sidecar.
+  # @default -- `false`
+  enabled: false
+  # -- (bool) EXPERIMENTAL Force Prometheus to reload the config with metric type relabels when a change is detected.
+  # @default -- `false`
+  forcePrometheusReload: false
+  # -- (string) Interval of time to execute the mapper and generate the new config.
+  # @default -- `30m`
+  interval: 30m
+
 # -- It holds the New Relic Prometheus configuration. Here you can easily set up prometheus to get set metrics, discover
 # ponds and endpoints Kubernetes and send metrics to New Relic using remote-write.
 # @default -- See `values.yaml`

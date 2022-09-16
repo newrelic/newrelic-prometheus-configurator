@@ -108,9 +108,12 @@ spec:
             - --storage.agent.retention.max-time=30m
             - --storage.agent.wal-truncate-frequency=30m
             - --storage.agent.path=/etc/prometheus/storage
-            {{- if include "newrelic.common.verboseLog" . }}
+          {{- if  .Values.metricTypeMapper.forcePrometheusReload }}
+            - --web.enable-lifecycle
+          {{- end }}
+          {{- if include "newrelic.common.verboseLog" . }}
             - --log.level=debug
-            {{- end }}
+          {{- end }}
           {{- with .Values.resources.prometheus }}
           resources: {{ toYaml . | nindent 12 }}
           {{- end }}
@@ -123,6 +126,38 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
 
+      {{- if  .Values.metricTypeMapper.enabled }}
+        - name: metric-type-mapper
+          image: {{ include "newrelic-prometheus.configurator.configurator_image" ( dict "imageRoot" .Values.images.configurator "context" .) }}
+          args:
+            - --input=/etc/configurator/config.yaml
+            - --output=/etc/prometheus/config/config.yaml
+            - --mapper_enable
+            - --mapper_file_path=/etc/prometheus/config/write_relabel_config.yaml
+            - --mapper_prometheus_url=http://localhost:9090
+            - --mapper_interval={{- .Values.metricTypeMapper.interval }}
+          {{- if  .Values.metricTypeMapper.forcePrometheusReload }}
+            - --mapper_reload
+          {{- end }}
+          {{- if include "newrelic.common.verboseLog" . }}
+            - --verbose=true
+          {{- end }}
+          volumeMounts:
+            - name: configurator-config
+              mountPath: /etc/configurator/
+            - name: prometheus-config
+              mountPath: /etc/prometheus/config
+          env:
+            - name: NR_PROM_DATA_SOURCE_NAME
+              valueFrom: 
+                fieldRef: 
+                  fieldPath: metadata.name
+            - name: NR_PROM_LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "newrelic.common.license.secretName" . }}
+                  key: {{ include "newrelic.common.license.secretKeyName" . }}
+      {{- end }}
       volumes:
         - name: configurator-config
           configMap:
