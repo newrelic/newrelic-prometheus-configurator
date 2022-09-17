@@ -5,6 +5,7 @@ global:
   scrape_interval: 1m
   scrape_timeout: 1s
 remote_write:
-  - url: "https://metric-api.newrelic.com/prometheus/v1/write"
+  - name: newrelic_conf
+    url: "https://metric-api.newrelic.com/prometheus/v1/write"
     authorization: 
       credentials: fake
