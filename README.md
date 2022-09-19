@@ -47,7 +47,7 @@ Content:
 - [POMI migration guide](/docs/MigrationGuide.md)
 
 
-## Develope
+## Develop
 ### Run local environment
 
 We use minikube and Tilt to launch a local cluster and deploy the [main chart](charts/newrelic-prometheus/) and a set of testing endpoints from the [test-resource](charts/internal/test-resources/).
