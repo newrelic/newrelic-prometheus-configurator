@@ -45,7 +45,7 @@ Content:
 - [Scrape Interval](/docs/ScrapeInterval.md)
 - [Metrics Labels/Metadata details](/docs/MetricLabels.md) 
 - [POMI migration guide](/docs/MigrationGuide.md)
-
+- [Troubleshooting guide](/docs/Troubleshooting.md)
 
 ## Develop
 ### Building
