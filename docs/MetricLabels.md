@@ -26,3 +26,16 @@ Kubernetes targets:
 | Pod | `<pod labels>` | Kubernetes labels of the Pod. | `k8s_io_app: MyApp` |
 
 Note: To comply with [Prometheus DataModel](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels) Kubernetes labels names are sanitized after scraped to replace any non allowed character to `_`. For example the Kubernetes label `k8s.io/app` is added as `k8s_io_app`. Labels values remain untouched. 
+
+# Generated metrics
+The following metrics are generated per each scraped target:
+
+| Metric name | Description |
+|:--|:--|:--|
+| `up` | The value will be `0` if the scrape has failed otherwise will be `1`. | 
+| `scrape_duration_seconds` | Duration of the scrape. |
+| `scrape_samples_scraped` | The number of samples the target exposed. |
+| `scrape_samples_post_metric_relabeling` | The number of samples remaining after metric relabeling was applied. |
+| `scrape_series_added` | The approximate number of new series in this scrape. |
+
+These metrics will contain all metric labels related to the target mentioned [above](#metric-labels).
