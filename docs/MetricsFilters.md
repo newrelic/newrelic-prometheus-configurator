@@ -26,42 +26,52 @@ newrelic_remote_write:
 
 ## Keep/drop metrics examples
 
+Following example snippet could be used at `extra_metric_relabel_config` or `extra_write_relabel_configs`.
+
+Drops metrics with name staring with `prefix_`:
 ``` yaml
-# Drops metrics staring with 'prefix_'.
 - source_labels: [__name__]
   regex: 'prefix_.+'
   action: drop
 
-# Drops metrics with specific kubernetes label.
+```
+
+Drops metrics having a Kubernetes label `k8s.io/app=appLabelValue`:
+``` yaml
 - source_labels: [k8s_io_app]
   regex: 'appLabelValue'
   action: drop
+```
 
-# Drops metrics staring with 'prefix_' that also contains a kubernetes label.
+Combined filter drops metrics with name staring with `prefix_` and which also have a Kubernetes label `k8s.io/app=appLabelValue`:
+``` yaml
 - source_labels: [__name__,k8s_io_app]
   regex: 'prefix_.+;appLabelValue'
   action: drop
+```
 
-# Keeps only metrics staring with 'prefix_'.
+Keeps only metrics with name staring with `prefix_`. All metrics not matching this will be dropped:
+``` yaml
 - source_labels: [__name__]
   regex: 'prefix_.+'
   action: keep
 ```
 
-## Add or Drop Metric labels
+## Add or Drop Metric labels examples
 
 Note: Metric Labels names must comply with [Prometheus DataModel](https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels).
 
+Add the `new_label=newLabelValue` labels to metrics names starting with `prefix_`:
 ``` yaml
-# Add labels to metrics with prefix.
 - source_labels: [__name__]
   regex: 'prefix_.+'
   target_label: new_label
   action: replace
   replacement: newLabelValue
+```
 
-# Drop any label that matches the regex from all metrics.
-# Care must be taken if removing identifying labels to ensure correct metrics aggregations are obtained.
+Drop from all metrics the label `label_name`. This could be use to reduce cardinality but care must be taken if removing identifying labels to ensure correct metrics aggregations are obtained.
+``` yaml
 - regex: 'label_name'
   action: labeldrop
 ```
