@@ -48,6 +48,24 @@ Content:
 
 
 ## Develop
+### Building
+
+Golang is required to build the integration. We recommend the Golang version that is used by the `go.mod` file.
+
+After cloning this repository, go to the directory and build it:
+
+```bash
+make build
+```
+
+If you plan modify the code of the configurator, charts or tests we recommend you to [run the local environment](#run-local-environment)
+
+To run it locally you can use CLI directly piping in, or setting the `--input` flag pointing to the New Relic configuration and the Prometheus configuration will be printed out:
+
+```bash
+./bin/prometheus-configurator --input=path/to/nr-config
+``` 
+
 ### Run local environment
 
 We use minikube and Tilt to launch a local cluster and deploy the [main chart](charts/newrelic-prometheus/) and a set of testing endpoints from the [test-resource](charts/internal/test-resources/).
@@ -68,18 +86,6 @@ make tilt-up
 ```
 
 Notice that local images are build and pushed to docker running inside the minikube cluster since we are running `eval $(minikube docker-env)` before launching Tilt.
-
-### Building
-
-Golang is required to build the integration. We recommend the Golang version that is used by the `go.mod` file.
-
-After cloning this repository, go to the directory and build it:
-
-```bash
-make build
-```
-
-If you plan modify the code of the configurator, charts or tests we recommend you to [run the local environment](#run-local-environment)
 
 ### Testing
 
