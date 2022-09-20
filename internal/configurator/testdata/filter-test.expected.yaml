@@ -85,6 +85,7 @@ scrape_configs:
         target_label: node
 
 remote_write:
-  - url: https://metric-api.newrelic.com/prometheus/v1/write
+  - name: newrelic_rw
+    url: https://metric-api.newrelic.com/prometheus/v1/write
     authorization:
       credentials: nrLicenseKey
