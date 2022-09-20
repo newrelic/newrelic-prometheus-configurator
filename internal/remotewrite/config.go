@@ -9,6 +9,9 @@ import (
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
 )
 
+// Name identifies the newrelic remote_write entry used in logs and prometheus self metrics.
+const Name = "newrelic_rw"
+
 // Config defines all the NewRelic's remote write endpoint fields.
 type Config struct {
 	// LicenseKey holds the New Relic ingest license key of the account where metrics will be sent.
@@ -50,6 +53,7 @@ func (c Config) Build() (promcfg.RemoteWrite, error) {
 	}
 
 	rw := promcfg.RemoteWrite{
+		Name:                Name,
 		URL:                 url,
 		RemoteTimeout:       c.RemoteTimeout,
 		Authorization:       promcfg.Authorization{Credentials: c.LicenseKey},
