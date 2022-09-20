@@ -35,7 +35,7 @@ scrape_configs:
         target_label: pod
 
 remote_write:
-  - name: newrelic_conf
+  - name: newrelic_rw
     url: https://metric-api.newrelic.com/prometheus/v1/write
     authorization:
       credentials: nrLicenseKey

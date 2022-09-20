@@ -10,7 +10,7 @@ import (
 )
 
 // Name identifies the newrelic remote_write entry used in logs and prometheus self metrics.
-const Name = "newrelic_conf"
+const Name = "newrelic_rw"
 
 // Config defines all the NewRelic's remote write endpoint fields.
 type Config struct {
