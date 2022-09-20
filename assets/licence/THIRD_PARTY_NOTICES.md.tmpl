@@ -1,18 +1,18 @@
 {{- define "depInfo" -}}
-{{- range $i, $dep := . }}
+    {{- range $i, $dep := . }}
 
-## [{{ $dep.Name }}]({{ $dep.URL }})
+    ## [{{ $dep.Name }}]({{ $dep.URL }})
 
-Distributed under the following license(s):
+    Distributed under the following license(s):
 
-* {{ $dep.LicenceType }}
+    * {{ $dep.LicenceType }}
 
-{{ end }}
+    {{ end }}
 {{- end -}}
 
 # Third Party Notices
 
-The New Relic Integration for Kubernetes uses source code from third party libraries which carry
+The New Relic Prometheus Configurator uses source code from third party libraries which carry
 their own copyright notices and license terms. These notices are provided
 below.
 
