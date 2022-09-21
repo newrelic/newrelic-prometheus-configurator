@@ -91,3 +91,7 @@ e2e-test:
         --spec_path=./test/e2e/test-specs.yml \
 		--verbose_mode=true \
 		--agent_enabled="false"
+
+.PHONY: build-license-notice
+build-license-notice:
+	@go list -mod=mod -m -json all | go-licence-detector -noticeOut=NOTICE.txt -rules ./assets/licence/rules.json  -noticeTemplate ./assets/licence/THIRD_PARTY_NOTICES.md.tmpl -noticeOut THIRD_PARTY_NOTICES.md -overrides ./assets/licence/overrides -includeIndirect

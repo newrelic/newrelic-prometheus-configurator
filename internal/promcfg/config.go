@@ -142,6 +142,7 @@ type QueueConfig struct {
 
 // RemoteWrite represents a prometheus remote_write config.
 type RemoteWrite struct {
+	Name                string          `yaml:"name"`
 	URL                 string          `yaml:"url"`
 	RemoteTimeout       time.Duration   `yaml:"remote_timeout,omitempty"`
 	Authorization       Authorization   `yaml:"authorization"`

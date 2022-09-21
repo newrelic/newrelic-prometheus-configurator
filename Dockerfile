@@ -7,6 +7,8 @@ RUN apk add --no-cache --upgrade && apk add --no-cache tini curl bind-tools
 
 COPY bin/prometheus-configurator-${TARGETOS}-${TARGETARCH} /
 
+COPY THIRD_PARTY_NOTICES.md /
+
 RUN mv /prometheus-configurator-${TARGETOS}-${TARGETARCH} /prometheus-configurator && \
     chmod 755 /prometheus-configurator
 

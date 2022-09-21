@@ -4,13 +4,13 @@ description: A Helm chart to deploy Prometheus.
 
 type: application
 
-version: 0.0.20-devel
+version: 0.0.1
 
 # Prometheus Server Version
-appVersion: "v2.37.0"
+appVersion: "v2.37.1"
 annotations:
 # TODO replace with the first configurator release
-  configuratorVersion: "main"
+  configuratorVersion: "0.0.1"
 
 dependencies:
   - name: common-library
