@@ -1,8 +1,16 @@
-# Migration guide from POMI (nri-prometheus) to newrelic-prometheus
+# Migration guide from Prometheus Open Metrics Integration ( POMI / nri-prometheus) to newrelic-prometheus
 
 What have changed:
-POMI (nri-prometheus) was a custom solution build by New Relic with some of the Prometheus Server capabilities. The `newrelic-prometheus` solution is actually running the Prometheus Server in Agent mode. This allows to use any scrape related feature of the Prometheus Server like authorization methods and relabel configs.
+Prometheus Open Metrics Integration ( POMI / nri-prometheus) was a custom solution build by New Relic with some of the Prometheus Server capabilities. The `newrelic-prometheus` solution is actually running the Prometheus Server in Agent mode. This allows to use any scrape related feature of the Prometheus Server like authorization methods and relabel configs.
 Also we have built a `prometheus-configurator` on top of that which improved the configuration experience of the solution.
+
+As a summary of new features supported by the new solution compared with POMI we can mention:
+- Improves vertical scalability.
+- Adds horizontal scalability by supporting sharding.
+- Adds scraper [authorization mechanisms](/docs/TargetAuthorization.md).
+- Improves the [Kubernetes target discovery filtering](/docs/KuberntesTargetFilter.md).
+- Improves the [metric filtering capabilities](/docs/MetricsFilters.md).
+- Supports more granular [scrape interval configuration](/docs/ScrapeInterval.md).
 
 ## Metadata
 
@@ -34,7 +42,7 @@ This is a list of POMI metadata and it replacement in the new solution.
 The target discovery configuration has improved with the introduction of the Jobs and can be easily configured as explained [here](./KuberntesTargetFilter.md).
 
 There are some default behaviors that differs on the solutions.
-By default POMI scrapes Pods and Services that has `prometheus.io/scrape=true` Label or Annotation. But `newrelic-prometheus` scrapes Pods and Endpoints from Services with `prometheus.io/scrape=true` Annotation. 
+By default POMI scrapes Pods and Services that has `prometheus.io/scrape=true` Label or Annotation. But `newrelic-prometheus` scrapes Pods and Endpoints from Services with `prometheus.io/scrape=true` Annotation. Also node metrics are not longer scraped by default.
 
 ## Metrics types
 
