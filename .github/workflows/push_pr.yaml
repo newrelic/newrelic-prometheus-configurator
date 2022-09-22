@@ -50,6 +50,19 @@ jobs:
               echo "No unit tests found for $chart"
             fi
           done
+      - uses: actions/setup-go@v2
+        if: steps.list-changed.outputs.changed == 'true'
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: Check README.md is up to date
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          go install github.com/norwoodj/helm-docs/cmd/helm-docs@v1.11.0
+          make build-chart-docs
+          if [ ! -z "$(git status --porcelain)" ]; then 
+            git diff
+            exit 1
+          fi
       - name: Setup Minikube
         uses: manusa/actions-setup-minikube@v2.6.0
         if: steps.list-changed.outputs.changed == 'true'
@@ -57,10 +70,6 @@ jobs:
           minikube version: ${{ env.MINIKUBE_VERSION }}
           kubernetes version: ${{ matrix.kubernetes-version }}
           github token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-go@v2
-        if: steps.list-changed.outputs.changed == 'true'
-        with:
-          go-version: ${{ env.GO_VERSION }}
       - name: Create image for chart testing
         if: steps.list-changed.outputs.changed == 'true'
         run: |

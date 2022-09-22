@@ -68,7 +68,6 @@ chart-unit-test:
 	helm dependency update ./charts/newrelic-prometheus
 	helm unittest ./charts/newrelic-prometheus -3
 
-
 PROMETHEUS_VERSION_CHART := $(shell grep "appVersion" charts/newrelic-prometheus/Chart.yaml | grep -o -E "(\.\d+.\d+)")
 PROMETHEUS_VERSION_GO := $(shell grep "github.com/prometheus/prometheus" go.mod| grep -o -E "(\.\d+.\d+)")
 .PHONY: check-prometheus-version
@@ -95,3 +94,7 @@ e2e-test:
 .PHONY: build-license-notice
 build-license-notice:
 	@go list -mod=mod -m -json all | go-licence-detector -noticeOut=NOTICE.txt -rules ./assets/licence/rules.json  -noticeTemplate ./assets/licence/THIRD_PARTY_NOTICES.md.tmpl -noticeOut THIRD_PARTY_NOTICES.md -overrides ./assets/licence/overrides -includeIndirect
+
+.PHONY: generate-chart-docs
+build-chart-docs:
+	helm-docs -c charts/newrelic-prometheus

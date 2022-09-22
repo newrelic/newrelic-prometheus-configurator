@@ -37,7 +37,18 @@ For further information of the configuration needed for the chart just read the 
 ## Getting Started
 The simplest way to start working with this project is to install the [Chart](/charts/newrelic-prometheus/README.md) in your Kubernetes cluster which by default will scrape the Prometheus targets having the `'prometheus.io/scrape: true'` annotation.
 
-## Building
+### Usage
+Content: 
+- [Filter targets in Kubernetes](/docs/KuberntesTargetFilter.md)
+- [Filter metrics and labels](/docs/MetricsFilters.md)
+- [Target authorization](/docs/TargetAuthorization.md)
+- [Scrape Interval](/docs/ScrapeInterval.md)
+- [Metrics Labels/Metadata details](/docs/MetricLabels.md) 
+- [POMI migration guide](/docs/MigrationGuide.md)
+- [Troubleshooting guide](/docs/Troubleshooting.md)
+
+## Develop
+### Building
 
 Golang is required to build the integration. We recommend the Golang version that is used by the `go.mod` file.
 
@@ -49,32 +60,13 @@ make build
 
 If you plan modify the code of the configurator, charts or tests we recommend you to [run the local environment](#run-local-environment)
 
-## Testing
-
-### Running unit tests
+To run it locally you can use CLI directly piping in, or setting the `--input` flag pointing to the New Relic configuration and the Prometheus configuration will be printed out:
 
 ```bash
-make test
-```
+./bin/prometheus-configurator --input=path/to/nr-config
+``` 
 
-### Running integration tests
-
-Detailed info about integration tests [here](./test/integration/README.md).
-
-### Running Helm chart testing
-
-Make sure you have these tools or install them before running the tests:
-- [Install Helm](https://helm.sh/docs/intro/install/)
-- [Install Chart Testing](https://github.com/helm/chart-testing#installation)
-- [Install unit test plugin](https://github.com/quintush/helm-unittest#install)
-
-Then run: 
-
-```bash
-make chart-unit-test
-```
-
-## Run local environment
+### Run local environment
 
 We use minikube and Tilt to launch a local cluster and deploy the [main chart](charts/newrelic-prometheus/) and a set of testing endpoints from the [test-resource](charts/internal/test-resources/).
 
@@ -95,7 +87,32 @@ make tilt-up
 
 Notice that local images are build and pushed to docker running inside the minikube cluster since we are running `eval $(minikube docker-env)` before launching Tilt.
 
-### Running e2e tests
+### Testing
+
+#### Running unit tests
+
+```bash
+make test
+```
+
+#### Running integration tests
+
+Detailed info about integration tests [here](./test/integration/README.md).
+
+#### Running Helm chart testing
+
+Make sure you have these tools or install them before running the tests:
+- [Install Helm](https://helm.sh/docs/intro/install/)
+- [Install Chart Testing](https://github.com/helm/chart-testing#installation)
+- [Install unit test plugin](https://github.com/quintush/helm-unittest#install)
+
+Then run: 
+
+```bash
+make chart-unit-test
+```
+
+#### Running e2e tests
 
 This test are based on the `newrelic-integration-e2e`. This tool will start the local environment and check if the expected metrics has been reach the NewRelic platform.
 

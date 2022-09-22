@@ -89,6 +89,12 @@ config:
 
 All pod and endpoints with the `prometheus.io/scrape: true` annotation will be scraped by default.
 
+Check the [docs](https://github.com/newrelic/newrelic-prometheus-configurator/blob/main/docs/KubernetesTargetFilter.md) for more information about it usage.
+
+### Metrics Filtering
+
+Check [docs](https://github.com/newrelic/newrelic-prometheus-configurator/blob/main/docs/MetricsFilters.md) for detailed explanation and examples to how to filter metrics and labels.
+
 ### Self metrics
 
 By default it is defined a job in `static_target.jobs` to obtain self-metrics. Particularlly, a snippet like the one
