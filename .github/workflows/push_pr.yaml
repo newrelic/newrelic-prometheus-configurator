@@ -6,7 +6,6 @@ on:
       - main
 
 env:
-  GO_VERSION: '1.18'
   # NOTICE that apart from this, the versions in the chart linter matrix needs to be bumped too.
   LATEST_K8S_VERSION: 'v1.24.4'
   MINIKUBE_VERSION: 'v1.26.1'
@@ -50,10 +49,10 @@ jobs:
               echo "No unit tests found for $chart"
             fi
           done
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         if: steps.list-changed.outputs.changed == 'true'
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: 'go.mod'
       - name: Check README.md is up to date
         if: steps.list-changed.outputs.changed == 'true'
         run: |
@@ -100,9 +99,9 @@ jobs:
           # default driver doesn't support 'eval $$(minikube docker-env)'.
           driver: docker
           github token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: 'go.mod'
       - name: Install Tilt
         run: |
           curl -fsSL https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh | bash
@@ -122,9 +121,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: 'go.mod'
       - uses: actions/cache@v3
         with:
           path: |
@@ -149,9 +148,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: 'go.mod'
       - uses: newrelic/newrelic-infra-checkers@v1
         with:
           golangci-lint-config: golangci-lint

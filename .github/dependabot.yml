@@ -1,0 +1,32 @@
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    ignore:
+      # Ignores any update except patches for prometheus deps in order to 
+      # stick with [LTS](https://prometheus.io/docs/introduction/release-cycle/#long-term-support).
+      # PR since the Chart app version must be in sync to the Prometheus version, but at least is an step
+      # forward the complete automation.
+      - dependency-name: "github.com/prometheus/*"
+        update-types:
+        - "version-update:semver-major"
+        - "version-update:semver-minor"
+    labels:
+      - dependencies
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 2
+    labels: 
+      - dependencies
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 2
+    labels: 
+      - dependencies
