@@ -53,7 +53,7 @@ flowchart LR
 
     subgraph shards[Shards]
         direction LR
-        desc(Each shard scrapes a subset of targets dpending ond the hash index\n obtained from the hashmod of the target address)
+        desc(Each shard scrapes a subset of targets depending one the hash index\n obtained from the hashmod of the target address)
         Shard_1(Shard_1)
         Shard_2(Shard_2)
     end
