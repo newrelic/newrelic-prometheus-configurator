@@ -22,14 +22,16 @@ However, this approach may not be scalable for huge clusters, or simply we just 
 Horizontal Scaling is supported by setting up a configuration parameter which allows running several prometheus servers in agent mode to gather your data. This is known as Sharding.
 
 If you define `sharding.total_shards_count` value, the deployed StatefulSet will include as many replicas as you defined there. When it is used, the _configurator_ component will automatically include some additional relabel rules so each target will only be scraped by one prometheus server. Those
-rules rely on the target's address [hash-mod](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config).
+rules rely on the target's address [hash-mod](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config). 
+
+Briefly, what the configurator does to set those relabel rules for each target is calculating a hash for the given target `__address__` and then it applies the `modulus` to the hash, being the modulus the total number of shards. Thus, it obtains into what shard the scrapped target should be included.
 
 For example, if `custom-values.yaml` includes:
 
 ```yaml
 # (...)
 sharding:
-  total_shards_count: 5
+  total_shards_count: 2
 # (...)
 ```
 
@@ -39,7 +41,46 @@ And then, the release is upgraded:
 helm upgrade my-prometheus-release newrelic-prometheus-configurator/newrelic-prometheus -f custom-values.yaml
 ```
 
-Then five prometheus servers will be executed and each target will only be scraped by only one of them.
+Then two prometheus servers will be executed and each target will only be scraped by only one of them.
+
+An example diagram would be the following:
+
+```mermaid
+flowchart LR
+
+    subgraph configurator[Configurator\ntotal_shards_count=2]
+    end
+
+    subgraph shards[Shards]
+        direction LR
+        desc(Each shard scrapes a subset of targets dpending ond the hash index\n obtained from the hashmod of the target address)
+        Shard_1(Shard_1)
+        Shard_2(Shard_2)
+    end
+
+    subgraph targets[Targets]
+        direction LR
+        Target_1
+        Target_2
+        Target_3
+    end
+
+configurator --> shards
+Shard_1 --> Target_1
+Shard_1 --> Target_3
+Shard_2 --> Target_2
+
+
+classDef plain fill:#fafafa,backgroud-color:transparent,color:#000;
+classDef text fill:#fff,stroke:transparent,color:#000,font-size:12px,font-style:italic;
+
+classDef shardy fill:#fff,stroke:transparent,color:#000,font-size:12px,font-style:italic;
+class s shardy;
+
+class desc text;
+class shards plain;
+class targets plain;
+```
 
 ### Target scraper identification
 The shard identification (name of the StatefulSet Pod) is added as a `prometheus_server` label to all metrics and could be used to understand which is the Prometheus instance that is scraping that target.
