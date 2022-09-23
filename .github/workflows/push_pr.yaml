@@ -22,7 +22,7 @@ jobs:
       - uses: azure/setup-helm@v3
         with:
           version: 'v3.0.0'
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: helm/chart-testing-action@v2.2.1
@@ -91,7 +91,7 @@ jobs:
     # If the environment is broken this job could timeout since the default timeout for tilt ci is 30m.
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Minikube
         uses: manusa/actions-setup-minikube@v2.6.0
         with:
@@ -121,7 +121,7 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version-file: 'go.mod'
@@ -148,7 +148,7 @@ jobs:
     name: Static analysis and linting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version-file: 'go.mod'
@@ -183,7 +183,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Codespell test
         uses: codespell-project/actions-codespell@master
         with:
