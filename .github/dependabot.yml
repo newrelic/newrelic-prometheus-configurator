@@ -16,6 +16,8 @@ updates:
         - "version-update:semver-minor"
     labels:
       - dependencies
+      # external PRs cannot use secrets needed to run e2e tests.
+      - ci/skip-e2e
   - package-ecosystem: docker
     directory: "/"
     schedule:
@@ -23,6 +25,7 @@ updates:
     open-pull-requests-limit: 2
     labels: 
       - dependencies
+      - ci/skip-e2e
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
@@ -30,3 +33,4 @@ updates:
     open-pull-requests-limit: 2
     labels: 
       - dependencies
+      - ci/skip-e2e
