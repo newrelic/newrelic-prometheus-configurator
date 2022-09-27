@@ -86,7 +86,7 @@ jobs:
 
   e2e-test:
     name: E2e Tests 
-    if: ${{ ! contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
     runs-on: ubuntu-latest
     # If the environment is broken this job could timeout since the default timeout for tilt ci is 30m.
     timeout-minutes: 10
@@ -107,6 +107,9 @@ jobs:
         run: |
           curl -fsSL https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh | bash
       - name: Run e2e-test
+        env:
+          SECRET_AVAILABLE: ${{ secrets.COREINT_E2E_ACCOUNT_ID }}
+        if: ${{ env.SECRET_AVAILABLE != '' }}
         uses: newrelic/newrelic-integration-e2e-action@v1
         with:
           retry_seconds: 60
