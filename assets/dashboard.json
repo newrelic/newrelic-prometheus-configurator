@@ -20,7 +20,7 @@
             "id": "viz.markdown"
           },
           "rawConfiguration": {
-            "text": "# Overview\n\nThis dashboard provides insight into the metrics collected into this account via the [New Relic Prometheus Configurator](https://github.com/newrelic/newrelic-prometheus-configurator). \n\nIf you have integrated multiple servers, you may filter this dashboard's results to a single cluster by setting the `cluster_name` variable into the filter bar above.  \n\n&nbsp;\n\n# Usage\n\nThis dashboard tab contains charts that provide information about volume metrics sent to New Relic. These charts are useful in helping to monitor the New Relic Remote Write from Prometheus itself and can be used to identify any issues sending the metrics to New Relic.\n\n&nbsp;\n\nFor more detailed information on the health of the Prometheus servers, navigate to the next tab.\n\n&nbsp;\n\n**Note:** To gather more insights about metrics directly related to the New Relic Remote Write, check out the adhoc dashboard created for it."
+            "text": "# Overview\n\nThis dashboard provides insight into the metrics collected into this account via the [New Relic Prometheus Configurator](https://github.com/newrelic/newrelic-prometheus-configurator). \n\nIf you have integrated multiple servers, you may filter this dashboard's results to a single cluster by setting the `cluster_name` variable into the filter bar above.  \n\n&nbsp;\n\n# Usage\n\nThis dashboard tab contains charts that provide information about volume metrics sent to New Relic. These charts are useful in helping mointoring the New Relic Remote Write from Prometheus itself and can be used to identify any issues sending the metrics to New Relic.\n\n&nbsp;\n\nFor more detailed information on the health of the Prometheus servers, navigate to the next tab.\n\n&nbsp;\n\n**Note:** To gather more insights about metrics directly related to the New Relic Remote Write, check out the adhoc dashboard created for it."
           }
         },
         {
@@ -415,7 +415,7 @@
           }
         },
         {
-          "title": "Total Shards",
+          "title": "Total Prometheus Server Instances (Shards)",
           "layout": {
             "column": 11,
             "row": 1,
@@ -433,7 +433,7 @@
             "nrqlQueries": [
               {
                 "accountId": "YOUR_ACCOUNT_ID",
-                "query": "SELECT count(*) as 'Shards' FROM (FROM Metric SELECT latest(prometheus_remote_storage_shards) FACET prometheus_server)"
+                "query": "FROM Metric SELECT UniqueCount(prometheus_server)"
               }
             ],
             "platformOptions": {
@@ -508,7 +508,7 @@
           }
         },
         {
-          "title": "Shards by Source",
+          "title": "Remote Write Threads by Source",
           "layout": {
             "column": 9,
             "row": 4,
