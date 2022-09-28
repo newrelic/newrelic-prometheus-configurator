@@ -87,6 +87,10 @@ make tilt-up
 
 Notice that local images are build and pushed to docker running inside the minikube cluster since we are running `eval $(minikube docker-env)` before launching Tilt.
 
+### Dashboard
+
+You can import an already pre-constructed dashboard by importing this [dashboard.json](/assets/dashboard.json) file. Note that for the import to work you need to replace the json placeholder `YOUR_ACCOUNT_ID` for your New Relic `accountID` without quotes.
+
 ### Testing
 
 #### Running unit tests
