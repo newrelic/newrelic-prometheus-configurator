@@ -20,7 +20,7 @@
             "id": "viz.markdown"
           },
           "rawConfiguration": {
-            "text": "# Overview\n\nThis dashboard provides insight into the metrics collected into this account via the [New Relic Prometheus Configurator](https://github.com/newrelic/newrelic-prometheus-configurator). \n\nIf you have integrated multiple servers, you may filter this dashboard's results to a single cluster by setting the `cluster_name` variable into the filter bar above.  \n\n&nbsp;\n\n# Usage\n\nThis dashboard tab contains charts that provide information about volume metrics sent to New Relic. These charts are useful in helping monitoring the New Relic Remote Write from Prometheus itself and can be used to identify any issues sending the metrics to New Relic.\n\n&nbsp;\n\nFor more detailed information on the health of the Prometheus servers, navigate to the next tab.\n\n&nbsp;\n\n**Note:** To gather more insights about metrics directly related to the New Relic Remote Write, check out the adhoc dashboard created for it."
+            "text": "# Overview\n\nThis dashboard provides insight into the metrics collected into this account via the [New Relic Prometheus Configurator](https://github.com/newrelic/newrelic-prometheus-configurator). \n\nIf you have integrated multiple servers, you may filter this dashboard's results to a single cluster by setting the `cluster_name` variable into the filter bar above.  \n\n&nbsp;\n\n# Usage\n\nThis dashboard tab contains charts that provide information about volume metrics sent to New Relic. These charts are useful in helping to monitor the New Relic Remote Write from Prometheus itself and can be used to identify any issues sending the metrics to New Relic.\n\n&nbsp;\n\nFor more detailed information on the health of the Prometheus servers, navigate to the next tab.\n\n&nbsp;\n\n**Note:** To gather more insights about metrics directly related to the New Relic Remote Write, check out the adhoc dashboard created for it."
           }
         },
         {
@@ -44,7 +44,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT rate(sum(prometheus_remote_storage_samples_in_total), 1 second)  AS 'Samples Appended / Sec' FACET prometheus_server TIMESERIES AUTO LIMIT MAX"
               }
             ],
@@ -77,7 +77,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT rate(sum(prometheus_remote_storage_samples_in_total), 1 second)  AS 'Samples Appended / Sec' FACET prometheus_server TIMESERIES AUTO LIMIT MAX"
               }
             ],
@@ -104,7 +104,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT cardinality(metricName) WHERE instrumentation.name = 'remote-write' and instrumentation.provider = 'prometheus' FACET metricName LIMIT MAX"
               }
             ],
@@ -131,7 +131,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT cardinality() AS 'Time Series' WHERE instrumentation.name = 'remote-write' and instrumentation.provider = 'prometheus' FACET instrumentation.source LIMIT MAX"
               }
             ],
@@ -168,7 +168,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT uniqueCount(metricName) WHERE instrumentation.name = 'remote-write' and instrumentation.provider = 'prometheus' FACET prometheus_server LIMIT MAX"
               }
             ],
@@ -198,7 +198,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT latest(prometheus_agent_active_series) FACET prometheus_server TIMESERIES"
               }
             ],
@@ -231,7 +231,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT latest(prometheus_remote_storage_samples_pending) WHERE instrumentation.name = 'remote-write' FACET prometheus_server TIMESERIES AUTO LIMIT MAX"
               }
             ],
@@ -264,7 +264,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "from Metric SELECT sum(prometheus_remote_storage_samples_retried_total) WHERE instrumentation.name = 'remote-write' FACET prometheus_server TIMESERIES AUTO LIMIT MAX"
               }
             ],
@@ -297,7 +297,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT rate(sum(prometheus_remote_storage_samples_failed_total), 1 second)  AS 'Samples Failed/Sec' FACET prometheus_server TIMESERIES AUTO LIMIT MAX"
               }
             ],
@@ -336,7 +336,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT latest(process_resident_memory_bytes), latest(process_virtual_memory_bytes) WHERE instrumentation.name = 'remote-write' TIMESERIES AUTO FACET prometheus_server,job LIMIT MAX"
               }
             ],
@@ -369,7 +369,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT rate(latest(process_cpu_seconds_total),1 second)*100 WHERE instrumentation.name = 'remote-write' TIMESERIES AUTO FACET prometheus_server,job LIMIT MAX"
               }
             ],
@@ -402,7 +402,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT filter(latest(up), WHERE up[latest]=0) FACET prometheus_server TIMESERIES auto"
               }
             ],
@@ -415,7 +415,7 @@
           }
         },
         {
-          "title": "Total Prometheus Server Instances (Shards)",
+          "title": "Total Prometheus Server Instances (Shards) by Cluster",
           "layout": {
             "column": 11,
             "row": 1,
@@ -432,8 +432,8 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
-                "query": "FROM Metric SELECT UniqueCount(prometheus_server)"
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
+                "query": "FROM Metric SELECT UniqueCount(prometheus_server)as 'Prometheus Shards Count' FACET cluster_name"
               }
             ],
             "platformOptions": {
@@ -462,7 +462,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT max(prometheus_target_interval_length_seconds) FACET prometheus_server,quantile as quantile TIMESERIES LIMIT MAX"
               }
             ],
@@ -495,7 +495,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT max(scrape_duration_seconds) WHERE instrumentation.name = 'remote-write' AND instrumentation.provider = 'prometheus' TIMESERIES AUTO FACET prometheus_server,job LIMIT MAX"
               }
             ],
@@ -525,7 +525,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT latest(prometheus_remote_storage_shards) FACET prometheus_server LIMIT MAX"
               }
             ],
@@ -555,7 +555,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT sum(prometheus_agent_corruptions_total) FACET prometheus_server TIMESERIES auto LIMIT MAX"
               }
             ],
@@ -588,7 +588,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT sum(prometheus_agent_checkpoint_creations_failed_total), sum(prometheus_agent_checkpoint_deletions_failed_total) FACET prometheus_server TIMESERIES  auto LIMIT MAX"
               }
             ],
@@ -618,7 +618,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT cardinality() AS 'Time Series' WHERE instrumentation.name = 'remote-write' and instrumentation.provider = 'prometheus' FACET metricName LIMIT MAX"
               }
             ],
@@ -648,7 +648,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT sum(prometheus_sd_kubernetes_events_total) FACET prometheus_server,role TIMESERIES AUTO LIMIT MAX"
               }
             ],
@@ -681,7 +681,7 @@
             },
             "nrqlQueries": [
               {
-                "accountId": "YOUR_ACCOUNT_ID",
+                "accountId": ACCOUNT_ID_PLACEHOLDER,
                 "query": "FROM Metric SELECT sum(prometheus_sd_kubernetes_http_request_total) FACET prometheus_server, status_code TIMESERIES AUTO LIMIT MAX"
               }
             ],

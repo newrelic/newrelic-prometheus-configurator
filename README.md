@@ -89,8 +89,11 @@ Notice that local images are build and pushed to docker running inside the minik
 
 ### Dashboard
 
-You can import an already pre-constructed dashboard by importing this [dashboard.json](/assets/dashboard.json) file. Note that for the import to work you need to replace the json placeholder `YOUR_ACCOUNT_ID` for your New Relic `accountID` without quotes.
-
+You can import an already pre-constructed dashboard by importing this [dashboard.json](/assets/dashboard.json) file. Note that for the import to work you need to replace the json placeholder `ACCOUNT_ID_PLACEHOLDER` for your New Relic `accountID`. You can use the following command to do so:
+```
+sed -i '' 's/ACCOUNT_ID_PLACEHOLDER/accountID/g' assets/dashboard.json
+```
+For more in depth details regarding importing dashboards, you can check the official [docs](https://docs.newrelic.com/docs/query-your-data/explore-query-data/dashboards/introduction-dashboards/#dashboards-import).
 ### Testing
 
 #### Running unit tests
