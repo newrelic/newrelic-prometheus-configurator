@@ -138,7 +138,7 @@ config:
     # for the New Relic remote write.
     # @default -- `[]`
     # extra_write_relabel_configs:
-    
+
     # -- Set up the proxy used to send metrics to New Relic.
     # @default -- `""`
     # proxy_url:
@@ -202,9 +202,9 @@ config:
           annotations:
             prometheus.io/scrape: true
 
-    # -- Set up the job name prefix. The final Prometheus `job` name will be composed of <job_name_prefix> + the target discovery kind. ie: `kubernetes-job-pod` 
+    # -- Set up the job name prefix. The final Prometheus `job` name will be composed of <job_name_prefix> + the target discovery kind. ie: `kubernetes-job-pod`
     # @default -- `""`
-    # - job_name_prefix: 
+    # - job_name_prefix:
 
       # -- The target discovery field allows customizing how Kubernetes discovery works.
       # target_discovery:
@@ -227,9 +227,9 @@ config:
 
           # -- Map of labels that the targets should have. If only the label name is defined, the filter only checks if exists.
           # @default -- `{}`
-          # labels: 
+          # labels:
 
-      # -- Advanced configs of the Kubernetes service discovery `kuberentes_sd_config` options, 
+      # -- Advanced configs of the Kubernetes service discovery `kuberentes_sd_config` options,
       # check [prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config) for details.
       # Notice that using `filter` is the recommended way to filter targets to avoid adding load to the API Server.
       # additional_config:
@@ -238,7 +238,7 @@ config:
         # selectors: {}
         # attach_metadata: {}
 
-    
+
     # -- The HTTP resource path on which to fetch metrics from targets.
     # Use `prometheus.io/path` pod/service annotation to override this or modify it here.
     # @default -- `/metrics`
@@ -256,7 +256,7 @@ config:
 
     # -- How frequently to scrape targets from this job.
     # @default -- defined in `common.scrape_interval`
-    # scrape_interval: 
+    # scrape_interval:
 
     # -- Per-scrape timeout when scraping this job.
     # @default -- defined in `common.scrape_timeout`
@@ -276,7 +276,7 @@ config:
 
       # Disable validation of the server certificate.
       # @default -- `false`
-      # insecure_skip_verify: 
+      # insecure_skip_verify:
 
     # -- Sets the `Authorization` Bearer token header on every scrape request
     # @default -- `{}`
@@ -299,7 +299,7 @@ config:
     # @default -- `[]`
     # extra_metric_relabel_config:
 
-  
+
   # -- It allows defining scrape jobs for targets with static URLs.
   # @default -- See `values.yaml`.
   static_targets:
@@ -341,7 +341,7 @@ config:
       # -- List of target URLs to be scraped by this job.
       # @default -- `[]`.
       # targets:
-      
+
       # -- Labels assigned to all metrics scraped from the targets.
       # @default -- `{}`.
       # labels:
@@ -360,7 +360,7 @@ config:
 
       # -- How frequently to scrape targets from this job.
       # @default -- defined in `common.scrape_interval`
-      # scrape_interval: 
+      # scrape_interval:
 
       # -- Per-scrape timeout when scraping this job.
       # @default -- defined in `common.scrape_timeout`
@@ -380,7 +380,7 @@ config:
 
         # Disable validation of the server certificate.
         # @default -- `false`
-        # insecure_skip_verify: 
+        # insecure_skip_verify:
 
       # -- Sets the `Authorization` Bearer token header on every scrape request
       # @default -- `{}`
