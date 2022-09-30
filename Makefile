@@ -13,7 +13,7 @@ COMMIT ?= $(shell git rev-parse HEAD || echo "unknown")
 
 LD_FLAGS ?= -ldflags="-X 'main.integrationVersion=$(TAG)' -X 'main.gitCommit=$(COMMIT)' -X 'main.buildDate=$(BUILD_DATE)' "
 
-HELM_VALUES_FILE ?= "./values-dev.yaml"
+HELM_VALUES_FILE ?= "./tilt-chart-values.yaml"
 
 .PHONY: all
 all: clean build-multiarch
