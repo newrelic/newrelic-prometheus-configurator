@@ -1,5 +1,5 @@
 {
-  "name": "Prometheus Configurator",
+  "name": "New Relic Prometheus",
   "description": null,
   "permissions": "PUBLIC_READ_WRITE",
   "pages": [
