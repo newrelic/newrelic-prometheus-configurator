@@ -47,6 +47,13 @@ Content:
 - [POMI migration guide](/docs/MigrationGuide.md)
 - [Troubleshooting guide](/docs/Troubleshooting.md)
 
+Dashboard:
+
+You can import an already pre-constructed dashboard by importing the [dashboard.json](/assets/dashboard.json) file. Note that for the import to work you need to replace the json placeholder `ACCOUNT_ID_PLACEHOLDER` for your New Relic `accountID`. You can use the following command to do so:
+```
+sed -i '' 's/ACCOUNT_ID_PLACEHOLDER/accountID/g' assets/dashboard.json
+```
+
 ## Develop
 ### Building
 
@@ -87,6 +94,7 @@ make tilt-up
 
 Notice that local images are build and pushed to docker running inside the minikube cluster since we are running `eval $(minikube docker-env)` before launching Tilt.
 
+For more in depth details regarding importing dashboards, you can check the official [docs](https://docs.newrelic.com/docs/query-your-data/explore-query-data/dashboards/introduction-dashboards/#dashboards-import).
 ### Testing
 
 #### Running unit tests
