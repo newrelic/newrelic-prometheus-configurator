@@ -91,9 +91,30 @@ All pod and endpoints with the `prometheus.io/scrape: true` annotation will be s
 
 Check the [docs](https://github.com/newrelic/newrelic-prometheus-configurator/blob/main/docs/KubernetesTargetFilter.md) for more information about it usage.
 
+### Kubernetes job examples
+
+The following job allows to scrape API Server metrics:
+```yaml
+config:
+  kubernetes:
+    jobs:
+    - job_name_prefix: apiserver
+      target_discovery:
+        endpoints: true
+        filter:
+          labels:
+            component: apiserver
+      scheme: https
+      tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecure_skip_verify: true
+      authorization:
+        credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+```
+
 ### Metrics Filtering
 
-Check [docs](https://github.com/newrelic/newrelic-prometheus-configurator/blob/main/docs/MetricsFilters.md) for detailed explanation and examples to how to filter metrics and labels.
+Check [docs](https://github.com/newrelic/newrelic-prometheus-configurator/blob/main/docs/MetricsFilters.md) for a detailed explanation and examples of how to filter metrics and labels.
 
 ### Self metrics
 
