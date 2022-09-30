@@ -4,7 +4,7 @@ description: A Helm chart to deploy Prometheus.
 
 type: application
 
-version: 0.0.2
+version: 0.0.3
 
 # Prometheus Server Version
 appVersion: "v2.37.1"
