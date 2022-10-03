@@ -1,10 +1,10 @@
 # Get verbose logs
 
-The `newrelic-prometheus` chart verbose logs can be enable setting the `verboseLog` or `global.verboseLog` to `true`.
+The `newrelic-prometheus-agent` chart verbose logs can be enable setting the `verboseLog` or `global.verboseLog` to `true`.
 
 Once this has been updated on the values files the helm upgrade command can be executed:
 ```bash
-helm upgrade <RELEASE_NAME> newrelic-prometheus-configurator/newrelic-prometheus \
+helm upgrade <RELEASE_NAME> newrelic-prometheus/newrelic-prometheus-agent \
 --namespace <NEWRELIC_NAMESPACE> \
 -f values-newrelic.yaml \
 [--version fixed-chart-version]
@@ -33,7 +33,7 @@ To check dropped targets the Prometheus API [Targets endpoint](https://prometheu
 
 Following command will list in `json` format all dropped targets, and show all discovered labels:
 ```bash
-kubectl exec newrelic-prometheus-0 -- wget -O - 'localhost:9090/api/v1/targets?state=dropped' 2>/dev/null
+kubectl exec newrelic-prometheus-agent-0 -- wget -O - 'localhost:9090/api/v1/targets?state=dropped' 2>/dev/null
 ```
 
 ### Target scrape fail
@@ -47,7 +47,7 @@ Another option is to check the Active target list from the Prometheus API [Targe
 
 Following command will list in `json` format all active targets, and show all discovered labels:
 ```bash
-kubectl exec newrelic-prometheus-0 -- wget -O - 'localhost:9090/api/v1/targets?state=active' 2>/dev/null
+kubectl exec newrelic-prometheus-agent-0 -- wget -O - 'localhost:9090/api/v1/targets?state=active' 2>/dev/null
 ```
 
 The failed target will be listed and the error will be available in the `lastError` field in a result similar to this:

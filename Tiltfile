@@ -5,7 +5,7 @@ cfg = config.parse()
 
 # Settings and defaults.
 helm_values_file=cfg.get('helm_values_file', './tilt-chart-values.yaml')
-project_name = 'newrelic-prometheus'
+project_name = 'newrelic-prometheus-agent'
 cluster_context = 'minikube'
 
 # Only use explicitly allowed kubeconfigs as a safety measure.

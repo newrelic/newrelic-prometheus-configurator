@@ -4,7 +4,7 @@
 
 Newrelic Prometheus Configurator gives you full observability of your services exposing [Prometheus](https://github.com/prometheus/prometheus) metrics.
 
-This repo contains the code base of the `newrelic-prometheus-configurator` and the [Helm Chart](/charts/newrelic-prometheus/README.md) to install the solution in Kubernetes.
+This repo contains the code base of the `newrelic-prometheus-configurator` and the [Helm Chart](/charts/newrelic-prometheus-agent/README.md) to install the solution in Kubernetes.
 
 The `newrelic-prometheus-configurator` uses a custom configuration that simplifies the experience related to configure features like discovery, filtering, metrics decoration, and sharding.
 
@@ -29,13 +29,13 @@ You can install this chart using [`nri-bundle`](https://github.com/newrelic/helm
 
 ```shell
 helm repo add newrelic-prometheus https://newrelic.github.io/newrelic-prometheus-configurator
-helm upgrade --install newrelic newrelic-prometheus/newrelic-prometheus -f your-custom-values.yaml
+helm upgrade --install newrelic newrelic-prometheus/newrelic-prometheus-agent -f your-custom-values.yaml
 ```
 
-For further information of the configuration needed for the chart just read the [chart's README](/charts/newrelic-prometheus/README.md).
+For further information of the configuration needed for the chart just read the [chart's README](/charts/newrelic-prometheus-agent/README.md).
 
 ## Getting Started
-The simplest way to start working with this project is to install the [Chart](/charts/newrelic-prometheus/README.md) in your Kubernetes cluster which by default will scrape the Prometheus targets having the `'prometheus.io/scrape: true'` annotation.
+The simplest way to start working with this project is to install the [Chart](/charts/newrelic-prometheus-agent/README.md) in your Kubernetes cluster which by default will scrape the Prometheus targets having the `'prometheus.io/scrape: true'` annotation.
 
 ### Usage
 Content: 
@@ -75,7 +75,7 @@ To run it locally you can use CLI directly piping in, or setting the `--input` f
 
 ### Run local environment
 
-We use minikube and Tilt to launch a local cluster and deploy the [main chart](charts/newrelic-prometheus/) and a set of testing endpoints from the [test-resource](charts/internal/test-resources/).
+We use minikube and Tilt to launch a local cluster and deploy the [main chart](charts/newrelic-prometheus-agent/) and a set of testing endpoints from the [test-resource](charts/internal/test-resources/).
 
 Make sure you have these tools or install them:
 - [Install minikube](https://minikube.sigs.k8s.io/docs/start/)

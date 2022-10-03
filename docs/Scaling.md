@@ -5,7 +5,7 @@ In this situation you can observe that your Prometheus servers start dying (idea
 
 In order to analyze the solution in detail, we provide a dashboard with different charts that will help us know when we have to scale our Prometheus solution.
 
-There are two different scaling approaches for `newrelic-prometheus`: 
+There are two different scaling approaches for `newrelic-prometheus-agent`: 
 
 - Vertical Scaling
 
@@ -38,7 +38,7 @@ sharding:
 And then, the release is upgraded:
 
 ```shell
-helm upgrade my-prometheus-release newrelic-prometheus-configurator/newrelic-prometheus -f custom-values.yaml
+helm upgrade my-prometheus-release newrelic-prometheus-configurator/newrelic-prometheus-agent -f custom-values.yaml
 ```
 
 Then two prometheus servers will be executed and each target will only be scraped by only one of them.

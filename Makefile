@@ -45,7 +45,7 @@ start-local-cluster:
 .PHONY: helm-deps
 helm-deps:
 	helm repo add newrelic https://helm-charts.newrelic.com
-	helm dependency update ./charts/newrelic-prometheus
+	helm dependency update ./charts/newrelic-prometheus-agent
 
 .PHONY: tilt-up
 tilt-up:
@@ -65,10 +65,10 @@ integration-test:
 .PHONY: chart-unit-test
 chart-unit-test:
 	ct --config .github/ct.yaml lint --debug
-	helm dependency update ./charts/newrelic-prometheus
-	helm unittest ./charts/newrelic-prometheus -3
+	helm dependency update ./charts/newrelic-prometheus-agent
+	helm unittest ./charts/newrelic-prometheus-agent -3
 
-PROMETHEUS_VERSION_CHART := $(shell grep "appVersion" charts/newrelic-prometheus/Chart.yaml | grep -o -E "(\.\d+.\d+)")
+PROMETHEUS_VERSION_CHART := $(shell grep "appVersion" charts/newrelic-prometheus-agent/Chart.yaml | grep -o -E "(\.\d+.\d+)")
 PROMETHEUS_VERSION_GO := $(shell grep "github.com/prometheus/prometheus" go.mod| grep -o -E "(\.\d+.\d+)")
 .PHONY: check-prometheus-version
 check-prometheus-version:
@@ -97,4 +97,4 @@ build-license-notice:
 
 .PHONY: generate-chart-docs
 build-chart-docs:
-	helm-docs -c charts/newrelic-prometheus
+	helm-docs -c charts/newrelic-prometheus-agent
