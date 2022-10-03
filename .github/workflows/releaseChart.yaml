@@ -37,6 +37,6 @@ jobs:
         run: helm repo add newrelic https://helm-charts.newrelic.com
 
       - name: Release workload charts
-        uses: helm/chart-releaser-action@v1.4.1
+        uses: helm/chart-releaser-action@v1
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
