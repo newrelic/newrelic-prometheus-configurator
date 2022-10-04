@@ -94,8 +94,7 @@ Check the [docs](https://github.com/newrelic/newrelic-prometheus-configurator/bl
 ### Kubernetes job examples
 
 #### API Server metrics
-
-By default the API Server Service named `kubernetes` is created in the `default` namespace. The following configuration will scrape metrics from all endpoints behind the mentioned service using the Prometheus Pod bearer token as Authorization Header:
+By default, the API Server Service named `kubernetes` is created in the `default` namespace. The following configuration will scrape metrics from all endpoints behind the mentioned service using the Prometheus Pod bearer token as Authorization Header:
 
 ```yaml
 config:
@@ -105,11 +104,11 @@ config:
       target_discovery:
         endpoints: true
       extra_relabel_config:
-      # Filter endpoints on `default` namespace asociated to `kubernetes` service.
+      # Filter endpoints on `default` namespace associated to `kubernetes` service.
       - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name]
         action: keep
         regex: default;kubernetes
-     
+    
       scheme: https
       tls_config:
           ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
