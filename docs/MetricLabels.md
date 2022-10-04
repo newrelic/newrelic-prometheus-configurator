@@ -5,12 +5,12 @@ There are a few sources of Metrics labels (AKA metadata or attributes). Below th
 All targets:
 | Label | Description | Example
 |:--|:--|:--|
-| `prometheus_server` | Name of the Prometheus instance that scraped the metric. When installed in Kubernetes the name of the Pod is assigned. | `prometheus_server: newrelic-prometheus-0`
+| `prometheus_server` | Name of the Prometheus instance that scraped the metric. When installed in Kubernetes the name of the Pod is assigned. | `prometheus_server: newrelic-prometheus-agent-0`
 | `instance` | Host and Port of the scraped target. | `instance: 172.17.0.5:8083` |
 | `job` | Name of the scrape job that discovered the target.| `job: kubernetes-job-pod` |
 | `instrumentation.name` | New Relic instrumentation name. | `instrumentation.name: remote-write` |
 | `instrumentation.provider` | New Relic instrumentation provider name. | `instrumentation.provider: prometheus` |
-| `instrumentation.source` | Will match the name in `prometheus_server`. | `instrumentation.source: newrelic-prometheus-0` |
+| `instrumentation.source` | Will match the name in `prometheus_server`. | `instrumentation.source: newrelic-prometheus-agent-0` |
 | `instrumentation.version` | New Relic remote-write endpoint API version. | `instrumentation.version: 0.0.2` |
 | `newrelic.source` | New Relic instrumentation source name. | `newrelic.source: prometheusAPI` |
 

@@ -1,6 +1,6 @@
 apiVersion: v2
 version: 0.0.1-devel
-description: This chart creates test resources for newrelic-prometheus.
+description: This chart creates test resources for newrelic-prometheus-agent.
 name: test-resources
 
 maintainers:
