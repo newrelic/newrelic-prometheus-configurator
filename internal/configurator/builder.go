@@ -97,8 +97,8 @@ func validate(config *NrConfig) error {
 // This function assumes the name follows the k8s name convention being `-` separated.
 // E.g. by running two shards the pod names will be the following:
 //
-//	1: newrelic-prometheus-0
-//	2: newrelic-prometheus-1
+//	1: newrelic-prometheus-agent-0
+//	2: newrelic-prometheus-agent-1
 func getIndexFromDataSourceName(dataSourceName string) string {
 	parts := strings.Split(dataSourceName, "-")
 	if len(parts) <= 1 {

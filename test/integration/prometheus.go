@@ -24,7 +24,7 @@ import (
 
 const (
 	prometheusBinaryPath = "./prometheus"
-	chartDefinitionFile  = "../../charts/newrelic-prometheus/Chart.yaml"
+	chartDefinitionFile  = "../../charts/newrelic-prometheus-agent/Chart.yaml"
 )
 
 type prometheusServer struct {
