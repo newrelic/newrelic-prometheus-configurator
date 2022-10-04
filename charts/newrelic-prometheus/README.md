@@ -93,7 +93,10 @@ Check the [docs](https://github.com/newrelic/newrelic-prometheus-configurator/bl
 
 ### Kubernetes job examples
 
-The following job allows to scrape API Server metrics:
+#### API Server metrics
+
+By default the API Server Service named `kubernetes` is created in the `default` namespace. The following configuration will scrape metrics from all endpoints behind the mentioned service using the Prometheus Pod bearer token as Authorization Header:
+
 ```yaml
 config:
   kubernetes:
@@ -101,9 +104,12 @@ config:
     - job_name_prefix: apiserver
       target_discovery:
         endpoints: true
-        filter:
-          labels:
-            component: apiserver
+      extra_relabel_config:
+      # Filter endpoints on `default` namespace asociated to `kubernetes` service.
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name]
+        action: keep
+        regex: default;kubernetes
+     
       scheme: https
       tls_config:
           ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
