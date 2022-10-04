@@ -45,6 +45,7 @@ func (c Config) Build() (promcfg.RemoteWrite, error) {
 		WithLicense(c.LicenseKey),
 		WithStaging(c.Staging),
 		WithDataSourceName(c.DataSourceName),
+		WithCollectorName(collectorName),
 	)
 
 	url, err := rwu.Build()

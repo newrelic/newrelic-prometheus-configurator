@@ -17,6 +17,7 @@ func TestRemoteWriteURL(t *testing.T) {
 		LicenseKey     string
 		Expected       string
 		DataSourceName string
+		CollectorName  string
 	}{
 		{
 			Name:       "staging non-eu",
@@ -58,8 +59,16 @@ func TestRemoteWriteURL(t *testing.T) {
 			Staging:        false,
 			FedRAMP:        false,
 			LicenseKey:     "non-eu-license-key",
-			Expected:       "https://metric-api.newrelic.com/prometheus/v1/write?prometheus_server=source",
 			DataSourceName: "source",
+			Expected:       "https://metric-api.newrelic.com/prometheus/v1/write?prometheus_server=source",
+		},
+		{
+			Name:          "collectorName",
+			Staging:       false,
+			FedRAMP:       false,
+			LicenseKey:    "non-eu-license-key",
+			CollectorName: "foo",
+			Expected:      "https://metric-api.newrelic.com/prometheus/v1/write?collector_name=foo",
 		},
 	}
 
@@ -72,6 +81,7 @@ func TestRemoteWriteURL(t *testing.T) {
 				remotewrite.WithLicense(c.LicenseKey),
 				remotewrite.WithStaging(c.Staging),
 				remotewrite.WithDataSourceName(c.DataSourceName),
+				remotewrite.WithCollectorName(c.CollectorName),
 			)
 			result, err := rwu.Build()
 			if assert.NoError(t, err) {

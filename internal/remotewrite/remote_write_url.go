@@ -18,6 +18,10 @@ const (
 	regionEUPrefix           = "eu."
 	// prometheusServerQueryParam is added to remoteWrite url when nrConfig's name is defined.
 	prometheusServerQueryParam = "prometheus_server"
+	// collectorNameQueryParam is a NR identifier of the component collecting the data. This is added as query parameter of the PRW and converted
+	// to collector.name to comply with NR standards.
+	collectorNameQueryParam = "collector_name"
+	collectorName           = "prometheus-agent"
 )
 
 var (
@@ -35,7 +39,7 @@ type URL struct {
 }
 
 func NewURL(opts ...URLOption) *URL {
-	u := &URL{}
+	u := &URL{Values: make(url.Values)}
 
 	for _, opt := range opts {
 		opt(u)
@@ -72,13 +76,17 @@ func WithDataSourceName(dataSourceName string) URLOption {
 			return
 		}
 
-		if u.Values != nil {
-			u.Values.Add(prometheusServerQueryParam, dataSourceName)
-		} else {
-			u.Values = url.Values{
-				prometheusServerQueryParam: []string{dataSourceName},
-			}
+		u.Values.Add(prometheusServerQueryParam, dataSourceName)
+	}
+}
+
+func WithCollectorName(collectorName string) URLOption {
+	return func(u *URL) {
+		if collectorName == "" {
+			return
 		}
+
+		u.Values.Add(collectorNameQueryParam, collectorName)
 	}
 }
 

@@ -1,6 +1,6 @@
 remote_write:
   - name: newrelic_rw
-    url: https://staging-metric-api.newrelic.com/prometheus/v1/write?prometheus_server=data-source
+    url: https://staging-metric-api.newrelic.com/prometheus/v1/write?collector_name=prometheus-agent&prometheus_server=data-source
     remote_timeout: 30s
     authorization:
       credentials: nrLicenseKey
