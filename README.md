@@ -140,6 +140,24 @@ make start-local-cluster
 make e2e-test
 ```
 
+### Release
+
+#### Configurator image
+The `newrelic-prometheus-configurator` images are pushed to [newrelic/newrelic-prometheus-configurator repo](https://hub.docker.com/r/newrelic/newrelic-prometheus-configurator). The following tags are pushed:
+- `main` each PR merged to the main branch will update this image.
+- `nightly` each night this image will be updated with the latest changes in the main branch. 
+- `latest` each Release will be update this image.
+- Release tag eg: `0.0.1`
+- Pre-Release tag eg: `0.0.1-pre`
+
+**Automated Release**:
+This release uses the release toolkit in order to automatically compute the version, changelog and release notes from the `## Unreleased` section for the [Changlog.md](/CHANGELOG.md) and dependency bots commits.
+To trigger this release run [releaseConfigurator](/.github/workflows/releaseConfigurator.yaml) workflow. This workflow automatically calculates the version from the changelog and commits the new changelog to main. 
+Release notes and new changelog can be previously checked by running the `make release-changelog` and `make release-notes` commands. Check [Release Toolkit](https://github.com/newrelic/release-toolkit#readme) for more details.
+
+**Manual release of images**:
+Is possible to manually trigger the build and push of a configurator image from any branch by executing the Actions->manualRelease->Run Workflow.
+
 ## Support
 
 New Relic hosts and moderates an online forum where customers can interact with New Relic employees as well as other customers to get help and share best practices. Like all official New Relic open source projects, there's a related Community topic in the New Relic Explorers Hub. You can find this project's topic/threads here:
@@ -148,7 +166,7 @@ New Relic hosts and moderates an online forum where customers can interact with 
 
 ## Contribute
 
-We encourage your contributions to improve [project name]! Keep in mind that when you submit your pull request, you'll need to sign the CLA via the click-through using CLA-Assistant. You only have to sign the CLA one time per project.
+We encourage your contributions to improve Newrelic Prometheus Configurator! Keep in mind that when you submit your pull request, you'll need to sign the CLA via the click-through using CLA-Assistant. You only have to sign the CLA one time per project.
 
 If you have any questions, or to execute our corporate CLA (which is required if your contribution is on behalf of a company), drop us an email at opensource@newrelic.com.
 
@@ -160,8 +178,8 @@ If you believe you have found a security vulnerability in this project or any of
 
 If you would like to contribute to this project, review [these guidelines](./CONTRIBUTING.md).
 
-To all contributors, we thank you!  Without your contribution, this project would not be what it is today.  We also host a community project page dedicated to [Project Name](<LINK TO https://opensource.newrelic.com/projects/... PAGE>).
+To all contributors, we thank you!  Without your contribution, this project would not be what it is today.  We also host a community project page dedicated to Newrelic Prometheus Configurator(<LINK TO https://opensource.newrelic.com/projects/... PAGE>).
 
 ## License
-[Project Name] is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
->[If applicable: The [project name] also uses source code from third-party libraries. You can find full details on which libraries are used and the terms under which they are licensed in the third-party notices document.]
+Newrelic Prometheus Configurator is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
+>[If applicable: The Newrelic Prometheus Configurator also uses source code from third-party libraries. You can find full details on which libraries are used and the terms under which they are licensed in the third-party notices document.]

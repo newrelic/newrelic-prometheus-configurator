@@ -1,0 +1,4 @@
+# This file is a dictionary used by the [link-dependencies](https://github.com/newrelic/release-toolkit/tree/main/link-dependencies) action.
+
+dictionary:
+  common-library: "https://github.com/newrelic/helm-charts/releases/tag/common-library-{{.To}}"

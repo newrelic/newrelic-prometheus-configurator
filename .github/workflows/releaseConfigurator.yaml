@@ -1,0 +1,64 @@
+name: Configurator Release
+
+# This workflow manually triggers the automated process of release based on the changelog.
+# Is recommended to run `make release-changelog` before to see an example of what is going to be generated.
+
+# IMPORTANT No matter the branch selected when triggered, the workflow will always execute on 'main' branch.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.next-version }}
+      image-tag: ${{ steps.image-tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main
+      - uses: newrelic/release-toolkit/validate-markdown@v1
+      - uses: newrelic/release-toolkit/generate-yaml@v1
+        with:
+          excluded-dirs: charts,.github
+      - uses: newrelic/release-toolkit/is-held@v1
+      - uses: newrelic/release-toolkit/link-dependencies@v1
+        with:
+          dictionary: .github/rt-dictionary.yaml
+      - uses: newrelic/release-toolkit/next-version@v1
+        id: version
+      - id: image-tag
+        run: |
+          export IMAGE_TAG=$(echo "${{ steps.version.outputs.next-version }}" | sed 's/^v//')
+          IMAGE_TAG+="-pre"
+          echo ::set-output name=tag::$IMAGE_TAG
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - uses: newrelic/release-toolkit/update-markdown@v1
+        with:
+          version: ${{ steps.version.outputs.next-version }}
+      - name: Commit updated changelog
+        run: |
+          git add CHANGELOG.md
+          git commit -m "Update changelog with changes from ${{ steps.version.outputs.next-version }}"
+          git push -u origin main
+      - uses: newrelic/release-toolkit/render@v1
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ steps.version.outputs.next-version }} --target $GITHUB_SHA --notes-file CHANGELOG.partial.md
+
+  build-push:
+    name: Build and Push images to Docker Hub
+    needs: release
+    uses: ./.github/workflows/_push_image.yaml
+    with:
+      version: ${{needs.release.outputs.version}} 
+      image-tag: ${{needs.release.outputs.image-tag}} 
+      image-overwrite-latest: true

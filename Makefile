@@ -98,3 +98,30 @@ build-license-notice:
 .PHONY: generate-chart-docs
 build-chart-docs:
 	helm-docs -c charts/newrelic-prometheus-agent
+
+## Release Toolkit targets
+ifeq (, $(shell which rt))
+RT_BIN ?= go run github.com/newrelic/release-toolkit@latest
+else
+RT_BIN ?= rt
+endif
+
+.PHONY: release-notes
+release-notes: _release-changes
+	@$(RT_BIN) render-changelog
+	@echo "RELEASE NOTES:\n"
+	@cat CHANGELOG.partial.md
+
+### Upgrades the CHANGELOG.md as if a Release is being triggered.
+.PHONY: release-changelog
+release-changelog: _release-changes
+	@VER=$$($(RT_BIN) next-version --tag-prefix "v") && \
+	$(RT_BIN) update-markdown --markdown CHANGELOG.md --version $$VER
+	@git --no-pager diff CHANGELOG.md
+
+### Prints out the Release Notes as if a Release is being triggered.
+.PHONY: _release-changes
+_release-changes:
+	@$(RT_BIN) validate-markdown
+	@$(RT_BIN) generate-yaml --excluded-dirs "charts,.github" --tag-prefix "v"
+	@$(RT_BIN) link-dependencies

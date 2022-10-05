@@ -16,3 +16,9 @@
 
 # local kubeconfig generated from minikube for integration tests.
 .kubeconfig-dev
+
+# Release toolkit
+
+CHANGELOG.md.bak
+CHANGELOG.partial.md
+changelog.yaml
