@@ -4,13 +4,13 @@ description: A Helm chart to deploy Prometheus with New Relic Prometheus Configu
 
 type: application
 
-version: 0.0.4
+version: 0.0.5
 
 # Prometheus Server Version
 appVersion: "v2.37.1"
 annotations:
 # TODO replace with the first configurator release
-  configuratorVersion: "0.0.1"
+  configuratorVersion: "0.0.2"
 
 dependencies:
   - name: common-library
