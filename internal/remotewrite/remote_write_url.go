@@ -39,7 +39,7 @@ type URL struct {
 }
 
 func NewURL(opts ...URLOption) *URL {
-	u := &URL{Values: make(url.Values)}
+	u := &URL{Values: url.Values{}}
 
 	for _, opt := range opts {
 		opt(u)
