@@ -36,6 +36,6 @@ scrape_configs:
 
 remote_write:
   - name: newrelic_rw
-    url: https://metric-api.newrelic.com/prometheus/v1/write
+    url: https://metric-api.newrelic.com/prometheus/v1/write?collector_name=prometheus-agent
     authorization:
       credentials: nrLicenseKey

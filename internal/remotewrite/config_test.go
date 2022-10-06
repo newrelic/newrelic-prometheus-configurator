@@ -37,7 +37,7 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 			},
 			Expected: promcfg.RemoteWrite{
 				Name: remotewrite.Name,
-				URL:  "https://metric-api.newrelic.com/prometheus/v1/write",
+				URL:  "https://metric-api.newrelic.com/prometheus/v1/write?collector_name=prometheus-agent",
 				Authorization: promcfg.Authorization{
 					Credentials: "fake-prod",
 				},
@@ -81,7 +81,7 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 			},
 			Expected: promcfg.RemoteWrite{
 				Name:          remotewrite.Name,
-				URL:           "https://staging-metric-api.eu.newrelic.com/prometheus/v1/write?prometheus_server=source-of-metrics",
+				URL:           "https://staging-metric-api.eu.newrelic.com/prometheus/v1/write?collector_name=prometheus-agent&prometheus_server=source-of-metrics",
 				RemoteTimeout: 10 * time.Second,
 				Authorization: promcfg.Authorization{
 					Credentials: "eu-fake-staging",
