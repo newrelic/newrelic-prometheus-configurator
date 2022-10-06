@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.2] - 2022-10-06
 ### Added
-- `collector_name` metadata is added as part of New Relic remote write config, to indentify the scraper component between other sources.
+- `collector_name` metadata is added as part of New Relic remote write config, to identify the scraper component between other sources.
 
 ## [0.0.1] - 2022-09-20
 ### Added
