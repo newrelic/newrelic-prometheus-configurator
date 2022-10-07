@@ -77,10 +77,10 @@ ifneq ($(PROMETHEUS_VERSION_CHART), $(PROMETHEUS_VERSION_GO))
 	exit 1
 endif
 
-
+NEWRELIC_E2E ?= go run github.com/newrelic/newrelic-integration-e2e-action@latest
 .PHONY: e2e-test
 e2e-test:
-	newrelic-integration-e2e \
+	$(NEWRELIC_E2E) \
 		--commit_sha=test-string \
 		--retry_attempts=5 \
 		--retry_seconds=60 \
