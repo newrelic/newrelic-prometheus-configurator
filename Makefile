@@ -91,10 +91,18 @@ e2e-test:
 		--verbose_mode=true \
 		--agent_enabled="false"
 
+LICENSE_DETECTOR ?= go run go.elastic.co/go-licence-detector@latest
 .PHONY: build-license-notice
 build-license-notice:
-	@go list -mod=mod -m -json all | go-licence-detector -noticeOut=NOTICE.txt -rules ./assets/licence/rules.json  -noticeTemplate ./assets/licence/THIRD_PARTY_NOTICES.md.tmpl -noticeOut THIRD_PARTY_NOTICES.md -overrides ./assets/licence/overrides -includeIndirect
+	@go list -mod=mod -m -json all | $(LICENSE_DETECTOR) \
+	  -noticeOut=NOTICE.txt \
+	  -rules ./assets/licence/rules.json \
+	  -noticeTemplate ./assets/licence/THIRD_PARTY_NOTICES.md.tmpl \
+	  -noticeOut THIRD_PARTY_NOTICES.md \
+	  -overrides ./assets/licence/overrides \
+	  -includeIndirect
 
+HELM_DOCS ?= go run github.com/norwoodj/helm-docs/cmd/helm-docs@latest
 .PHONY: generate-chart-docs
 build-chart-docs:
-	helm-docs -c charts/newrelic-prometheus-agent
+	$(HELM_DOCS) -c charts/newrelic-prometheus-agent
