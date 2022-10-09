@@ -5,3 +5,5 @@ target-branch: main
 
 chart-repos:
   - newrelic=https://helm-charts.newrelic.com
+
+check-version-increment: false

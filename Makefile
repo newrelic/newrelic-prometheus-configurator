@@ -128,3 +128,26 @@ _release-changes:
 	@$(RT_BIN) validate-markdown
 	@$(RT_BIN) generate-yaml --excluded-dirs "charts,.github" --tag-prefix "v"
 	@$(RT_BIN) link-dependencies
+
+
+CHART_DIRECTORY="charts/newrelic-prometheus-agent"
+MARKDOWN_FILE=${CHART_DIRECTORY}/CHANGELOG.md
+CHART_PREFIX=newrelic-prometheus-agent-
+
+.PHONY: release-notes-chart
+release-notes-chart: _release-changes-chart
+	@$(RT_BIN) render-changelog --markdown ${CHART_DIRECTORY}/release-notes.md
+	@echo "RELEASE NOTES:\n"
+	@cat ${CHART_DIRECTORY}/release-notes.md
+
+### Upgrades the CHANGELOG.md as if a Release is being triggered.
+.PHONY: release-changelog-chart
+release-changelog-chart: _release-changes-chart
+	@$(RT_BIN) update-markdown --markdown ${MARKDOWN_FILE} --version $$($(RT_BIN) next-version --tag-prefix ${CHART_PREFIX})
+	@git --no-pager diff CHANGELOG.md
+
+### Prints out the Release Notes as if a Release is being triggered.
+.PHONY: _release-changes-chart
+_release-changes-chart:
+	$(RT_BIN) validate-markdown --markdown ${MARKDOWN_FILE}
+	$(RT_BIN) generate-yaml --markdown ${MARKDOWN_FILE} --included-dirs ${CHART_DIRECTORY}  --tag-prefix ${CHART_PREFIX}
