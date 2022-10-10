@@ -115,8 +115,7 @@ release-notes: _release-changes
 ### Upgrades the CHANGELOG.md as if a Release is being triggered.
 .PHONY: release-changelog
 release-changelog: _release-changes
-	@VER=$$($(RT_BIN) next-version --tag-prefix "v") && \
-	$(RT_BIN) update-markdown --markdown CHANGELOG.md --version $$VER
+	$(RT_BIN) update-markdown --markdown CHANGELOG.md --version $$($(RT_BIN) next-version --tag-prefix "v")
 	@git --no-pager diff CHANGELOG.md
 
 ### Prints out the Release Notes as if a Release is being triggered.

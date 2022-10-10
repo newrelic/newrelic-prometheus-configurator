@@ -44,4 +44,4 @@ jobs:
     with:
       version: ${{ inputs.version }}
       image-tag: ${{needs.calculate-tag.outputs.image-tag}} 
-      image-overwrite-latest: ${{ ! inputs.pre-release }}
+      push-latest: ${{ ! inputs.pre-release }}

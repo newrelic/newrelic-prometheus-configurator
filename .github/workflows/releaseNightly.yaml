@@ -26,4 +26,4 @@ jobs:
     with:
       version: ${{needs.version.outputs.version}} 
       image-tag: nightly
-      image-overwrite-latest: false
+      push-latest: false

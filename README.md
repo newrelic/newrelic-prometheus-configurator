@@ -151,8 +151,8 @@ The `newrelic-prometheus-configurator` images are pushed to [newrelic/newrelic-p
 - Pre-Release tag eg: `0.0.1-pre`
 
 **Automated Release**:
-This release uses the release toolkit in order to automatically compute the version, changelog and release notes from the `## Unreleased` section for the [Changlog.md](/CHANGELOG.md) and dependency bots commits.
-To trigger this release run [releaseConfigurator](/.github/workflows/releaseConfigurator.yaml) workflow. This workflow automatically calculates the version from the changelog and commits the new changelog to main. 
+This release uses the release toolkit in order to automatically compute the version, changelog and release notes from the `## Unreleased` section for the [Changelog.md](/CHANGELOG.md) and dependency bots commits.
+To trigger this release run [releaseConfigurator](/.github/workflows/releaseConfigurator.yaml) workflow. This workflow automatically calculates the version from the changelog and commits the new changelog to the main branch. 
 Release notes and new changelog can be previously checked by running the `make release-changelog` and `make release-notes` commands. Check [Release Toolkit](https://github.com/newrelic/release-toolkit#readme) for more details.
 
 **Manual release of images**:
