@@ -1,11 +1,11 @@
 name: Release newrelic prometheus configurator chart
 # This workflow manually triggers the automated process of release based on the changelog.
-# Is recommended to run `make release-changelog` before to see an example of what is going to be generated.
-
-# IMPORTANT No matter the branch selected when triggered, the workflow will always execute on 'main' branch.
+# Is recommended to run `make release-changelog-chart` before to see an example of what is going to be generated.
 
 on:
   workflow_dispatch:
+
+concurrency: helm-charts
 
 env:
   CHART_DIRECTORY: 'charts/newrelic-prometheus-agent'
@@ -32,10 +32,12 @@ jobs:
   chart-release:
     name: Create chart release
     runs-on: ubuntu-latest
+    needs: [ validate-gh-pages-index ]
     outputs:
       version: ${{ steps.version.outputs.next-version }}
       image-tag: ${{ steps.image-tag.outputs.tag }}
     steps:
+      #TODO Add a check to be sure we are running over main
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -57,10 +59,6 @@ jobs:
         with:
           tag-prefix: ${{  env.CHART_TAG_PREFIX }}
           output-prefix: ""
-      - name: Set version in chart
-        uses: mikefarah/yq@master
-        with:
-          cmd: yq e -i '.version="${{ steps.version.outputs.next-version }}"' charts/newrelic-prometheus-agent/Chart.yaml
       - name: Configure Git
         run: |
           git config user.name "$GITHUB_ACTOR"
@@ -71,6 +69,7 @@ jobs:
           markdown: ${{ env.CHART_DIRECTORY }}/CHANGELOG.md
       - name: Commit updated changelog
         run: |
+          yq e -i '.version="${{ steps.version.outputs.next-version }}"' charts/newrelic-prometheus-agent/Chart.yaml
           git add ${{ env.CHART_DIRECTORY }}/CHANGELOG.md
           git add ${{ env.CHART_DIRECTORY }}/Chart.yaml
           git commit -m "Update changelog and Chart.yaml with ${{ steps.version.outputs.next-version }}" changes
