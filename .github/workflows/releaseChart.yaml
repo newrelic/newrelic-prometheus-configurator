@@ -52,8 +52,7 @@ jobs:
       - uses: newrelic/release-toolkit/link-dependencies@v1
         with:
           dictionary: .github/rt-dictionary.yaml
-      # TODO fix tag once it is merged
-      - uses: newrelic/release-toolkit/next-version@feat/prefixOutputAction
+      - uses: newrelic/release-toolkit/next-version@v1
         id: version
         with:
           tag-prefix: ${{  env.CHART_TAG_PREFIX }}
