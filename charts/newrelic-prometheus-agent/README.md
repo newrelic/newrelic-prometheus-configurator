@@ -181,7 +181,7 @@ The order to set the affinity is to set `affinity` field (at root level), if tha
 | config.common | object | See `values.yaml` | Include global configuration for Prometheus agent. |
 | config.common.scrape_interval | string | `"30s"` | How frequently to scrape targets by default, unless a different value is specified on the job. |
 | config.extra_remote_write | object | `nil` | It includes additional remote-write configuration. Note this configuration is not parsed, so valid [prometheus remote_write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) should be provided. |
-| config.extra_scrape_configs | object | `{}` | It is possible to include extra scrape configuration in [prometheus format](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config). Please note, it should be a valid Prometheus configuration which will not be parsed by the chart. |
+| config.extra_scrape_configs | list | `[]` | It is possible to include extra scrape configuration in [prometheus format](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config). Please note, it should be a valid Prometheus configuration which will not be parsed by the chart. |
 | config.kubernetes | object | See `values.yaml` | It allows defining scrape jobs for Kubernetes in a simple way. |
 | config.newrelic_remote_write | object | See `values.yaml` | Newrelic remote-write configuration settings. |
 | config.static_targets | object | See `values.yaml`. | It allows defining scrape jobs for targets with static URLs. |

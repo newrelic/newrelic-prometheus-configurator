@@ -406,5 +406,5 @@ config:
 
   # -- It is possible to include extra scrape configuration in [prometheus format](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config).
   # Please note, it should be a valid Prometheus configuration which will not be parsed by the chart.
-  # @default -- `{}`
-  extra_scrape_configs: {}
+  # @default -- `[]`
+  extra_scrape_configs: []
