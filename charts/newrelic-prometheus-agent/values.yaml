@@ -406,5 +406,7 @@ config:
 
   # -- It is possible to include extra scrape configuration in [prometheus format](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config).
   # Please note, it should be a valid Prometheus configuration which will not be parsed by the chart.
-  # @default -- `{}`
-  extra_scrape_configs: {}
+  # WARNING extra_scrape_configs is a raw Prometheus config. Therefore, the metrics collected thanks to it will not have by default the metadata (pod_name, service_name, ...) added by the configurator for the static or kubernetes jobs.
+  # This configuration should be used as a workaround whenever kubernetes and static job do not cover a particular use-case.
+  # @default -- `[]`
+  extra_scrape_configs: []
