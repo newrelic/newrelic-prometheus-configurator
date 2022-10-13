@@ -1,0 +1,30 @@
+name: Main branch release
+
+# Pushes `main` image tag each time a PR is merged to main branch.
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release-variables.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configurator version
+        id: release-variables
+        run: |
+          export CONFIG_VERSION=main-$(git rev-parse --short HEAD)
+          echo ::set-output name=version::$CONFIG_VERSION
+
+  build-push:
+    name: Build and Push images to Docker Hub
+    needs: version
+    uses: ./.github/workflows/_push_image.yaml
+    with:
+      version: ${{needs.version.outputs.version}} 
+      image-tag: main
+      push-latest: false

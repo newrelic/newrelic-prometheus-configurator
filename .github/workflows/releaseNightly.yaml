@@ -1,0 +1,29 @@
+name: Nightly release
+
+# # Pushes `nightly` image tag as scheduled.
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release-variables.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configurator version
+        id: release-variables
+        run: |
+          export CONFIG_VERSION=nightly-$(git rev-parse --short HEAD)
+          echo ::set-output name=version::$CONFIG_VERSION
+
+  build-push:
+    name: Build and Push images to Docker Hub
+    needs: version
+    uses: ./.github/workflows/_push_image.yaml
+    with:
+      version: ${{needs.version.outputs.version}} 
+      image-tag: nightly
+      push-latest: false

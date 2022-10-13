@@ -106,3 +106,25 @@ HELM_DOCS ?= go run github.com/norwoodj/helm-docs/cmd/helm-docs@latest
 .PHONY: generate-chart-docs
 build-chart-docs:
 	$(HELM_DOCS) -c charts/newrelic-prometheus-agent
+
+## Release Toolkit targets
+RT_BIN ?= go run github.com/newrelic/release-toolkit@latest
+
+.PHONY: release-notes
+release-notes: _release-changes
+	@$(RT_BIN) render-changelog
+	@echo "RELEASE NOTES:\n"
+	@cat CHANGELOG.partial.md
+
+### Upgrades the CHANGELOG.md as if a Release is being triggered.
+.PHONY: release-changelog
+release-changelog: _release-changes
+	$(RT_BIN) update-markdown --markdown CHANGELOG.md --version $$($(RT_BIN) next-version --tag-prefix "v")
+	@git --no-pager diff CHANGELOG.md
+
+### Prints out the Release Notes as if a Release is being triggered.
+.PHONY: _release-changes
+_release-changes:
+	@$(RT_BIN) validate-markdown
+	@$(RT_BIN) generate-yaml --excluded-dirs "charts,.github" --tag-prefix "v"
+	@$(RT_BIN) link-dependencies

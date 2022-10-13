@@ -1,0 +1,47 @@
+name: Manual Release
+
+# This workflow allows to build and push the configurator image on any branch.
+# - removes the 'v' prefix on the image tag.
+# - if release overwrites latest.
+# - if pre-release, adds "-pre" suffix.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version including "v" prefix eg: v0.0.1'
+        required: true
+        type: string
+      pre-release:
+        description: 'Push pre-release image. If disabled "latest" image will be overwritten'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  calculate-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.release-variables.outputs.tag }}
+    steps:
+      - name: Check valid version
+        run: echo "${{ inputs.version }}" | grep -E '^v[0-9.]*[0-9]$'
+      - name: Build image tag name
+        id: release-variables
+        run: |
+          export IMAGE_TAG=$(echo "${{ inputs.version }}" | sed 's/^v//')
+
+          if [ ${{ inputs.pre-release }} = "true" ];then
+            IMAGE_TAG+="-pre"
+          fi
+          
+          echo ::set-output name=tag::$IMAGE_TAG
+
+  build-push:
+    name: Build and Push images to Docker Hub
+    needs: calculate-tag
+    uses: ./.github/workflows/_push_image.yaml
+    with:
+      version: ${{ inputs.version }}
+      image-tag: ${{needs.calculate-tag.outputs.image-tag}} 
+      push-latest: ${{ ! inputs.pre-release }}
