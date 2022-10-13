@@ -108,11 +108,7 @@ build-chart-docs:
 	$(HELM_DOCS) -c charts/newrelic-prometheus-agent
 
 ## Release Toolkit targets
-ifeq (, $(shell which rt))
 RT_BIN ?= go run github.com/newrelic/release-toolkit@latest
-else
-RT_BIN ?= rt
-endif
 
 .PHONY: release-notes
 release-notes: _release-changes
