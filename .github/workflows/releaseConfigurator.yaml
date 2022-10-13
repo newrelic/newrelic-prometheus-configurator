@@ -66,3 +66,4 @@ jobs:
       version: ${{needs.release.outputs.version}} 
       image-tag: ${{needs.release.outputs.image-tag}} 
       push-latest: true
+    secrets: inherit

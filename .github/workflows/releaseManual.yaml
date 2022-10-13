@@ -45,3 +45,4 @@ jobs:
       version: ${{ inputs.version }}
       image-tag: ${{needs.calculate-tag.outputs.image-tag}} 
       push-latest: ${{ ! inputs.pre-release }}
+    secrets: inherit
