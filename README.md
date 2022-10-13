@@ -121,17 +121,8 @@ make chart-unit-test
 ```
 
 #### Running e2e tests
+This test is based on the `newrelic-integration-e2e`. This tool will start the local environment and check if the expected metrics have reached the New Relic platform.
 
-This test are based on the `newrelic-integration-e2e`. This tool will start the local environment and check if the expected metrics has been reach the NewRelic platform.
-
-To run it locally you should already be able to run the local cluster and apart from that you must install the `newrelic-integration-e2e` binary:
-```bash
-git clone https://github.com/newrelic/newrelic-integration-e2e-action
-cd newrelic-integration-e2e-action/newrelic-integration-e2e
-go build -o  $GOPATH/bin/newrelic-integration-e2e ./cmd/...
-```
-
-Then run:
 ```bash
 export ACCOUNT_ID=<NewRelic account number>
 export API_REST_KEY=<NewRelic api rest key>
