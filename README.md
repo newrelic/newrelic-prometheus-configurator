@@ -148,6 +148,17 @@ Release notes and new changelog can be previously checked by running the `make r
 
 **Manual release of images**:
 Is possible to manually trigger the build and push of a configurator image from any branch by executing the Actions->manualRelease->Run Workflow.
+#### newrelic-prometheus-agent Chart 
+
+The chart is released thanks to `helm/chart-releaser-action`, the package is hosted in Github releases and the index in Github pages.
+
+The release process uses the release toolkit in order to automatically compute the version, changelog and release notes from the `## Unreleased` section for the chart [Changelog.md](/charts/newrelic-prometheus-agent/CHANGELOG.md) and dependency bots commits.
+
+> Therefore, the chart version should not be changed manually in the Chart.yaml, since it is automatically bumped.
+
+To trigger this release run [Release newrelic prometheus configurator chart](/.github/workflows/releaseChart.yaml) workflow. This workflow automatically calculates the version from the chart changelog and commits the new changelog and the version to the main branch.
+
+Release notes and new changelog can be previously checked by running the `make release-changelog-chart` and `make release-notes-chart` commands. Check [Release Toolkit](https://github.com/newrelic/release-toolkit#readme) for more details.
 
 ## Support
 

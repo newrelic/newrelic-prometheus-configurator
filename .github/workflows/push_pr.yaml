@@ -79,10 +79,9 @@ jobs:
       - name: Test install charts
         if: steps.list-changed.outputs.changed == 'true'
         run: ct install --namespace ct --config .github/ct.yaml --debug
-      # TODO: enable upgrade check once chart and values are considered stable
-      #- name: Test upgrade charts
-      #  if: steps.list-changed.outputs.changed == 'true'
-      #  run: ct install --namespace ct --config .github/ct.yaml --debug --upgrade
+      - name: Test upgrade charts
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct install --namespace ct --config .github/ct.yaml --debug --upgrade
 
   e2e-test:
     name: E2e Tests 

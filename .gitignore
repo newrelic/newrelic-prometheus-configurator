@@ -22,3 +22,4 @@
 CHANGELOG.md.bak
 CHANGELOG.partial.md
 changelog.yaml
+charts/newrelic-prometheus-agent/release-notes.md
