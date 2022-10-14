@@ -37,8 +37,7 @@ jobs:
         id: version
       - id: image-tag
         run: |
-          export IMAGE_TAG=$(echo "${{ steps.version.outputs.next-version }}" | sed 's/^v//')
-          echo ::set-output name=tag::$IMAGE_TAG
+          echo tag=$(echo "${{ steps.version.outputs.next-version }}" | sed 's/^v//') >> $GITHUB_OUTPUT
       - name: Configure Git
         run: |
           git config user.name "$GITHUB_ACTOR"
