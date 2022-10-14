@@ -16,8 +16,7 @@ jobs:
       - name: Configurator version
         id: release-variables
         run: |
-          export CONFIG_VERSION=nightly-$(git rev-parse --short HEAD)
-          echo ::set-output name=version::$CONFIG_VERSION
+          echo version=nightly-$(git rev-parse --short HEAD) >> $GITHUB_OUTPUT
 
   build-push:
     name: Build and Push images to Docker Hub
@@ -27,3 +26,4 @@ jobs:
       version: ${{needs.version.outputs.version}} 
       image-tag: nightly
       push-latest: false
+    secrets: inherit

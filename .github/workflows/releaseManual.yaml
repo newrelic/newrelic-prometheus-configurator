@@ -34,8 +34,8 @@ jobs:
           if [ ${{ inputs.pre-release }} = "true" ];then
             IMAGE_TAG+="-pre"
           fi
-          
-          echo ::set-output name=tag::$IMAGE_TAG
+
+          echo tag=$IMAGE_TAG >> $GITHUB_OUTPUT
 
   build-push:
     name: Build and Push images to Docker Hub
@@ -45,3 +45,4 @@ jobs:
       version: ${{ inputs.version }}
       image-tag: ${{needs.calculate-tag.outputs.image-tag}} 
       push-latest: ${{ ! inputs.pre-release }}
+    secrets: inherit
