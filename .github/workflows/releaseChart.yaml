@@ -77,7 +77,7 @@ jobs:
           yq e -i '.version="${{ steps.version.outputs.next-version }}"' ${{ env.CHART_DIRECTORY }}/Chart.yaml
           git add ${{ env.CHART_DIRECTORY }}/CHANGELOG.md
           git add ${{ env.CHART_DIRECTORY }}/Chart.yaml
-          git commit -m "Update changelog and Chart.yaml with ${{ steps.version.outputs.next-version }}" changes
+          git commit -m "Update changelog and Chart.yaml with ${{ steps.version.outputs.next-version }} changes"
           git push origin main
       - uses: newrelic/release-toolkit/render@v1
         with:
