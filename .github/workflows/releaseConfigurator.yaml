@@ -26,6 +26,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: main
+          token: "${{ secrets.COREINT_BOT_TOKEN }}"
       - uses: newrelic/release-toolkit/validate-markdown@v1
       - uses: newrelic/release-toolkit/generate-yaml@v1
         with:
@@ -40,8 +41,8 @@ jobs:
           echo tag=$(echo "${{ steps.version.outputs.next-version }}" | sed 's/^v//') >> $GITHUB_OUTPUT
       - name: Configure Git
         run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config user.name newrelic-coreint-team
+          git config user.email coreint-dev@newrelic.com
       - uses: newrelic/release-toolkit/update-markdown@v1
         with:
           version: ${{ steps.version.outputs.next-version }}
