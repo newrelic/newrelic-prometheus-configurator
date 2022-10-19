@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
@@ -32,7 +31,7 @@ type prometheusServer struct {
 }
 
 func prometheusChartVersion() (string, error) {
-	f, err := ioutil.ReadFile(chartDefinitionFile)
+	f, err := os.ReadFile(chartDefinitionFile)
 	if err != nil {
 		return "", fmt.Errorf("reading Chart.yaml: %w", err)
 	}

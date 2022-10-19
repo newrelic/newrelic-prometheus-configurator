@@ -4,7 +4,7 @@
 package configurator
 
 import (
-	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 
@@ -18,7 +18,7 @@ func TestNrConfig(t *testing.T) {
 	t.Parallel()
 
 	expected := testNrConfigExpectation(t)
-	nrConfigData, err := ioutil.ReadFile("testdata/nr-config-test.yaml")
+	nrConfigData, err := os.ReadFile("testdata/nr-config-test.yaml")
 	require.NoError(t, err)
 
 	checkNrConfig(t, expected, nrConfigData)
