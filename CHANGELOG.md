@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### bugfix
+- Add missing `pod` name metadata to metrics scraped from `endpoints`.
+
 ## [0.0.2] - 2022-10-06
 ### Added
 - `collector_name` metadata is added as part of New Relic remote write config, to identify the scraper component between other sources.

@@ -77,5 +77,10 @@ func endpointsDefaultRelabelConfigs() []promcfg.RelabelConfig {
 			Action:      "replace",
 			TargetLabel: "node",
 		},
+		{
+			SourceLabels: []string{"__meta_kubernetes_pod_name"},
+			Action:       "replace",
+			TargetLabel:  "pod",
+		},
 	}
 }
