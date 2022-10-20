@@ -5,8 +5,20 @@
     ":disableDependencyDashboard"
   ],
   "enabledManagers": [
-    // Managers for helm and helm-values. Go dependencies are managed by Dependabot.
-    "helm-values",
+    // Needed to bump the conifgurator version.
+    "regex",
     "helmv3"
   ],
+  "regexManagers": [
+    {
+      "fileMatch": [
+        '(^|/)newrelic-prometheus-agent/Chart\.yaml$'
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "newrelic/newrelic-prometheus-configurator",
+      "matchStrings": [
+        'configuratorVersion: "(?<currentValue>.+)"'
+      ]
+    }
+  ]
 }
