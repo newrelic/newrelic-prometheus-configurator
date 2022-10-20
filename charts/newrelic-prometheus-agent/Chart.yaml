@@ -6,7 +6,6 @@ version: 0.1.0
 # Prometheus Server Version
 appVersion: "v2.37.1"
 annotations:
-  # TODO replace with the first configurator release
   configuratorVersion: "0.0.2"
 dependencies:
   - name: common-library
