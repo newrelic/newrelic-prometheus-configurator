@@ -46,8 +46,8 @@ You can install this chart using [`nri-bundle`](https://github.com/newrelic/helm
 [helm-charts repository](https://github.com/newrelic/helm-charts) or directly from this repository by adding this Helm repository:
 
 ```shell
-helm repo add nri-kubernetes https://newrelic.github.io/newrelic-prometheus-configurator
-helm upgrade --install newrelic-prometheus-configurator/newrelic-prometheus-agent -f your-custom-values.yaml
+helm repo add newrelic-prometheus https://newrelic.github.io/newrelic-prometheus-configurator
+helm upgrade --install newrelic newrelic-prometheus/newrelic-prometheus-agent -f your-custom-values.yaml
 ```
 
 ## Values managed globally
