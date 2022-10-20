@@ -8,15 +8,20 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### bugfix
-- Add missing `pod` name metadata to metrics scraped from `endpoints`.
+## v0.1.0 - 2022-10-20
 
-### enhancement
-- Use Go 1.19.
-
-### security
+### 🛡️ Security notices
 - Bumps `golang.org/x/sync` to `v0.1.0`.
 - Replace `golang.org/x/text` to `v0.3.8` to fix `CVE-2022-32149`.
+
+### 🚀 Enhancements
+- Use Go 1.19.
+
+### 🐞 Bug fixes
+- Add missing `pod` name metadata to metrics scraped from `endpoints`.
+
+### ⛓️ Dependencies
+- Upgraded k8s.io/client-go from 0.25.2 to 0.25.3
 
 ## [0.0.2] - 2022-10-06
 ### Added
