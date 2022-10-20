@@ -5,7 +5,7 @@ package configurator_test
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/configurator"
@@ -46,9 +46,9 @@ func TestBuilder(t *testing.T) { //nolint: paralleltest,tparallel
 			nrConfigFile := "testdata/" + name + ".yaml"
 			expectedFile := "testdata/" + name + ".expected.yaml"
 
-			data, err := ioutil.ReadFile(nrConfigFile)
+			data, err := os.ReadFile(nrConfigFile)
 			require.NoError(t, err)
-			expected, err := ioutil.ReadFile(expectedFile)
+			expected, err := os.ReadFile(expectedFile)
 			require.NoError(t, err)
 			nrConfig := &configurator.NrConfig{}
 			err = yaml.Unmarshal(data, nrConfig)
@@ -213,7 +213,7 @@ func assertYamlPromConfigsAreEqual(t *testing.T, y1, y2 []byte) {
 func assertIsPrometheusConfig(t *testing.T, y []byte) {
 	t.Helper()
 
-	tmpFile, err := ioutil.TempFile("", "gen-prometheus-config")
+	tmpFile, err := os.CreateTemp("", "gen-prometheus-config")
 	require.NoError(t, err)
 	_, err = tmpFile.Write(y)
 	require.NoError(t, err)

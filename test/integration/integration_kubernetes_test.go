@@ -272,6 +272,7 @@ kubernetes:
 		"namespace":  k8sEnv.testNamespace.Name,
 		"service":    svc.Name,
 		"node":       pod.Spec.NodeName,
+		"pod":        pod.Name,
 		"test_label": svc.Labels["test.label"],
 	})
 }

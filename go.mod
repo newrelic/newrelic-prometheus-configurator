@@ -1,13 +1,13 @@
 module github.com/newrelic/newrelic-prometheus-configurator
 
-go 1.18
+go 1.19
 
 require (
 	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137
 	github.com/prometheus/prometheus v0.37.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.0
-	golang.org/x/sync v0.0.0-20220907140024-f12130a52804
+	golang.org/x/sync v0.1.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.25.3
 	k8s.io/apimachinery v0.25.3
@@ -83,5 +83,9 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-// To avoid CVE-2022-27664 triggering a security scan
-replace golang.org/x/net v0.0.0-20220722155237-a158d28d115b => golang.org/x/net v0.0.0-20220906165146-f3363e06e74c
+replace (
+	// fixing CVE-2022-27664
+	golang.org/x/net v0.0.0-20220722155237-a158d28d115b => golang.org/x/net v0.0.0-20220906165146-f3363e06e74c
+	// fixing CVE-2022-32149
+	golang.org/x/text v0.3.7 => golang.org/x/text v0.3.8
+)

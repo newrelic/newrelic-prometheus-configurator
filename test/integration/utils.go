@@ -5,7 +5,7 @@ package integration
 import (
 	"fmt"
 	"io/fs"
-	"io/ioutil"
+	"os"
 	"os/exec"
 	"path"
 	"testing"
@@ -21,7 +21,7 @@ func runConfigurator(t *testing.T, nrConfigConfig string) string {
 	prometheusConfigConfigPath := path.Join(tempDir, "prometheusConfig.yml")
 
 	readOnly := 0o444
-	err := ioutil.WriteFile(nrConfigConfigPath, []byte(nrConfigConfig), fs.FileMode(readOnly))
+	err := os.WriteFile(nrConfigConfigPath, []byte(nrConfigConfig), fs.FileMode(readOnly))
 	require.NoError(t, err)
 
 	//nolint:gosec

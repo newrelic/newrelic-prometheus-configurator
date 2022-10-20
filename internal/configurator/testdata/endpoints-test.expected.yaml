@@ -36,6 +36,9 @@ scrape_configs:
         regex: ".*;(.+)|(.+);"
         replacement: "$1$2"
         target_label: node
+      - source_labels: [ __meta_kubernetes_pod_name ]
+        action: replace
+        target_label: pod
 
         # Extra relabel config
       - source_labels: [ test_label ]
@@ -91,6 +94,9 @@ scrape_configs:
         regex: ".*;(.+)|(.+);"
         replacement: "$1$2"
         target_label: node
+      - source_labels: [ __meta_kubernetes_pod_name ]
+        action: replace
+        target_label: pod
 
 remote_write:
   - name: newrelic_rw
