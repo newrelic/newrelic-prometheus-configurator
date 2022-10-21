@@ -8,6 +8,7 @@ All targets:
 | `prometheus_server` | Name of the Prometheus instance that scraped the metric. When installed in Kubernetes the name of the Pod is assigned. | `prometheus_server: newrelic-prometheus-agent-0`
 | `instance` | Host and Port of the scraped target. | `instance: 172.17.0.5:8083` |
 | `job` | Name of the scrape job that discovered the target.| `job: kubernetes-job-pod` |
+| `collector.name` | New Relic collector name. | `collector.name: prometheus-agent` |
 | `instrumentation.name` | New Relic instrumentation name. | `instrumentation.name: remote-write` |
 | `instrumentation.provider` | New Relic instrumentation provider name. | `instrumentation.provider: prometheus` |
 | `instrumentation.source` | Will match the name in `prometheus_server`. | `instrumentation.source: newrelic-prometheus-agent-0` |
