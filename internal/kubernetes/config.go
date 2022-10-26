@@ -74,7 +74,7 @@ func (c Config) Build(shardingConfig sharding.Config) ([]promcfg.Job, error) {
 
 func buildTargetFilters(filters CuratedExperience, metadataSourcePrefix string) []promcfg.RelabelConfig { //nolint: prealloc
 	var relabelConfigs []promcfg.RelabelConfig
-	var sourceLabels []string
+	sourceLabels := make([]string, 0, len(filters.SourceLabels))
 
 	for _, sL := range filters.SourceLabels {
 		sanitizedLabel := invalidPrometheusLabelCharRegex.ReplaceAllString(sL, "_")

@@ -416,3 +416,93 @@ kubernetes:
 	// https://github.com/kubernetes/kubernetes/pull/110479
 	asserter.droppedTargetCount(t, 1)
 }
+
+func Test_CuratedExperience(t *testing.T) {
+	t.Parallel()
+
+	k8sEnv := newK8sEnvironment(t)
+
+	// Create running pod
+	podBase := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "unmonitored-pod",
+			Labels: map[string]string{
+				"k8s.io/app": "myApp",
+			},
+			Annotations: map[string]string{
+				"prometheus.io/scrape": "true",
+				"prometheus.io/scheme": "https",
+				"prometheus.io/port":   "8001",
+				"prometheus.io/path":   "/custom-path",
+			},
+		},
+		Spec: fakePodSpec(),
+	}
+
+	podNotMonitored := k8sEnv.addPodAndWaitOnPhase(t, podBase, corev1.PodRunning)
+
+	// Create a similar pod, but with the required filter
+	podBase.Name = "monitored-pod1"
+	podBase.Labels["app.kubernetes.io/name"] = "asdTesT1asd"
+
+	podMonitored1 := k8sEnv.addPodAndWaitOnPhase(t, podBase, corev1.PodRunning)
+
+	// Create a similar pod, but with a different label
+	podBase.Name = "monitored-pod2"
+	podBase.Labels["something-different2"] = "asdtest2"
+
+	podMonitored2 := k8sEnv.addPodAndWaitOnPhase(t, podBase, corev1.PodRunning)
+
+	nrConfigConfig := fmt.Sprintf(`
+newrelic_remote_write:
+  license_key: nrLicenseKey
+common:
+  scrape_interval: 1s
+kubernetes:
+  jobs:
+    - job_name_prefix: test-k8s
+      target_discovery:
+        pod: true
+        additional_config:
+         kubeconfig_file: %s
+         namespaces:
+          names:
+          - %s
+  curated_experience:
+    regexes:
+      - test1
+      - test2
+    source_labels:
+      - something-different1     
+      - app.kubernetes.io/name
+      - something-different2
+
+`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
+
+	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
+
+	fmt.Errorf(prometheusConfigConfigPath)
+	ps := newPrometheusServer(t)
+	ps.start(t, prometheusConfigConfigPath)
+
+	scrapeURL1 := fmt.Sprintf("%s://%s:%s%s",
+		podMonitored1.Annotations["prometheus.io/scheme"],
+		podMonitored1.Status.PodIP,
+		podMonitored1.Annotations["prometheus.io/port"],
+		podMonitored1.Annotations["prometheus.io/path"],
+	)
+
+	scrapeURL2 := fmt.Sprintf("%s://%s:%s%s",
+		podMonitored2.Annotations["prometheus.io/scheme"],
+		podMonitored2.Status.PodIP,
+		podMonitored2.Annotations["prometheus.io/port"],
+		podMonitored2.Annotations["prometheus.io/path"],
+	)
+
+	asserter := newAsserter(ps)
+	asserter.activeTargetWithScrapeURL(t, scrapeURL1)
+	asserter.activeTargetWithScrapeURL(t, scrapeURL2)
+	asserter.droppedTargetLabels(t, map[string]string{
+		"__meta_kubernetes_pod_name": podNotMonitored.Name,
+	})
+}
