@@ -182,8 +182,21 @@ config:
   # -- It allows defining scrape jobs for Kubernetes in a simple way.
   # @default -- See `values.yaml`
   kubernetes:
+
+    # By default, all targets discovered are scraped.
+    # If curated_experience is enabled or any regex is specified,
+    # then merely the targets having one of the specified labels matching those regexes or the ones of the curated experiences are scraped.
+    # Notice that this configuration option applies to all configured kubernetes jobs.
+    # Under the hood relabel_configs with action 'keep' are generated, consider it in case any custom extra_relabel_config is needed
+    curated_experience:
+      enabled: false
+      source_labels: ["app.kubernetes.io/name", "k8s-app", "app"]
+      additional_regexes: []
+#     - ".*<regex>.*"
+
+
     jobs:
-    # By default all pods and endpoints with `prometheus.io/scrape: true` annotation will be discovered.
+    # By default, all pods and endpoints with `prometheus.io/scrape: true` annotation will be discovered.
     # Kubernetes jobs define [kubernetes_sd_configs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)
     # to discover and scrape Kubernetes objects. Besides, a set of relabel_configs are included in order to include some Kubernetes metadata as
     # Labels. For example, address, metrics_path, URL scheme, prometheus_io_parameters, namespace, pod name, service name and labels are taken

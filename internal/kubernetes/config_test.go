@@ -249,3 +249,106 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 		})
 	}
 }
+
+func TestBuildFilterCuratedExperience(t *testing.T) {
+	t.Parallel()
+
+	annotationsFilter := kubernetes.Filter{
+		Annotations: map[string]string{"prometheus.io/scrape": "true"},
+	}
+
+	type regexBySourceLabel map[string]string
+
+	tests := []struct {
+		name     string
+		nrConfig kubernetes.Config
+		want     *regexBySourceLabel
+		len      int
+	}{
+		{
+			name: "two labels two regexes",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+					},
+				},
+				CuratedExperience: kubernetes.CuratedExperience{
+					SourceLabels: []string{"label1", "label2"},
+					Regexes:      []string{"regex1", "regex2"},
+				},
+			},
+			want: &regexBySourceLabel{
+				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
+				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
+			},
+			len: 11,
+		},
+		{
+			name: "two labels only",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+					},
+				},
+				CuratedExperience: kubernetes.CuratedExperience{
+					SourceLabels: []string{"label1", "label2"},
+					Regexes:      []string{},
+				},
+			},
+			len: 10,
+		},
+		{
+			name: "two regexes only",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+					},
+				},
+				CuratedExperience: kubernetes.CuratedExperience{
+					SourceLabels: []string{},
+					Regexes:      []string{"regex1", "regex2"},
+				},
+			},
+			len: 10,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			job, err := tt.nrConfig.Build(sharding.Config{})
+			require.NoError(t, err)
+
+			// we expect the filter relabel config as last one.
+			l := len(job[0].RelabelConfigs)
+			actualRelabelConfig := job[0].RelabelConfigs[l-1]
+
+			require.Len(t, job[0].RelabelConfigs, tt.len)
+
+			for _, actualSourceLabel := range actualRelabelConfig.SourceLabels {
+				if tt.want != nil {
+					regexBySourceLabel := *tt.want
+					val, ok := regexBySourceLabel[actualSourceLabel]
+					require.True(t, ok, "source label not expected: ", actualSourceLabel)
+					require.Equal(t, actualRelabelConfig.Regex, val)
+				}
+			}
+		})
+	}
+}

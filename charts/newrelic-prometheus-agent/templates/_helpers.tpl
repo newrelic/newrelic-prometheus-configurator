@@ -83,10 +83,29 @@ extra_scrape_configs:
 
 {{- define "newrelic-prometheus.configurator.kubernetes" -}}
 {{- if .Values.config -}}
-  {{- if .Values.config.kubernetes  -}}
+{{- if .Values.config.kubernetes  -}}
 kubernetes:
-  {{- .Values.config.kubernetes | toYaml | nindent 2 -}}
+  {{- if .Values.config.kubernetes.jobs }}
+  jobs:
+    {{- .Values.config.kubernetes.jobs | toYaml | nindent 2 -}}
   {{- end -}}
+
+  {{- if .Values.config.kubernetes.curated_experience }}
+  {{- if .Values.config.kubernetes.curated_experience.enabled }}
+    {{- $tmp := dict -}}
+    {{- $reg := list -}}
+    {{- $tmp = .Files.Get "static/curatedexperience.yaml" | fromYaml -}}
+    {{- $reg = $tmp.list_regexes -}}
+    {{ if concat .Values.config.kubernetes.curated_experience.additional_regexes $reg}}
+  curated_experience:
+    regexes:
+      {{- concat .Values.config.kubernetes.curated_experience.additional_regexes $reg | toYaml | nindent 6 }}
+    source_labels:
+      {{- .Values.config.kubernetes.curated_experience.source_labels | toYaml | nindent 6 -}}
+    {{- end -}}
+   {{- end -}}
+   {{- end -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 

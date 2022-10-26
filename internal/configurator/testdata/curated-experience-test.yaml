@@ -1,0 +1,16 @@
+kubernetes:
+  jobs:
+    - job_name_prefix: kubernetes-job
+      target_discovery:
+        pod: true
+        endpoints: true
+  curated_experience:
+    regexes:
+      - test1
+      - test2
+    source_labels:
+      - testLabel1
+      - testLabel2
+
+newrelic_remote_write:
+  license_key: nrLicenseKey

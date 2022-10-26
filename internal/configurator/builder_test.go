@@ -36,6 +36,7 @@ func TestBuilder(t *testing.T) { //nolint: paralleltest,tparallel
 		"kubernetes-scrape-fields-test",
 		"sharding-test",
 		"skip-sharding-test",
+		"curated-experience-test",
 	}
 
 	for _, c := range testCases {

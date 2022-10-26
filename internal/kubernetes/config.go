@@ -2,6 +2,8 @@ package kubernetes
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/promcfg"
 	"github.com/newrelic/newrelic-prometheus-configurator/internal/scrapejob"
@@ -21,12 +23,22 @@ var (
 
 // Config defines all fields to set up prometheus to scrape k8s targets.
 type Config struct {
-	K8sJobs []K8sJob `yaml:"jobs"`
+	K8sJobs           []K8sJob          `yaml:"jobs"`
+	CuratedExperience CuratedExperience `yaml:"curated_experience"`
+}
+
+// CuratedExperience holds the configuration for the CuratedExperience filtering.
+type CuratedExperience struct {
+	SourceLabels []string `yaml:"source_labels"`
+	Regexes      []string `yaml:"regexes"`
 }
 
 // Build will create a Prometheus Job list based on the kubernetes configuration.
 func (c Config) Build(shardingConfig sharding.Config) ([]promcfg.Job, error) {
 	var promScrapeJobs []promcfg.Job
+
+	endpointsCuratedExperienceRelabelConfig := buildTargetFilters(c.CuratedExperience, serviceMetadata)
+	podCuratedExperienceRelabelConfig := buildTargetFilters(c.CuratedExperience, podMetadata)
 
 	for _, k8sJob := range c.K8sJobs {
 		if err := c.validate(k8sJob); err != nil {
@@ -37,10 +49,10 @@ func (c Config) Build(shardingConfig sharding.Config) ([]promcfg.Job, error) {
 			podJob := k8sJob.ScrapeJob.
 				WithName(k8sJob.JobNamePrefix + "-" + podKind).
 				WithRelabelConfigs(podRelabelConfigs(k8sJob)).
+				WithRelabelConfigs(podCuratedExperienceRelabelConfig).
 				BuildPrometheusJob(shardingConfig)
 
 			podJob.KubernetesSdConfigs = append(podJob.KubernetesSdConfigs, buildSdConfig(podKind, k8sJob.TargetDiscovery.AdditionalConfig))
-
 			promScrapeJobs = append(promScrapeJobs, podJob)
 		}
 
@@ -48,6 +60,7 @@ func (c Config) Build(shardingConfig sharding.Config) ([]promcfg.Job, error) {
 			endpointsJob := k8sJob.ScrapeJob.
 				WithName(k8sJob.JobNamePrefix + "-" + endpointsKind).
 				WithRelabelConfigs(endpointsRelabelConfigs(k8sJob)).
+				WithRelabelConfigs(endpointsCuratedExperienceRelabelConfig).
 				BuildPrometheusJob(shardingConfig)
 
 			endpointsJob.KubernetesSdConfigs = append(endpointsJob.KubernetesSdConfigs, buildSdConfig(endpointsKind, k8sJob.TargetDiscovery.AdditionalConfig))
@@ -57,6 +70,32 @@ func (c Config) Build(shardingConfig sharding.Config) ([]promcfg.Job, error) {
 	}
 
 	return promScrapeJobs, nil
+}
+
+func buildTargetFilters(filters CuratedExperience, metadataSourcePrefix string) []promcfg.RelabelConfig { //nolint: prealloc
+	var relabelConfigs []promcfg.RelabelConfig
+	var sourceLabels []string
+
+	for _, sL := range filters.SourceLabels {
+		sanitizedLabel := invalidPrometheusLabelCharRegex.ReplaceAllString(sL, "_")
+		sourceLabels = append(sourceLabels, fmt.Sprintf("%s%s_%s", metadataSourcePrefix, labelMetadata, sanitizedLabel))
+	}
+
+	regex := strings.Join(filters.Regexes, "|")
+	caseInsensitiveRegex := fmt.Sprintf("(?i)(%s)", regex)
+	unanchoredRegex := fmt.Sprintf(".*%s.*", caseInsensitiveRegex)
+
+	if regex != "" && len(filters.SourceLabels) != 0 {
+		relabelConfigs = append(relabelConfigs, promcfg.RelabelConfig{
+			SourceLabels: sourceLabels,
+			Separator:    ";",
+			Regex:        unanchoredRegex,
+			Action:       "keep",
+		},
+		)
+	}
+
+	return relabelConfigs
 }
 
 func (c Config) validate(k8sJob K8sJob) error {

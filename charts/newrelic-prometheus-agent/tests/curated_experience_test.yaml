@@ -1,0 +1,147 @@
+suite: test configmap with CuratedExperience
+templates:
+  - templates/configmap.yaml
+tests:
+  - it: config with CuratedExperience true
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      config:
+        kubernetes:
+          curated_experience:
+            enabled: true
+        # Set empty to make this test simple
+        static_targets:
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            common:
+              external_labels:
+                cluster_name: cluster-test
+              scrape_interval: 30s
+            kubernetes:
+              jobs:
+              - job_name_prefix: kubernetes-job
+                target_discovery:
+                  endpoints: true
+                  filter:
+                    annotations:
+                      prometheus.io/scrape: true
+                  pod: true
+              curated_experience:
+                regexes:
+                  - redis
+                  - mongodb
+                  - consul
+                  - calico
+                  - ingress-nginx
+                source_labels:
+                  - app.kubernetes.io/name
+                  - k8s-app
+                  - app
+
+  - it: config with CuratedExperience false
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      config:
+        kubernetes:
+          target_filters:
+            curated_experience: false
+        # Set empty to make this test simple
+        static_targets:
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            common:
+              external_labels:
+                cluster_name: cluster-test
+              scrape_interval: 30s
+            kubernetes:
+              jobs:
+              - job_name_prefix: kubernetes-job
+                target_discovery:
+                  endpoints: true
+                  filter:
+                    annotations:
+                      prometheus.io/scrape: true
+                  pod: true
+  - it: config with CuratedExperience false
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      config:
+        kubernetes:
+          curated_experience:
+            additional_regexes:
+              - test1
+              - test2
+        # Set empty to make this test simple
+        static_targets:
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            common:
+              external_labels:
+                cluster_name: cluster-test
+              scrape_interval: 30s
+            kubernetes:
+              jobs:
+              - job_name_prefix: kubernetes-job
+                target_discovery:
+                  endpoints: true
+                  filter:
+                    annotations:
+                      prometheus.io/scrape: true
+                  pod: true
+  - it: config with CuratedExperience false
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      config:
+        kubernetes:
+          curated_experience:
+            enabled: true
+            additional_regexes:
+              - test1
+              - test2
+            source_labels:
+              - testLabel
+        # Set empty to make this test simple
+        static_targets:
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            common:
+              external_labels:
+                cluster_name: cluster-test
+              scrape_interval: 30s
+            kubernetes:
+              jobs:
+              - job_name_prefix: kubernetes-job
+                target_discovery:
+                  endpoints: true
+                  filter:
+                    annotations:
+                      prometheus.io/scrape: true
+                  pod: true
+              curated_experience:
+                regexes:
+                  - test1
+                  - test2
+                  - redis
+                  - mongodb
+                  - consul
+                  - calico
+                  - ingress-nginx
+                source_labels:
+                  - testLabel
+
