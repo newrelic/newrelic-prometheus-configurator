@@ -72,7 +72,7 @@ func (c Config) Build(shardingConfig sharding.Config) ([]promcfg.Job, error) {
 	return promScrapeJobs, nil
 }
 
-func buildTargetFilters(filters CuratedExperience, metadataSourcePrefix string) []promcfg.RelabelConfig { //nolint: prealloc
+func buildTargetFilters(filters CuratedExperience, metadataSourcePrefix string) []promcfg.RelabelConfig {
 	var relabelConfigs []promcfg.RelabelConfig
 	sourceLabels := make([]string, 0, len(filters.SourceLabels))
 

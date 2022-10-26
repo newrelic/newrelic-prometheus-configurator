@@ -109,7 +109,7 @@ jobs:
         env:
           SECRET_AVAILABLE: ${{ secrets.COREINT_E2E_ACCOUNT_ID }}
         if: ${{ env.SECRET_AVAILABLE != '' }}
-        uses: newrelic/newrelic-integration-e2e-action@v1
+        uses: newrelic/newrelic-integration-e2e-action@feat/testMissingMetrics
         with:
           retry_seconds: 60
           retry_attempts: 5

@@ -7,7 +7,7 @@ scenarios:
     before:
       - cd ../../ && NR_PROM_LICENSE_KEY=${LICENSE_KEY} NR_PROM_CLUSTER=${SCENARIO_TAG} make tilt-ci
     after:
-      - kubectl logs -l app.kubernetes.io/name=newrelic-prometheus --all-containers --prefix=true
+      - kubectl logs -l app.kubernetes.io/name=newrelic-prometheus-agent --all-containers --prefix=true
       - kubectl get all -o wide
       - cd ../../ && tilt down
     tests:
@@ -17,9 +17,26 @@ scenarios:
     before:
       - cd ../../ && NR_PROM_LICENSE_KEY=${LICENSE_KEY} NR_PROM_CLUSTER=${SCENARIO_TAG} make tilt-ci HELM_VALUES_FILE="./test/e2e/values-multi-shards.yaml"
     after:
-      - kubectl logs -l app.kubernetes.io/name=newrelic-prometheus --all-containers --prefix=true
+      - kubectl logs -l app.kubernetes.io/name=newrelic-prometheus-agent --all-containers --prefix=true
       - kubectl get all -o wide
       - cd ../../ && tilt down
     tests:
       metrics:
         - source: "metrics.yml"
+  - description: Scrape test environment metrics from curated experience only
+    before:
+      - cd ../../ && NR_PROM_LICENSE_KEY=${LICENSE_KEY} NR_PROM_CLUSTER=${SCENARIO_TAG} make tilt-ci HELM_VALUES_FILE="./test/e2e/values-curated-experience.yaml"
+    after:
+      - kubectl logs -l app.kubernetes.io/name=newrelic-prometheus-agent --all-containers --prefix=true
+      - kubectl get all -o wide
+      - cd ../../ && tilt down
+    tests:
+      metrics:
+        - source: "metrics-curated-experience.yml"
+      nrqls:
+        - query: "FROM Metric select metricName  where collector_type = 'curated-experience' and service = 'test-resources-openmetrics'"
+          error_expected: true
+        - query: "FROM Metric select metricName  where collector_type = 'curated-experience' and service = 'kube-dns'"
+          error_expected: true
+        - query: "FROM Metric select metricName  where collector_type = 'curated-experience' and service = 'test-resources-endpoints'"
+          error_expected: false #In this case we expect the metrics
