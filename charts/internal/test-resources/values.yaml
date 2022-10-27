@@ -2,6 +2,7 @@
 deployment:
   enabled: true
   annotations:
+    prometheus.io/scrape: "true"
     prometheus.io/port: "80"
 
 endpoints:
