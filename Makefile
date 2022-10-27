@@ -109,6 +109,7 @@ build-chart-docs:
 
 ## Release Toolkit targets
 RT_BIN ?= go run github.com/newrelic/release-toolkit@latest
+DICTIONARY_DIRECTORY = .github/rt-dictionary.yaml
 
 .PHONY: release-notes
 release-notes: _release-changes
@@ -127,12 +128,12 @@ release-changelog: _release-changes
 _release-changes:
 	@$(RT_BIN) validate-markdown
 	@$(RT_BIN) generate-yaml --excluded-dirs "charts,.github" --tag-prefix "v"
-	@$(RT_BIN) link-dependencies
+	@$(RT_BIN) link-dependencies --dictionary ${DICTIONARY_DIRECTORY}
 
 
-CHART_DIRECTORY="charts/newrelic-prometheus-agent"
-MARKDOWN_FILE=${CHART_DIRECTORY}/CHANGELOG.md
-CHART_PREFIX=newrelic-prometheus-agent-
+CHART_DIRECTORY = "charts/newrelic-prometheus-agent"
+MARKDOWN_FILE = ${CHART_DIRECTORY}/CHANGELOG.md
+CHART_PREFIX = newrelic-prometheus-agent-
 
 .PHONY: release-notes-chart
 release-notes-chart: _release-changes-chart
@@ -144,10 +145,11 @@ release-notes-chart: _release-changes-chart
 .PHONY: release-changelog-chart
 release-changelog-chart: _release-changes-chart
 	@$(RT_BIN) update-markdown --markdown ${MARKDOWN_FILE} --version $$($(RT_BIN) next-version --tag-prefix ${CHART_PREFIX})
-	@git --no-pager diff CHANGELOG.md
+	@git --no-pager diff ${CHART_DIRECTORY}/CHANGELOG.md
 
 ### Prints out the Release Notes as if a Release is being triggered.
 .PHONY: _release-changes-chart
 _release-changes-chart:
-	$(RT_BIN) validate-markdown --markdown ${MARKDOWN_FILE}
-	$(RT_BIN) generate-yaml --markdown ${MARKDOWN_FILE} --included-dirs ${CHART_DIRECTORY}  --tag-prefix ${CHART_PREFIX}
+	@$(RT_BIN) validate-markdown --markdown ${MARKDOWN_FILE}
+	@$(RT_BIN) generate-yaml --markdown ${MARKDOWN_FILE} --included-dirs ${CHART_DIRECTORY}  --tag-prefix ${CHART_PREFIX}
+	@$(RT_BIN) link-dependencies --dictionary ${DICTIONARY_DIRECTORY}
