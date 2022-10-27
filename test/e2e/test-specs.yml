@@ -37,7 +37,7 @@ scenarios:
       # we do both with nrqls and the standard metric source.
       nrqls:
         - query: "FROM Metric select metricName  where collector_type = 'curated-experience' and service = 'test-resources-endpoints'"
-          error_expected: false #In this case we expect the metrics
+          error_expected: false #In this case we expect the metrics thanks to the newrelic.io/scrape=true
         - query: "FROM Metric select metricName  where collector_type = 'curated-experience' and service = 'test-resources-openmetrics'"
           error_expected: true
         - query: "FROM Metric select metricName  where collector_type = 'curated-experience' and service = 'kube-dns'"

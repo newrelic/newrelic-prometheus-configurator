@@ -7,10 +7,10 @@ sharding:
 
 kubernetes:
   jobs:
-    - job_name_prefix: kubernetes-job
+    - job_name_prefix: default
       target_discovery:
         pod: true
-    - job_name_prefix: kubernetes-job
+    - job_name_prefix: default
       target_discovery:
         endpoints: true
 

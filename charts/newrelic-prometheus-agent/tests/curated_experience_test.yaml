@@ -23,14 +23,14 @@ tests:
               scrape_interval: 30s
             kubernetes:
               jobs:
-              - job_name_prefix: kubernetes-job
+              - job_name_prefix: default
                 target_discovery:
                   endpoints: true
                   filter:
                     annotations:
                       prometheus.io/scrape: true
                   pod: true
-              - job_name_prefix: newrelic-job
+              - job_name_prefix: newrelic
                 target_discovery:
                   endpoints: true
                   filter:
@@ -38,18 +38,18 @@ tests:
                       newrelic.io/scrape: true
                   pod: true
               curated_experience:
-                enabled: true
                 app_values:
-                  - redis
-                  - mongodb
-                  - consul
-                  - calico
-                  - ingress-nginx
-                source_labels:
-                  - app.kubernetes.io/name
-                  - app.newrelic.io/name
+                - redis
+                - mongodb
+                - consul
+                - calico
+                - ingress-nginx
+                enabled: true
                 jobs_prefix:
-                  - kubernetes-job
+                - default
+                source_labels:
+                - app.kubernetes.io/name
+                - app.newrelic.io/name
 
   - it: config with CuratedExperience false
     set:
@@ -72,14 +72,14 @@ tests:
               scrape_interval: 30s
             kubernetes:
               jobs:
-              - job_name_prefix: kubernetes-job
+              - job_name_prefix: default
                 target_discovery:
                   endpoints: true
                   filter:
                     annotations:
                       prometheus.io/scrape: true
                   pod: true
-              - job_name_prefix: newrelic-job
+              - job_name_prefix: newrelic
                 target_discovery:
                   endpoints: true
                   filter:

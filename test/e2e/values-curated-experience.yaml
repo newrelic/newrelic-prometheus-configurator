@@ -19,5 +19,7 @@ config:
     curated_experience:
       enabled: true
       source_labels: [ "app.kubernetes.io/name", "unused", "app" ]
-      app_values: ["deployment-app", "not-matching", "endpoints" ]
+      # note that we still scrape the pod since it is matching the curated experience, the self metrics and
+      # the endpoints since they have also the newrelic.io/scrape label
+      app_values: ["deployment-app", "not-matching" ]
 

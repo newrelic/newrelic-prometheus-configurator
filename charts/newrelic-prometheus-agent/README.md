@@ -78,7 +78,7 @@ By default, some Kubernetes objects are discovered and scraped by Prometheus. Ta
 config:
   kubernetes:
     jobs:
-    - job_name_prefix: kubernetes-job
+    - job_name_prefix: default
       target_discovery:
         pod: true
         endpoints: true
@@ -185,7 +185,7 @@ The order to set the affinity is to set `affinity` field (at root level), if tha
 | config.kubernetes | object | See `values.yaml` | It allows defining scrape jobs for Kubernetes in a simple way. |
 | config.kubernetes.curated_experience.app_values | list | `["redis","mongodb","consul","calico","ingress-nginx"]` | app_values to be used to create the regex used in the relabel config added by the curated experience to filter targets |
 | config.kubernetes.curated_experience.enabled | bool | `true` | enabling the curated experience the jobs, matching the jobs_prefix, scrape merely the targets having one of the specified labels matching    one of the values of app_values. |
-| config.kubernetes.curated_experience.jobs_prefix | list | `["kubernetes-job"]` | list of jobs_prefix to identify to which jobs to apply the curated experience |
+| config.kubernetes.curated_experience.jobs_prefix | list | `["default"]` | list of jobs_prefix to identify to which jobs to apply the curated experience |
 | config.kubernetes.curated_experience.source_labels | list | `["app.kubernetes.io/name","app.newrelic.io/name"]` | source_labels to be used in the relabel config added by the curated experience to filter targets |
 | config.newrelic_remote_write | object | See `values.yaml` | Newrelic remote-write configuration settings. |
 | config.static_targets | object | See `values.yaml`. | It allows defining scrape jobs for targets with static URLs. |

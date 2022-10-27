@@ -93,16 +93,10 @@ kubernetes:
   {{- if .Values.config.kubernetes.curated_experience }}
   {{- if .Values.config.kubernetes.curated_experience.enabled }}
   curated_experience:
-    enabled: true
-    app_values:
-      {{- .Values.config.kubernetes.curated_experience.app_values | toYaml | nindent 6 }}
-    source_labels:
-      {{- .Values.config.kubernetes.curated_experience.source_labels | toYaml | nindent 6 }}
-    jobs_prefix:
-      {{- .Values.config.kubernetes.curated_experience.jobs_prefix | toYaml | nindent 6 }}
-    {{- end -}}
+     {{- .Values.config.kubernetes.curated_experience | toYaml | nindent 4 -}}
    {{- end -}}
    {{- end -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 

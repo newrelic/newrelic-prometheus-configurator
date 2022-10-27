@@ -2,14 +2,14 @@
 deployment:
   enabled: true
   annotations:
-    prometheus.io/scrape: "true"
     prometheus.io/port: "80"
 
 endpoints:
   enabled: true
   replicas: 1
   annotations:
-    prometheus.io/scrape: "true"
+    # this label allows the newrelic job to scrape it
+    newrelic.io/scrape: "true"
     prometheus.io/port: "80"
 
 # https://github.com/prometheus-community/avalanche

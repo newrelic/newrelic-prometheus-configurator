@@ -1,6 +1,6 @@
 kubernetes:
   jobs:
-    - job_name_prefix: kubernetes-job
+    - job_name_prefix: default
       target_discovery:
         pod: true
         endpoints: true
@@ -10,10 +10,10 @@ kubernetes:
       - test1
       - test2
     source_labels:
-      - testLabel1
-      - testLabel2
+      - testlabel1
+      - testlabel2
     jobs_prefix:
-      - kubernetes-job
+      - default
 
 newrelic_remote_write:
   license_key: nrLicenseKey

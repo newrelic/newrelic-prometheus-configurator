@@ -1,5 +1,5 @@
 scrape_configs:
-  - job_name: kubernetes-job-pod
+  - job_name: default-pod
     kubernetes_sd_configs:
       - role: pod
     relabel_configs:
@@ -40,7 +40,7 @@ scrape_configs:
         action: replace
         target_label: pod
         
-  - job_name: kubernetes-job-endpoints
+  - job_name: default-endpoints
     kubernetes_sd_configs:
       - role: endpoints
     relabel_configs:
