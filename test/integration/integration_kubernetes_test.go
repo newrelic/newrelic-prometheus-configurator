@@ -422,36 +422,21 @@ func Test_CuratedExperience(t *testing.T) {
 
 	k8sEnv := newK8sEnvironment(t)
 
-	// Create running pod
-	podBase := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "unmonitored-pod",
-			Labels: map[string]string{
-				"k8s.io/app": "myApp",
-			},
-			Annotations: map[string]string{
-				"prometheus.io/scrape": "true",
-				"prometheus.io/scheme": "https",
-				"prometheus.io/port":   "8001",
-				"prometheus.io/path":   "/custom-path",
-			},
-		},
-		Spec: fakePodSpec(),
-	}
-
-	podNotMonitored := k8sEnv.addPodAndWaitOnPhase(t, podBase, corev1.PodRunning)
+	// Pod not monitored due to the app name
+	podNotMonitored1 := fakePod("testpod", map[string]string{"prometheus.io/scrape": "true"}, nil)
+	podNotMonitored1 = k8sEnv.addPodAndWaitOnPhase(t, podNotMonitored1, corev1.PodRunning)
 
 	// Create a similar pod, but with the required filter
-	podBase.Name = "monitored-pod1"
-	podBase.Labels["app.kubernetes.io/name"] = "asdTesT1asd"
+	podMonitored1 := fakePod("monitored-pod1", map[string]string{"prometheus.io/scrape": "true"}, map[string]string{"app.kubernetes.io/name": "asdTesT1asd"})
+	podMonitored1 = k8sEnv.addPodAndWaitOnPhase(t, podMonitored1, corev1.PodRunning)
 
-	podMonitored1 := k8sEnv.addPodAndWaitOnPhase(t, podBase, corev1.PodRunning)
+	// Create a similar pod, but with the required filter
+	podMonitored2 := fakePod("monitored-pod2", map[string]string{"prometheus.io/scrape": "true"}, map[string]string{"something-different2": "asdtest2"})
+	podMonitored2 = k8sEnv.addPodAndWaitOnPhase(t, podMonitored2, corev1.PodRunning)
 
 	// Create a similar pod, but with a different label
-	podBase.Name = "monitored-pod2"
-	podBase.Labels["something-different2"] = "asdtest2"
-
-	podMonitored2 := k8sEnv.addPodAndWaitOnPhase(t, podBase, corev1.PodRunning)
+	podMonitored3 := fakePod("monitored-pod3", map[string]string{"newrelic.io/scrape": "true"}, nil)
+	podMonitored3 = k8sEnv.addPodAndWaitOnPhase(t, podMonitored3, corev1.PodRunning)
 
 	nrConfigConfig := fmt.Sprintf(`
 newrelic_remote_write:
@@ -468,16 +453,30 @@ kubernetes:
          namespaces:
           names:
           - %s
+    - job_name_prefix: newrelic-k8s
+      target_discovery:
+        pod: true
+        additional_config:
+         kubeconfig_file: %s
+         namespaces:
+          names:
+          - %s
+        filter:
+          annotations:
+            newrelic.io/scrape: true
   curated_experience:
-    regexes:
+    enabled: true
+    app_values:
       - test1
       - test2
     source_labels:
       - something-different1     
       - app.kubernetes.io/name
       - something-different2
+    jobs_prefix:
+      - test-k8s
 
-`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
+`, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
 	prometheusConfigConfigPath := runConfigurator(t, nrConfigConfig)
 
@@ -485,24 +484,18 @@ kubernetes:
 	ps := newPrometheusServer(t)
 	ps.start(t, prometheusConfigConfigPath)
 
-	scrapeURL1 := fmt.Sprintf("%s://%s:%s%s",
-		podMonitored1.Annotations["prometheus.io/scheme"],
-		podMonitored1.Status.PodIP,
-		podMonitored1.Annotations["prometheus.io/port"],
-		podMonitored1.Annotations["prometheus.io/path"],
-	)
-
-	scrapeURL2 := fmt.Sprintf("%s://%s:%s%s",
-		podMonitored2.Annotations["prometheus.io/scheme"],
-		podMonitored2.Status.PodIP,
-		podMonitored2.Annotations["prometheus.io/port"],
-		podMonitored2.Annotations["prometheus.io/path"],
-	)
-
 	asserter := newAsserter(ps)
-	asserter.activeTargetWithScrapeURL(t, scrapeURL1)
-	asserter.activeTargetWithScrapeURL(t, scrapeURL2)
+	asserter.activeTargetCount(t, 3)
+	asserter.activeTargetLabels(t, map[string]string{
+		"__meta_kubernetes_pod_name": podMonitored1.Name,
+	})
+	asserter.activeTargetLabels(t, map[string]string{
+		"__meta_kubernetes_pod_name": podMonitored2.Name,
+	})
+	asserter.activeTargetLabels(t, map[string]string{
+		"__meta_kubernetes_pod_name": podMonitored3.Name,
+	})
 	asserter.droppedTargetLabels(t, map[string]string{
-		"__meta_kubernetes_pod_name": podNotMonitored.Name,
+		"__meta_kubernetes_pod_name": podNotMonitored1.Name,
 	})
 }

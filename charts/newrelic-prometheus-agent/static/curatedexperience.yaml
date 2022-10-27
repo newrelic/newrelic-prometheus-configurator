@@ -1,6 +1,0 @@
-list_regexes:
-- "redis"
-- "mongodb"
-- "consul"
-- "calico"
-- "ingress-nginx"

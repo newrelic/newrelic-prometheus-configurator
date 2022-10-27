@@ -33,10 +33,13 @@ scenarios:
     tests:
       metrics:
         - source: "metrics-curated-experience.yml"
+      # Note that since we are checking for missing metrics the test make sense merely if before we check that all metrics were there.
+      # we do both with nrqls and the standard metric source.
       nrqls:
+        - query: "FROM Metric select metricName  where collector_type = 'curated-experience' and service = 'test-resources-endpoints'"
+          error_expected: false #In this case we expect the metrics
         - query: "FROM Metric select metricName  where collector_type = 'curated-experience' and service = 'test-resources-openmetrics'"
           error_expected: true
         - query: "FROM Metric select metricName  where collector_type = 'curated-experience' and service = 'kube-dns'"
           error_expected: true
-        - query: "FROM Metric select metricName  where collector_type = 'curated-experience' and service = 'test-resources-endpoints'"
-          error_expected: false #In this case we expect the metrics
+

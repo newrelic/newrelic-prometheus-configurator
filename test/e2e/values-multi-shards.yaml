@@ -14,7 +14,9 @@ config:
     scrape_interval: 15s
     external_labels:
       collector_type: multi-sharding
-
+  kubernetes:
+    curated_experience:
+      enabled: true
 
 sharding:
  total_shards_count: 7

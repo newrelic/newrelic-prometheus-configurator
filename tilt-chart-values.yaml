@@ -12,3 +12,6 @@ images:
 config:
   common:
     scrape_interval: 15s
+  kubernetes:
+    curated_experience:
+      enabled: true

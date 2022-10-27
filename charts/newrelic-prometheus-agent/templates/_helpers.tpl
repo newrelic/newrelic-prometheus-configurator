@@ -92,20 +92,17 @@ kubernetes:
 
   {{- if .Values.config.kubernetes.curated_experience }}
   {{- if .Values.config.kubernetes.curated_experience.enabled }}
-    {{- $tmp := dict -}}
-    {{- $reg := list -}}
-    {{- $tmp = .Files.Get "static/curatedexperience.yaml" | fromYaml -}}
-    {{- $reg = $tmp.list_regexes -}}
-    {{ if concat .Values.config.kubernetes.curated_experience.additional_regexes $reg}}
   curated_experience:
-    regexes:
-      {{- concat .Values.config.kubernetes.curated_experience.additional_regexes $reg | toYaml | nindent 6 }}
+    enabled: true
+    app_values:
+      {{- .Values.config.kubernetes.curated_experience.app_values | toYaml | nindent 6 }}
     source_labels:
-      {{- .Values.config.kubernetes.curated_experience.source_labels | toYaml | nindent 6 -}}
+      {{- .Values.config.kubernetes.curated_experience.source_labels | toYaml | nindent 6 }}
+    jobs_prefix:
+      {{- .Values.config.kubernetes.curated_experience.jobs_prefix | toYaml | nindent 6 }}
     {{- end -}}
    {{- end -}}
    {{- end -}}
-{{- end -}}
 {{- end -}}
 {{- end -}}
 

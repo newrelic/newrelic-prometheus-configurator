@@ -29,21 +29,23 @@ type Config struct {
 
 // CuratedExperience holds the configuration for the CuratedExperience filtering.
 type CuratedExperience struct {
+	Enabled      bool     `yaml:"enabled"`
 	SourceLabels []string `yaml:"source_labels"`
-	Regexes      []string `yaml:"regexes"`
+	AppValues    []string `yaml:"app_values"`
+	JobsPrefix   []string `yaml:"jobs_prefix"`
 }
 
 // Build will create a Prometheus Job list based on the kubernetes configuration.
 func (c Config) Build(shardingConfig sharding.Config) ([]promcfg.Job, error) {
 	var promScrapeJobs []promcfg.Job
 
-	endpointsCuratedExperienceRelabelConfig := buildTargetFilters(c.CuratedExperience, serviceMetadata)
-	podCuratedExperienceRelabelConfig := buildTargetFilters(c.CuratedExperience, podMetadata)
-
 	for _, k8sJob := range c.K8sJobs {
 		if err := c.validate(k8sJob); err != nil {
 			return nil, err
 		}
+
+		endpointsCuratedExperienceRelabelConfig := buildTargetFilters(c.CuratedExperience, k8sJob.JobNamePrefix, serviceMetadata)
+		podCuratedExperienceRelabelConfig := buildTargetFilters(c.CuratedExperience, k8sJob.JobNamePrefix, podMetadata)
 
 		if k8sJob.TargetDiscovery.Pod {
 			podJob := k8sJob.ScrapeJob.
@@ -72,30 +74,46 @@ func (c Config) Build(shardingConfig sharding.Config) ([]promcfg.Job, error) {
 	return promScrapeJobs, nil
 }
 
-func buildTargetFilters(filters CuratedExperience, metadataSourcePrefix string) []promcfg.RelabelConfig {
-	var relabelConfigs []promcfg.RelabelConfig
-	sourceLabels := make([]string, 0, len(filters.SourceLabels))
+func buildTargetFilters(filters CuratedExperience, jobPrefix string, metadataSourcePrefix string) []promcfg.RelabelConfig {
+	if !filters.Enabled || !containPrefix(filters.JobsPrefix, jobPrefix) {
+		return nil
+	}
 
+	sourceLabels := make([]string, 0, len(filters.SourceLabels))
 	for _, sL := range filters.SourceLabels {
 		sanitizedLabel := invalidPrometheusLabelCharRegex.ReplaceAllString(sL, "_")
 		sourceLabels = append(sourceLabels, fmt.Sprintf("%s%s_%s", metadataSourcePrefix, labelMetadata, sanitizedLabel))
 	}
 
-	regex := strings.Join(filters.Regexes, "|")
+	if len(filters.SourceLabels) == 0 {
+		return nil
+	}
+
+	regex := strings.Join(filters.AppValues, "|")
 	caseInsensitiveRegex := fmt.Sprintf("(?i)(%s)", regex)
 	unanchoredRegex := fmt.Sprintf(".*%s.*", caseInsensitiveRegex)
 
-	if regex != "" && len(filters.SourceLabels) != 0 {
-		relabelConfigs = append(relabelConfigs, promcfg.RelabelConfig{
+	if regex == "" {
+		return nil
+	}
+
+	return []promcfg.RelabelConfig{
+		{
 			SourceLabels: sourceLabels,
 			Separator:    ";",
 			Regex:        unanchoredRegex,
 			Action:       "keep",
 		},
-		)
 	}
+}
 
-	return relabelConfigs
+func containPrefix(prefixes []string, prefix string) bool {
+	for _, p := range prefixes {
+		if p == prefix {
+			return true
+		}
+	}
+	return false
 }
 
 func (c Config) validate(k8sJob K8sJob) error {

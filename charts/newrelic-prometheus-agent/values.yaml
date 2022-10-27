@@ -182,21 +182,23 @@ config:
   # -- It allows defining scrape jobs for Kubernetes in a simple way.
   # @default -- See `values.yaml`
   kubernetes:
-
-    # By default, all targets discovered are scraped.
-    # If curated_experience is enabled or any regex is specified,
-    # then merely the targets having one of the specified labels matching those regexes or the ones of the curated experiences are scraped.
-    # Notice that this configuration option applies to all configured kubernetes jobs.
-    # Under the hood relabel_configs with action 'keep' are generated, consider it in case any custom extra_relabel_config is needed
+    # NR has a list of Dashboards, alerts and entities for several Services and the curated_experience configuration
+    # allows to keep only the targets having this experience out of the box.
+    # Notice that this configuration option applies to all jobs having a prefix matching the jobs_prefix list.
+    # If curated_experience is enabled, then the jobs, selected by jobs_prefix, scrapes merely the targets having one of the specified labels matching
+    # one of the values of app_values.
+    # Under the hood relabel_configs with action 'keep' are generated, consider it in case any custom extra_relabel_config is needed.
     curated_experience:
-      enabled: false
-      source_labels: ["app.kubernetes.io/name", "k8s-app", "app"]
-      additional_regexes: []
-#     - ".*<regex>.*"
+      # -- enabling the curated experience the jobs, selected by jobs_prefix, scrapes merely the targets having one of the specified labels matching
+      #    # one of the values of app_values.
+      enabled: true
+      # -- source_labels to be used in the relabel configs when looking for app_values.
+      source_labels: ["app.kubernetes.io/name", "app.newrelic.io/name"]
+      # -- app_values to be used in the relabel configs when looking for the values of labels of source_labels.
+      app_values: ["redis", "mongodb", "consul", "calico", "ingress-nginx"]
+      # -- list of jobs_prefix to identify to which jobs to apply the curated experience
+      jobs_prefix: ["kubernetes-job"]
 
-
-    jobs:
-    # By default, all pods and endpoints with `prometheus.io/scrape: true` annotation will be discovered.
     # Kubernetes jobs define [kubernetes_sd_configs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)
     # to discover and scrape Kubernetes objects. Besides, a set of relabel_configs are included in order to include some Kubernetes metadata as
     # Labels. For example, address, metrics_path, URL scheme, prometheus_io_parameters, namespace, pod name, service name and labels are taken
@@ -207,6 +209,10 @@ config:
     # - `prometheus.io/port`: If the metrics are exposed on a different port to the service for service endpoints or to
     #   the default 9102 for pods.
     # - `prometheus.io/param_<param-name>`: To include additional parameters in the scrape URL.
+    jobs:
+
+    # - 'kubernetes-job' scrapes all targets having 'prometheus.io/scrape: true'. If  curated_experience.enabled=true then
+    #  only targets selected by the curated experience are considered.
     - job_name_prefix: kubernetes-job
       target_discovery:
         pod: true
@@ -214,6 +220,16 @@ config:
         filter:
           annotations:
             prometheus.io/scrape: true
+
+      # - 'newrelic-job' scrapes all targets having 'newrelic.io/scrape: true'. This is useful to extend the 'default-job'
+      #  whitelisting all services adding the required annotation
+    - job_name_prefix: newrelic-job
+      target_discovery:
+        pod: true
+        endpoints: true
+        filter:
+          annotations:
+            newrelic.io/scrape: true
 
     # -- Set up the job name prefix. The final Prometheus `job` name will be composed of <job_name_prefix> + the target discovery kind. ie: `kubernetes-job-pod`
     # @default -- `""`

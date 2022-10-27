@@ -250,7 +250,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 	}
 }
 
-func TestBuildFilterCuratedExperience(t *testing.T) {
+func TestBuildFilterCuratedExperience(t *testing.T) { //nolint: funlen
 	t.Parallel()
 
 	annotationsFilter := kubernetes.Filter{
@@ -279,7 +279,9 @@ func TestBuildFilterCuratedExperience(t *testing.T) {
 				},
 				CuratedExperience: kubernetes.CuratedExperience{
 					SourceLabels: []string{"label1", "label2"},
-					Regexes:      []string{"regex1", "regex2"},
+					AppValues:    []string{"regex1", "regex2"},
+					JobsPrefix:   []string{"test-pod"},
+					Enabled:      true,
 				},
 			},
 			want: &regexBySourceLabel{
@@ -302,7 +304,9 @@ func TestBuildFilterCuratedExperience(t *testing.T) {
 				},
 				CuratedExperience: kubernetes.CuratedExperience{
 					SourceLabels: []string{"label1", "label2"},
-					Regexes:      []string{},
+					AppValues:    []string{},
+					JobsPrefix:   []string{"test-pod"},
+					Enabled:      true,
 				},
 			},
 			len: 10,
@@ -321,7 +325,51 @@ func TestBuildFilterCuratedExperience(t *testing.T) {
 				},
 				CuratedExperience: kubernetes.CuratedExperience{
 					SourceLabels: []string{},
-					Regexes:      []string{"regex1", "regex2"},
+					AppValues:    []string{"regex1", "regex2"},
+					JobsPrefix:   []string{"test-pod"},
+					Enabled:      true,
+				},
+			},
+			len: 10,
+		},
+		{
+			name: "two labels two regexes but different job prefix",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+					},
+				},
+				CuratedExperience: kubernetes.CuratedExperience{
+					SourceLabels: []string{"label1", "label2"},
+					AppValues:    []string{"regex1", "regex2"},
+					JobsPrefix:   []string{"different"},
+					Enabled:      true,
+				},
+			},
+			len: 10,
+		},
+		{
+			name: "two labels two regexes but disabled",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+					},
+				},
+				CuratedExperience: kubernetes.CuratedExperience{
+					SourceLabels: []string{"label1", "label2"},
+					AppValues:    []string{"regex1", "regex2"},
+					JobsPrefix:   []string{"test-pod"},
+					Enabled:      false,
 				},
 			},
 			len: 10,

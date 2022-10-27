@@ -5,12 +5,15 @@ kubernetes:
         pod: true
         endpoints: true
   curated_experience:
-    regexes:
+    enabled: true
+    app_values:
       - test1
       - test2
     source_labels:
       - testLabel1
       - testLabel2
+    jobs_prefix:
+      - kubernetes-job
 
 newrelic_remote_write:
   license_key: nrLicenseKey

@@ -19,4 +19,5 @@ config:
     curated_experience:
       enabled: true
       source_labels: [ "app.kubernetes.io/name", "unused", "app" ]
-      additional_regexes: ["deployment-app", "not-matching", "endpoints" ]
+      app_values: ["deployment-app", "not-matching", "endpoints" ]
+
