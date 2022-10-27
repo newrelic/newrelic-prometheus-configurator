@@ -16,7 +16,7 @@ config:
       collector_type: multi-sharding
   kubernetes:
     curated_experience:
-      enabled: true
+      enabled: false
 
 sharding:
  total_shards_count: 7

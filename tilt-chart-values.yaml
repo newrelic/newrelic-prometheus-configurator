@@ -14,4 +14,4 @@ config:
     scrape_interval: 15s
   kubernetes:
     curated_experience:
-      enabled: true
+      enabled: false
