@@ -6,8 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Enhancements
+### Note, defaults of the chart changed
+Now, the chart has two jobs configured and curated experience turned on by default:
 
+- `default` scrapes all targets having `prometheus.io/scrape: true`.
+  Since, by default, `curated_experience.enabled=true` then only targets selected by the curated experience are actually scraped.
+
+- `newrelic` crapes all targets having `newrelic.io/scrape: true`.
+  This is useful to extend the `default` job allowlisting services one by one adding the required annotation.
+
+### Enhancements
+ - The `curated experience` is now supported and the default of the chart.
 
 ## v0.1.1 - 2022-10-20
 
