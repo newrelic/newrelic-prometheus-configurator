@@ -15,7 +15,7 @@ config:
     external_labels:
       collector_type: multi-sharding
   kubernetes:
-    curated_experience:
+    integrations_filter:
       enabled: false
 
 sharding:

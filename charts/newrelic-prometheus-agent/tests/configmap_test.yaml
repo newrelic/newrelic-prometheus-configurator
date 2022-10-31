@@ -35,23 +35,24 @@ tests:
                     annotations:
                       prometheus.io/scrape: true
                   pod: true
-              - job_name_prefix: newrelic
+              - integrations_filter:
+                  enabled: false
+                job_name_prefix: newrelic
                 target_discovery:
                   endpoints: true
                   filter:
                     annotations:
                       newrelic.io/scrape: true
                   pod: true
-              curated_experience:
+              integrations_filter:
                 app_values:
                 - redis
-                - mongodb
-                - consul
+                - traefik
                 - calico
-                - ingress-nginx
+                - nginx
+                - coredns
+                - etcd
                 enabled: true
-                jobs_prefix:
-                - default
                 source_labels:
                 - app.kubernetes.io/name
                 - app.newrelic.io/name
@@ -374,7 +375,7 @@ tests:
       cluster: cluster-test
       config:
         kubernetes:
-          curated_experience:
+          integrations_filter:
             enabled: false
           jobs:
             - job_name_prefix: pod-job

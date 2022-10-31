@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_CuratedExperience(t *testing.T) {
+func Test_IntegrationFilter(t *testing.T) {
 	t.Parallel()
 
 	testsCases := []struct {
@@ -46,7 +46,7 @@ func Test_CuratedExperience(t *testing.T) {
 			},
 		},
 		{
-			name: "matching annotation without curated",
+			name: "matching annotation without integrations filters",
 			matchPod: &metadata{
 				annotations: map[string]string{"newrelic.io/scrape": "true"},
 			},
@@ -55,7 +55,7 @@ func Test_CuratedExperience(t *testing.T) {
 			},
 		},
 		{
-			name: "drop due to curated",
+			name: "drop due to integration filters",
 			dropPod: &metadata{
 				annotations: map[string]string{"prometheus.io/scrape": "true"},
 			},
@@ -87,6 +87,11 @@ common:
 kubernetes:
   jobs:
     - job_name_prefix: test-k8s
+      integrations_filter:
+        enabled: true
+        app_values:
+          - test1
+          - test2
       target_discovery:
         endpoints: true
         pod: true
@@ -96,6 +101,8 @@ kubernetes:
           names:
           - %s
     - job_name_prefix: newrelic-k8s
+      integrations_filter:
+        enabled: false
       target_discovery:
         endpoints: true
         pod: true
@@ -107,17 +114,12 @@ kubernetes:
         filter:
           annotations:
             newrelic.io/scrape: true
-  curated_experience:
+  integrations_filter:
     enabled: true
-    app_values:
-      - test1
-      - test2
     source_labels:
       - something-different1
       - app.kubernetes.io/name
       - something-different2
-    jobs_prefix:
-      - test-k8s
 `, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
 			ps := newPrometheusServer(t)

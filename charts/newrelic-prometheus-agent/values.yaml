@@ -182,22 +182,19 @@ config:
   # -- It allows defining scrape jobs for Kubernetes in a simple way.
   # @default -- See `values.yaml`
   kubernetes:
-    # NewRelic provides a list of Dashboards, alerts and entities for several Services. The curated_experience configuration
+    # NewRelic provides a list of Dashboards, alerts and entities for several Services. The integrations_filter configuration
     # allows to scrape only the targets having this experience out of the box.
-    # Notice that this configuration option applies to all jobs having a prefix matching the jobs_prefix list.
-    # If curated_experience is enabled, then the jobs, matching the jobs_prefix, scrape merely the targets having one of the specified labels matching
+    # If integrations_filter is enabled, then the jobs scrape merely the targets having one of the specified labels matching
     # one of the values of app_values.
     # Under the hood, a relabel_configs with action 'keep' are generated, consider it in case any custom extra_relabel_config is needed.
-    curated_experience:
-      # -- enabling the curated experience the jobs, matching the jobs_prefix, scrape merely the targets having one of the specified labels matching
-      #    one of the values of app_values.
+    integrations_filter:
+      # -- enabling the integration filters, merely the targets having one of the specified labels matching
+      #    one of the values of app_values are scraped. Each job configuration can override this default.
       enabled: true
-      # -- source_labels to be used in the relabel config added by the curated experience to filter targets
+      # -- source_labels used to fetch label values in the relabel config added by the integration filters configuration
       source_labels: ["app.kubernetes.io/name", "app.newrelic.io/name"]
-      # -- app_values to be used to create the regex used in the relabel config added by the curated experience to filter targets
-      app_values: ["redis", "mongodb", "consul", "calico", "ingress-nginx"]
-      # -- list of jobs_prefix to identify to which jobs to apply the curated experience
-      jobs_prefix: ["default"]
+      # -- app_values used to create the regex used in the relabel config added by the integration filters configuration
+      app_values: ["redis", "traefik", "calico", "nginx", "coredns", "etcd"]
 
     # Kubernetes jobs define [kubernetes_sd_configs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)
     # to discover and scrape Kubernetes objects. Besides, a set of relabel_configs are included in order to include some Kubernetes metadata as
@@ -210,9 +207,8 @@ config:
     #   the default 9102 for pods.
     # - `prometheus.io/param_<param-name>`: To include additional parameters in the scrape URL.
     jobs:
-
     # 'default' scrapes all targets having 'prometheus.io/scrape: true'.
-    # If curated_experience.enabled=true then only targets selected by the curated experience are considered.
+    # Out of the box, since kubernetes.integrations_filter.enabled=true then only targets selected by the integration filters are considered.
     - job_name_prefix: default
       target_discovery:
         pod: true
@@ -220,10 +216,14 @@ config:
         filter:
           annotations:
             prometheus.io/scrape: true
+      # -- integrations_filter configuration for this specific job. It overrides kubernetes.integrations_filter configuration
+      # integrations_filter:
 
       # 'newrelic' scrapes all targets having 'newrelic.io/scrape: true'.
-      # This is useful to extend the 'default-job' allowlisting all services adding the required annotation
+      # This is useful to extend the targets scraped by the 'default' job allowlisting services leveraging `newrelic.io/scrape` annotation
     - job_name_prefix: newrelic
+      integrations_filter:
+        enabled: false
       target_discovery:
         pod: true
         endpoints: true

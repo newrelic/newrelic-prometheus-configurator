@@ -13,5 +13,5 @@ config:
   common:
     scrape_interval: 15s
   kubernetes:
-    curated_experience:
+    integrations_filter:
       enabled: false

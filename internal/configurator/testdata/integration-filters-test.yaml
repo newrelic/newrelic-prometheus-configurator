@@ -4,7 +4,7 @@ kubernetes:
       target_discovery:
         pod: true
         endpoints: true
-  curated_experience:
+  integrations_filter:
     enabled: true
     app_values:
       - test1
@@ -12,8 +12,6 @@ kubernetes:
     source_labels:
       - testlabel1
       - testlabel2
-    jobs_prefix:
-      - default
 
 newrelic_remote_write:
   license_key: nrLicenseKey

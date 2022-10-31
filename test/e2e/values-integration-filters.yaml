@@ -13,13 +13,13 @@ config:
   common:
     scrape_interval: 15s
     external_labels:
-      collector_type: curated-experience
+      collector_type: integration-filters
 
   kubernetes:
-    curated_experience:
+    integrations_filter:
       enabled: true
       source_labels: [ "app.kubernetes.io/name", "unused", "app" ]
-      # note that we still scrape the pod since it is matching the curated experience, the self metrics and
+      # note that we still scrape the pod since it is matching the integration filters, the self metrics and
       # the endpoints since they have also the newrelic.io/scrape label
       app_values: ["deployment-app", "not-matching" ]
 

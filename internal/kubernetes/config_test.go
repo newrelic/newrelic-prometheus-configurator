@@ -53,6 +53,65 @@ func TestBuildFailWhen(t *testing.T) {
 			},
 			want: kubernetes.ErrInvalidSkipShardingFlag,
 		},
+		{
+			name: "two labels only",
+			k8sConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod: true,
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{"label1", "label2"},
+					AppValues:    []string{},
+					Enabled:      boolPtr(true),
+				},
+			},
+			want: kubernetes.ErrIntegrationFilterConfig,
+		}, {
+			name: "two labels only, enable in job definition",
+			k8sConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod: true,
+						},
+						IntegrationFilter: kubernetes.IntegrationFilter{
+							Enabled: boolPtr(true),
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{"label1", "label2"},
+					AppValues:    []string{},
+					Enabled:      boolPtr(false),
+				},
+			},
+			want: kubernetes.ErrIntegrationFilterConfig,
+		},
+		{
+			name: "two regexes only",
+			k8sConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod: true,
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{},
+					AppValues:    []string{"regex1", "regex2"},
+					Enabled:      boolPtr(true),
+				},
+			},
+			want: kubernetes.ErrIntegrationFilterConfig,
+		},
 	}
 
 	for _, tt := range tests {
@@ -250,7 +309,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 	}
 }
 
-func TestBuildFilterCuratedExperience(t *testing.T) { //nolint: funlen
+func TestBuildFilterIntegrationFilter(t *testing.T) { //nolint: funlen
 	t.Parallel()
 
 	annotationsFilter := kubernetes.Filter{
@@ -266,7 +325,7 @@ func TestBuildFilterCuratedExperience(t *testing.T) { //nolint: funlen
 		len      int
 	}{
 		{
-			name: "two labels two regexes",
+			name: "two labels two app values",
 			nrConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
@@ -277,11 +336,10 @@ func TestBuildFilterCuratedExperience(t *testing.T) { //nolint: funlen
 						},
 					},
 				},
-				CuratedExperience: kubernetes.CuratedExperience{
+				IntegrationFilter: kubernetes.IntegrationFilter{
 					SourceLabels: []string{"label1", "label2"},
 					AppValues:    []string{"regex1", "regex2"},
-					JobsPrefix:   []string{"test-pod"},
-					Enabled:      true,
+					Enabled:      boolPtr(true),
 				},
 			},
 			want: &regexBySourceLabel{
@@ -291,7 +349,7 @@ func TestBuildFilterCuratedExperience(t *testing.T) { //nolint: funlen
 			len: 11,
 		},
 		{
-			name: "two labels only",
+			name: "two labels two app values from default even if disabled",
 			nrConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
@@ -300,19 +358,75 @@ func TestBuildFilterCuratedExperience(t *testing.T) { //nolint: funlen
 							Pod:    true,
 							Filter: annotationsFilter,
 						},
+						IntegrationFilter: kubernetes.IntegrationFilter{
+							Enabled: boolPtr(true),
+						},
 					},
 				},
-				CuratedExperience: kubernetes.CuratedExperience{
+				IntegrationFilter: kubernetes.IntegrationFilter{
 					SourceLabels: []string{"label1", "label2"},
-					AppValues:    []string{},
-					JobsPrefix:   []string{"test-pod"},
-					Enabled:      true,
+					AppValues:    []string{"regex1", "regex2"},
+					Enabled:      boolPtr(false),
+				},
+			},
+			want: &regexBySourceLabel{
+				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
+				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
+			},
+			len: 11,
+		},
+		{
+			name: "two labels two regexes at different levels",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+						IntegrationFilter: kubernetes.IntegrationFilter{
+							SourceLabels: []string{"label1", "label2"},
+							AppValues:    []string{"regex1", "regex2"},
+							Enabled:      boolPtr(true),
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{"different1", "different2"},
+					AppValues:    []string{"regexDifferent1", "regexDifferent2"},
+					Enabled:      boolPtr(true),
+				},
+			},
+			want: &regexBySourceLabel{
+				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
+				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
+			},
+			len: 11,
+		},
+		{
+			name: "two labels two regexes but disabled at job label",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+						IntegrationFilter: kubernetes.IntegrationFilter{
+							Enabled: boolPtr(false),
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					Enabled: boolPtr(true),
 				},
 			},
 			len: 10,
 		},
 		{
-			name: "two regexes only",
+			name: "two labels two regexes but disabled at default value",
 			nrConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
@@ -323,53 +437,8 @@ func TestBuildFilterCuratedExperience(t *testing.T) { //nolint: funlen
 						},
 					},
 				},
-				CuratedExperience: kubernetes.CuratedExperience{
-					SourceLabels: []string{},
-					AppValues:    []string{"regex1", "regex2"},
-					JobsPrefix:   []string{"test-pod"},
-					Enabled:      true,
-				},
-			},
-			len: 10,
-		},
-		{
-			name: "two labels two regexes but different job prefix",
-			nrConfig: kubernetes.Config{
-				K8sJobs: []kubernetes.K8sJob{
-					{
-						JobNamePrefix: "test-pod",
-						TargetDiscovery: kubernetes.TargetDiscovery{
-							Pod:    true,
-							Filter: annotationsFilter,
-						},
-					},
-				},
-				CuratedExperience: kubernetes.CuratedExperience{
-					SourceLabels: []string{"label1", "label2"},
-					AppValues:    []string{"regex1", "regex2"},
-					JobsPrefix:   []string{"different"},
-					Enabled:      true,
-				},
-			},
-			len: 10,
-		},
-		{
-			name: "two labels two regexes but disabled",
-			nrConfig: kubernetes.Config{
-				K8sJobs: []kubernetes.K8sJob{
-					{
-						JobNamePrefix: "test-pod",
-						TargetDiscovery: kubernetes.TargetDiscovery{
-							Pod:    true,
-							Filter: annotationsFilter,
-						},
-					},
-				},
-				CuratedExperience: kubernetes.CuratedExperience{
-					SourceLabels: []string{"label1", "label2"},
-					AppValues:    []string{"regex1", "regex2"},
-					JobsPrefix:   []string{"test-pod"},
-					Enabled:      false,
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					Enabled: boolPtr(false),
 				},
 			},
 			len: 10,
@@ -399,4 +468,8 @@ func TestBuildFilterCuratedExperience(t *testing.T) { //nolint: funlen
 			}
 		})
 	}
+}
+
+func boolPtr(b bool) *bool {
+	return &b
 }

@@ -90,10 +90,10 @@ kubernetes:
     {{- .Values.config.kubernetes.jobs | toYaml | nindent 2 -}}
   {{- end -}}
 
-  {{- if .Values.config.kubernetes.curated_experience }}
-  {{- if .Values.config.kubernetes.curated_experience.enabled }}
-  curated_experience:
-     {{- .Values.config.kubernetes.curated_experience | toYaml | nindent 4 -}}
+  {{- if .Values.config.kubernetes.integrations_filter }}
+  {{- if .Values.config.kubernetes.integrations_filter.enabled }}
+  integrations_filter:
+     {{- .Values.config.kubernetes.integrations_filter | toYaml | nindent 4 -}}
    {{- end -}}
    {{- end -}}
 {{- end -}}

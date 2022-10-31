@@ -1,14 +1,14 @@
-suite: test configmap with CuratedExperience
+suite: test configmap with IntegrationFilter
 templates:
   - templates/configmap.yaml
 tests:
-  - it: config with CuratedExperience true
+  - it: config with IntegrationFilter true
     set:
       licenseKey: license-key-test
       cluster: cluster-test
       config:
         kubernetes:
-          curated_experience:
+          integrations_filter:
             enabled: true
         # Set empty to make this test simple
         static_targets:
@@ -30,34 +30,35 @@ tests:
                     annotations:
                       prometheus.io/scrape: true
                   pod: true
-              - job_name_prefix: newrelic
+              - integrations_filter:
+                  enabled: false
+                job_name_prefix: newrelic
                 target_discovery:
                   endpoints: true
                   filter:
                     annotations:
                       newrelic.io/scrape: true
                   pod: true
-              curated_experience:
+              integrations_filter:
                 app_values:
                 - redis
-                - mongodb
-                - consul
+                - traefik
                 - calico
-                - ingress-nginx
+                - nginx
+                - coredns
+                - etcd
                 enabled: true
-                jobs_prefix:
-                - default
                 source_labels:
                 - app.kubernetes.io/name
                 - app.newrelic.io/name
 
-  - it: config with CuratedExperience false
+  - it: config with IntegrationFilter false
     set:
       licenseKey: license-key-test
       cluster: cluster-test
       config:
         kubernetes:
-          curated_experience:
+          integrations_filter:
             enabled: false
         # Set empty to make this test simple
         static_targets:
@@ -79,7 +80,9 @@ tests:
                     annotations:
                       prometheus.io/scrape: true
                   pod: true
-              - job_name_prefix: newrelic
+              - integrations_filter:
+                  enabled: false
+                job_name_prefix: newrelic
                 target_discovery:
                   endpoints: true
                   filter:
