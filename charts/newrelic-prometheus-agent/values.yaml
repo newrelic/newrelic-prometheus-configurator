@@ -186,14 +186,15 @@ config:
     # allows to scrape only the targets having this experience out of the box.
     # If integrations_filter is enabled, then the jobs scrape merely the targets having one of the specified labels matching
     # one of the values of app_values.
-    # Under the hood, a relabel_configs with action 'keep' are generated, consider it in case any custom extra_relabel_config is needed.
+    # Under the hood, a relabel_configs with 'action=keep' are generated, consider it in case any custom extra_relabel_config is needed.
     integrations_filter:
       # -- enabling the integration filters, merely the targets having one of the specified labels matching
       #    one of the values of app_values are scraped. Each job configuration can override this default.
       enabled: true
       # -- source_labels used to fetch label values in the relabel config added by the integration filters configuration
       source_labels: ["app.kubernetes.io/name", "app.newrelic.io/name"]
-      # -- app_values used to create the regex used in the relabel config added by the integration filters configuration
+      # -- app_values used to create the regex used in the relabel config added by the integration filters configuration.
+      # Note that a single regex will be created from this list, example: '.*(?i)(app1|app2|app3).*'
       app_values: ["redis", "traefik", "calico", "nginx", "coredns", "etcd"]
 
     # Kubernetes jobs define [kubernetes_sd_configs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)

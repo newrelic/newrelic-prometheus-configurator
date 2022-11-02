@@ -36,6 +36,12 @@ type IntegrationFilter struct {
 	AppValues    []string `yaml:"app_values"`
 }
 
+// This struct is used internally to improve readability of function signatures.
+type jobRelabelConfig struct {
+	endpoints []promcfg.RelabelConfig
+	pods      []promcfg.RelabelConfig
+}
+
 // Build will create a Prometheus Job list based on the kubernetes configuration.
 func (c Config) Build(shardingConfig sharding.Config) ([]promcfg.Job, error) {
 	var promScrapeJobs []promcfg.Job
@@ -73,12 +79,6 @@ func buildPromJob(shardingConfig sharding.Config, k8sJob K8sJob, objPrefix strin
 	promJob.KubernetesSdConfigs = append(promJob.KubernetesSdConfigs, buildSdConfig(objPrefix, k8sJob.TargetDiscovery.AdditionalConfig))
 
 	return promJob
-}
-
-// This struct is used internally to improve readability of function signatures.
-type jobRelabelConfig struct {
-	endpoints []promcfg.RelabelConfig
-	pods      []promcfg.RelabelConfig
 }
 
 func (c Config) buildRelabelConfig(k8sJob K8sJob) (jobRelabelConfig, error) {
@@ -122,8 +122,8 @@ func buildIntegrationFilter(filters IntegrationFilter, jobFilters IntegrationFil
 
 	sourceLabelsPod := make([]string, 0, len(filterLabels))
 	sourceLabelsEndpoint := make([]string, 0, len(filterLabels))
-	for _, sL := range filterLabels {
-		sanitizedLabel := invalidPrometheusLabelCharRegex.ReplaceAllString(sL, "_")
+	for _, fL := range filterLabels {
+		sanitizedLabel := invalidPrometheusLabelCharRegex.ReplaceAllString(fL, "_")
 
 		sourceLabelsPod = append(sourceLabelsPod, fmt.Sprintf("%s%s_%s", podMetadata, labelMetadata, sanitizedLabel))
 		sourceLabelsEndpoint = append(sourceLabelsEndpoint, fmt.Sprintf("%s%s_%s", serviceMetadata, labelMetadata, sanitizedLabel))

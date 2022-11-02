@@ -310,7 +310,7 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 	}
 }
 
-func TestBuildFilterIntegrationFilter(t *testing.T) { //nolint: funlen
+func TestBuildIntegrationFilter(t *testing.T) { //nolint: funlen
 	t.Parallel()
 
 	annotationsFilter := kubernetes.Filter{
@@ -406,7 +406,7 @@ func TestBuildFilterIntegrationFilter(t *testing.T) { //nolint: funlen
 			len: 11,
 		},
 		{
-			name: "two labels two regexes but disabled at job label",
+			name: "no labels no regex but disabled at job label",
 			nrConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
@@ -427,7 +427,7 @@ func TestBuildFilterIntegrationFilter(t *testing.T) { //nolint: funlen
 			len: 10,
 		},
 		{
-			name: "two labels two regexes but disabled at default value",
+			name: "No labels no regex but disabled at default label",
 			nrConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{
 					{
@@ -468,6 +468,94 @@ func TestBuildFilterIntegrationFilter(t *testing.T) { //nolint: funlen
 				}
 			}
 		})
+	}
+}
+
+func TestBuildIntegrationFilterDifferentConfig(t *testing.T) {
+	t.Parallel()
+
+	annotationsFilter := kubernetes.Filter{
+		Annotations: map[string]string{"prometheus.io/scrape": "true"},
+	}
+
+	nrConfig := kubernetes.Config{
+		K8sJobs: []kubernetes.K8sJob{
+			{
+				JobNamePrefix: "job-with-default-filtering",
+				TargetDiscovery: kubernetes.TargetDiscovery{
+					Pod:    true,
+					Filter: annotationsFilter,
+				},
+			},
+			{
+				JobNamePrefix: "job-with-custom-filtering",
+				TargetDiscovery: kubernetes.TargetDiscovery{
+					Pod:    true,
+					Filter: annotationsFilter,
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{"different-label"},
+					AppValues:    []string{"different-regex"},
+				},
+			},
+			{
+				JobNamePrefix: "job-with-no-filtering",
+				TargetDiscovery: kubernetes.TargetDiscovery{
+					Pod:    true,
+					Filter: annotationsFilter,
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					Enabled: boolPtr(false),
+				},
+			},
+		},
+		IntegrationFilter: kubernetes.IntegrationFilter{
+			SourceLabels: []string{"label1", "label2"},
+			AppValues:    []string{"regex1", "regex2"},
+			Enabled:      boolPtr(true),
+		},
+	}
+
+	expectedJobSpecs := map[int]struct {
+		want *map[string]string
+		len  int
+	}{
+		0: {
+			want: &map[string]string{
+				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
+				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
+			},
+			len: 11,
+		},
+		1: {
+			want: &map[string]string{
+				"__meta_kubernetes_pod_label_different_label": ".*(?i)(different-regex).*",
+			},
+			len: 11,
+		},
+		2: {
+			len: 10,
+		},
+	}
+
+	job, err := nrConfig.Build(sharding.Config{})
+	require.NoError(t, err)
+
+	for indexJob, js := range expectedJobSpecs {
+		// we expect the filter relabel config as last one.
+		l := len(job[indexJob].RelabelConfigs)
+		actualRelabelConfig := job[indexJob].RelabelConfigs[l-1]
+
+		require.Len(t, job[indexJob].RelabelConfigs, js.len)
+
+		for _, actualSourceLabel := range actualRelabelConfig.SourceLabels {
+			if js.want != nil {
+				regexBySourceLabel := *js.want
+				val, ok := regexBySourceLabel[actualSourceLabel]
+				require.True(t, ok, "source label not expected: ", actualSourceLabel)
+				require.Equal(t, actualRelabelConfig.Regex, val)
+			}
+		}
 	}
 }
 

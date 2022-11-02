@@ -38,11 +38,11 @@ func Test_IntegrationFilter(t *testing.T) {
 			name: "matching labels",
 			matchPod: &metadata{
 				annotations: map[string]string{"prometheus.io/scrape": "true"},
-				labels:      map[string]string{"something-different2": "asdtest2"},
+				labels:      map[string]string{"app.newrelic.io/name": "asdtest2"},
 			},
 			matchEndpoints: &metadata{
 				annotations: map[string]string{"prometheus.io/scrape": "true"},
-				labels:      map[string]string{"something-different2": "asdtest2"},
+				labels:      map[string]string{"app.newrelic.io/name": "asdtest2"},
 			},
 		},
 		{
@@ -117,9 +117,9 @@ kubernetes:
   integrations_filter:
     enabled: true
     source_labels:
-      - something-different1
       - app.kubernetes.io/name
-      - something-different2
+      - app.newrelic.io/name
+      - customer.label.io/name
 `, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name, k8sEnv.kubeconfigFullPath, k8sEnv.testNamespace.Name)
 
 			ps := newPrometheusServer(t)
