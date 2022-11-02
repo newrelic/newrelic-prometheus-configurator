@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestBuildFailWhen(t *testing.T) {
+func TestBuildFailWhen(t *testing.T) { //nolint: funlen
 	t.Parallel()
 
 	tests := []struct {
@@ -71,7 +71,8 @@ func TestBuildFailWhen(t *testing.T) {
 				},
 			},
 			want: kubernetes.ErrIntegrationFilterConfig,
-		}, {
+		},
+		{
 			name: "two labels only, enable in job definition",
 			k8sConfig: kubernetes.Config{
 				K8sJobs: []kubernetes.K8sJob{

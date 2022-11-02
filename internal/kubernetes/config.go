@@ -75,7 +75,7 @@ func buildPromJob(shardingConfig sharding.Config, k8sJob K8sJob, objPrefix strin
 	return promJob
 }
 
-// This struct is used internally to improve readability of function signatures
+// This struct is used internally to improve readability of function signatures.
 type jobRelabelConfig struct {
 	endpoints []promcfg.RelabelConfig
 	pods      []promcfg.RelabelConfig
