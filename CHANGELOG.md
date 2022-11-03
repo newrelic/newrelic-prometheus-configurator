@@ -8,17 +8,18 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v0.2.0 - 2022-11-03
+
 ### Integration filters
-NewRelic provides a list of Dashboards, alerts and entities for several Services. The `integrations_filter` configuration
- allows to scrape only the targets having this experience out of the box.
-
- - If `integrations_filter` is enabled, then the kubernetes jobs scrape merely the targets having one of the specified labels matching
-one of the values of `app_values`.
-
- - Under the hood, a `relabel_configs` with `action=keep` are generated, consider it in case any custom `extra_relabel_config` is needed.
+NewRelic provides a list of Dashboards, alerts and entities for several Services. The `integrations_filter` configuration allows to scrape only the targets having this experience out of the box.
+- If `integrations_filter` is enabled, then the kubernetes jobs scrape merely the targets having one of the specified labels matching one of the values of `app_values`.
+- Under the hood, a `relabel_configs` with `action=keep` are generated, consider it in case any custom `extra_relabel_config` is needed.
 
 ### 🚀 Enhancements
 - `Integration filters` feature is now supported.
+
+### ⛓️ Dependencies
+- Upgraded github.com/stretchr/testify from 1.8.0 to 1.8.1 [Changelog](https://github.com/stretchr/testify/releases/tag/1.8.1)
 
 ## v0.1.0 - 2022-10-20
 
