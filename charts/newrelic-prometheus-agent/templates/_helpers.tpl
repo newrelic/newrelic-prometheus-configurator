@@ -83,10 +83,20 @@ extra_scrape_configs:
 
 {{- define "newrelic-prometheus.configurator.kubernetes" -}}
 {{- if .Values.config -}}
-  {{- if .Values.config.kubernetes  -}}
+{{- if .Values.config.kubernetes  -}}
 kubernetes:
-  {{- .Values.config.kubernetes | toYaml | nindent 2 -}}
+  {{- if .Values.config.kubernetes.jobs }}
+  jobs:
+    {{- .Values.config.kubernetes.jobs | toYaml | nindent 2 -}}
   {{- end -}}
+
+  {{- if .Values.config.kubernetes.integrations_filter }}
+  {{- if .Values.config.kubernetes.integrations_filter.enabled }}
+  integrations_filter:
+     {{- .Values.config.kubernetes.integrations_filter | toYaml | nindent 4 -}}
+   {{- end -}}
+   {{- end -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 

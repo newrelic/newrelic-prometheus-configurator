@@ -78,7 +78,7 @@ By default, some Kubernetes objects are discovered and scraped by Prometheus. Ta
 config:
   kubernetes:
     jobs:
-    - job_name_prefix: kubernetes-job
+    - job_name_prefix: default
       target_discovery:
         pod: true
         endpoints: true
@@ -183,6 +183,9 @@ The order to set the affinity is to set `affinity` field (at root level), if tha
 | config.extra_remote_write | object | `nil` | It includes additional remote-write configuration. Note this configuration is not parsed, so valid [prometheus remote_write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) should be provided. |
 | config.extra_scrape_configs | list | `[]` | It is possible to include extra scrape configuration in [prometheus format](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config). Please note, it should be a valid Prometheus configuration which will not be parsed by the chart. WARNING extra_scrape_configs is a raw Prometheus config. Therefore, the metrics collected thanks to it will not have by default the metadata (pod_name, service_name, ...) added by the configurator for the static or kubernetes jobs. This configuration should be used as a workaround whenever kubernetes and static job do not cover a particular use-case. |
 | config.kubernetes | object | See `values.yaml` | It allows defining scrape jobs for Kubernetes in a simple way. |
+| config.kubernetes.integrations_filter.app_values | list | `["redis","traefik","calico","nginx","coredns","etcd"]` | app_values used to create the regex used in the relabel config added by the integration filters configuration. Note that a single regex will be created from this list, example: '.*(?i)(app1|app2|app3).*' |
+| config.kubernetes.integrations_filter.enabled | bool | `true` | enabling the integration filters, merely the targets having one of the specified labels matching    one of the values of app_values are scraped. Each job configuration can override this default. |
+| config.kubernetes.integrations_filter.source_labels | list | `["app.kubernetes.io/name","app.newrelic.io/name"]` | source_labels used to fetch label values in the relabel config added by the integration filters configuration |
 | config.newrelic_remote_write | object | See `values.yaml` | Newrelic remote-write configuration settings. |
 | config.static_targets | object | See `values.yaml`. | It allows defining scrape jobs for targets with static URLs. |
 | config.static_targets.jobs | list | See `values.yaml`. | List of static target jobs. By default, it defines a job to get self-metrics. Please note, if you define `static_target.jobs` and would like to keep self-metrics you need to include a job like the one defined by default. |

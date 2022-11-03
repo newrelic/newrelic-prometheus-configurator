@@ -83,7 +83,7 @@ By default, some Kubernetes objects are discovered and scraped by Prometheus. Ta
 config:
   kubernetes:
     jobs:
-    - job_name_prefix: kubernetes-job
+    - job_name_prefix: default
       target_discovery:
         pod: true
         endpoints: true

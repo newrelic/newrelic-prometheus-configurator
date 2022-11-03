@@ -1,6 +1,6 @@
 kubernetes:
   jobs:
-    - job_name_prefix: kubernetes-job
+    - job_name_prefix: default
       # prometheus scrape_config fields
       proxy_url: http://proxy.url
       body_size_limit: 100MiB

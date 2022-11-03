@@ -6,7 +6,7 @@ version: 0.1.1
 # Prometheus Server Version
 appVersion: "v2.37.1"
 annotations:
-  configuratorVersion: "0.1.0"
+  configuratorVersion: "0.2.0"
 dependencies:
   - name: common-library
     version: 1.1.0

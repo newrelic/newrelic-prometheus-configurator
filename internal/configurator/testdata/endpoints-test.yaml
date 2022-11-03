@@ -1,7 +1,7 @@
 kubernetes:
   jobs:
     # Job with kubernetes sd config not populated and with extra_label_config
-    - job_name_prefix: kubernetes-job
+    - job_name_prefix: default
       target_discovery:
         endpoints: true
 
@@ -13,7 +13,7 @@ kubernetes:
         - test_label
 
     # Job with kubernetes sd config actually populated
-    - job_name_prefix: kubernetes-job-2
+    - job_name_prefix: default-2
       target_discovery:
         endpoints: true
         additional_config:

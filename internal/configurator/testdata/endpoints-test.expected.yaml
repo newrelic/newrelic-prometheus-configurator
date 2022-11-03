@@ -1,5 +1,5 @@
 scrape_configs:
-  - job_name: kubernetes-job-endpoints
+  - job_name: default-endpoints
     kubernetes_sd_configs:
       - role: endpoints
     relabel_configs:
@@ -45,7 +45,7 @@ scrape_configs:
         action: drop
         regex: (.+)
 
-  - job_name: kubernetes-job-2-endpoints
+  - job_name: default-2-endpoints
     kubernetes_sd_configs:
       - role: endpoints
         kubeconfig_file: test_file

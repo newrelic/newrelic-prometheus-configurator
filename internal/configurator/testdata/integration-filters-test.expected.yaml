@@ -1,51 +1,20 @@
-# sharding-test.expected
 scrape_configs:
-  # static_targets
-  - job_name: my-custom-target-authorization-full
-    static_configs:
-      - targets:
-          - "192.168.3.1:2379"
-    metrics_path: /metrics-custom
-    relabel_configs:
-      - source_labels: [ '__address__' ]
-        modulus: 2
-        action: hashmod
-        target_label: __tmp_hash
-      - source_labels: [ '__tmp_hash' ]
-        regex: ^1$
-        action: keep
-      - source_labels: [ '__name__', 'instance' ]
-        regex: node_memory_active_bytes;localhost:9100
-        action: drop
-    metric_relabel_configs:
-      - source_labels: [ '__name__', 'instance' ]
-        regex: node_memory_active_bytes;localhost:9100
-        action: drop
-
-  # pod
   - job_name: default-pod
     kubernetes_sd_configs:
       - role: pod
     relabel_configs:
-      - source_labels: [ '__address__' ]
-        modulus: 2
-        action: hashmod
-        target_label: __tmp_hash
-      - source_labels: [ '__tmp_hash' ]
-        regex: ^1$
-        action: keep
-      - source_labels: [ __meta_kubernetes_pod_phase ]
+      - source_labels: [__meta_kubernetes_pod_phase]
         regex: Pending|Succeeded|Failed|Completed
         action: drop
-      - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scheme ]
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
         action: replace
         regex: (https?)
         target_label: __scheme__
-      - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_path ]
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
         action: replace
         target_label: __metrics_path__
         regex: (.+)
-      - source_labels: [ __address__, __meta_kubernetes_pod_annotation_prometheus_io_port ]
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
         action: replace
         regex: (.+?)(?::\d+)?;(\d+)
         replacement: $1:$2
@@ -55,36 +24,31 @@ scrape_configs:
         replacement: __param_$1
       - action: labelmap
         regex: __meta_kubernetes_pod_label_(.+)
-      - source_labels: [ __meta_kubernetes_namespace ]
+      - source_labels: [__meta_kubernetes_namespace]
         action: replace
         target_label: namespace
-      - source_labels: [ __meta_kubernetes_pod_node_name ]
+      - source_labels: [__meta_kubernetes_pod_node_name]
         action: replace
         target_label: node
-      - source_labels: [ __meta_kubernetes_pod_name ]
+      - source_labels: [__meta_kubernetes_pod_name]
         action: replace
         target_label: pod
-
-  # endpoints
+      - source_labels: [__meta_kubernetes_pod_label_testlabel1, __meta_kubernetes_pod_label_testlabel2]
+        action: keep
+        separator: ";"
+        regex: ".*(?i)(test1|test2).*"
   - job_name: default-endpoints
     kubernetes_sd_configs:
       - role: endpoints
     relabel_configs:
-      - source_labels: [ '__address__' ]
-        modulus: 2
-        action: hashmod
-        target_label: __tmp_hash
-      - source_labels: [ '__tmp_hash' ]
-        regex: ^1$
-        action: keep
       - source_labels: [ __meta_kubernetes_pod_phase ]
         action: drop
         regex: Succeeded|Failed|Completed
-      - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_scheme ]
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
         action: replace
         target_label: __scheme__
         regex: (https?)
-      - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_path ]
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
         action: replace
         target_label: __metrics_path__
         regex: (.+)
@@ -98,10 +62,10 @@ scrape_configs:
         replacement: __param_$1
       - action: labelmap
         regex: __meta_kubernetes_service_label_(.+)
-      - source_labels: [ __meta_kubernetes_namespace ]
+      - source_labels: [__meta_kubernetes_namespace]
         action: replace
         target_label: namespace
-      - source_labels: [ __meta_kubernetes_service_name ]
+      - source_labels: [__meta_kubernetes_service_name]
         action: replace
         target_label: service
       - source_labels: [ __meta_kubernetes_endpoint_node_name, __meta_kubernetes_pod_node_name ]
@@ -113,7 +77,10 @@ scrape_configs:
       - source_labels: [ __meta_kubernetes_pod_name ]
         action: replace
         target_label: pod
-
+      - source_labels: [__meta_kubernetes_service_label_testlabel1, __meta_kubernetes_service_label_testlabel2]
+        action: keep
+        separator: ";"
+        regex: ".*(?i)(test1|test2).*"
 remote_write:
   - name: newrelic_rw
     url: https://metric-api.newrelic.com/prometheus/v1/write?collector_name=prometheus-agent

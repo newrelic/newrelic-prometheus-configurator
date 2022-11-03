@@ -8,6 +8,18 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### Integration filters
+NewRelic provides a list of Dashboards, alerts and entities for several Services. The `integrations_filter` configuration
+ allows to scrape only the targets having this experience out of the box.
+
+ - If `integrations_filter` is enabled, then the kubernetes jobs scrape merely the targets having one of the specified labels matching
+one of the values of `app_values`.
+
+ - Under the hood, a `relabel_configs` with `action=keep` are generated, consider it in case any custom `extra_relabel_config` is needed.
+
+### 🚀 Enhancements
+- `Integration filters` feature is now supported.
+
 ## v0.1.0 - 2022-10-20
 
 ### 🛡️ Security notices

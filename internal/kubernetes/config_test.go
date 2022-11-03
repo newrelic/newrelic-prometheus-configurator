@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestBuildFailWhen(t *testing.T) {
+func TestBuildFailWhen(t *testing.T) { //nolint: funlen
 	t.Parallel()
 
 	tests := []struct {
@@ -52,6 +52,66 @@ func TestBuildFailWhen(t *testing.T) {
 				},
 			},
 			want: kubernetes.ErrInvalidSkipShardingFlag,
+		},
+		{
+			name: "two labels only",
+			k8sConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod: true,
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{"label1", "label2"},
+					AppValues:    []string{},
+					Enabled:      boolPtr(true),
+				},
+			},
+			want: kubernetes.ErrIntegrationFilterConfig,
+		},
+		{
+			name: "two labels only, enable in job definition",
+			k8sConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod: true,
+						},
+						IntegrationFilter: kubernetes.IntegrationFilter{
+							Enabled: boolPtr(true),
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{"label1", "label2"},
+					AppValues:    []string{},
+					Enabled:      boolPtr(false),
+				},
+			},
+			want: kubernetes.ErrIntegrationFilterConfig,
+		},
+		{
+			name: "two regexes only",
+			k8sConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod: true,
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{},
+					AppValues:    []string{"regex1", "regex2"},
+					Enabled:      boolPtr(true),
+				},
+			},
+			want: kubernetes.ErrIntegrationFilterConfig,
 		},
 	}
 
@@ -248,4 +308,257 @@ func TestBuildFilter(t *testing.T) { //nolint: funlen
 			require.Equal(t, actualRelabelConfig.Regex, expectedRegex)
 		})
 	}
+}
+
+func TestBuildIntegrationFilter(t *testing.T) { //nolint: funlen
+	t.Parallel()
+
+	annotationsFilter := kubernetes.Filter{
+		Annotations: map[string]string{"prometheus.io/scrape": "true"},
+	}
+
+	type regexBySourceLabel map[string]string
+
+	tests := []struct {
+		name     string
+		nrConfig kubernetes.Config
+		want     *regexBySourceLabel
+		len      int
+	}{
+		{
+			name: "two labels two app values",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{"label1", "label2"},
+					AppValues:    []string{"regex1", "regex2"},
+					Enabled:      boolPtr(true),
+				},
+			},
+			want: &regexBySourceLabel{
+				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
+				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
+			},
+			len: 11,
+		},
+		{
+			name: "two labels two app values from default even if disabled",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+						IntegrationFilter: kubernetes.IntegrationFilter{
+							Enabled: boolPtr(true),
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{"label1", "label2"},
+					AppValues:    []string{"regex1", "regex2"},
+					Enabled:      boolPtr(false),
+				},
+			},
+			want: &regexBySourceLabel{
+				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
+				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
+			},
+			len: 11,
+		},
+		{
+			name: "two labels two regexes at different levels",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+						IntegrationFilter: kubernetes.IntegrationFilter{
+							SourceLabels: []string{"label1", "label2"},
+							AppValues:    []string{"regex1", "regex2"},
+							Enabled:      boolPtr(true),
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{"different1", "different2"},
+					AppValues:    []string{"regexDifferent1", "regexDifferent2"},
+					Enabled:      boolPtr(true),
+				},
+			},
+			want: &regexBySourceLabel{
+				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
+				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
+			},
+			len: 11,
+		},
+		{
+			name: "no labels no regex but disabled at job label",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+						IntegrationFilter: kubernetes.IntegrationFilter{
+							Enabled: boolPtr(false),
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					Enabled: boolPtr(true),
+				},
+			},
+			len: 10,
+		},
+		{
+			name: "No labels no regex but disabled at default label",
+			nrConfig: kubernetes.Config{
+				K8sJobs: []kubernetes.K8sJob{
+					{
+						JobNamePrefix: "test-pod",
+						TargetDiscovery: kubernetes.TargetDiscovery{
+							Pod:    true,
+							Filter: annotationsFilter,
+						},
+					},
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					Enabled: boolPtr(false),
+				},
+			},
+			len: 10,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			job, err := tt.nrConfig.Build(sharding.Config{})
+			require.NoError(t, err)
+
+			// we expect the filter relabel config as last one.
+			l := len(job[0].RelabelConfigs)
+			actualRelabelConfig := job[0].RelabelConfigs[l-1]
+
+			require.Len(t, job[0].RelabelConfigs, tt.len)
+
+			for _, actualSourceLabel := range actualRelabelConfig.SourceLabels {
+				if tt.want != nil {
+					regexBySourceLabel := *tt.want
+					val, ok := regexBySourceLabel[actualSourceLabel]
+					require.True(t, ok, "source label not expected: ", actualSourceLabel)
+					require.Equal(t, actualRelabelConfig.Regex, val)
+				}
+			}
+		})
+	}
+}
+
+func TestBuildIntegrationFilterDifferentConfig(t *testing.T) {
+	t.Parallel()
+
+	annotationsFilter := kubernetes.Filter{
+		Annotations: map[string]string{"prometheus.io/scrape": "true"},
+	}
+
+	nrConfig := kubernetes.Config{
+		K8sJobs: []kubernetes.K8sJob{
+			{
+				JobNamePrefix: "job-with-default-filtering",
+				TargetDiscovery: kubernetes.TargetDiscovery{
+					Pod:    true,
+					Filter: annotationsFilter,
+				},
+			},
+			{
+				JobNamePrefix: "job-with-custom-filtering",
+				TargetDiscovery: kubernetes.TargetDiscovery{
+					Pod:    true,
+					Filter: annotationsFilter,
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					SourceLabels: []string{"different-label"},
+					AppValues:    []string{"different-regex"},
+				},
+			},
+			{
+				JobNamePrefix: "job-with-no-filtering",
+				TargetDiscovery: kubernetes.TargetDiscovery{
+					Pod:    true,
+					Filter: annotationsFilter,
+				},
+				IntegrationFilter: kubernetes.IntegrationFilter{
+					Enabled: boolPtr(false),
+				},
+			},
+		},
+		IntegrationFilter: kubernetes.IntegrationFilter{
+			SourceLabels: []string{"label1", "label2"},
+			AppValues:    []string{"regex1", "regex2"},
+			Enabled:      boolPtr(true),
+		},
+	}
+
+	expectedJobSpecs := map[int]struct {
+		want *map[string]string
+		len  int
+	}{
+		0: {
+			want: &map[string]string{
+				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
+				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
+			},
+			len: 11,
+		},
+		1: {
+			want: &map[string]string{
+				"__meta_kubernetes_pod_label_different_label": ".*(?i)(different-regex).*",
+			},
+			len: 11,
+		},
+		2: {
+			len: 10,
+		},
+	}
+
+	job, err := nrConfig.Build(sharding.Config{})
+	require.NoError(t, err)
+
+	for indexJob, js := range expectedJobSpecs {
+		// we expect the filter relabel config as last one.
+		l := len(job[indexJob].RelabelConfigs)
+		actualRelabelConfig := job[indexJob].RelabelConfigs[l-1]
+
+		require.Len(t, job[indexJob].RelabelConfigs, js.len)
+
+		for _, actualSourceLabel := range actualRelabelConfig.SourceLabels {
+			if js.want != nil {
+				regexBySourceLabel := *js.want
+				val, ok := regexBySourceLabel[actualSourceLabel]
+				require.True(t, ok, "source label not expected: ", actualSourceLabel)
+				require.Equal(t, actualRelabelConfig.Regex, val)
+			}
+		}
+	}
+}
+
+func boolPtr(b bool) *bool {
+	return &b
 }

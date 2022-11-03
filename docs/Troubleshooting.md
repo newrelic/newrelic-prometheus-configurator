@@ -40,7 +40,7 @@ kubectl exec newrelic-prometheus-agent-0 -- wget -O - 'localhost:9090/api/v1/tar
 
 If the `up` metrics has value `0` means that the target is actively scraped by Prometheus but the scrape has failed. The reason can be found in the verbose logs with a  log entry similar to this:
 ```log
- prometheus ts=2022-09-19T15:21:05.489Z caller=scrape.go:1332 level=debug component="scrape manager" scrape_pool=kubernetes-job-pod target=http://172.17.0.5:80/metrics msg="<error>" err="<error detail>"
+ prometheus ts=2022-09-19T15:21:05.489Z caller=scrape.go:1332 level=debug component="scrape manager" scrape_pool=default-pod target=http://172.17.0.5:80/metrics msg="<error>" err="<error detail>"
 ```
 
 Another option is to check the Active target list from the Prometheus API [Targets endpoint](https://prometheus.io/docs/prometheus/latest/querying/api/#targets).
@@ -59,7 +59,7 @@ The failed target will be listed and the error will be available in the `lastErr
             {
                 "discoveredLabels": <map of labels>,
                 "labels": <map of labels>,
-                "scrapePool": "kubernetes-job-pod",
+                "scrapePool": "default-pod",
                 "scrapeUrl": "http://172.17.0.5:80/metrics",
                 "globalUrl": "http://172.17.0.5:80/metrics",
                 "lastError": <error detail>,
