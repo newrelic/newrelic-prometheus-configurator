@@ -49,6 +49,7 @@ spec:
       initContainers:
         - name: configurator
           image: {{ include "newrelic-prometheus.configurator.configurator_image" ( dict "imageRoot" .Values.images.configurator "context" .) }}
+          imagePullPolicy: {{ .Values.images.configurator.pullPolicy }}
           args:
             - --input=/etc/configurator/config.yaml
             - --output=/etc/prometheus/config/config.yaml

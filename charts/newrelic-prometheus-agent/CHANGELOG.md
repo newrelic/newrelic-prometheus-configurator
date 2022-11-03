@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Bugfix
+- `imagePullPolicy` is now correctly applied to the init container as well.
+
 ## v0.2.0 - 2022-11-03
 
 ### Note, defaults of the chart changed
