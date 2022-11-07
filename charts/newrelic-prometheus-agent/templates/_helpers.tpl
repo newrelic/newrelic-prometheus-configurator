@@ -52,10 +52,13 @@ common:
 {{- define "newrelic-prometheus.configurator.extra_write_relabel_configs" -}}
 
 {{- $extra_write_relabel_configs := list  -}}
-{{- if .Values.config.metric_type_override.enabled -}}
+{{- if .Values.config.metric_type_override -}}
+  {{- if .Values.config.metric_type_override.enabled -}}
     {{- $metricTypeOverride := .Files.Get "static/metrictyperelabeldefaults.yaml" | fromYaml -}}
     {{- $extra_write_relabel_configs = concat $extra_write_relabel_configs $metricTypeOverride.metrics_type_relabel -}}
+  {{- end -}}
 {{- end -}}
+
 
 {{- if (include "newrelic.common.lowDataMode" .) -}}
   {{- $lowDataModeRelabelConfig := .Files.Get "static/lowdatamodedefaults.yaml" | fromYaml -}}
