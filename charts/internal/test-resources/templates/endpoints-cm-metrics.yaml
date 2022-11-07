@@ -33,3 +33,7 @@ data:
     mock_endpoints_histogram_metric_bucket{le="+Inf"} 2
     mock_endpoints_histogram_metric_sum 58
     mock_endpoints_histogram_metric_count 2
+
+    # HELP timeseries_write_test A counter to test metric relabelling.
+    # TYPE timeseries_write_test counter
+    timeseries_write_test 1

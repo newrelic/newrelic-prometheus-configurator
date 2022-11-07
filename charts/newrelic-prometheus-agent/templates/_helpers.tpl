@@ -31,20 +31,15 @@ common:
   {{- $_ := set $tmp "fedramp" (dict "enabled" true)  -}}
 {{- end -}}
 
-{{- if (include "newrelic.common.lowDataMode" .) -}}
-  {{- $lowDataModeRelabelConfig := .Files.Get "static/lowdatamodedefaults.yaml" | fromYaml -}}
-  {{- $_ := set $tmp "extra_write_relabel_configs" (list $lowDataModeRelabelConfig)  -}}
+{{- $extra_write_relabel_configs :=(include "newrelic-prometheus.configurator.extra_write_relabel_configs" . | fromYaml) -}}
+{{- if ne (len $extra_write_relabel_configs.list) 0 -}}
+  {{- $_ := set $tmp "extra_write_relabel_configs" $extra_write_relabel_configs.list -}}
 {{- end -}}
 
-{{- if and .Values.config .Values.config.newrelic_remote_write -}}
-  {{- /* it concatenates the defined 'extra_write_relabel_configs' to the ones defined in lowDataMode  */ -}}
-  {{- if and .Values.config.newrelic_remote_write.extra_write_relabel_configs  $tmp.extra_write_relabel_configs -}}
-      {{- $concatenated := concat $tmp.extra_write_relabel_configs .Values.config.newrelic_remote_write.extra_write_relabel_configs -}}
-      {{- $_ := set $tmp "extra_write_relabel_configs" $concatenated  -}}
-  {{- end -}}
-
+{{- if .Values.config -}}
+{{- if .Values.config.newrelic_remote_write -}}
   {{- $tmp = mustMerge $tmp .Values.config.newrelic_remote_write  -}}
-
+{{- end -}}
 {{- end -}}
 
 {{- if not (empty $tmp) -}}
@@ -52,6 +47,37 @@ common:
 {{- end -}}
 
 {{- end -}}
+
+{{- /* it builds the extra_write_relabel_configs configuration merging: lowdatamode, user ones, and metrictyperelabeldefaults  */ -}}
+{{- define "newrelic-prometheus.configurator.extra_write_relabel_configs" -}}
+
+{{- $extra_write_relabel_configs := list  -}}
+{{- if (include "newrelic.common.lowDataMode" .) -}}
+  {{- $lowDataModeRelabelConfig := .Files.Get "static/lowdatamodedefaults.yaml" | fromYaml -}}
+  {{- $extra_write_relabel_configs = concat $extra_write_relabel_configs $lowDataModeRelabelConfig.low_data_mode -}}
+{{- end -}}
+
+{{- if .Values.metric_type_override -}}
+  {{- if .Values.metric_type_override.enabled -}}
+    {{- $metricTypeOverride := .Files.Get "static/metrictyperelabeldefaults.yaml" | fromYaml -}}
+    {{- $extra_write_relabel_configs = concat $extra_write_relabel_configs $metricTypeOverride.metrics_type_relabel -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if .Values.config -}}
+{{- if .Values.config.newrelic_remote_write -}}
+  {{- /* it concatenates the defined 'extra_write_relabel_configs' to the ones defined in lowDataMode  */ -}}
+  {{- if .Values.config.newrelic_remote_write.extra_write_relabel_configs  -}}
+      {{- $extra_write_relabel_configs = concat $extra_write_relabel_configs .Values.config.newrelic_remote_write.extra_write_relabel_configs -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- /* sadly in helm we cannot pass back a list without putting it into a tmp dict  */ -}}
+{{ dict "list" $extra_write_relabel_configs | toYaml}}
+
+{{- end -}}
+
 
 {{- /* it builds the extra_remote_write configuration from configurator config */ -}}
 {{- define "newrelic-prometheus.configurator.extra_remote_write" -}}

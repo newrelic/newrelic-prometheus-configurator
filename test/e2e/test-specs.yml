@@ -42,4 +42,6 @@ scenarios:
           error_expected: true
         - query: "FROM Metric select metricName  where collector_type = 'integration-filters' and service = 'kube-dns'"
           error_expected: true
-
+        # metric type relabelling, the metric name is wrong, but since the prefix matches timeseries_write_* we expect it as a counter
+        - query: "FROM Metric select metricName where collector_type = 'integration-filters' and metricName = 'timeseries_write_test' and getField(timeseries_write_test,'type') = 'count'"
+          error_expected: false #In this case we expect the metrics thanks to the newrelic.io/scrape=true

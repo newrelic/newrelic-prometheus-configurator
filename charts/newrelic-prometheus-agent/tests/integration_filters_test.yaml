@@ -6,6 +6,8 @@ tests:
     set:
       licenseKey: license-key-test
       cluster: cluster-test
+      metric_type_override:
+        enabled: false
       config:
         kubernetes:
           integrations_filter:
@@ -47,6 +49,7 @@ tests:
                 - nginx
                 - coredns
                 - etcd
+                - cockroachdb
                 enabled: true
                 source_labels:
                 - app.kubernetes.io/name
@@ -56,6 +59,8 @@ tests:
     set:
       licenseKey: license-key-test
       cluster: cluster-test
+      metric_type_override:
+        enabled: false
       config:
         kubernetes:
           integrations_filter:
