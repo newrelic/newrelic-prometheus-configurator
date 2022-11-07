@@ -13,5 +13,5 @@ metrics_type_relabel:
   target_label: newrelic_metric_type
   replacement: counter
   action: replace
-# Node that adding more element to this list could cause a possible breaking change to users already leveraging affected metrics.
+# Note that adding more elements to this list could cause a possible breaking change to users already leveraging affected metrics.
 # Therefore, before adding new entries check if any users is relying already on those metrics and warn them.
