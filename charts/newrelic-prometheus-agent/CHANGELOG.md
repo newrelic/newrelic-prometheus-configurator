@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### bugfix 
+- updated appVersion of `quay.io/prometheus/prometheus` from v2.37.1 to v2.37.2
+
 ## v0.2.1 - 2022-11-03
 
 ### 🐞 Bug fixes

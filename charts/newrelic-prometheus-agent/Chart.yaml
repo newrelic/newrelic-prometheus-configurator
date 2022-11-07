@@ -4,7 +4,7 @@ description: A Helm chart to deploy Prometheus with New Relic Prometheus Configu
 type: application
 version: 0.2.1
 # Prometheus Server Version
-appVersion: "v2.37.1"
+appVersion: "v2.37.2"
 annotations:
   configuratorVersion: "0.2.0"
 dependencies:
