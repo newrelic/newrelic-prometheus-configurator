@@ -1,8 +1,8 @@
 [![Community Project header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Community_Project.png)](https://opensource.newrelic.com/oss-category/#community-project)
 
-# Newrelic Prometheus Configurator
+# New Relic Prometheus Configurator 
 
-Newrelic Prometheus Configurator gives you full observability of your services exposing [Prometheus](https://github.com/prometheus/prometheus) metrics.
+New Relic Prometheus Configurator (a.k.a. New Relic Prometheus Agent) gives you full observability of your services exposing [Prometheus](https://github.com/prometheus/prometheus) metrics.
 
 This repo contains the code base of the `newrelic-prometheus-configurator` and the [Helm Chart](/charts/newrelic-prometheus-agent/README.md) to install the solution in Kubernetes.
 
