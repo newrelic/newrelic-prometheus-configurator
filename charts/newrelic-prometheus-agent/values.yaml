@@ -195,7 +195,7 @@ config:
       source_labels: ["app.kubernetes.io/name", "app.newrelic.io/name"]
       # -- app_values used to create the regex used in the relabel config added by the integration filters configuration.
       # Note that a single regex will be created from this list, example: '.*(?i)(app1|app2|app3).*'
-      app_values: ["redis", "traefik", "calico", "nginx", "coredns", "etcd"]
+      app_values: ["redis", "traefik", "calico", "nginx", "coredns", "etcd", "cockroachdb"]
 
     # Kubernetes jobs define [kubernetes_sd_configs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)
     # to discover and scrape Kubernetes objects. Besides, a set of relabel_configs are included in order to include some Kubernetes metadata as
@@ -440,3 +440,6 @@ config:
   # This configuration should be used as a workaround whenever kubernetes and static job do not cover a particular use-case.
   # @default -- `[]`
   extra_scrape_configs: []
+
+  metric_type_override:
+    enabled: true

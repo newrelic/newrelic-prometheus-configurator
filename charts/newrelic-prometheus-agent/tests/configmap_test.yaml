@@ -11,6 +11,22 @@ tests:
           path: data.config\.yaml
           value: |-
             # Configuration for newrelic-prometheus-configurator
+            newrelic_remote_write:
+              extra_write_relabel_configs:
+              - action: replace
+                regex: timeseries_write_(.*)
+                replacement: counter
+                separator: ;
+                source_labels:
+                - __name__
+                target_label: newrelic_metric_type
+              - action: replace
+                regex: sql_byte(.*)
+                replacement: counter
+                separator: ;
+                source_labels:
+                - __name__
+                target_label: newrelic_metric_type
             static_targets:
               jobs:
               - extra_metric_relabel_config:
@@ -52,6 +68,7 @@ tests:
                 - nginx
                 - coredns
                 - etcd
+                - cockroachdb
                 enabled: true
                 source_labels:
                 - app.kubernetes.io/name
@@ -63,6 +80,8 @@ tests:
       cluster: cluster-test
       nrStaging: true
       config:
+        metric_type_override:
+          enabled: false
         static_targets:  # Set empty to make this test simple
     asserts:
       - matchRegex:
@@ -76,6 +95,8 @@ tests:
       fedramp:
         enabled: true
       config:
+        metric_type_override:
+          enabled: false
         static_targets:  # Set empty to make this test simple
     asserts:
       - matchRegex:
@@ -113,6 +134,20 @@ tests:
             # Configuration for newrelic-prometheus-configurator
             newrelic_remote_write:
               extra_write_relabel_configs:
+              - action: replace
+                regex: timeseries_write_(.*)
+                replacement: counter
+                separator: ;
+                source_labels:
+                - __name__
+                target_label: newrelic_metric_type
+              - action: replace
+                regex: sql_byte(.*)
+                replacement: counter
+                separator: ;
+                source_labels:
+                - __name__
+                target_label: newrelic_metric_type
               - action: drop
                 regex: node_memory_active_bytes;localhost:9100
                 source_labels:
@@ -132,11 +167,47 @@ tests:
                 cluster_name: cluster-test
               scrape_interval: 30s
 
+  - it: config including remote_write.extra_write_relabel_configs and not metric relabels
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      config:
+        metric_type_override:
+          enabled: false
+        newrelic_remote_write:
+          extra_write_relabel_configs:
+            - source_labels:
+                - __name__
+                - instance
+              regex: node_memory_active_bytes;localhost:9100
+              action: drop
+
+        static_targets:
+        kubernetes:
+    asserts:
+      - equal:
+          path: data.config\.yaml
+          value: |-
+            # Configuration for newrelic-prometheus-configurator
+            newrelic_remote_write:
+              extra_write_relabel_configs:
+              - action: drop
+                regex: node_memory_active_bytes;localhost:9100
+                source_labels:
+                - __name__
+                - instance
+            common:
+              external_labels:
+                cluster_name: cluster-test
+              scrape_interval: 30s
+
   - it: cluster_name is set from global
     set:
       global:
        cluster: "test"
       config:
+        metric_type_override:
+          enabled: false
         # Set empty to make this test simple
         static_targets:
         kubernetes:
@@ -155,6 +226,8 @@ tests:
         cluster: "test"
       cluster: "test2"
       config:
+        metric_type_override:
+          enabled: false
         # Set empty to make this test simple
         static_targets:
         kubernetes:
@@ -175,6 +248,8 @@ tests:
       customAttributes:
         cluster_name: "test3"
       config:
+        metric_type_override:
+          enabled: false
         # Set empty to make this test simple
         static_targets:
         kubernetes:
@@ -196,6 +271,8 @@ tests:
         one: error
         cluster_name: "different"
       config:
+        metric_type_override:
+          enabled: false
         common:
           external_labels:
             one: two
@@ -221,6 +298,8 @@ tests:
       licenseKey: license-key-test
       cluster: cluster-test
       config:
+        metric_type_override:
+          enabled: false
         static_targets:
           jobs:
             - job_name: my-custom-target-authorization-full
@@ -374,6 +453,8 @@ tests:
       licenseKey: license-key-test
       cluster: cluster-test
       config:
+        metric_type_override:
+          enabled: false
         kubernetes:
           integrations_filter:
             enabled: false
@@ -428,6 +509,8 @@ tests:
       config:
         kubernetes:
         static_targets:
+        metric_type_override:
+          enabled: false
     asserts:
       - equal:
           path: data.config\.yaml
@@ -447,6 +530,8 @@ tests:
       config:
         kubernetes:
         static_targets:
+        metric_type_override:
+          enabled: false
     asserts:
       - equal:
           path: data.config\.yaml
