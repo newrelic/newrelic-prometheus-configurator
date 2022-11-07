@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137
-	github.com/prometheus/prometheus v0.37.1
+	github.com/prometheus/prometheus v0.37.2
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/sync v0.1.0
