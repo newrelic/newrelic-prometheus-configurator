@@ -68,10 +68,11 @@ chart-unit-test:
 	helm dependency update ./charts/newrelic-prometheus-agent
 	helm unittest ./charts/newrelic-prometheus-agent -3
 
-PROMETHEUS_VERSION_CHART := $(shell grep "appVersion" charts/newrelic-prometheus-agent/Chart.yaml | grep -o -E "(\.\d+.\d+)")
-PROMETHEUS_VERSION_GO := $(shell grep "github.com/prometheus/prometheus" go.mod| grep -o -E "(\.\d+.\d+)")
+PROMETHEUS_VERSION_CHART := $(shell grep "appVersion" charts/newrelic-prometheus-agent/Chart.yaml | grep -o -E "(\.[0-9]+\.[0-9]+)")
+PROMETHEUS_VERSION_GO := $(shell grep "github.com/prometheus/prometheus" go.mod| grep -o -E "(\.[0-9]+\.[0-9]+)")
 .PHONY: check-prometheus-version
 check-prometheus-version:
+	@echo PROMETHEUS_VERSION_CHART=$(PROMETHEUS_VERSION_CHART), PROMETHEUS_VERSION_GO=$(PROMETHEUS_VERSION_GO)
 ifneq ($(PROMETHEUS_VERSION_CHART), $(PROMETHEUS_VERSION_GO))
 	@echo "Prometheus server version defined in chart does not match with the one in Go dependency"
 	exit 1
