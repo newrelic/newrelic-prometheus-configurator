@@ -103,6 +103,11 @@ nrStaging:
 # @default -- false
 lowDataMode:
 
+# -- It holds the configuration for metric type override. If enabled, a series of metric relabel configs will be added to
+# `config.newrelic_remote_write.extra_write_relabel_configs`, you can check the whole list in `static/metrictyperelabeldefaults.yaml`
+metric_type_override:
+  enabled: true
+
 # -- Set up Prometheus replicas to allow horizontal scalability.
 # @default -- See `values.yaml`
 sharding:
@@ -440,6 +445,3 @@ config:
   # This configuration should be used as a workaround whenever kubernetes and static job do not cover a particular use-case.
   # @default -- `[]`
   extra_scrape_configs: []
-
-  metric_type_override:
-    enabled: true

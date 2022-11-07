@@ -7,9 +7,9 @@ tests:
       licenseKey: license-key-test
       cluster: cluster-test
       lowDataMode: true
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         # Set empty to make this test simple
         static_targets:
         kubernetes:
@@ -35,9 +35,9 @@ tests:
       cluster: cluster-test
       lowDataMode: true
       nrStaging: true
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         # Set empty to make this test simple
         static_targets:
         kubernetes:
@@ -64,9 +64,9 @@ tests:
         lowDataMode: true
       licenseKey: license-key-test
       cluster: cluster-test
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         # Set empty to make this test simple
         static_targets:
         kubernetes:
@@ -91,9 +91,9 @@ tests:
       lowDataMode: true
       licenseKey: license-key-test
       cluster: cluster-test
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         newrelic_remote_write:
           extra_write_relabel_configs:
             - action: drop

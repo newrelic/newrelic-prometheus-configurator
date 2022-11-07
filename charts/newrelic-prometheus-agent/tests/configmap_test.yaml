@@ -79,9 +79,9 @@ tests:
       licenseKey: license-key-test
       cluster: cluster-test
       nrStaging: true
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         static_targets:  # Set empty to make this test simple
     asserts:
       - matchRegex:
@@ -94,9 +94,9 @@ tests:
       cluster: cluster-test
       fedramp:
         enabled: true
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         static_targets:  # Set empty to make this test simple
     asserts:
       - matchRegex:
@@ -171,9 +171,9 @@ tests:
     set:
       licenseKey: license-key-test
       cluster: cluster-test
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         newrelic_remote_write:
           extra_write_relabel_configs:
             - source_labels:
@@ -205,9 +205,9 @@ tests:
     set:
       global:
        cluster: "test"
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         # Set empty to make this test simple
         static_targets:
         kubernetes:
@@ -225,9 +225,9 @@ tests:
       global:
         cluster: "test"
       cluster: "test2"
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         # Set empty to make this test simple
         static_targets:
         kubernetes:
@@ -247,9 +247,9 @@ tests:
       cluster: "test2"
       customAttributes:
         cluster_name: "test3"
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         # Set empty to make this test simple
         static_targets:
         kubernetes:
@@ -270,9 +270,9 @@ tests:
         attribute: "value"
         one: error
         cluster_name: "different"
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         common:
           external_labels:
             one: two
@@ -297,9 +297,9 @@ tests:
     set:
       licenseKey: license-key-test
       cluster: cluster-test
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         static_targets:
           jobs:
             - job_name: my-custom-target-authorization-full
@@ -452,9 +452,9 @@ tests:
     set:
       licenseKey: license-key-test
       cluster: cluster-test
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         kubernetes:
           integrations_filter:
             enabled: false
@@ -506,11 +506,11 @@ tests:
       licenseKey: license-key-test
       cluster: cluster-test
       sharding:
+      metric_type_override:
+        enabled: false
       config:
         kubernetes:
         static_targets:
-        metric_type_override:
-          enabled: false
     asserts:
       - equal:
           path: data.config\.yaml
@@ -527,11 +527,11 @@ tests:
       cluster: cluster-test
       sharding:
         total_shards_count: 2
+      metric_type_override:
+        enabled: false
       config:
         kubernetes:
         static_targets:
-        metric_type_override:
-          enabled: false
     asserts:
       - equal:
           path: data.config\.yaml

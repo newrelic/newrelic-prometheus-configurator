@@ -6,9 +6,9 @@ tests:
     set:
       licenseKey: license-key-test
       cluster: cluster-test
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         kubernetes:
           integrations_filter:
             enabled: true
@@ -59,9 +59,9 @@ tests:
     set:
       licenseKey: license-key-test
       cluster: cluster-test
+      metric_type_override:
+        enabled: false
       config:
-        metric_type_override:
-          enabled: false
         kubernetes:
           integrations_filter:
             enabled: false

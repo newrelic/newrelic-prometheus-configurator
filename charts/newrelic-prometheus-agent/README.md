@@ -204,6 +204,7 @@ The order to set the affinity is to set `affinity` field (at root level), if tha
 | labels | object | `{}` | Additional labels for chart objects. Can be configured also with `global.labels` |
 | licenseKey | string | `""` | This set this license key to use. Can be configured also with `global.licenseKey` |
 | lowDataMode | bool | false | Reduces the number of metrics sent in order to reduce costs. It can be configured also with `global.lowDataMode`. Specifically, it makes Prometheus stop reporting some Kubernetes cluster-specific metrics, you can see details in `static/lowdatamodedefaults.yaml`. |
+| metric_type_override | object | `{"enabled":true}` | It holds the configuration for metric type override. If enabled, a series of metric relabel configs will be added to `config.newrelic_remote_write.extra_write_relabel_configs`, you can check the whole list in `static/metrictyperelabeldefaults.yaml` |
 | nameOverride | string | `""` | Override the name of the chart |
 | nodeSelector | object | `{}` | Sets pod's node selector almost globally. (See [Affinities and tolerations](README.md#affinities-and-tolerations)) |
 | nrStaging | bool | `false` | Send the metrics to the staging backend. Requires a valid staging license key. Can be configured also with `global.nrStaging` |
