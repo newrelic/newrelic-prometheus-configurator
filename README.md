@@ -35,17 +35,20 @@ helm upgrade --install newrelic newrelic-prometheus/newrelic-prometheus-agent -f
 For further information of the configuration needed for the chart just read the [chart's README](/charts/newrelic-prometheus-agent/README.md).
 
 ## Getting Started
-The simplest way to start working with this project is to install the [Chart](/charts/newrelic-prometheus-agent/README.md) in your Kubernetes cluster which by default will scrape the Prometheus targets having the `'prometheus.io/scrape: true'` annotation.
+The simplest way to start working with this project is to install the [Chart](/charts/newrelic-prometheus-agent/README.md) in your Kubernetes cluster.
+
+All pod and endpoints with the `newrelic.io/scrape: true` annotation will be scraped by default.
+
+Moreover, the solution will scrape as well all pods and endpoints with the `prometheus.io/scrape: true` annotations and
+having one of the labels matching the integrations_filter configuration.
+
+Notice that at any point you can turn off the integrations filters and scrape all pods and services annotated with
+`prometheus.io/scrape: true` by setting `config.kubernetes.integrations_filter.integrations_filter: false` or turning
+it off in any specific job.
 
 ### Usage
-Content: 
-- [Filter targets in Kubernetes](/docs/KuberntesTargetFilter.md)
-- [Filter metrics and labels](/docs/MetricsFilters.md)
-- [Target authorization](/docs/TargetAuthorization.md)
-- [Scrape Interval](/docs/ScrapeInterval.md)
-- [Metrics Labels/Metadata details](/docs/MetricLabels.md) 
-- [POMI migration guide](/docs/MigrationGuide.md)
-- [Troubleshooting guide](/docs/Troubleshooting.md)
+For further information checkout [the official documentation](https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-prometheus-agent/install-prometheus-agent/) 
+and if you are migrating from nri-prometheus check the [migration guide](https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-prometheus-agent/migration-guide).
 
 Dashboard:
 
