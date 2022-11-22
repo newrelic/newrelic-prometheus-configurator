@@ -197,10 +197,10 @@ config:
       #    one of the values of app_values are scraped. Each job configuration can override this default.
       enabled: true
       # -- source_labels used to fetch label values in the relabel config added by the integration filters configuration
-      source_labels: ["app.kubernetes.io/name", "app.newrelic.io/name"]
+      source_labels: ["app.kubernetes.io/name", "app.newrelic.io/name", "k8s-app"]
       # -- app_values used to create the regex used in the relabel config added by the integration filters configuration.
       # Note that a single regex will be created from this list, example: '.*(?i)(app1|app2|app3).*'
-      app_values: ["redis", "traefik", "calico", "nginx", "coredns", "etcd", "cockroachdb"]
+      app_values: ["redis", "traefik", "calico", "nginx", "coredns", "kube-dns", "etcd", "cockroachdb"]
 
     # Kubernetes jobs define [kubernetes_sd_configs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)
     # to discover and scrape Kubernetes objects. Besides, a set of relabel_configs are included in order to include some Kubernetes metadata as
