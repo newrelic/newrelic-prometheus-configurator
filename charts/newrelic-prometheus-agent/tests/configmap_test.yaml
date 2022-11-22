@@ -67,12 +67,14 @@ tests:
                 - calico
                 - nginx
                 - coredns
+                - kube-dns
                 - etcd
                 - cockroachdb
                 enabled: true
                 source_labels:
                 - app.kubernetes.io/name
                 - app.newrelic.io/name
+                - k8s-app
 
   - it: staging is enabled
     set:
