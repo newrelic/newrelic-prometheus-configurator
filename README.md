@@ -37,7 +37,7 @@ For further information of the configuration needed for the chart just read the 
 ## Getting Started
 The simplest way to start working with this project is to install the [Chart](/charts/newrelic-prometheus-agent/README.md) in your Kubernetes cluster.
 
-All pod and endpoints with the `newrelic.io/scrape: true` annotation will be scraped by default.
+All pods and endpoints with the `newrelic.io/scrape: true` annotation will be scraped by default.
 
 Moreover, the solution will scrape as well all pods and endpoints with the `prometheus.io/scrape: true` annotations and
 having one of the labels matching the integrations_filter configuration.
@@ -47,7 +47,7 @@ Notice that at any point you can turn off the integrations filters and scrape al
 it off in any specific job.
 
 ### Usage
-For further information checkout [the official documentation](https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-prometheus-agent/install-prometheus-agent/) 
+For further information check out [the official documentation](https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-prometheus-agent/install-prometheus-agent/) 
 and if you are migrating from nri-prometheus check the [migration guide](https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-prometheus-agent/migration-guide).
 
 Dashboard:

@@ -98,7 +98,7 @@ By default, some Kubernetes objects are discovered and scraped by Prometheus. Ta
             newrelic.io/scrape: true
 ```
 
-All pod and endpoints with the `newrelic.io/scrape: true` annotation will be scraped by default.
+All pods and endpoints with the `newrelic.io/scrape: true` annotation will be scraped by default.
 
 Moreover, the solution will scrape as well all pods and endpoints with the `prometheus.io/scrape: true` annotations and
 having one of the labels matching the integrations_filter configuration.
