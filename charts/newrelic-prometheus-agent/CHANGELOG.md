@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - added `k8s-app` label in `integration_filters`.
 - added `kube-dns` label value in `integration_filters` to cover `coreDNS` use-case.
 
+### bugfix
+- chart readme was outdated with respect the new default behaviour of integrations_filters.
+
 ## v0.3.1 - 2022-11-08
 
 ### 🚀 Enhancements
