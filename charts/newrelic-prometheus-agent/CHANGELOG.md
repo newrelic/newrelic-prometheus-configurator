@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### enhancements
+- adding support for `kube-dns` label for integration filters and `kube-dns` value to cover `coreDNS` use-case
+
 ## v0.3.1 - 2022-11-08
 
 ### 🚀 Enhancements
