@@ -8,8 +8,17 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.0.0 - 2022-11-29
+
 ### First stable release
 - From now on the configuration is considered stable.
+
+### ⛓️ Dependencies
+- Upgraded github.com/prometheus/prometheus from 0.37.1 to 0.37.2 [Changelog](https://github.com/prometheus/prometheus/releases/tag/0.37.2)
+- Upgraded k8s.io/apimachinery from 0.25.3 to 0.25.4
+- Upgraded k8s.io/client-go from 0.25.3 to 0.25.4
+- Upgraded alpine from 3.16 to 3.17
+- Upgraded github.com/prometheus/prometheus from 0.37.2 to 0.37.3 [Changelog](https://github.com/prometheus/prometheus/releases/tag/0.37.3)
 
 ## v0.2.0 - 2022-11-03
 
