@@ -2,7 +2,7 @@ apiVersion: v2
 name: newrelic-prometheus-agent
 description: A Helm chart to deploy Prometheus with New Relic Prometheus Configurator.
 type: application
-version: 0.3.1
+version: 1.0.0
 # Prometheus Server Version
 appVersion: "v2.37.3"
 annotations:

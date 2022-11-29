@@ -6,16 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.0.0 - 2022-11-29
+
 ### First stable release
 - From now on the configuration is considered stable.
 
-### enhancements
+### 🚀 Enhancements
 - added `k8s-app` label in `integration_filters`.
 - added `kube-dns` label value in `integration_filters` to cover `coreDNS` use-case.
 - configurator version bumped to `1.0.0`
 
-### bugfix
+### 🐞 Bug fixes
 - chart readme was outdated with respect the new default behaviour of integrations_filters.
+
+### ⛓️ Dependencies
+- Upgraded github.com/prometheus/prometheus from 0.37.2 to 0.37.3 [Changelog](https://github.com/prometheus/prometheus/releases/tag/0.37.3)
 
 ## v0.3.1 - 2022-11-08
 
