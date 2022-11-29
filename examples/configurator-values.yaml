@@ -6,9 +6,9 @@ fullnameOverride: ""
 # -- Name of the Kubernetes cluster monitored. Can be configured also with `global.cluster`.
 # Note it will be set as an external label in prometheus configuration, it will have precedence over `config.common.external_labels.cluster_name`
 # and `customAttributes.cluster_name``.
-cluster: "test-cluster"
+cluster: <CLUSTER_NAME>
 # -- This set this license key to use. Can be configured also with `global.licenseKey`
-licenseKey: ""
+licenseKey: <LICENSE_KEY>
 # -- In case you don't want to have the license key in you values, this allows you to point to a user created secret to get the key from there. Can be configured also with `global.customSecretName`
 customSecretName: ""
 # -- In case you don't want to have the license key in you values, this allows you to point to which secret key is the license key located. Can be configured also with `global.customSecretLicenseKey`
@@ -93,10 +93,6 @@ affinity: {}
 nodeSelector: {}
 # -- Sets pod's tolerations to node taints almost globally. (See [Affinities and tolerations](README.md#affinities-and-tolerations))
 tolerations: []
-
-# -- (bool) Send the metrics to the staging backend. Requires a valid staging license key. Can be configured also with `global.nrStaging`
-# @default -- `false`
-nrStaging: false
 
 # -- (bool) Reduces the number of metrics sent in order to reduce costs. It can be configured also with `global.lowDataMode`.
 # Specifically, it makes Prometheus stop reporting some Kubernetes cluster-specific metrics, you can see details in `static/lowdatamodedefaults.yaml`.
