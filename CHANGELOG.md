@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### First stable release
+- From now on the configuration is considered stable.
+
 ## v0.2.0 - 2022-11-03
 
 ### Integration filters
