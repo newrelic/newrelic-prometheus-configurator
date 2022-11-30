@@ -502,6 +502,21 @@ tests:
                     annotations:
                       custom/scrape-endpoints: true
                   pod: false
+              integrations_filter:
+                app_values:
+                - redis
+                - traefik
+                - calico
+                - nginx
+                - coredns
+                - kube-dns
+                - etcd
+                - cockroachdb
+                enabled: false
+                source_labels:
+                - app.kubernetes.io/name
+                - app.newrelic.io/name
+                - k8s-app
 
   - it: sharding empty not propagated
     set:
