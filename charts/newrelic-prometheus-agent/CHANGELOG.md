@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### bugfix
+- whenever `config.kubernetes.integrations_filter.enabled: false` we should pass the list of `labels` and `app_values` to the configurator config.
+
 ## v1.0.0 - 2022-11-29
 
 ### First stable release
