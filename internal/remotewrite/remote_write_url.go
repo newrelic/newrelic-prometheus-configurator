@@ -22,6 +22,9 @@ const (
 	// to collector.name to comply with NR standards.
 	collectorNameQueryParam = "collector_name"
 	collectorName           = "prometheus-agent"
+	// collectorVersionQueryParam is a NR version of the component collecting the data. This is added as query parameter of the PRW and converted
+	// to collector.version to comply with NR standards.
+	collectorVersionQueryParam = "collector_version"
 )
 
 var (
@@ -87,6 +90,16 @@ func WithCollectorName(collectorName string) URLOption {
 		}
 
 		u.Values.Add(collectorNameQueryParam, collectorName)
+	}
+}
+
+func WithCollectorVersion(collectorVersion string) URLOption {
+	return func(u *URL) {
+		if collectorVersion == "" {
+			return
+		}
+
+		u.Values.Add(collectorVersionQueryParam, collectorVersion)
 	}
 }
 

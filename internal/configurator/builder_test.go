@@ -201,6 +201,43 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 	}
 }
 
+func TestChartVersion(t *testing.T) { //nolint: paralleltest
+	t.Setenv(configurator.LicenseKeyEnvKey, "fake")
+
+	testCases := []struct {
+		name     string
+		expected string
+		setEnv   func()
+	}{
+		{
+			name:     "IsSetFromEnvVar",
+			expected: "1.0.1",
+			setEnv: func() {
+				t.Setenv(configurator.ChartVersionEnvKey, "1.0.1")
+			},
+		},
+		{
+			name:     "IsEmpty",
+			expected: "",
+			setEnv: func() {
+				t.Setenv(configurator.ChartVersionEnvKey, "")
+			},
+		},
+	}
+
+	for _, c := range testCases { //nolint: paralleltest
+		t.Run(c.name, func(t *testing.T) {
+			c.setEnv()
+			config := configurator.NrConfig{}
+
+			_, err := configurator.BuildPromConfig(&config)
+			require.NoError(t, err)
+
+			require.Equal(t, c.expected, config.RemoteWrite.ChartVersion)
+		})
+	}
+}
+
 func assertYamlPromConfigsAreEqual(t *testing.T, y1, y2 []byte) {
 	t.Helper()
 

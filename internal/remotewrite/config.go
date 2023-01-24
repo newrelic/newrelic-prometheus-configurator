@@ -18,6 +18,8 @@ type Config struct {
 	LicenseKey string `yaml:"license_key"`
 	// Staging configures the remote write url to point to the New Relic staging endpoint.
 	Staging bool `yaml:"staging"`
+	// ChartVersion holds the Chart version of the prometheus-configurator.
+	ChartVersion string `yaml:"-"`
 	// DataSourceName holds the source name which will be used as `prometheus_server` parameter in New Relic remote
 	// write endpoint. See:
 	// <https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-remote-write/set-your-prometheus-remote-write-integration/>
@@ -46,6 +48,7 @@ func (c Config) Build() (promcfg.RemoteWrite, error) {
 		WithStaging(c.Staging),
 		WithDataSourceName(c.DataSourceName),
 		WithCollectorName(collectorName),
+		WithCollectorVersion(c.ChartVersion),
 	)
 
 	url, err := rwu.Build()

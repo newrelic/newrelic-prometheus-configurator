@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### enhancements
+- Send collector_version query param to the Remote Write endpoint.
+
 ## v1.0.0 - 2022-11-29
 
 ### First stable release

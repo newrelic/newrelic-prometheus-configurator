@@ -11,13 +11,14 @@ func TestRemoteWriteURL(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		Name           string
-		Staging        bool
-		FedRAMP        bool
-		LicenseKey     string
-		Expected       string
-		DataSourceName string
-		CollectorName  string
+		Name             string
+		Staging          bool
+		FedRAMP          bool
+		LicenseKey       string
+		Expected         string
+		DataSourceName   string
+		CollectorName    string
+		CollectorVersion string
 	}{
 		{
 			Name:       "staging non-eu",
@@ -70,6 +71,14 @@ func TestRemoteWriteURL(t *testing.T) {
 			CollectorName: "foo",
 			Expected:      "https://metric-api.newrelic.com/prometheus/v1/write?collector_name=foo",
 		},
+		{
+			Name:             "collectorVersion",
+			Staging:          false,
+			FedRAMP:          false,
+			LicenseKey:       "non-eu-license-key",
+			CollectorVersion: "1.0.0",
+			Expected:         "https://metric-api.newrelic.com/prometheus/v1/write?collector_version=1.0.0",
+		},
 	}
 
 	for _, testCase := range cases {
@@ -82,6 +91,7 @@ func TestRemoteWriteURL(t *testing.T) {
 				remotewrite.WithStaging(c.Staging),
 				remotewrite.WithDataSourceName(c.DataSourceName),
 				remotewrite.WithCollectorName(c.CollectorName),
+				remotewrite.WithCollectorVersion(c.CollectorVersion),
 			)
 			result, err := rwu.Build()
 			if assert.NoError(t, err) {
