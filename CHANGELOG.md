@@ -8,6 +8,12 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.2.0 - 2023-01-26
+
+### ⛓️ Dependencies
+- Upgraded k8s.io/client-go from 0.25.4 to 0.26.1
+- Upgraded github.com/prometheus/prometheus from 0.37.3 to 0.37.5 - [Changelog 🔗](https://github.com/prometheus/prometheus/releases/tag/0.37.5)
+
 ## v1.1.0 - 2023-01-26
 
 ### 🚀 Enhancements
