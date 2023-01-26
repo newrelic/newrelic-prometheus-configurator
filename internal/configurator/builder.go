@@ -8,6 +8,7 @@ import (
 )
 
 const (
+	ChartVersionEnvKey   = "NR_PROM_CHART_VERSION"
 	DataSourceNameEnvKey = "NR_PROM_DATA_SOURCE_NAME"
 	LicenseKeyEnvKey     = "NR_PROM_LICENSE_KEY"
 )
@@ -64,8 +65,12 @@ func expand(config *NrConfig) {
 		config.RemoteWrite.LicenseKey = licenseKey
 	}
 
-	dataSourceName := os.Getenv(DataSourceNameEnvKey)
+	chartVersion := os.Getenv(ChartVersionEnvKey)
+	if chartVersion != "" {
+		config.RemoteWrite.ChartVersion = chartVersion
+	}
 
+	dataSourceName := os.Getenv(DataSourceNameEnvKey)
 	if dataSourceName != "" {
 		config.RemoteWrite.DataSourceName = dataSourceName
 	}

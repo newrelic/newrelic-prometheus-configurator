@@ -142,6 +142,7 @@ jobs:
         with:
           minikube version: ${{ env.MINIKUBE_VERSION }}
           kubernetes version: ${{ env.LATEST_K8S_VERSION }}
+          driver: docker
           github token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run integration tests
         run: make integration-test
