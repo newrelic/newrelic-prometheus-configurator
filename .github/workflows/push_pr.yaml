@@ -68,6 +68,8 @@ jobs:
         with:
           minikube version: ${{ env.MINIKUBE_VERSION }}
           kubernetes version: ${{ matrix.kubernetes-version }}
+          # default driver doesn't support 'eval $$(minikube docker-env)'.
+          driver: docker
           github token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create image for chart testing
         if: steps.list-changed.outputs.changed == 'true'
