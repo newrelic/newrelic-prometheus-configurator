@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### enhancements
+### enhancement
 - Set `NR_PROM_CHART_VERSION` env var in the configurator statefulset init container.
 
 ## v1.0.1 - 2022-11-30
