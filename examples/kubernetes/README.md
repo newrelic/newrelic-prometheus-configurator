@@ -36,4 +36,6 @@ helm repo add newrelic-prometheus https://newrelic.github.io/newrelic-prometheus
 helm upgrade --install newrelic newrelic-prometheus/newrelic-prometheus-agent -f configurator-values.yaml
 ```
 
-4. Install the [Kubernetes Prometheus Quickstart dashboard](https://newrelic.com/instant-observability/kubernetes-prometheus) and watch for data to appear.
+## Install the dashboard
+
+Once the above is complete, install the [Kubernetes Prometheus Quickstart dashboard](https://newrelic.com/instant-observability/kubernetes-prometheus) and watch for data to appear.
