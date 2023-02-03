@@ -1,0 +1,110 @@
+kube-state-metrics:
+  enabled: true
+  podAnnotations:
+    prometheus.io/scrape: "true"
+newrelic-prometheus-agent:
+  enabled: true
+  config:
+    kubernetes:
+      integrations_filter:
+        source_labels: ["app.kubernetes.io/name", "app.newrelic.io/name"]
+        app_values: ["redis", "traefik", "calico", "nginx", "coredns", "etcd", "cockroachdb"]
+    static_targets:
+      jobs:
+  # New Relic: Scrape Configs
+
+  # Job to pull metrics from KSM
+      - job_name: kube-state-metrics
+        targets:
+          - 'kube-state-metrics.kube-system.svc.cluster.local:8080'
+        tls_config:
+          insecure_skip_verify: true
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+  #      extra_metric_relabel_config:
+  #        - source_labels: [__name__]
+  #          regex: kube_node_status_capacity
+  #          action: keep
+
+  # Job to pull metrics from kubelet
+      - job_name: kubelet
+        kubernetes_sd_configs:
+          - role: node
+        targets:
+          - 'kubelet.kube-system.svc.cluster.local:10255'
+        scheme: https
+        tls_config:
+          insecure_skip_verify: true
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        authorization:
+          credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+  # Job to pull from apiserver
+      - job_name: "apiservers"
+        kubernetes_sd_configs:
+          - role: endpoints
+        # Default to scraping over https. If required, just disable this or change to
+        # `http`.
+        scheme: https
+        tls_config:
+          insecure_skip_verify: true
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          # If your node certificates are self-signed or use a different CA to the
+          # master CA, then disable certificate verification below. Note that
+          # certificate verification is an integral part of a secure infrastructure
+          # so this should only be disabled in a controlled environment. You can
+          # disable certificate verification by uncommenting the line below.
+          #
+          # insecure_skip_verify: true
+        authorization:
+          credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+        # Keep only the default/kubernetes service endpoints for the https port. This
+        # will add targets for each API server which Kubernetes adds an endpoint to
+        # the default/kubernetes service.
+        relabel_configs:
+          - source_labels:
+              [
+                __meta_kubernetes_namespace,
+                __meta_kubernetes_service_name,
+                __meta_kubernetes_endpoint_port_name,
+              ]
+            action: keep
+            regex: default;kubernetes;https
+
+  # Job to pull metrics from cadvisor
+      - job_name: "cadvisor"
+
+        # Default to scraping over https. If required, just disable this or change to
+        # `http`.
+        scheme: https
+
+        # Starting Kubernetes 1.7.3 the cAdvisor metrics are under /metrics/cadvisor.
+        # Kubernetes CIS Benchmark recommends against enabling the insecure HTTP
+        # servers of Kubernetes, therefore the cAdvisor metrics on the secure handler
+        # are used.
+        metrics_path: /metrics/cadvisor
+
+        # This TLS & authorization config is used to connect to the actual scrape
+        # endpoints for cluster components. This is separate to discovery auth
+        # configuration because discovery & scraping are two separate concerns in
+        # Prometheus. The discovery auth config is automatic if Prometheus runs inside
+        # the cluster. Otherwise, more config options have to be provided within the
+        # <kubernetes_sd_config>.
+        tls_config:
+          insecure_skip_verify: true
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+
+          # If your node certificates are self-signed or use a different CA to the
+          # master CA, then disable certificate verification below. Note that
+          # certificate verification is an integral part of a secure infrastructure
+          # so this should only be disabled in a controlled environment. You can
+          # disable certificate verification by uncommenting the line below.
+          #
+          # insecure_skip_verify: true
+        authorization:
+          credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+          - role: node
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
