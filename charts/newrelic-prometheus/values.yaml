@@ -131,35 +131,59 @@ config:
   # set it up you can customize most [prometheus remote_write](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
   # values, as described in `values.yaml`.
   newrelic_remote_write:
-#    # Includes additional relabel configs for the New Relic remote write. Please note, this field is not parsed so it should
-#    # include valid [prometheus write_relabel_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
-#    extra_write_relabel_configs: []
-#    proxy_url: ""
-#    remote_timeout: 30s
-#    # prometheus tls_config setup, see <https://prometheus.io/docs/prometheus/latest/configuration/configuration/#tls_config> for details.
-#    tls_config:
-#    # queue_config setup, see prometheus remote-write tuning <https://prometheus.io/docs/practices/remote_write/#remote-write-tuning>
-#    # for a more detailed explanation.
-#    queue_config:
-#       # Number of samples to buffer per shard before we block reading of more
-#       # samples from the WAL. It is recommended to have enough capacity in each
-#       # shard to buffer several requests to keep throughput up while processing
-#       # occasional slow remote requests.
-#       capacity: 2500
-#       # Maximum number of shards, i.e. amount of concurrency.
-#       max_shards: 200
-#       # Minimum number of shards, i.e. amount of concurrency.
-#       min_shards: 1
-#       # Maximum number of samples per send.
-#       max_samples_per_send: 500
-#       # Maximum time a sample will wait in buffer.
-#       batch_send_deadline: 5s
-#       # Initial retry delay. Gets doubled for every retry.
-#       min_backoff: 30ms
-#       # Maximum retry delay.
-#       max_backoff: 5s
-#       # Retry upon receiving a 429 status code from the remote-write storage.
-#       retry_on_http_429: false
+  #  # Includes additional relabel configs for the New Relic remote write. Please note, this field is not parsed so it should
+  #  # include valid [prometheus write_relabel_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
+  #  extra_write_relabel_configs: []
+  #     # Uncomment for backwards compatibility with Prometheus OpenMetrics Integration (POMI) key attributes
+  #     # Visit the [Migrate from the Prometheus OpenMetrics Integration](https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-prometheus-agent/migration-guide/#metadata-renamed) docs page for more details.
+  #     - source_labels: [namespace]
+  #       action: replace
+  #       target_label: namespaceName
+  #     - source_labels: [node]
+  #       action: replace
+  #       target_label: nodeName
+  #     - source_labels: [pod]
+  #       action: replace
+  #       target_label: podName
+  #     - source_labels: [service]
+  #       action: replace
+  #       target_label: serviceName
+  #     - source_labels: [cluster_name]
+  #       action: replace
+  #       target_label: clusterName
+  #     - source_labels: [job]
+  #       action: replace
+  #       target_label: scrapedTargetKind
+  #     - source_labels: [instance]
+  #       action: replace
+  #       target_label: scrapedTargetInstance
+
+  #  proxy_url: ""
+  #  remote_timeout: 30s
+  #  # prometheus tls_config setup, see <https://prometheus.io/docs/prometheus/latest/configuration/configuration/#tls_config> for details.
+  #  tls_config:
+  #  # queue_config setup, see prometheus remote-write tuning <https://prometheus.io/docs/practices/remote_write/#remote-write-tuning>
+  #  # for a more detailed explanation.
+  #  queue_config:
+  #     # Number of samples to buffer per shard before we block reading of more
+  #     # samples from the WAL. It is recommended to have enough capacity in each
+  #     # shard to buffer several requests to keep throughput up while processing
+  #     # occasional slow remote requests.
+  #     capacity: 2500
+  #     # Maximum number of shards, i.e. amount of concurrency.
+  #     max_shards: 200
+  #     # Minimum number of shards, i.e. amount of concurrency.
+  #     min_shards: 1
+  #     # Maximum number of samples per send.
+  #     max_samples_per_send: 500
+  #     # Maximum time a sample will wait in buffer.
+  #     batch_send_deadline: 5s
+  #     # Initial retry delay. Gets doubled for every retry.
+  #     min_backoff: 30ms
+  #     # Maximum retry delay.
+  #     max_backoff: 5s
+  #     # Retry upon receiving a 429 status code from the remote-write storage.
+  #     retry_on_http_429: false
 
   # -- (object) It includes additional remote-write configuration. Note this configuration is not parsed, so valid
   # [prometheus remote_write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
