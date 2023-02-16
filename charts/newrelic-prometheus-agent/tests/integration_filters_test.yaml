@@ -51,8 +51,8 @@ tests:
                 - kube-dns
                 - etcd
                 - cockroachdb
-                - harbor
                 - velero
+                - harbor
                 - argocd
                 enabled: true
                 source_labels:
