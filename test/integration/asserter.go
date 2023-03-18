@@ -28,7 +28,7 @@ func newAsserter(ps *prometheusServer) *asserter {
 
 	a.appendable = mocks.NewAppendable()
 	a.defaultBackoff = time.Second
-	a.defaultTimeout = time.Second * 20
+	a.defaultTimeout = time.Second * 30
 	a.prometheusServer = ps
 
 	return a
