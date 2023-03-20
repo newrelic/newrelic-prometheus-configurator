@@ -200,4 +200,5 @@ To all contributors, we thank you!  Without your contribution, this project woul
 ## License
 
 Newrelic Prometheus Configurator is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
->[If applicable: The Newrelic Prometheus Configurator also uses source code from third-party libraries. You can find full details on which libraries are used and the terms under which they are licensed in the third-party notices document.]
+
+The Newrelic Prometheus Configurator also uses source code from third-party libraries. You can find full details on which libraries are used and the terms under which they are licensed in the third-party notices document.
