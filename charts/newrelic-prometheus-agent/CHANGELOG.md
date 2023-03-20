@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v1.1.1 - 2023-03-20
+
+### ⛓️ Dependencies
+- Updated common-library to v1.1.1 - [Changelog 🔗](https://github.com/newrelic/helm-charts/releases/tag/common-library-1.1.1)
+
 ## v1.1.0 - 2023-01-30
 
 ### 🚀 Enhancements
