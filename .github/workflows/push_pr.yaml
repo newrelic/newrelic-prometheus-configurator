@@ -44,7 +44,7 @@ jobs:
 
           for chart in $(ct --config .github/ct.yaml list-changed); do
             if [ -d "$chart/tests/" ]; then
-              helm unittest -3 $chart
+              helm unittest $chart
             else
               echo "No unit tests found for $chart"
             fi
@@ -58,7 +58,7 @@ jobs:
         run: |
           go install github.com/norwoodj/helm-docs/cmd/helm-docs@v1.11.0
           make build-chart-docs
-          if [ ! -z "$(git status --porcelain)" ]; then 
+          if [ ! -z "$(git status --porcelain)" ]; then
             git diff
             exit 1
           fi
@@ -86,7 +86,7 @@ jobs:
         run: ct install --namespace ct --config .github/ct.yaml --debug --upgrade
 
   e2e-test:
-    name: E2e Tests 
+    name: E2e Tests
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
     runs-on: ubuntu-latest
     # If the environment is broken this job could timeout since the default timeout for tilt ci is 30m.
@@ -178,7 +178,7 @@ jobs:
       #   run: |
       #     go install go.elastic.co/go-licence-detector@v0.5.0
       #     make build-license-notice
-      #     if [ ! -z "$(git status --porcelain)" ]; then 
+      #     if [ ! -z "$(git status --porcelain)" ]; then
       #       git diff
       #       exit 1
       #     fi
