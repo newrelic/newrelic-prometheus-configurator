@@ -208,6 +208,7 @@ tests:
 
   - it: cluster_name is set from global
     set:
+      licenseKey: license-key-test
       global:
        cluster: "test"
       metric_type_override:
@@ -227,6 +228,7 @@ tests:
               scrape_interval: 30s
   - it: cluster_name local value has precedence over global precedence
     set:
+      licenseKey: license-key-test
       global:
         cluster: "test"
       cluster: "test2"
@@ -247,6 +249,7 @@ tests:
               scrape_interval: 30s
   - it: cluster_name is not overwritten from customAttributes
     set:
+      licenseKey: license-key-test
       global:
         cluster: "test"
       cluster: "test2"
@@ -270,6 +273,7 @@ tests:
 
   - it: cluster_name has precedence over extra labels has precedence over customAttributes
     set:
+      licenseKey: license-key-test
       cluster: test
       customAttributes:
         attribute: "value"
