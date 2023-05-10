@@ -113,7 +113,7 @@ jobs:
         if: ${{ env.SECRET_AVAILABLE != '' }}
         uses: newrelic/newrelic-integration-e2e-action@v1
         with:
-          retry_seconds: 60
+          retry_seconds: 90
           retry_attempts: 5
           agent_enabled: false
           spec_path: test/e2e/test-specs.yml
