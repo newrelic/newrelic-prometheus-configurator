@@ -90,7 +90,7 @@ jobs:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
     runs-on: ubuntu-latest
     # If the environment is broken this job could timeout since the default timeout for tilt ci is 30m.
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v3
       - name: Setup Minikube
