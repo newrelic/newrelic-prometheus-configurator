@@ -157,7 +157,7 @@ The `newrelic-prometheus-configurator` images are pushed to [newrelic/newrelic-p
 
 **Automated Release**:
 This release uses the release toolkit in order to automatically compute the version, changelog and release notes from the `## Unreleased` section for the [Changelog.md](/CHANGELOG.md) and dependency bots commits.
-To trigger this release run [releaseConfigurator](/.github/workflows/releaseConfigurator.yaml) workflow. This workflow automatically calculates the version from the changelog and commits the new changelog to the main branch.
+To trigger this release run [Configurator Release](/.github/workflows/releaseConfigurator.yaml) workflow. This workflow automatically calculates the version from the changelog and commits the new changelog to the main branch.
 Release notes and new changelog can be previously checked by running the `make release-changelog` and `make release-notes` commands. Check [Release Toolkit](https://github.com/newrelic/release-toolkit#readme) for more details.
 
 **Manual release of images**:
@@ -171,7 +171,7 @@ The release process uses the release toolkit in order to automatically compute t
 
 > Therefore, the chart version should not be changed manually in the Chart.yaml, since it is automatically bumped.
 
-To trigger this release run [Release newrelic prometheus configurator chart](/.github/workflows/releaseChart.yaml) workflow. This workflow automatically calculates the version from the chart changelog and commits the new changelog and the version to the main branch.
+To trigger this release run [Configurator Chart Release](/.github/workflows/releaseChart.yaml) workflow. This workflow automatically calculates the version from the chart changelog and commits the new changelog and the version to the main branch.
 
 Release notes and new changelog can be previously checked by running the `make release-changelog-chart` and `make release-notes-chart` commands. Check [Release Toolkit](https://github.com/newrelic/release-toolkit#readme) for more details.
 
