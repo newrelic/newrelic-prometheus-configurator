@@ -123,7 +123,7 @@ Make sure you have these tools or install them before running the tests:
 
 - [Install Helm](https://helm.sh/docs/intro/install/)
 - [Install Chart Testing](https://github.com/helm/chart-testing#installation)
-- [Install unit test plugin](https://github.com/quintush/helm-unittest#install)
+- [Install unit test plugin](https://github.com/helm-unittest/helm-unittest#install)
 
 Then run:
 
