@@ -8,6 +8,22 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.4.0 - 2023-05-11
+
+### ⛓️ Dependencies
+- Upgraded k8s.io/client-go from 0.26.2 to 0.27.1
+- Upgraded alpine from 3.17 to 3.18
+- Upgraded golang.org/x/sync from 0.1.0 to 0.2.0
+
+## v1.3.0 - 2023-03-20
+
+### ⛓️ Dependencies
+- Upgraded golang.org/x/net from 0.4.0 to 0.7.0
+- Upgraded github.com/stretchr/testify from 1.8.1 to 1.8.2 - [Changelog 🔗](https://github.com/stretchr/testify/releases/tag/v1.8.2)
+- Upgraded k8s.io/api from 0.26.1 to 0.26.2
+- Upgraded k8s.io/client-go from 0.26.1 to 0.26.2
+- Upgraded k8s.io/api from 0.26.2 to 0.26.3
+
 ## v1.2.0 - 2023-01-26
 
 ### ⛓️ Dependencies

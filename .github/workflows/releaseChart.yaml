@@ -42,16 +42,16 @@ jobs:
       version: ${{ steps.version.outputs.next-version }}
       image-tag: ${{ steps.image-tag.outputs.tag }}
     steps:
-      - name: Check is triggered for main branch
+      - name: Check is triggered for default branch
         run: |
-          if [ ${{ env.GITHUB_REF_NAME }} != "main" ] || [ ${{ env.GITHUB_REF_TYPE }} != "branch" ];then
-            echo This workflow should only be triggered for the 'main' branch
+          if [ ${GITHUB_REF_NAME} != ${{ github.event.repository.default_branch }} ] || [ ${GITHUB_REF_TYPE} != "branch" ];then
+            echo This workflow should only be triggered for the '${{ github.event.repository.default_branch }}' branch
             exit 1
           fi
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: main
+          ref: ${{ github.event.repository.default_branch }}
           token: "${{ secrets.COREINT_BOT_TOKEN }}"
       - name: Add newrelic repository
         run: helm repo add newrelic https://helm-charts.newrelic.com
@@ -87,7 +87,7 @@ jobs:
           git add ${{ env.CHART_DIRECTORY }}/CHANGELOG.md
           git add ${{ env.CHART_DIRECTORY }}/Chart.yaml
           git commit -m "Update changelog and Chart.yaml with ${{ steps.version.outputs.next-version }} changes"
-          git push origin main
+          git push origin ${{ github.event.repository.default_branch }}
       - uses: newrelic/release-toolkit/render@v1
         with:
           markdown: ${{ env.CHART_DIRECTORY }}/release-notes.md

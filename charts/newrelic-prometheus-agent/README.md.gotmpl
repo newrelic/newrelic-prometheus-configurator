@@ -65,7 +65,7 @@ Options that can be defined globally include `affinity`, `nodeSelector`, `tolera
 
 ## Chart particularities
 
-### Configuration 
+### Configuration
 
 The configuration used is similar to the [Prometheus configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/), but it includes some syntactic sugar to make easy to set up some special use-cases like Kubernetes targets, sharding and some New Relic related settings like remote write endpoints.
 
@@ -83,7 +83,7 @@ By default, some Kubernetes objects are discovered and scraped by Prometheus. Ta
     integrations_filter:
       enabled: true
       source_labels: ["app.kubernetes.io/name", "app.newrelic.io/name", "k8s-app"]
-      app_values: ["redis", "traefik", "calico", "nginx", "coredns", "etcd", "cockroachdb"]
+      app_values: ["redis", "traefik", "calico", "nginx", "coredns", "etcd", "cockroachdb", "velero", "harbor", "argocd"]
     jobs:
     - job_name_prefix: default
       target_discovery:
@@ -112,8 +112,6 @@ Notice that at any point you can turn off the integrations filters and scrape al
 `prometheus.io/scrape: true` by setting `config.kubernetes.integrations_filter.integrations_filter: false` or turning
 it off in any specific job.
 
-Check the [docs](https://github.com/newrelic/newrelic-prometheus-configurator/blob/main/docs/KubernetesTargetFilter.md) for more information about it usage.
-
 ### Kubernetes job examples
 
 #### API Server metrics
@@ -131,7 +129,7 @@ config:
       - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name]
         action: keep
         regex: default;kubernetes
-     
+
       scheme: https
       tls_config:
           ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt

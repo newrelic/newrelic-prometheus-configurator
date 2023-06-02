@@ -3,7 +3,7 @@ name: Configurator Release
 # This workflow manually triggers the automated process of release based on the changelog.
 # Is recommended to run `make release-changelog` before to see an example of what is going to be generated.
 
-# IMPORTANT No matter the branch selected when triggered, the workflow will always execute on 'main' branch.
+# IMPORTANT No matter the branch selected when triggered, the workflow will always execute on default branch.
 
 on:
   workflow_dispatch:
@@ -21,16 +21,16 @@ jobs:
       version: ${{ steps.version.outputs.next-version }}
       image-tag: ${{ steps.image-tag.outputs.tag }}
     steps:
-      - name: Check is triggered for main branch
+      - name: Check is triggered for default branch
         run: |
-          if [ ${{ env.GITHUB_REF_NAME }} != "main" ] || [ ${{ env.GITHUB_REF_TYPE }} != "branch" ];then
-            echo This workflow should only be triggered for the 'main' branch
+          if [ ${GITHUB_REF_NAME} != ${{ github.event.repository.default_branch }} ] || [ ${GITHUB_REF_TYPE} != "branch" ];then
+            echo This workflow should only be triggered for the '${{ github.event.repository.default_branch }}' branch
             exit 1
           fi
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: main
+          ref: ${{ github.event.repository.default_branch }}
           token: "${{ secrets.COREINT_BOT_TOKEN }}"
       - uses: newrelic/release-toolkit/validate-markdown@v1
       - uses: newrelic/release-toolkit/generate-yaml@v1
@@ -58,7 +58,7 @@ jobs:
         run: |
           git add CHANGELOG.md
           git commit -m "Update changelog with changes from ${{ steps.version.outputs.next-version }}"
-          git push -u origin main
+          git push -u origin ${{ github.event.repository.default_branch }}
       - uses: newrelic/release-toolkit/render@v1
       - name: Create Release
         env:

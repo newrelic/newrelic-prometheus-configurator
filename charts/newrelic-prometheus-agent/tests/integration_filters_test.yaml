@@ -16,7 +16,7 @@ tests:
         static_targets:
     asserts:
       - equal:
-          path: data.config\.yaml
+          path: data["config.yaml"]
           value: |-
             # Configuration for newrelic-prometheus-configurator
             common:
@@ -51,6 +51,9 @@ tests:
                 - kube-dns
                 - etcd
                 - cockroachdb
+                - velero
+                - harbor
+                - argocd
                 enabled: true
                 source_labels:
                 - app.kubernetes.io/name
@@ -71,7 +74,7 @@ tests:
         static_targets:
     asserts:
       - equal:
-          path: data.config\.yaml
+          path: data["config.yaml"]
           value: |-
             # Configuration for newrelic-prometheus-configurator
             common:
@@ -106,6 +109,9 @@ tests:
                 - kube-dns
                 - etcd
                 - cockroachdb
+                - velero
+                - harbor
+                - argocd
                 enabled: false
                 source_labels:
                 - app.kubernetes.io/name
