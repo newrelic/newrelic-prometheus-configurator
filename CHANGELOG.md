@@ -8,6 +8,11 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.4.1 - 2023-06-03
+
+### ⛓️ Dependencies
+- Upgraded k8s.io/client-go from 0.27.1 to 0.27.2
+
 ## v1.4.0 - 2023-05-11
 
 ### ⛓️ Dependencies
