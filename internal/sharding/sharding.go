@@ -22,6 +22,12 @@ func (c Config) RelabelConfigs() []promcfg.RelabelConfig {
 	return []promcfg.RelabelConfig{
 		{
 			SourceLabels: []string{"__address__"},
+			Regex:        `(.+?)(?::\d+)?`,
+			Action:       "replace",
+			TargetLabel:  "__tmp_hash",
+		},
+		{
+			SourceLabels: []string{"__tmp_hash"},
 			Modulus:      c.TotalShardsCount,
 			Action:       "hashmod",
 			TargetLabel:  "__tmp_hash",
