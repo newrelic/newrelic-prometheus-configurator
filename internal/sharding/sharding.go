@@ -22,7 +22,7 @@ func (c Config) RelabelConfigs() []promcfg.RelabelConfig {
 	return []promcfg.RelabelConfig{
 		{
 			SourceLabels: []string{"__address__"},
-			Regex:        `(.+?)(?::\d+)?`,
+			Regex:        `(\d{1,3}\.\d{1,3}\.\d{1,3}.\d{1,3})(?::\d+)?`,
 			Action:       "replace",
 			TargetLabel:  "__tmp_hash",
 		},

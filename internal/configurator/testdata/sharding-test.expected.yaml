@@ -8,7 +8,7 @@ scrape_configs:
     metrics_path: /metrics-custom
     relabel_configs:
       - source_labels: [ '__address__' ]
-        regex: (.+?)(?::\d+)?
+        regex: (\d{1,3}\.\d{1,3}\.\d{1,3}.\d{1,3})(?::\d+)?
         action: replace
         target_label: __tmp_hash
       - source_labels: [ '__tmp_hash' ]
@@ -32,7 +32,7 @@ scrape_configs:
       - role: pod
     relabel_configs:
       - source_labels: [ '__address__' ]
-        regex: (.+?)(?::\d+)?
+        regex: (\d{1,3}\.\d{1,3}\.\d{1,3}.\d{1,3})(?::\d+)?
         action: replace
         target_label: __tmp_hash
       - source_labels: [ '__tmp_hash' ]
@@ -79,7 +79,7 @@ scrape_configs:
       - role: endpoints
     relabel_configs:
       - source_labels: [ '__address__' ]
-        regex: (.+?)(?::\d+)?
+        regex: (\d{1,3}\.\d{1,3}\.\d{1,3}.\d{1,3})(?::\d+)?
         action: replace
         target_label: __tmp_hash
       - source_labels: [ '__tmp_hash' ]
