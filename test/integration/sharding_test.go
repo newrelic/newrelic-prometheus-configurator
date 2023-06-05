@@ -4,6 +4,8 @@ package integration
 
 import (
 	"fmt"
+	"net"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -22,8 +24,7 @@ func Test_Sharding_Pod(t *testing.T) {
 	pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "test-pod"}, Spec: fakePodSpec()}
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 
-	podAddress := pod.Status.PodIP
-	mod := shardingHashMod(podAddress, uint64(numberOfShards))
+	mod := shardingHashMod(pod.Status.PodIP, uint64(numberOfShards))
 
 	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
 		nrConfig := k8sShardingNRConfig(numberOfShards, shardIndex, k8sEnv, true, false)
@@ -62,8 +63,8 @@ func Test_Sharding_Endpoints(t *testing.T) {
 	})
 	scrapeURLHashMod := map[string]uint64{}
 	for pod := range pods {
-		address := pod.Status.PodIP
-		mod := shardingHashMod(address, uint64(numberOfShards))
+		address := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
+		mod := shardingHashMod(pod.Status.PodIP, uint64(numberOfShards))
 		scrapeURLHashMod[fmt.Sprintf("http://%s/metrics", address)] = mod
 	}
 
@@ -105,8 +106,7 @@ func Test_Sharding_Endpoints_Sharing_Services(t *testing.T) {
 	pod := fakePod(fmt.Sprintf("test-pod"), nil, serviceSelector)
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 
-	podAddress := pod.Status.PodIP
-	mod := shardingHashMod(podAddress, uint64(numberOfShards))
+	mod := shardingHashMod(pod.Status.PodIP, uint64(numberOfShards))
 
 	// Create many services sharing the same selector
 	numberOfServices := 10
