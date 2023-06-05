@@ -4,8 +4,7 @@ package integration
 
 import (
 	"fmt"
-	"net"
-	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/newrelic/newrelic-prometheus-configurator/test/integration/mocks"
@@ -23,7 +22,7 @@ func Test_Sharding_Pod(t *testing.T) {
 	pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "test-pod"}, Spec: fakePodSpec()}
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 
-	podAddress := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
+	podAddress := pod.Status.PodIP
 	mod := shardingHashMod(podAddress, uint64(numberOfShards))
 
 	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
@@ -63,7 +62,7 @@ func Test_Sharding_Endpoints(t *testing.T) {
 	})
 	scrapeURLHashMod := map[string]uint64{}
 	for pod := range pods {
-		address := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
+		address := pod.Status.PodIP
 		mod := shardingHashMod(address, uint64(numberOfShards))
 		scrapeURLHashMod[fmt.Sprintf("http://%s/metrics", address)] = mod
 	}
@@ -106,7 +105,7 @@ func Test_Sharding_Endpoints_Sharing_Services(t *testing.T) {
 	pod := fakePod(fmt.Sprintf("test-pod"), nil, serviceSelector)
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 
-	podAddress := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
+	podAddress := pod.Status.PodIP
 	mod := shardingHashMod(podAddress, uint64(numberOfShards))
 
 	// Create many services sharing the same selector
@@ -146,7 +145,9 @@ func Test_Sharding_Static_Targets(t *testing.T) {
 	// Create a mock for the static target.
 	ex := mocks.StartExporter(t)
 	address := ex.Listener.Addr().String()
-	mod := shardingHashMod(address, uint64(numberOfShards))
+	// only use IP as the sharding hash function input
+	addressComponents := strings.Split(address, ":")
+	mod := shardingHashMod(addressComponents[0], uint64(numberOfShards))
 
 	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
 		nrConfig := fmt.Sprintf(`
@@ -192,8 +193,9 @@ func Test_Sharding_Skip_Sharding(t *testing.T) {
 	exRegular := mocks.StartExporter(t)
 	addressRegular := exRegular.Listener.Addr().String()
 	scrapeURLRegular := fmt.Sprintf("http://%s/metrics-a", addressRegular)
-
-	mod := shardingHashMod(addressRegular, uint64(numberOfShards))
+	// only use IP as the sharding hash function input
+	addressComponents := strings.Split(addressRegular, ":")
+	mod := shardingHashMod(addressComponents[0], uint64(numberOfShards))
 
 	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
 		nrConfig := fmt.Sprintf(`
