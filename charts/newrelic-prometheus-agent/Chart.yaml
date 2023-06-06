@@ -7,7 +7,7 @@ version: 1.2.0
 # https://pkg.go.dev/github.com/prometheus/prometheus#readme-prometheus-code-base
 appVersion: "v2.37.8"
 annotations:
-  configuratorVersion: "1.4.0"
+  configuratorVersion: "1.4.1"
 dependencies:
   - name: common-library
     version: 1.1.1
