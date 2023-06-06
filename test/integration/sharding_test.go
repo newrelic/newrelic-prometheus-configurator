@@ -40,6 +40,15 @@ func Test_Sharding_Pod(t *testing.T) {
 	})
 }
 
+// If you specify scraping annotation for a kubernetes pod, typically for each container port a target is added by kubernetes/pod.go.
+// If you have a second container in the pod, that does not expose any container ports, then kubernetes/pod.go will add the IP address
+// to the target, but no port value. So the format would be 1.2.3.4 instead of 1.2.3.4:5432.
+// In the scenario that there are two containers in a pod, one exports a port and the other does not export port. Two target addresses
+// will be generated (1.2.3.4:5432 and 1.2.3.4). The current sharding relabel config uses target address and hash function to calculate
+// the sharding assignment. Suppose there are two Prometheus agents, it is possible that prometheus agent 0 hashes the 1.2.3.4:5432 to 0
+// and prometheus agent 0 hashes the 1.2.3.4 to 1. That means both agents accept the pod as its own target. This results in duplicate metrics from agents.
+// To fix it, we extract the IP as the only source of hash function. In this way, only one agent will accept the pod as the agent.
+// This test case is to test this scenario.
 func Test_Sharding_Pod_With_Two_Containers(t *testing.T) {
 	t.Parallel()
 
