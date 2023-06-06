@@ -40,6 +40,32 @@ func Test_Sharding_Pod(t *testing.T) {
 	})
 }
 
+func Test_Sharding_Pod_With_Two_Containers(t *testing.T) {
+	t.Parallel()
+
+	numberOfShards := 2
+
+	k8sEnv := newK8sEnvironment(t)
+
+	pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "test-pod"}, Spec: fakePodSpecWithTwoContainers()}
+	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
+
+	mod := shardingHashMod(pod.Status.PodIP, uint64(numberOfShards))
+
+	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
+		nrConfig := k8sShardingNRConfig(numberOfShards, shardIndex, k8sEnv, true, false)
+		prometheusConfigPath := runConfigurator(t, nrConfig)
+		ps.start(t, prometheusConfigPath)
+
+		// Only the server whose shardIndex is equal to the address hash-mod should scrape the pod.
+		if mod == uint64(shardIndex) {
+			asserter.activeTargetLabels(t, map[string]string{"__meta_kubernetes_pod_name": pod.Name})
+		} else {
+			asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_pod_name": pod.Name})
+		}
+	})
+}
+
 func Test_Sharding_Endpoints(t *testing.T) {
 	t.Parallel()
 
