@@ -168,7 +168,7 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         continue-on-error: ${{ github.event_name != 'pull_request' }}
         with:
-          args: --verbose
+          only-new-issues: true
       - name: Prometheus versions match
         run: make check-prometheus-version
 
