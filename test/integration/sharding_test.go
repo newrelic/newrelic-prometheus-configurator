@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/newrelic/newrelic-prometheus-configurator/test/integration/mocks"
@@ -23,8 +24,42 @@ func Test_Sharding_Pod(t *testing.T) {
 	pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "test-pod"}, Spec: fakePodSpec()}
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 
-	podAddress := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
-	mod := shardingHashMod(podAddress, uint64(numberOfShards))
+	mod := shardingHashMod(pod.Status.PodIP, uint64(numberOfShards))
+
+	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
+		nrConfig := k8sShardingNRConfig(numberOfShards, shardIndex, k8sEnv, true, false)
+		prometheusConfigPath := runConfigurator(t, nrConfig)
+		ps.start(t, prometheusConfigPath)
+
+		// Only the server whose shardIndex is equal to the address hash-mod should scrape the pod.
+		if mod == uint64(shardIndex) {
+			asserter.activeTargetLabels(t, map[string]string{"__meta_kubernetes_pod_name": pod.Name})
+		} else {
+			asserter.droppedTargetLabels(t, map[string]string{"__meta_kubernetes_pod_name": pod.Name})
+		}
+	})
+}
+
+// If you specify scraping annotation for a kubernetes pod, typically for each container port a target is added by kubernetes/pod.go.
+// If you have a second container in the pod, that does not expose any container ports, then kubernetes/pod.go will add the IP address
+// to the target, but no port value. So the format would be 1.2.3.4 instead of 1.2.3.4:5432.
+// In the scenario that there are two containers in a pod, one exports a port and the other does not export port. Two target addresses
+// will be generated (1.2.3.4:5432 and 1.2.3.4). The current sharding relabel config uses target address and hash function to calculate
+// the sharding assignment. Suppose there are two Prometheus agents, it is possible that prometheus agent 0 hashes the 1.2.3.4:5432 to 0
+// and prometheus agent 0 hashes the 1.2.3.4 to 1. That means both agents accept the pod as its own target. This results in duplicate metrics from agents.
+// To fix it, we extract the IP as the only source of hash function. In this way, only one agent will accept the pod as the agent.
+// This test case is to test this scenario.
+func Test_Sharding_Pod_With_Two_Containers(t *testing.T) {
+	t.Parallel()
+
+	numberOfShards := 2
+
+	k8sEnv := newK8sEnvironment(t)
+
+	pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "test-pod"}, Spec: fakePodSpecWithTwoContainers()}
+	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
+
+	mod := shardingHashMod(pod.Status.PodIP, uint64(numberOfShards))
 
 	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
 		nrConfig := k8sShardingNRConfig(numberOfShards, shardIndex, k8sEnv, true, false)
@@ -64,7 +99,7 @@ func Test_Sharding_Endpoints(t *testing.T) {
 	scrapeURLHashMod := map[string]uint64{}
 	for pod := range pods {
 		address := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
-		mod := shardingHashMod(address, uint64(numberOfShards))
+		mod := shardingHashMod(pod.Status.PodIP, uint64(numberOfShards))
 		scrapeURLHashMod[fmt.Sprintf("http://%s/metrics", address)] = mod
 	}
 
@@ -106,8 +141,7 @@ func Test_Sharding_Endpoints_Sharing_Services(t *testing.T) {
 	pod := fakePod(fmt.Sprintf("test-pod"), nil, serviceSelector)
 	pod = k8sEnv.addPodAndWaitOnPhase(t, pod, corev1.PodRunning)
 
-	podAddress := net.JoinHostPort(pod.Status.PodIP, strconv.Itoa(defaultPodPort))
-	mod := shardingHashMod(podAddress, uint64(numberOfShards))
+	mod := shardingHashMod(pod.Status.PodIP, uint64(numberOfShards))
 
 	// Create many services sharing the same selector
 	numberOfServices := 10
@@ -146,7 +180,9 @@ func Test_Sharding_Static_Targets(t *testing.T) {
 	// Create a mock for the static target.
 	ex := mocks.StartExporter(t)
 	address := ex.Listener.Addr().String()
-	mod := shardingHashMod(address, uint64(numberOfShards))
+	// only use IP as the sharding hash function input
+	addressComponents := strings.Split(address, ":")
+	mod := shardingHashMod(addressComponents[0], uint64(numberOfShards))
 
 	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
 		nrConfig := fmt.Sprintf(`
@@ -192,8 +228,9 @@ func Test_Sharding_Skip_Sharding(t *testing.T) {
 	exRegular := mocks.StartExporter(t)
 	addressRegular := exRegular.Listener.Addr().String()
 	scrapeURLRegular := fmt.Sprintf("http://%s/metrics-a", addressRegular)
-
-	mod := shardingHashMod(addressRegular, uint64(numberOfShards))
+	// only use IP as the sharding hash function input
+	addressComponents := strings.Split(addressRegular, ":")
+	mod := shardingHashMod(addressComponents[0], uint64(numberOfShards))
 
 	checkPrometheusShards(t, numberOfShards, func(ps *prometheusServer, asserter *asserter, shardIndex int) {
 		nrConfig := fmt.Sprintf(`

@@ -171,6 +171,28 @@ func fakePodSpec() corev1.PodSpec {
 	}
 }
 
+func fakePodSpecWithTwoContainers() corev1.PodSpec {
+	return corev1.PodSpec{
+		Containers: []corev1.Container{
+			{
+				Name:    "fake-exporter",
+				Image:   "alpine:latest",
+				Command: []string{"/bin/sh", "-c", "sleep infinity"},
+				Ports: []corev1.ContainerPort{
+					{
+						ContainerPort: defaultPodPort,
+					},
+				},
+			},
+			{
+				Name:    "container-with-no-exposed-ports",
+				Image:   "alpine:latest",
+				Command: []string{"/bin/sh", "-c", "sleep infinity"},
+			},
+		},
+	}
+}
+
 func fakePod(namePrefix string, annotations, labels map[string]string) *corev1.Pod {
 	return &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
