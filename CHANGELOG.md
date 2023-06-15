@@ -8,11 +8,17 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-## v1.4.2 - 2023-06-08
+## v1.4.2 - 2023-06-15
 
-### ⛓️ Dependencies
-- Upgraded github.com/stretchr/testify from 1.8.2 to 1.8.4 - [Changelog 🔗](https://github.com/stretchr/testify/releases/tag/v1.8.4)
-- Upgraded github.com/sirupsen/logrus from 1.9.0 to 1.9.3 - [Changelog 🔗](https://github.com/sirupsen/logrus/releases/tag/v1.9.3)
+### What's Changed
+- Fix golangci-lint by @juanjjaramillo in https://github.com/newrelic/newrelic-prometheus-configurator/pull/231
+- chore(deps): bump github.com/stretchr/testify from 1.8.2 to 1.8.4 by @dependabot in https://github.com/newrelic/newrelic-prometheus-configurator/pull/229
+- chore(deps): bump github.com/sirupsen/logrus from 1.9.0 to 1.9.3 by @dependabot in https://github.com/newrelic/newrelic-prometheus-configurator/pull/230
+- chore(deps): update newrelic/newrelic-prometheus-configurator docker tag to v1.4.1 by @renovate in https://github.com/newrelic/newrelic-prometheus-configurator/pull/227
+- chore(deps): bump aquasecurity/trivy-action from 0.10.0 to 0.11.0 by @dependabot in https://github.com/newrelic/newrelic-prometheus-configurator/pull/232
+- Fix Duplicate Metrics in Sharding by @xqi-nr in https://github.com/newrelic/newrelic-prometheus-configurator/pull/228
+- chore(deps): bump aquasecurity/trivy-action from 0.11.0 to 0.11.2 by @dependabot in https://github.com/newrelic/newrelic-prometheus-configurator/pull/234
+- Upgrade Apline Image Version by @xqi-nr in https://github.com/newrelic/newrelic-prometheus-configurator/pull/236
 
 ## v1.4.1 - 2023-06-03
 
