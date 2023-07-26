@@ -88,7 +88,7 @@ jobs:
   e2e-test:
     name: E2e Tests
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     # If the environment is broken this job could timeout since the default timeout for tilt ci is 30m.
     timeout-minutes: 20
     steps:
