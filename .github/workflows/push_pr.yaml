@@ -99,7 +99,7 @@ jobs:
           minikube version: ${{ env.MINIKUBE_VERSION }}
           kubernetes version: ${{ env.LATEST_K8S_VERSION }}
           # default driver doesn't support 'eval $$(minikube docker-env)'.
-          # driver: docker
+          driver: docker
           github token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/setup-go@v4
         with:
@@ -111,7 +111,7 @@ jobs:
         env:
           SECRET_AVAILABLE: ${{ secrets.COREINT_E2E_ACCOUNT_ID }}
         if: ${{ env.SECRET_AVAILABLE != '' }}
-        uses: newrelic/newrelic-integration-e2e-action@v1
+        uses: newrelic/newrelic-integration-e2e-action@latest
         with:
           retry_seconds: 90
           retry_attempts: 5
