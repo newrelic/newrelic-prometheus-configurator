@@ -104,9 +104,12 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
+      # tilt 0.33.3 introduces a breaking change that results in 
+      # "ERROR: Failed to connect to Docker: Error response from daemon: Client sent an HTTP request to an HTTPS server."
+      # So we explicitly adopt tilt 0.33.2 to prevent the E2e Tests failure.
       - name: Install Tilt
         run: |
-          curl -fsSL https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh | bash
+          curl -fsSL https://github.com/tilt-dev/tilt/releases/download/v0.33.2/tilt.0.33.2.linux.x86_64.tar.gz | tar -xzv tilt && sudo mv tilt /usr/local/bin/tilt
       - name: Run e2e-test
         env:
           SECRET_AVAILABLE: ${{ secrets.COREINT_E2E_ACCOUNT_ID }}
