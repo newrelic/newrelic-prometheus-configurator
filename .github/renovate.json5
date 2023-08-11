@@ -4,6 +4,8 @@
     // Disable the creation of this issue that renovate updates with the pending issue we follow.
     ":disableDependencyDashboard"
   ],
+  // Label PRs with `dependencies`.
+  "labels": ["dependencies"],
   "enabledManagers": [
     // Needed to bump the conifgurator version.
     "regex",
