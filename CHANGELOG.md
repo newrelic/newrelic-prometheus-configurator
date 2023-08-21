@@ -8,6 +8,26 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.5.0 - 2023-08-21
+
+### 🚀 Enhancements
+* Update issue templates by @davidgit in https://github.com/newrelic/newrelic-prometheus-configurator/pull/247
+* Add prometheus_remote_storage_bytes_total Metric by @xqi-nr in https://github.com/newrelic/newrelic-prometheus-configurator/pull/246
+* chore: Add Pull Request Template by @svetlanabrennan in https://github.com/newrelic/newrelic-prometheus-configurator/pull/251
+* chore: Update CHANGELOG format by @svetlanabrennan in https://github.com/newrelic/newrelic-prometheus-configurator/pull/250
+
+### ⛓️ Dependencies
+* chore(deps): update newrelic/newrelic-prometheus-configurator docker tag to v1.4.2 by @renovate in https://github.com/newrelic/newrelic-prometheus-configurator/pull/238
+* chore(deps): bump alpine from 3.18.2 to 3.18.3 by @dependabot in https://github.com/newrelic/newrelic-prometheus-configurator/pull/248
+* chore: Add CHANGELOG github workflow by @svetlanabrennan in https://github.com/newrelic/newrelic-prometheus-configurator/pull/252
+* chore(deps): bump golang.org/x/sync from 0.2.0 to 0.3.0 by @dependabot in https://github.com/newrelic/newrelic-prometheus-configurator/pull/242
+* chore(deps): bump k8s.io/client-go from 0.27.2 to 0.28.0 by @dependabot in https://github.com/newrelic/newrelic-prometheus-configurator/pull/253
+
+## New Contributors
+* @svetlanabrennan made their first contribution in https://github.com/newrelic/newrelic-prometheus-configurator/pull/251
+
+**Full Changelog**: https://github.com/newrelic/newrelic-prometheus-configurator/compare/v1.4.2...v1.5.0
+
 ## v1.4.2 - 2023-06-15
 
 ### ⛓️ Dependencies
