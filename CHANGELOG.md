@@ -8,6 +8,12 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### bugfix
+- Add resource configuration option for initContainers. I accidentally push a commit to the repo main branch directly https://github.com/newrelic/newrelic-prometheus-configurator/commit/cf752524b70fe4d351beb7da57a45d529b2aeece
+
+### Enhancement
+- Update K8s Versions in E2E Tests by @xqi-nr in [#265](https://github.com/newrelic/newrelic-prometheus-configurator/pull/265)
+
 ## v1.5.0 - 2023-08-21
 
 ### ⛓️ Dependencies

@@ -28,7 +28,7 @@ jobs:
       DOCKER_IMAGE_NAME: newrelic/newrelic-prometheus-configurator
       DOCKER_PLATFORMS: "linux/amd64,linux/arm64,linux/arm" # Must be consistent with make build-multiarch
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-go@v4
         with:
           go-version-file: 'go.mod'
@@ -54,7 +54,7 @@ jobs:
             -t $DOCKER_IMAGE_NAME:ci-scan \
             .
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.11.2
+        uses: aquasecurity/trivy-action@0.12.0
         with:
           image-ref: '${{ env.DOCKER_IMAGE_NAME }}:ci-scan'
           format: 'table'
