@@ -308,8 +308,8 @@ github.com/prometheus/procfs v0.1.3/go.mod h1:lV6e/gmhEcM9IjHGsFOCxxuZ+z1YqCvr4O
 github.com/prometheus/procfs v0.6.0/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1xBZuNvfVA=
 github.com/prometheus/procfs v0.7.3 h1:4jVXhlkAyzOScmCkXBTOLRLTz8EeU+eyjrwB/EPq0VU=
 github.com/prometheus/procfs v0.7.3/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1xBZuNvfVA=
-github.com/prometheus/prometheus v0.37.8 h1:OHPMOq9EkK6kEcO3Ul8Vby3b0FlwE0JE/I/xAgtlJhE=
-github.com/prometheus/prometheus v0.37.8/go.mod h1:qrrW4duOJdlqRG9XZdd2lkPe9iDnFrWoSHv13SArq60=
+github.com/prometheus/prometheus v0.37.9 h1:xcf1PKMUEg+OmiqQV5XkWyoLXYPV0R8YpC9ywrTRTp8=
+github.com/prometheus/prometheus v0.37.9/go.mod h1:qrrW4duOJdlqRG9XZdd2lkPe9iDnFrWoSHv13SArq60=
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjRBZyWFQ=
 github.com/scaleway/scaleway-sdk-go v1.0.0-beta.9 h1:0roa6gXKgyta64uqh52AQG3wzZXH21unn+ltzQSXML0=
