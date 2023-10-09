@@ -1,5 +1,6 @@
 name: Configurator Chart Release
 # This workflow manually triggers the automated process of release based on the changelog.
+# This workflow also runs on push to main branch. 
 # Is recommended to run `make release-changelog-chart` before to see an example of what is going to be generated.
 
 on:
@@ -9,6 +10,9 @@ on:
         description: 'Release version including "v" prefix eg: v0.0.1 (Optional)'
         required: false
         type: string
+  push:
+    branches:
+      - main
 
 concurrency: helm-charts
 
