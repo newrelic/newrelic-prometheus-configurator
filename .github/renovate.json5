@@ -1,8 +1,6 @@
 {
   "extends": [
-    "config:base",
-    // Disable the creation of this issue that renovate updates with the pending issue we follow.
-    ":disableDependencyDashboard"
+    "github>newrelic/coreint-automation:renovate-base.json5"
   ],
   // Label PRs with `dependencies`.
   "labels": ["dependencies"],

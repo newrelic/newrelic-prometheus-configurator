@@ -1,6 +1,6 @@
 name: Configurator Release
 
-# This workflow manually triggers the automated process of release based on the changelog.
+# This workflow manually triggers the automated process of release based on the changelog and also runs on a schedule.
 # Is recommended to run `make release-changelog` before to see an example of what is going to be generated.
 
 # IMPORTANT No matter the branch selected when triggered, the workflow will always execute on default branch.
@@ -12,6 +12,11 @@ on:
         description: 'Release version including "v" prefix eg: v0.0.1 (Optional)'
         required: false
         type: string
+  schedule:
+    - cron: "0 12 * * 1" # Monday at 12pm UTC or 5am PT
+
+env:
+  ORIGINAL_REPO_NAME: ${{ github.event.repository.full_name }}
 
 jobs:
   release:
@@ -31,7 +36,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event.repository.default_branch }}
-          token: "${{ secrets.COREINT_BOT_TOKEN }}"
+          token: "${{ secrets.K8S_AGENTS_BOT_TOKEN }}"
       - uses: newrelic/release-toolkit/validate-markdown@v1
       - uses: newrelic/release-toolkit/generate-yaml@v1
         with:
@@ -49,8 +54,8 @@ jobs:
           echo tag=$(echo "${{ steps.version.outputs.next-version }}" | sed 's/^v//') >> $GITHUB_OUTPUT
       - name: Configure Git
         run: |
-          git config user.name newrelic-coreint-team
-          git config user.email coreint-dev@newrelic.com
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
       - uses: newrelic/release-toolkit/update-markdown@v1
         with:
           version: ${{ steps.version.outputs.next-version }}
@@ -75,3 +80,16 @@ jobs:
       image-tag: ${{needs.release.outputs.image-tag}} 
       push-latest: true
     secrets: inherit
+
+  notify-failure:
+    if: ${{ always() && failure() }}
+    needs: [release, build-push]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify failure via Slack
+        uses: archive/github-actions-slack@b91c7e2ff3852411ad4fbdad441a8133221ac86e
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.K8S_AGENTS_SLACK_TOKEN }}
+          slack-channel: ${{ secrets.K8S_AGENTS_SLACK_CHANNEL }}
+          slack-text: "❌ `${{ env.ORIGINAL_REPO_NAME }}`: <${{ github.server_url }}/${{ env.ORIGINAL_REPO_NAME }}/actions/runs/${{ github.run_id }}|release pipeline failed>."
+
