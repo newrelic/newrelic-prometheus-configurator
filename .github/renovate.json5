@@ -1,26 +1,5 @@
 {
   "extends": [
-    "config:base",
-    // Disable the creation of this issue that renovate updates with the pending issue we follow.
-    ":disableDependencyDashboard"
-  ],
-  // Label PRs with `dependencies`.
-  "labels": ["dependencies"],
-  "enabledManagers": [
-    // Needed to bump the conifgurator version.
-    "regex",
-    "helmv3"
-  ],
-  "regexManagers": [
-    {
-      "fileMatch": [
-        '(^|/)newrelic-prometheus-agent/Chart\.yaml$'
-      ],
-      "datasourceTemplate": "docker",
-      "depNameTemplate": "newrelic/newrelic-prometheus-configurator",
-      "matchStrings": [
-        'configuratorVersion: "(?<currentValue>.+)"'
-      ]
-    }
+    "github>newrelic/coreint-automation:renovate-base.json5"
   ]
 }

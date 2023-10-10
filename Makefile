@@ -154,3 +154,11 @@ _release-changes-chart:
 	@$(RT_BIN) validate-markdown --markdown ${MARKDOWN_FILE}
 	@$(RT_BIN) generate-yaml --markdown ${MARKDOWN_FILE} --included-dirs ${CHART_DIRECTORY}  --tag-prefix ${CHART_PREFIX}
 	@$(RT_BIN) link-dependencies --dictionary ${DICTIONARY_DIRECTORY}
+
+# rt-update-changelog runs the release-toolkit run.sh script by piping it into bash to update the CHANGELOG.md.
+# It also passes down to the script all the flags added to the make target. To check all the accepted flags,
+# see: https://github.com/newrelic/release-toolkit/blob/main/contrib/ohi-release-notes/run.sh
+#  e.g. `make rt-update-changelog -- -v`
+.PHONY: rt-update-changelog
+rt-update-changelog:
+	curl "https://raw.githubusercontent.com/newrelic/release-toolkit/v1/contrib/ohi-release-notes/run.sh" | bash -s -- $(filter-out $@,$(MAKECMDGOALS))
