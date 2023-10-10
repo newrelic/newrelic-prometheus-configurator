@@ -15,6 +15,13 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 - Upgraded alpine from 3.18.3 to 3.18.4
 - Upgraded golang.org/x/sync from 0.3.0 to 0.4.0
 
+## v1.7.0 - 2023-10-10
+
+### ⛓️ Dependencies
+- Upgraded k8s.io/client-go from 0.28.1 to 0.28.2
+- Upgraded alpine from 3.18.3 to 3.18.4
+- Upgraded golang.org/x/sync from 0.3.0 to 0.4.0
+
 ## v1.6.0 - 2023-09-14
 
 ### 🚀 Enhancements
