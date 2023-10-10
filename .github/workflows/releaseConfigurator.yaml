@@ -5,13 +5,14 @@ name: Configurator Release
 
 # IMPORTANT No matter the branch selected when triggered, the workflow will always execute on default branch.
 
-on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Release version including "v" prefix eg: v0.0.1 (Optional)'
-        required: false
-        type: string
+# tmp disabling this workflow to test reusable workflows instead
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       version:
+#         description: 'Release version including "v" prefix eg: v0.0.1 (Optional)'
+#         required: false
+#         type: string
 
 jobs:
   release:
