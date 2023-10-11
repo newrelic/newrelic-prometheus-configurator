@@ -18,6 +18,7 @@ jobs:
       artifact_path: bin/
       docker_image_name: newrelic/newrelic-prometheus-configurator
       chart_directory: charts/newrelic-prometheus-agent
+      image_name_key: .configuratorVersion
     secrets:
       dockerhub_username: ${{ secrets.FSI_DOCKERHUB_USERNAME }}
       dockerhub_token: ${{ secrets.FSI_DOCKERHUB_TOKEN }}
