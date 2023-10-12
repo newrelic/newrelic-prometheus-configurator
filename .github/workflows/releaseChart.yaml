@@ -2,13 +2,14 @@ name: Configurator Chart Release
 # This workflow manually triggers the automated process of release based on the changelog.
 # Is recommended to run `make release-changelog-chart` before to see an example of what is going to be generated.
 
-on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Release version including "v" prefix eg: v0.0.1 (Optional)'
-        required: false
-        type: string
+# tmp disabling this workflow to test reusable workflows instea
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       version:
+#         description: 'Release version including "v" prefix eg: v0.0.1 (Optional)'
+#         required: false
+#         type: string
 
 concurrency: helm-charts
 
