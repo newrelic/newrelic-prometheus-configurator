@@ -8,12 +8,6 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-## v1.8.0 - 2023-10-16
-
-### ⛓️ Dependencies
-- Upgraded golang.org/x/net from 0.13.0 to 0.17.0
-- Upgraded go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp from 0.32.0 to 0.44.0
-
 ## v1.7.1 - 2023-10-12
 
 ### ⛓️ Dependencies
