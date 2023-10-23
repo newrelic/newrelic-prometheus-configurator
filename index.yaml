@@ -2,6 +2,44 @@ apiVersion: v1
 entries:
   newrelic-prometheus-agent:
   - annotations:
+      configuratorVersion: 1.8.1
+    apiVersion: v2
+    appVersion: v2.37.8
+    created: "2023-10-23T19:34:51.70662005Z"
+    dependencies:
+    - name: common-library
+      repository: https://helm-charts.newrelic.com
+      version: 1.1.1
+    description: A Helm chart to deploy Prometheus with New Relic Prometheus Configurator.
+    digest: 21529be00094ec64f97580979326748bc1c6d2f63ba3a240f608fa6f361b82a8
+    keywords:
+    - newrelic
+    - prometheus
+    maintainers:
+    - name: nserrino
+      url: https://github.com/nserrino
+    - name: philkuz
+      url: https://github.com/philkuz
+    - name: htroisi
+      url: https://github.com/htroisi
+    - name: juanjjaramillo
+      url: https://github.com/juanjjaramillo
+    - name: svetlanabrennan
+      url: https://github.com/svetlanabrennan
+    - name: nrepai
+      url: https://github.com/nrepai
+    - name: csongnr
+      url: https://github.com/csongnr
+    - name: vuqtran88
+      url: https://github.com/vuqtran88
+    - name: xqi-nr
+      url: https://github.com/xqi-nr
+    name: newrelic-prometheus-agent
+    type: application
+    urls:
+    - https://github.com/newrelic/newrelic-prometheus-configurator/releases/download/newrelic-prometheus-agent-1.5.1/newrelic-prometheus-agent-1.5.1.tgz
+    version: 1.5.1
+  - annotations:
       configuratorVersion: 1.8.0
     apiVersion: v2
     appVersion: v2.37.8
@@ -739,4 +777,4 @@ entries:
     urls:
     - https://github.com/newrelic/newrelic-prometheus-configurator/releases/download/newrelic-prometheus-agent-0.0.4/newrelic-prometheus-agent-0.0.4.tgz
     version: 0.0.4
-generated: "2023-10-16T19:57:30.894202286Z"
+generated: "2023-10-23T19:34:51.706774451Z"
