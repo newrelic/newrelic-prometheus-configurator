@@ -8,7 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### enhancement
+## v1.9.0 - 2023-10-30
+
+### 🚀 Enhancements
 - Remove 1.23 support by @svetlanabrennan in [#303](https://github.com/newrelic/newrelic-prometheus-configurator/pull/303)
 - Add k8s 1.28.0-rc.1 support by @svetlanabrennan in [#305](https://github.com/newrelic/newrelic-prometheus-configurator/pull/305)
 
