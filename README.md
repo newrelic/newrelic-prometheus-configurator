@@ -2,6 +2,8 @@
 
 # New Relic Prometheus Configurator
 
+Test
+
 New Relic Prometheus Configurator (a.k.a. New Relic Prometheus Agent) gives you full observability of your services exposing [Prometheus](https://github.com/prometheus/prometheus) metrics.
 
 This repo contains the code base of the `newrelic-prometheus-configurator` and the [Helm Chart](/charts/newrelic-prometheus-agent/README.md) to install the solution in Kubernetes.
