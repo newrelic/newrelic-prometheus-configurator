@@ -386,7 +386,8 @@ common:
 kubernetes:
   jobs:
     - job_name_prefix: test-k8s
-      target_discovery:
+      target_discovery
+        pod: true
         endpoints: true
         additional_config:
          kubeconfig_file: %s
