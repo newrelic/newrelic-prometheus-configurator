@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### bugfix
+- Fix integration test by @svetlanabrennan in [#324](https://github.com/newrelic/newrelic-prometheus-configurator/pull/324)
+
 ## v1.10.0 - 2023-11-13
 
 ### 🚀 Enhancements
