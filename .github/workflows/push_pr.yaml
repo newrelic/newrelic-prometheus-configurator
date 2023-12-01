@@ -113,7 +113,7 @@ jobs:
           curl -fsSL https://github.com/tilt-dev/tilt/releases/download/v0.33.2/tilt.0.33.2.linux.x86_64.tar.gz | tar -xzv tilt && sudo mv tilt /usr/local/bin/tilt
       - name: Run e2e-test
         env:
-          SECRET_AVAILABLE: ${{ secrets.COREINT_E2E_ACCOUNT_ID }}
+          SECRET_AVAILABLE: ${{ secrets.K8S_AGENTS_E2E_ACCOUNT_ID }}
         if: ${{ env.SECRET_AVAILABLE != '' }}
         uses: newrelic/newrelic-integration-e2e-action@v1
         with:
@@ -121,9 +121,9 @@ jobs:
           retry_attempts: 5
           agent_enabled: false
           spec_path: test/e2e/test-specs.yml
-          account_id: ${{ secrets.COREINT_E2E_ACCOUNT_ID }}
-          api_key: ${{ secrets.COREINT_E2E_API_KEY }}
-          license_key: ${{ secrets.COREINT_E2E_LICENSE_KEY }}
+          account_id: ${{ secrets.K8S_AGENTS_E2E_ACCOUNT_ID }}
+          api_key: ${{ secrets.K8S_AGENTS_E2E_API_KEY }}
+          license_key: ${{ secrets.K8S_AGENTS_E2E_LICENSE_KEY }}
 
   test:
     name: Run tests
