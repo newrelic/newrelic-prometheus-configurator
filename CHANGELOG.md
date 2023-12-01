@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Unreleased section should follow [Release Toolkit](https://github.com/newrelic/release-toolkit#readme)
 
 ## Unreleased
+### enhancement
+- Update reusable workflow dependency by @juanjjaramillo [#325](https://github.com/newrelic/newrelic-prometheus-configurator/pull/325)
 
 ### bugfix
 - Fix integration test by @svetlanabrennan in [#324](https://github.com/newrelic/newrelic-prometheus-configurator/pull/324)
