@@ -406,13 +406,13 @@ kubernetes:
 		"__meta_kubernetes_pod_name":     runningPod.Name,
 		"__meta_kubernetes_service_name": svc.Name,
 	})
-	asserter.droppedTargetLabels(t, map[string]string{
-		"__meta_kubernetes_pod_name":     succeededPod.Name,
-		"__meta_kubernetes_service_name": svc.Name,
-	})
 
 	// Failed Pods are not added as endpoints of the service in K8s.
 	// This could fail if not using a patched version of k8s to executed the test.
 	// https://github.com/kubernetes/kubernetes/pull/110479
-	asserter.droppedTargetCount(t, 1)
+	// Succeeded pods are not added as endpoints of the service in K8s 1.27.0 or higher.
+	asserter.droppedTargetCount(t, 0)
+
+	// Active targets
+	asserter.activeTargetCount(t, 1)
 }

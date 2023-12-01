@@ -10,6 +10,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 ### enhancement
 - Update reusable workflow dependency by @juanjjaramillo [#325](https://github.com/newrelic/newrelic-prometheus-configurator/pull/325)
 
+### bugfix
+- Fix integration test by @svetlanabrennan in [#324](https://github.com/newrelic/newrelic-prometheus-configurator/pull/324)
+
 ## v1.10.0 - 2023-11-13
 
 ### 🚀 Enhancements
