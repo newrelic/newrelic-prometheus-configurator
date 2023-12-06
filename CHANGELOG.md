@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Unreleased section should follow [Release Toolkit](https://github.com/newrelic/release-toolkit#readme)
 
 ## Unreleased
-### enhancement
+
+## v1.11.0 - 2023-12-06
+
+### 🚀 Enhancements
 - Update reusable workflow dependency by @juanjjaramillo [#325](https://github.com/newrelic/newrelic-prometheus-configurator/pull/325)
 
-### bugfix
+### 🐞 Bug fixes
 - Fix integration test by @svetlanabrennan in [#324](https://github.com/newrelic/newrelic-prometheus-configurator/pull/324)
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.28.4
+- Updated alpine to v3.18.5
+- Updated github.com/alecthomas/units digest
 
 ## v1.10.0 - 2023-11-13
 
