@@ -8,6 +8,11 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.11.2 - 2023-12-18
+
+### ⛓️ Dependencies
+- Updated alpine to v3.19.0
+
 ## v1.11.1 - 2023-12-11
 
 ### ⛓️ Dependencies
