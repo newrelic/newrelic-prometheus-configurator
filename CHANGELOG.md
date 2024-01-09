@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Unreleased section should follow [Release Toolkit](https://github.com/newrelic/release-toolkit#readme)
 
 ## Unreleased
+### enhancement
+- Trigger release creation by @juanjjaramillo [#341](https://github.com/newrelic/newrelic-prometheus-configurator/pull/341)
 
 ## v1.11.3 - 2024-01-09
 
