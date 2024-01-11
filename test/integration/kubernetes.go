@@ -86,8 +86,12 @@ func (ke *k8sEnvironment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 		// we want to override p with the latest pod retrieved.
 		fmt.Printf(ke.testNamespace.Name)
 		p, err = ke.client.CoreV1().Pods(ke.testNamespace.Name).Get(context.Background(), p.Name, metav1.GetOptions{})
-		fmt.Printf(p)
-		fmt.Printf(err)
+		if p != nil {
+			fmt.Printf("P is not nil")
+		} else {
+			fmt.Printf("P is nil")
+		}
+		fmt.Printf(err.Error())
 		require.NoError(t, err)
 
 		return p.Status.Phase == podPhase
