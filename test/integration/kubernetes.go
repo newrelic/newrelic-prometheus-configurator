@@ -84,7 +84,10 @@ func (ke *k8sEnvironment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 	err := retryUntilTrue(ke.defaultTimeout, ke.defaultBackoff, func() bool {
 		var err error
 		// we want to override p with the latest pod retrieved.
+		fmt.Printf(ke.testNamespace.Name)
 		p, err = ke.client.CoreV1().Pods(ke.testNamespace.Name).Get(context.Background(), p.Name, metav1.GetOptions{})
+		fmt.Printf(p)
+		fmt.Printf(err)
 		require.NoError(t, err)
 
 		return p.Status.Phase == podPhase
