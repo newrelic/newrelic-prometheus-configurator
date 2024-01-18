@@ -73,7 +73,14 @@ func (ke *k8sEnvironment) addPod(t *testing.T, pod *corev1.Pod) *corev1.Pod {
 	require.NoError(t, err)
 
 	// Consider adding an await loop here, for now we will add a small delay
-	time.Sleep(30 * time.Second)
+	//time.Sleep(30 * time.Second)
+	err = retryUntilTrue(ke.defaultTimeout, ke.defaultBackoff, func() bool {
+		namespaces, err := ke.client.CoreV1().Namespaces().Get(context.Background(), ke.testNamespace.Name, metav1.GetOptions{})
+		require.NoError(t, err)
+
+		return namespaces.Status.Phase == "Active"
+	})
+	require.NoError(t, err)
 
 	return p
 }
@@ -87,13 +94,7 @@ func (ke *k8sEnvironment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 	err := retryUntilTrue(ke.defaultTimeout, ke.defaultBackoff, func() bool {
 		var err error
 		// we want to override p with the latest pod retrieved.
-		fmt.Printf(ke.testNamespace.Name)
 		p, err = ke.client.CoreV1().Pods(ke.testNamespace.Name).Get(context.Background(), p.Name, metav1.GetOptions{})
-		if p != nil {
-			fmt.Printf("\nP is not nil\n")
-		} else {
-			fmt.Printf("\nP is nil\n")
-		}
 		require.NoError(t, err)
 
 		return p.Status.Phase == podPhase
