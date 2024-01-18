@@ -72,6 +72,9 @@ func (ke *k8sEnvironment) addPod(t *testing.T, pod *corev1.Pod) *corev1.Pod {
 	p, err := ke.client.CoreV1().Pods(ke.testNamespace.Name).Create(context.Background(), pod, metav1.CreateOptions{})
 	require.NoError(t, err)
 
+	// Consider adding an await loop here, for now we will add a small delay
+	time.Sleep(30 * time.Second)
+
 	return p
 }
 
@@ -87,11 +90,10 @@ func (ke *k8sEnvironment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 		fmt.Printf(ke.testNamespace.Name)
 		p, err = ke.client.CoreV1().Pods(ke.testNamespace.Name).Get(context.Background(), p.Name, metav1.GetOptions{})
 		if p != nil {
-			fmt.Printf("P is not nil")
+			fmt.Printf("\nP is not nil\n")
 		} else {
-			fmt.Printf("P is nil")
+			fmt.Printf("\nP is nil\n")
 		}
-		fmt.Printf(err.Error())
 		require.NoError(t, err)
 
 		return p.Status.Phase == podPhase
