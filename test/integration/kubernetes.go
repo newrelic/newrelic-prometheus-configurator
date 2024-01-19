@@ -52,6 +52,15 @@ func newK8sEnvironment(t *testing.T) k8sEnvironment {
 	testNamespace, err := clientset.CoreV1().Namespaces().Create(context.Background(), &namespaceTemplate, metav1.CreateOptions{})
 	require.NoError(t, err)
 
+	// Wait for namespace to be active before proceeding
+	err = retryUntilTrue(ke.defaultTimeout, ke.defaultBackoff, func() bool {
+		namespaces, err := ke.client.CoreV1().Namespaces().Get(context.Background(), ke.testNamespace.Name, metav1.GetOptions{})
+		require.NoError(t, err)
+
+		return namespaces.Status.Phase == "Active"
+	})
+	require.NoError(t, err)
+
 	t.Cleanup(func() {
 		err := clientset.CoreV1().Namespaces().Delete(context.Background(), testNamespace.Name, metav1.DeleteOptions{})
 		require.NoError(t, err)
@@ -74,13 +83,6 @@ func (ke *k8sEnvironment) addPod(t *testing.T, pod *corev1.Pod) *corev1.Pod {
 
 	// Consider adding an await loop here, for now we will add a small delay
 	//time.Sleep(30 * time.Second)
-	err = retryUntilTrue(ke.defaultTimeout, ke.defaultBackoff, func() bool {
-		namespaces, err := ke.client.CoreV1().Namespaces().Get(context.Background(), ke.testNamespace.Name, metav1.GetOptions{})
-		require.NoError(t, err)
-
-		return namespaces.Status.Phase == "Active"
-	})
-	require.NoError(t, err)
 
 	return p
 }
