@@ -34,6 +34,9 @@ type k8sEnvironment struct {
 
 // newK8sEnvironment connects to a cluster using kubeconfigPath and creates namespace for the current test.
 func newK8sEnvironment(t *testing.T) k8sEnvironment {
+	defaultBackoff := time.Second
+	defaultTimeout := time.Second * 20
+
 	t.Helper()
 
 	// Prometheus needs the full path to read the file.
@@ -53,7 +56,7 @@ func newK8sEnvironment(t *testing.T) k8sEnvironment {
 	require.NoError(t, err)
 
 	// Wait for namespace to be active before proceeding
-	err = retryUntilTrue(time.Second*20, time.Second, func() bool {
+	err = retryUntilTrue(defaultTimeout, defaultBackoff, func() bool {
 		namespaces, err := clientset.CoreV1().Namespaces().Get(context.Background(), testNamespace.Name, metav1.GetOptions{})
 		require.NoError(t, err)
 
@@ -70,8 +73,8 @@ func newK8sEnvironment(t *testing.T) k8sEnvironment {
 		kubeconfigFullPath: kubeconfigFullPath,
 		client:             clientset,
 		testNamespace:      testNamespace,
-		defaultBackoff:     time.Second,
-		defaultTimeout:     time.Second * 20,
+		defaultBackoff:     defaultBackoff,
+		defaultTimeout:     defaultTimeout,
 	}
 }
 
