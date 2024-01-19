@@ -53,8 +53,8 @@ func newK8sEnvironment(t *testing.T) k8sEnvironment {
 	require.NoError(t, err)
 
 	// Wait for namespace to be active before proceeding
-	err = retryUntilTrue(ke.defaultTimeout, ke.defaultBackoff, func() bool {
-		namespaces, err := ke.client.CoreV1().Namespaces().Get(context.Background(), ke.testNamespace.Name, metav1.GetOptions{})
+	err = retryUntilTrue(time.Second*20, time.Second, func() bool {
+		namespaces, err := clientset.CoreV1().Namespaces().Get(context.Background(), testNamespace.Name, metav1.GetOptions{})
 		require.NoError(t, err)
 
 		return namespaces.Status.Phase == "Active"
