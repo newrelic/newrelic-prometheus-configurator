@@ -10,7 +10,15 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 ### bugfix
 - Fix flaky tests @dbudziwojskiNR [#344](https://github.com/newrelic/newrelic-prometheus-configurator/pull/344)
 
-### enhancement
+## v1.12.1 - 2024-01-22
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.1
+- Updated go to v1.21.6
+
+## v1.12.0 - 2024-01-15
+
+### 🚀 Enhancements
 - Trigger release creation by @juanjjaramillo [#341](https://github.com/newrelic/newrelic-prometheus-configurator/pull/341)
 
 ## v1.11.3 - 2024-01-09
