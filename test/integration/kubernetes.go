@@ -84,8 +84,8 @@ func (ke *k8sEnvironment) addPod(t *testing.T, pod *corev1.Pod) *corev1.Pod {
 	p, err := ke.client.CoreV1().Pods(ke.testNamespace.Name).Create(context.Background(), pod, metav1.CreateOptions{})
 	require.NoError(t, err)
 
-	// Consider adding an await loop here, for now we will add a small delay
-	//time.Sleep(30 * time.Second)
+	// Add a small delay to ensure that pod is fully created.
+	time.Sleep(3 * time.Second)
 
 	return p
 }
