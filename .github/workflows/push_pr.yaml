@@ -135,6 +135,8 @@ jobs:
           go-version-file: 'go.mod'
       - name: Run unit tests
         run: make test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
       - name: Setup Minikube
         uses: manusa/actions-setup-minikube@v2.10.0
         with:

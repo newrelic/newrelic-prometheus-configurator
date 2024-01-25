@@ -24,7 +24,7 @@ clean:
 
 .PHONY: test
 test:
-	go test ./... -count=1 -race
+	go test ./... -count=1 -race -coverprofile=coverage.out -covermode=atomic
 
 .PHONY: build
 build: BINARY_NAME := $(if $(GOOS),$(BINARY_NAME)-$(GOOS),$(BINARY_NAME))
@@ -61,7 +61,7 @@ tilt-ci:
 .PHONY: integration-test
 integration-test:
 	KUBECONFIG='./.kubeconfig-dev' minikube update-context
-	go test ./... -tags=integration_test -count=1 -race
+	go test ./... -tags=integration_test -count=1 -race -coverprofile=integration-coverage.out -covermode=atomic
 
 .PHONY: chart-unit-test
 chart-unit-test:
