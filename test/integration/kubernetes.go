@@ -83,7 +83,9 @@ func (ke *k8sEnvironment) addPod(t *testing.T, pod *corev1.Pod) *corev1.Pod {
 	t.Helper()
 
 	p, err := ke.client.CoreV1().Pods(ke.testNamespace.Name).Create(context.Background(), pod, metav1.CreateOptions{})
-	fmt.Println(err)
+	if err != nil {
+		fmt.Printf("Error Creating Pod: %v", err)
+	}
 	require.NoError(t, err)
 
 	return p
@@ -101,7 +103,8 @@ func (ke *k8sEnvironment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 		p, err = ke.client.CoreV1().Pods(ke.testNamespace.Name).Get(context.Background(), p.Name, metav1.GetOptions{})
 
 		// Retry if the error returned is recoverable
-		if err != nil && strings.Contains(err.Error(), "a recoverable error") {
+		if err != nil && strings.Contains(err.Error(), "serviceaccount \"default\" not found") {
+			fmt.Println("Trying to recover!")
 			return false
 		}
 		require.NoError(t, err)
@@ -111,32 +114,6 @@ func (ke *k8sEnvironment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 	require.NoError(t, err)
 
 	return p
-}
-
-func (ke *k8sEnvironment) addNamespace(t *testing.T, namespace *corev1.Namespace) *corev1.Namespace {
-	t.Helper()
-
-	n, err := ke.client.CoreV1().Namespaces().Create(context.Background(), namespace, metav1.CreateOptions{})
-	require.NoError(t, err)
-
-	return n
-}
-
-// addNamespaceAndWaitOnPhase creates the namespace and waits until the specified namespacePhase.
-func (ke *k8sEnvironment) addNamespaceAndWaitOnPhase(t *testing.T, namespace *corev1.Namespace, namespacePhase corev1.NamespacePhase) *corev1.Namespace {
-	t.Helper()
-
-	n := ke.addNamespace(t, namespace)
-
-	err := retryUntilTrue(ke.defaultTimeout, ke.defaultBackoff, func() bool {
-		namespaces, err := ke.client.CoreV1().Namespaces().Get(context.Background(), namespace.Name, metav1.GetOptions{})
-		require.NoError(t, err)
-
-		return namespaces.Status.Phase == namespacePhase
-	})
-	require.NoError(t, err)
-
-	return n
 }
 
 // addManyPodsWaitingOnPhase creates and waits for many pods (built by `buildPod` function), until the specified
