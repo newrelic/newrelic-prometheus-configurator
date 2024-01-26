@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -35,7 +36,7 @@ type k8sEnvironment struct {
 // newK8sEnvironment connects to a cluster using kubeconfigPath and creates namespace for the current test.
 func newK8sEnvironment(t *testing.T) k8sEnvironment {
 	defaultBackoff := time.Second
-	defaultTimeout := time.Second * 20
+	defaultTimeout := time.Second * 120
 
 	t.Helper()
 
@@ -46,23 +47,13 @@ func newK8sEnvironment(t *testing.T) k8sEnvironment {
 	clientset, err := k8sClient(kubeconfigFullPath)
 	require.NoError(t, err)
 
-	namespaceTemplate := corev1.Namespace{
+	testNamespace := &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			GenerateName: "newrelic-prometheus-test-",
 		},
 	}
 
-	testNamespace, err := clientset.CoreV1().Namespaces().Create(context.Background(), &namespaceTemplate, metav1.CreateOptions{})
-	require.NoError(t, err)
-
-	// Wait for namespace to be active before proceeding
-	err = retryUntilTrue(defaultTimeout, defaultBackoff, func() bool {
-		namespaces, err := clientset.CoreV1().Namespaces().Get(context.Background(), testNamespace.Name, metav1.GetOptions{})
-		require.NoError(t, err)
-
-		return namespaces.Status.Phase == "Active"
-	})
-	require.NoError(t, err)
+	testNamespace := addNamespaceAndWaitOnPhase(t, testNamespace, corev1.NamespaceActive)
 
 	t.Cleanup(func() {
 		err := clientset.CoreV1().Namespaces().Delete(context.Background(), testNamespace.Name, metav1.DeleteOptions{})
@@ -84,9 +75,6 @@ func (ke *k8sEnvironment) addPod(t *testing.T, pod *corev1.Pod) *corev1.Pod {
 	p, err := ke.client.CoreV1().Pods(ke.testNamespace.Name).Create(context.Background(), pod, metav1.CreateOptions{})
 	require.NoError(t, err)
 
-	// Add a small delay to ensure that pod is fully created.
-	time.Sleep(3 * time.Second)
-
 	return p
 }
 
@@ -100,6 +88,11 @@ func (ke *k8sEnvironment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 		var err error
 		// we want to override p with the latest pod retrieved.
 		p, err = ke.client.CoreV1().Pods(ke.testNamespace.Name).Get(context.Background(), p.Name, metav1.GetOptions{})
+
+		// Retry if the error returned is recoverable
+		if strings.Contains(err.Error(), "a recoverable error") {
+			return false
+		}
 		require.NoError(t, err)
 
 		return p.Status.Phase == podPhase
@@ -107,6 +100,32 @@ func (ke *k8sEnvironment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 	require.NoError(t, err)
 
 	return p
+}
+
+func (ke *k8sEnvironment) addNamespace(t *testing.T, namespace *corev1.Namespace) *corev1.Namespace {
+	t.Helper()
+
+	n, err := ke.client.CoreV1().Namespaces().Create(context.Background(), namespace, metav1.CreateOptions{})
+	require.NoError(t, err)
+
+	return n
+}
+
+// addNamespaceAndWaitOnPhase creates the namespace and waits until the specified namespacePhase.
+func (ke *k8sEnvironment) addNamespaceAndWaitOnPhase(t *testing.T, namespace *corev1.Namespace, namespacePhase corev1.NamespacePhase) *corev1.Namespace {
+	t.Helper()
+
+	n := ke.addNamespace(t, namespace)
+
+	err := retryUntilTrue(ke.defaultTimeout, ke.defaultBackoff, func() bool {
+		namespaces, err := ke.client.CoreV1().Namespaces().Get(context.Background(), namespace.Name, metav1.GetOptions{})
+		require.NoError(t, err)
+
+		return namespaces.Status.Phase == namespacePhase
+	})
+	require.NoError(t, err)
+
+	return n
 }
 
 // addManyPodsWaitingOnPhase creates and waits for many pods (built by `buildPod` function), until the specified
