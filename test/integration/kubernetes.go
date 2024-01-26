@@ -83,6 +83,7 @@ func (ke *k8sEnvironment) addPod(t *testing.T, pod *corev1.Pod) *corev1.Pod {
 	t.Helper()
 
 	p, err := ke.client.CoreV1().Pods(ke.testNamespace.Name).Create(context.Background(), pod, metav1.CreateOptions{})
+	fmt.Println(err)
 	require.NoError(t, err)
 
 	return p
@@ -100,7 +101,7 @@ func (ke *k8sEnvironment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 		p, err = ke.client.CoreV1().Pods(ke.testNamespace.Name).Get(context.Background(), p.Name, metav1.GetOptions{})
 
 		// Retry if the error returned is recoverable
-		if strings.Contains(err.Error(), "a recoverable error") {
+		if err != nil && strings.Contains(err.Error(), "a recoverable error") {
 			return false
 		}
 		require.NoError(t, err)
