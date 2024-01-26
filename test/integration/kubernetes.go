@@ -47,13 +47,23 @@ func newK8sEnvironment(t *testing.T) k8sEnvironment {
 	clientset, err := k8sClient(kubeconfigFullPath)
 	require.NoError(t, err)
 
-	testNamespace := &corev1.Namespace{
+	namespaceTemplate := &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			GenerateName: "newrelic-prometheus-test-",
 		},
 	}
 
-	testNamespace := addNamespaceAndWaitOnPhase(t, testNamespace, corev1.NamespaceActive)
+	testNamespace, err := clientset.CoreV1().Namespaces().Create(context.Background(), namespaceTemplate, metav1.CreateOptions{})
+	require.NoError(t, err)
+
+	// wait until initial namespace is active
+	err = retryUntilTrue(defaultTimeout, defaultBackoff, func() bool {
+		namespaces, err := clientset.CoreV1().Namespaces().Get(context.Background(), testNamespace.Name, metav1.GetOptions{})
+		require.NoError(t, err)
+
+		return namespaces.Status.Phase == corev1.NamespaceActive
+	})
+	require.NoError(t, err)
 
 	t.Cleanup(func() {
 		err := clientset.CoreV1().Namespaces().Delete(context.Background(), testNamespace.Name, metav1.DeleteOptions{})
