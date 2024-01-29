@@ -10,6 +10,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 ### enhancement
 - Add Codecov @dbudziwojskiNR [#349](https://github.com/newrelic/newrelic-prometheus-configurator/pull/349)
 
+### bugfix
+- Fix flaky tests @dbudziwojskiNR [#344](https://github.com/newrelic/newrelic-prometheus-configurator/pull/344)
+
 ## v1.12.1 - 2024-01-22
 
 ### ⛓️ Dependencies

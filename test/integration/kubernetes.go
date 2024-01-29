@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -34,6 +35,9 @@ type k8sEnvironment struct {
 
 // newK8sEnvironment connects to a cluster using kubeconfigPath and creates namespace for the current test.
 func newK8sEnvironment(t *testing.T) k8sEnvironment {
+	defaultBackoff := time.Second
+	defaultTimeout := time.Second * 120
+
 	t.Helper()
 
 	// Prometheus needs the full path to read the file.
@@ -43,13 +47,22 @@ func newK8sEnvironment(t *testing.T) k8sEnvironment {
 	clientset, err := k8sClient(kubeconfigFullPath)
 	require.NoError(t, err)
 
-	namespaceTemplate := corev1.Namespace{
+	namespaceTemplate := &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			GenerateName: "newrelic-prometheus-test-",
 		},
 	}
 
-	testNamespace, err := clientset.CoreV1().Namespaces().Create(context.Background(), &namespaceTemplate, metav1.CreateOptions{})
+	testNamespace, err := clientset.CoreV1().Namespaces().Create(context.Background(), namespaceTemplate, metav1.CreateOptions{})
+	require.NoError(t, err)
+
+	// wait until initial namespace is active
+	err = retryUntilTrue(defaultTimeout, defaultBackoff, func() bool {
+		namespaces, err := clientset.CoreV1().Namespaces().Get(context.Background(), testNamespace.Name, metav1.GetOptions{})
+		require.NoError(t, err)
+
+		return namespaces.Status.Phase == corev1.NamespaceActive
+	})
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
@@ -61,8 +74,8 @@ func newK8sEnvironment(t *testing.T) k8sEnvironment {
 		kubeconfigFullPath: kubeconfigFullPath,
 		client:             clientset,
 		testNamespace:      testNamespace,
-		defaultBackoff:     time.Second,
-		defaultTimeout:     time.Second * 20,
+		defaultBackoff:     defaultBackoff,
+		defaultTimeout:     defaultTimeout,
 	}
 }
 
@@ -70,6 +83,9 @@ func (ke *k8sEnvironment) addPod(t *testing.T, pod *corev1.Pod) *corev1.Pod {
 	t.Helper()
 
 	p, err := ke.client.CoreV1().Pods(ke.testNamespace.Name).Create(context.Background(), pod, metav1.CreateOptions{})
+	if err != nil {
+		fmt.Printf("Error Creating Pod: %v", err)
+	}
 	require.NoError(t, err)
 
 	return p
@@ -85,6 +101,12 @@ func (ke *k8sEnvironment) addPodAndWaitOnPhase(t *testing.T, pod *corev1.Pod, po
 		var err error
 		// we want to override p with the latest pod retrieved.
 		p, err = ke.client.CoreV1().Pods(ke.testNamespace.Name).Get(context.Background(), p.Name, metav1.GetOptions{})
+
+		// Retry if the error returned is recoverable
+		if err != nil && strings.Contains(err.Error(), "serviceaccount \"default\" not found") {
+			fmt.Println("Trying to recover!")
+			return false
+		}
 		require.NoError(t, err)
 
 		return p.Status.Phase == podPhase
