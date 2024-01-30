@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 ### enhancement
+- Add Codecov badge @dbudziwojskiNR [#352](https://github.com/newrelic/newrelic-prometheus-configurator/pull/352)
+
+### enhancement
 - Add Codecov @dbudziwojskiNR [#349](https://github.com/newrelic/newrelic-prometheus-configurator/pull/349)
 
 ### bugfix
