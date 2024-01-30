@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Unreleased section should follow [Release Toolkit](https://github.com/newrelic/release-toolkit#readme)
 
 ## Unreleased
+### enhancement
+- Add Codecov @dbudziwojskiNR [#349](https://github.com/newrelic/newrelic-prometheus-configurator/pull/349)
+
 ### bugfix
 - Fix flaky tests @dbudziwojskiNR [#344](https://github.com/newrelic/newrelic-prometheus-configurator/pull/344)
 

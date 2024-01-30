@@ -1,5 +1,5 @@
 BIN_DIR = ./bin
-TOOLS_DIR := $(BIN_DIR)/dev-tools
+TEST_COVERAGE_DIR := $(BIN_DIR)/test-coverage
 BINARY_NAME = prometheus-configurator
 
 GOOS ?=
@@ -24,7 +24,8 @@ clean:
 
 .PHONY: test
 test:
-	go test ./... -count=1 -race
+	mkdir -p $(TEST_COVERAGE_DIR)
+	go test ./... -count=1 -coverprofile=$(TEST_COVERAGE_DIR)/coverage.out -covermode=count
 
 .PHONY: build
 build: BINARY_NAME := $(if $(GOOS),$(BINARY_NAME)-$(GOOS),$(BINARY_NAME))
