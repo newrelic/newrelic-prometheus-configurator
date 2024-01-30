@@ -25,7 +25,7 @@ clean:
 .PHONY: test
 test:
 	mkdir -p $(TEST_COVERAGE_DIR)
-	go test ./... -count=1 -race -coverprofile=$(TEST_COVERAGE_DIR)/coverage.out -covermode=atomic
+	go test ./... -count=1 -race -coverprofile=$(TEST_COVERAGE_DIR)/coverage.out -covermode=count
 
 .PHONY: build
 build: BINARY_NAME := $(if $(GOOS),$(BINARY_NAME)-$(GOOS),$(BINARY_NAME))
@@ -62,8 +62,7 @@ tilt-ci:
 .PHONY: integration-test
 integration-test:
 	KUBECONFIG='./.kubeconfig-dev' minikube update-context
-	mkdir -p $(TEST_COVERAGE_DIR)
-	go test ./... -tags=integration_test -count=1 -race -coverprofile=$(TEST_COVERAGE_DIR)/integration-coverage.out -covermode=atomic
+	go test ./... -tags=integration_test -count=1 -race
 
 .PHONY: chart-unit-test
 chart-unit-test:
