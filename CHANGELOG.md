@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Unreleased section should follow [Release Toolkit](https://github.com/newrelic/release-toolkit#readme)
 
 ## Unreleased
-### enhancement
+
+## v1.13.0 - 2024-02-05
+
+### 🚀 Enhancements
 - Add Codecov @dbudziwojskiNR [#349](https://github.com/newrelic/newrelic-prometheus-configurator/pull/349)
 - Add Codecov badge @dbudziwojskiNR [#352](https://github.com/newrelic/newrelic-prometheus-configurator/pull/352)
 
-### bugfix
+### 🐞 Bug fixes
 - Fix flaky tests @dbudziwojskiNR [#344](https://github.com/newrelic/newrelic-prometheus-configurator/pull/344)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.19.1
 
 ## v1.12.1 - 2024-01-22
 
