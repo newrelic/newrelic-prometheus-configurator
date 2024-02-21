@@ -40,6 +40,7 @@ tests:
           path: spec.template.spec.nodeSelector
           value:
             kubernetes.io/os: linux
+        template: templates/statefulset.yaml
 
   - it: has a linux node selector and additional selectors
     set:
@@ -53,3 +54,4 @@ tests:
           value:
             kubernetes.io/os: linux
             aCoolTestLabel: aCoolTestValue
+        template: templates/statefulset.yaml
