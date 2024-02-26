@@ -10,6 +10,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 ### enhancement
 - Add linux node selector @dbudziwojskiNR [#362](https://github.com/newrelic/newrelic-prometheus-configurator/pull/362)
 
+### enhancement
+- Add linux node selector @dbudziwojskiNR [#362](https://github.com/newrelic/newrelic-prometheus-configurator/pull/362)
+
 ## v1.13.0 - 2024-02-05
 
 ### 🚀 Enhancements
