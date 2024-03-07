@@ -20,9 +20,6 @@ Before submitting an Issue, please search for similar ones in the
     ```md
       ## Unreleased
 
-      - Add `examples/metrictypes` directory for metric type conversion examples.
-      - Add varnish metric type conversions
-
       ### bugfix
       - Fix some bug in some file @yourGithubHandle [#123](linkToThisPR)
     ```

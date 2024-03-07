@@ -8,6 +8,8 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### enhancements
+
 - Add `examples/metrictypes` directory for metric type conversion examples.
 - Add varnish metric type conversions
 
