@@ -8,6 +8,12 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.15.0 - 2024-03-25
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.3
+- Upgraded google.golang.org/protobuf from 1.31.0 to 1.33.0
+
 ## v1.15.0 - 2024-03-08 
 
 ### 🚀 Enhancements
