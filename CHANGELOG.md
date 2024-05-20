@@ -8,7 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### bugfix
+## v1.16.1 - 2024-05-20
+
+### 🐞 Bug fixes
 - Update statefulset initcontainer to use container level security context from values [#385](https://github.com/newrelic/newrelic-prometheus-configurator/pull/385)
 
 ## v1.16.0 - 2024-04-29
