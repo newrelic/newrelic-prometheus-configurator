@@ -8,6 +8,12 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.16.3 - 2024-06-10
+
+### ⛓️ Dependencies
+- Updated go to v1.22.3
+- Updated kubernetes packages to v0.30.1
+
 ## v1.16.2 - 2024-05-27
 
 ### ⛓️ Dependencies
