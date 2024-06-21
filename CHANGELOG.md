@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### enhancement
+- Add 1.29 and 1.30 support and drop 1.25 and 1.24 @dbudziwojskiNR [#399](https://github.com/newrelic/newrelic-prometheus-configurator/pull/399)
+
 ## v1.16.4 - 2024-06-17
 
 ### ⛓️ Dependencies
