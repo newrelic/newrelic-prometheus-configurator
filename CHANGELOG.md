@@ -8,8 +8,13 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### enhancement
+## v1.17.0 - 2024-06-24
+
+### 🚀 Enhancements
 - Add 1.29 and 1.30 support and drop 1.25 and 1.24 @dbudziwojskiNR [#399](https://github.com/newrelic/newrelic-prometheus-configurator/pull/399)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.1
 
 ## v1.16.4 - 2024-06-17
 
