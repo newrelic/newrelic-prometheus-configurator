@@ -8,6 +8,11 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.17.1 - 2024-07-15
+
+### ⛓️ Dependencies
+- Updated github.com/alecthomas/units digest
+
 ## v1.17.0 - 2024-06-24
 
 ### 🚀 Enhancements
