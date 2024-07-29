@@ -8,6 +8,12 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.17.3 - 2024-07-29
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.2
+- Updated kubernetes packages to v0.30.3
+
 ## v1.17.2 - 2024-07-22
 
 ### ⛓️ Dependencies
