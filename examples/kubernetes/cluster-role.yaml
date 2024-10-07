@@ -27,8 +27,8 @@ metadata:
   name: prom-rbac
 subjects:
 - kind: ServiceAccount
-  name: newrelic-newrelic-prometheus-agent
-  namespace: default
+  name: newrelic-bundle-newrelic-prometheus-agent
+  namespace: newrelic
 roleRef:
   kind: ClusterRole
   name: prom-admin
