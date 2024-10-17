@@ -8,7 +8,7 @@ on:
 
 env:
   # NOTICE that apart from this, the versions in the chart linter matrix needs to be bumped too.
-  LATEST_K8S_VERSION: 'v1.30.0'
+  LATEST_K8S_VERSION: 'v1.31.0'
 
 jobs:
   chart-lint:
@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        kubernetes-version: ["v1.30.0", "v1.29.5", "v1.28.3", "v1.27.5", "v1.26.8"]
+        kubernetes-version: ["v1.31.0", "v1.30.0", "v1.29.5", "v1.28.3", "v1.27.5"]
     steps:
       - uses: azure/setup-helm@v4
         with:
