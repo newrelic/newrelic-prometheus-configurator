@@ -19,9 +19,9 @@ spec:
     spec:
       containers:
       - name: avalanche
-        image: quay.io/prometheuscommunity/avalanche:main
+        image: quay.io/prometheuscommunity/avalanche:v0.6.0
         args:
-        - --metric-count= {{- .Values.avalanche.metricCount }}
+        - --gauge-metric-count= {{- .Values.avalanche.metricCount }}
         - --label-count= {{- .Values.avalanche.labelCount }}
         - --series-count= {{- .Values.avalanche.seriesCount }}
         - --metricname-length= {{- .Values.avalanche.metricLength }}
