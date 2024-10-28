@@ -8,7 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### enhancement
+## v1.18.0 - 2024-10-28
+
+### 🚀 Enhancements
 - Add 1.31 support and drop 1.26 @zeitlerc [#421](https://github.com/newrelic/newrelic-prometheus-configurator/pull/421)
 
 ## v1.17.4 - 2024-10-07
