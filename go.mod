@@ -3,7 +3,7 @@ module github.com/newrelic/newrelic-prometheus-configurator
 go 1.23.3
 
 require (
-	github.com/alecthomas/units v0.0.0-20240626203959-61d1e3462e30
+	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b
 	github.com/prometheus/prometheus v0.37.8
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
