@@ -8,6 +8,12 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.18.3 - 2024-11-25
+
+### ⛓️ Dependencies
+- Updated github.com/alecthomas/units digest
+- Updated golang.org/x/sync to v0.9.0
+
 ## v1.18.2 - 2024-11-18
 
 ### ⛓️ Dependencies
