@@ -14,7 +14,7 @@ env:
 jobs:
   chart-lint:
     name: Helm chart Lint
-    runs-on: ubuntu-22.04 # Pinning this version is needed till k8s 1.16, 1.17, 1.18 are supported/tested
+    runs-on: ubuntu-24.04 # Pinning this version is needed till k8s 1.16, 1.17, 1.18 are supported/tested
     timeout-minutes: 10
     strategy:
       matrix:
