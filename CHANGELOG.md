@@ -8,6 +8,13 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v1.18.5 - 2024-12-23
+
+### ⛓️ Dependencies
+- Updated go to v1.23.4
+- Updated golang.org/x/sync to v0.10.0
+- Updated kubernetes packages to v0.32.0
+
 ## v1.18.4 - 2024-12-09
 
 ### ⛓️ Dependencies
