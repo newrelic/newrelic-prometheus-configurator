@@ -8,8 +8,15 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### enhancement
+## v1.20.0 - 2025-03-24
+
+### 🚀 Enhancements
 - Add v1.32 support and drop support for v1.27 @kpattaswamy [#447](https://github.com/newrelic/newrelic-prometheus-configurator/pull/447)
+
+### ⛓️ Dependencies
+- Updated golang.org/x/sync to v0.11.0
+- Updated kubernetes packages to v0.32.3
+- Updated go to v1.24.1
 
 ## v1.19.2 - 2025-02-17
 
