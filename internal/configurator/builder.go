@@ -11,6 +11,7 @@ const (
 	ChartVersionEnvKey   = "NR_PROM_CHART_VERSION"
 	DataSourceNameEnvKey = "NR_PROM_DATA_SOURCE_NAME"
 	LicenseKeyEnvKey     = "NR_PROM_LICENSE_KEY"
+	ProxyUrlEnvKey       = "NR_PROM_PROXY_URL"
 )
 
 var (
@@ -63,6 +64,10 @@ func BuildPromConfig(nrConfig *NrConfig) (*PromConfig, error) {
 func expand(config *NrConfig) {
 	if licenseKey := os.Getenv(LicenseKeyEnvKey); licenseKey != "" {
 		config.RemoteWrite.LicenseKey = licenseKey
+	}
+
+	if proxyurl := os.Getenv(ProxyUrlEnvKey); proxyurl != "" {
+		config.RemoteWrite.ProxyURL = proxyurl
 	}
 
 	chartVersion := os.Getenv(ChartVersionEnvKey)
