@@ -204,6 +204,18 @@ config:
       # @default -- `false`
       # retry_on_http_429:
 
+  # Retrive proxy_url from a secret
+  # @default -- `false` 
+  # If set will overwrite the proxy_url if set by newrelic_remote_write.proxy_url
+  # Ensure secret to use exists before setting this to true
+  proxyFromSecret:
+    enabled: false
+    # -- The name of the secret containing the proxy URL.
+    name: ""
+    # -- The key in the secret containing the proxy URL.  
+    key: ""
+
+
   # -- (object) It includes additional remote-write configuration. Note this configuration is not parsed, so valid
   # [prometheus remote_write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
   # should be provided.

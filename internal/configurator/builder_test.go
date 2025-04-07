@@ -238,6 +238,60 @@ func TestChartVersion(t *testing.T) { //nolint: paralleltest
 	}
 }
 
+func TestProxyUrl(t *testing.T) { //nolint: tparallel
+	t.Setenv(configurator.LicenseKeyEnvKey, "fake")
+	t.Setenv(configurator.ProxyUrlEnvKey, "")
+
+	configWithProxyURL := configurator.NrConfig{
+		RemoteWrite: remotewrite.Config{},
+	}
+
+	//nolint: paralleltest // need clean env variables.
+	t.Run("IsSetFromConfig", func(t *testing.T) {
+		configWithProxyURL.RemoteWrite.ProxyURL = "http://proxy-from-config.com"
+		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		require.NoError(t, err)
+
+		data, _ := yaml.Marshal(promConf)
+		require.Contains(t, string(data), fmt.Sprintf("proxy_url: %s", "http://proxy-from-config.com"))
+	})
+
+	expectedProxyURL := "http://proxy-from-env.com"
+	t.Setenv(configurator.ProxyUrlEnvKey, expectedProxyURL)
+
+	t.Run("IsSetFromEnvVar", func(t *testing.T) {
+		t.Parallel()
+
+		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		require.NoError(t, err)
+
+		data, _ := yaml.Marshal(promConf)
+		require.Contains(t, string(data), fmt.Sprintf("proxy_url: %s", expectedProxyURL))
+	})
+
+	t.Run("EnvVarOverridesConfig", func(t *testing.T) {
+		t.Parallel()
+
+		configWithProxyURL.RemoteWrite.ProxyURL = "http://proxy-from-config.com"
+		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		require.NoError(t, err)
+
+		data, _ := yaml.Marshal(promConf)
+		require.Contains(t, string(data), fmt.Sprintf("proxy_url: %s", expectedProxyURL), "Environment variable should override the configuration value")
+	})
+
+	t.Run("IsNotPresentWhenUnset", func(t *testing.T) {
+		t.Setenv(configurator.ProxyUrlEnvKey, "")
+		configWithProxyURL.RemoteWrite.ProxyURL = ""
+
+		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		require.NoError(t, err)
+
+		data, _ := yaml.Marshal(promConf)
+		require.NotContains(t, string(data), "proxy_url:", "proxy_url should not be present when unset in both config and environment")
+	})
+}
+
 func assertYamlPromConfigsAreEqual(t *testing.T, y1, y2 []byte) {
 	t.Helper()
 

@@ -42,6 +42,11 @@ common:
 {{- end -}}
 {{- end -}}
 
+{{- /* Remove proxy_url if proxyFromSecret.enabled is true */ -}}
+{{- if .Values.config.proxyFromSecret.enabled -}}
+  {{- $_ := unset $tmp "proxy_url" -}}
+{{- end -}}
+
 {{- if not (empty $tmp) -}}
   {{- dict "newrelic_remote_write" $tmp | toYaml -}}
 {{- end -}}
