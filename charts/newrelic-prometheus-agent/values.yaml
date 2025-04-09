@@ -173,6 +173,10 @@ config:
     # @default -- `""`
     # proxy_url:
 
+    # -- Use proxy URL indicated by environment variables (HTTP_PROXY, http_proxy, HTTPS_PROXY, https_proxy, and no_proxy) can be configured via config.extraEnvs
+    # @default -- `""`
+    # proxy_from_environment: 
+
     # -- # Timeout for requests to the remote write endpoint.
     # @default -- `30s`
     # remote_timeout:
@@ -288,6 +292,10 @@ config:
           # -- Map of labels that the targets should have. If only the label name is defined, the filter only checks if exists.
           # @default -- `{}`
           # labels:
+          
+      # -- Use proxy URL indicated by environment variables (HTTP_PROXY, http_proxy, HTTPS_PROXY, https_proxy, and no_proxy) can be configured via config.extraEnvs
+      # @default -- `""`
+      # proxy_from_environment: 
 
       # -- Advanced configs of the Kubernetes service discovery `kuberentes_sd_config` options,
       # check [prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config) for details.
@@ -464,6 +472,21 @@ config:
       # @default -- `[]`
       # extra_metric_relabel_config:
 
+    
+  #  If configuring environemt varibles from configmaps or secrets, ensure the configmap or secret exists before enableing this
+  # extraEnvs:
+  #   - name: HTTPS_PROXY
+  #     value: "http://example.com" # Direct value
+  #   - name: HTTPS_PROXY
+  #     valueFrom:
+  #       configMapKeyRef:
+  #         name: my-configmap
+  #         key: proxy
+  #   - name: HTTPS_PROXY
+  #     valueFrom:
+  #       secretKeyRef:
+  #         name: my-secret
+  #         key: proxy
 
   # -- It is possible to include extra scrape configuration in [prometheus format](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config).
   # Please note, it should be a valid Prometheus configuration which will not be parsed by the chart.
@@ -471,3 +494,6 @@ config:
   # This configuration should be used as a workaround whenever kubernetes and static job do not cover a particular use-case.
   # @default -- `[]`
   extra_scrape_configs: []
+
+
+
