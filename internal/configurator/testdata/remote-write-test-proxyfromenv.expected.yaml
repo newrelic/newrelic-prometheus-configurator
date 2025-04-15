@@ -1,0 +1,30 @@
+remote_write:
+  - name: newrelic_rw
+    url: https://staging-metric-api.newrelic.com/prometheus/v1/write?collector_name=prometheus-agent&prometheus_server=data-source
+    remote_timeout: 30s
+    authorization:
+      credentials: nrLicenseKey
+    tls_config:
+      ca_file: /path/to/ca.crt
+      cert_file: /path/to/cert.crt
+      key_file: /path/to/key.crt
+      server_name: server.name
+      insecure_skip_verify: true
+      min_version: TLS12
+    proxy_from_environment: true
+    queue_config:
+      capacity: 2500
+      max_shards: 200
+      min_shards: 1
+      max_samples_per_send: 500
+      batch_send_deadline: 5s
+      min_backoff: 30ms
+      max_backoff: 5s
+      retry_on_http_429: false
+    write_relabel_configs:
+      - action: drop
+        regex: node_memory_active_bytes;localhost:9100
+        source_labels:
+          - __name__
+          - instance
+  - url: https://extra.prometheus.remote.write
