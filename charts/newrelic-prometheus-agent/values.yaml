@@ -175,7 +175,7 @@ config:
 
     # -- Use proxy URL indicated by environment variables (HTTP_PROXY, http_proxy, HTTPS_PROXY, https_proxy, and no_proxy) can be configured via config.extraEnvs
     # @default -- `""`
-    # proxy_from_environment: 
+    # proxy_from_environment:
 
     # -- # Timeout for requests to the remote write endpoint.
     # @default -- `30s`
@@ -292,10 +292,10 @@ config:
           # -- Map of labels that the targets should have. If only the label name is defined, the filter only checks if exists.
           # @default -- `{}`
           # labels:
-          
+
       # -- Use proxy URL indicated by environment variables (HTTP_PROXY, http_proxy, HTTPS_PROXY, https_proxy, and no_proxy) can be configured via config.extraEnvs
       # @default -- `""`
-      # proxy_from_environment: 
+      # proxy_from_environment:
 
       # -- Advanced configs of the Kubernetes service discovery `kuberentes_sd_config` options,
       # check [prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config) for details.
@@ -472,7 +472,7 @@ config:
       # @default -- `[]`
       # extra_metric_relabel_config:
 
-    
+
   #  If configuring environment variables from configmaps or secrets, ensure the configmap or secret exists before enabling this
   # extraEnvs:
   #   - name: HTTPS_PROXY
@@ -494,6 +494,3 @@ config:
   # This configuration should be used as a workaround whenever kubernetes and static job do not cover a particular use-case.
   # @default -- `[]`
   extra_scrape_configs: []
-
-
-
