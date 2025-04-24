@@ -473,7 +473,7 @@ config:
       # extra_metric_relabel_config:
 
     
-  #  If configuring environemt varibles from configmaps or secrets, ensure the configmap or secret exists before enableing this
+  #  If configuring environment variables from configmaps or secrets, ensure the configmap or secret exists before enabling this
   # extraEnvs:
   #   - name: HTTPS_PROXY
   #     value: "http://example.com" # Direct value

@@ -5,7 +5,7 @@ type: application
 version: 1.17.0
 # Prometheus Server Version
 # https://pkg.go.dev/github.com/prometheus/prometheus#readme-prometheus-code-base
-appVersion: "v2.53.4" # minimum required version 2023-05-13 -> https://github.com/prometheus/prometheus/releases/tag/v2.44.0
+appVersion: "v2.53.4"  # Minimum required version 2023-05-13 -> https://github.com/prometheus/prometheus/releases/tag/v2.44.0
 annotations:
   configuratorVersion: "1.20.0"
 dependencies:
