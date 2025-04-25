@@ -75,22 +75,15 @@ PROMETHEUS_VERSION_CHART := $(shell grep "appVersion" charts/newrelic-prometheus
 
 .PHONY: check-prometheus-version
 check-prometheus-version:
-	@if [[ $(PROMETHEUS_VERSION_CHART) == v3* ]]; then \
-		REGEX="v3\.([0-9]+)\.([0-9]+)"; \
-		[[ $(PROMETHEUS_VERSION_CHART) =~ $$REGEX ]]; \
-		MINOR=$${BASH_REMATCH[1]}; \
-        printf -v MINOR '%02d' $$MINOR; \
-		PATCH=$${BASH_REMATCH[2]}; \
-		CONVERTED_PROMETHEUS_VERSION_CHART="v0.3$${MINOR}.$${PATCH}"; \
-    else \
-		REGEX="v2\.([0-9]+)\.([0-9]+)"; \
-		[[ $(PROMETHEUS_VERSION_CHART) =~ $$REGEX ]]; \
-		MINOR=$${BASH_REMATCH[1]}; \
-		PATCH=$${BASH_REMATCH[2]}; \
-		CONVERTED_PROMETHEUS_VERSION_CHART="v0.$${MINOR}.$${PATCH}"; \
-    fi; \
-	echo "PROMETHEUS_VERSION_CHART=$(PROMETHEUS_VERSION_CHART) (AKA $${CONVERTED_PROMETHEUS_VERSION_CHART}), PROMETHEUS_VERSION_GO=$(PROMETHEUS_VERSION_GO)"; \
-	if [ "$${CONVERTED_PROMETHEUS_VERSION_CHART}" != "$(PROMETHEUS_VERSION_GO)" ]; then \
+	@converted_version=$$(echo "$(PROMETHEUS_VERSION_CHART)" | awk -F. '{ \
+		if ($$1 == "v3") { \
+			printf("v0.3%02d.%d\n", $$2, $$3) \
+		} else if ($$1 == "v2") { \
+			printf("v0.%d.%d\n", $$2, $$3) \
+		}\
+	}'); \
+	echo "PROMETHEUS_VERSION_CHART=$(PROMETHEUS_VERSION_CHART)(AKA $${converted_version}), PROMETHEUS_VERSION_GO=$(PROMETHEUS_VERSION_GO)"; \
+	if [ "$${converted_version}" != "$(PROMETHEUS_VERSION_GO)" ]; then \
 		echo "Prometheus server version defined in chart does not match with the one in Go dependency"; \
 		exit 1; \
 	fi
