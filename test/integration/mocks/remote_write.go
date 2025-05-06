@@ -5,10 +5,13 @@ package mocks
 import (
 	"errors"
 	"fmt"
+	"github.com/prometheus/prometheus/config"
 	"io"
+	"log/slog"
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"syscall"
 	"testing"
@@ -19,11 +22,12 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-// StartRemoteWriteEndpoint start an remote write endpoint with proxy.
+// StartRemoteWriteEndpoint start a remote write endpoint with proxy.
 func StartRemoteWriteEndpoint(t *testing.T, appendable storage.Appendable) *httptest.Server {
 	t.Helper()
 
-	handler := remote.NewWriteHandler(mockLog{t}, appendable)
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	handler := remote.NewWriteHandler(logger, nil, appendable, []config.RemoteWriteProtoMsg{config.RemoteWriteProtoMsgV1}, false)
 
 	url := ""
 	remoteWriteServer := httptest.NewTLSServer(handlerWithProxy(t, handler, &url))
@@ -92,13 +96,4 @@ func pipe(from net.Conn, to net.Conn) error {
 	default:
 		return fmt.Errorf("error in pipe: %w", err)
 	}
-}
-
-type mockLog struct {
-	t *testing.T
-}
-
-func (ml mockLog) Log(keys ...interface{}) error {
-	ml.t.Log(keys...)
-	return nil
 }
