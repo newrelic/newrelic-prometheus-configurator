@@ -48,25 +48,26 @@ type OAuth2 struct {
 
 // Job holds fields which do not change from nrConfig and prometheusConfig jobs.
 type Job struct {
-	JobName               string           `yaml:"job_name"`
-	HonorLabels           *bool            `yaml:"honor_labels,omitempty"`
-	HonorTimestamps       *bool            `yaml:"honor_timestamps,omitempty"`
-	Params                url.Values       `yaml:"params,omitempty"`
-	Scheme                string           `yaml:"scheme,omitempty"`
-	BodySizeLimit         units.Base2Bytes `yaml:"body_size_limit,omitempty"`
-	SampleLimit           uint             `yaml:"sample_limit,omitempty"`
-	TargetLimit           uint             `yaml:"target_limit,omitempty"`
-	LabelLimit            uint             `yaml:"label_limit,omitempty"`
-	LabelNameLengthLimit  uint             `yaml:"label_name_length_limit,omitempty"`
-	LabelValueLengthLimit uint             `yaml:"label_value_length_limit,omitempty"`
-	MetricsPath           string           `yaml:"metrics_path,omitempty"`
-	ScrapeInterval        time.Duration    `yaml:"scrape_interval,omitempty"`
-	ScrapeTimeout         time.Duration    `yaml:"scrape_timeout,omitempty"`
-	TLSConfig             *TLSConfig       `yaml:"tls_config,omitempty"`
-	BasicAuth             *BasicAuth       `yaml:"basic_auth,omitempty"`
-	Authorization         Authorization    `yaml:"authorization,omitempty"`
-	OAuth2                OAuth2           `yaml:"oauth2,omitempty"`
-	ProxyURL              string           `yaml:"proxy_url,omitempty"`
+	JobName                string           `yaml:"job_name"`
+	HonorLabels            *bool            `yaml:"honor_labels,omitempty"`
+	FallbackScrapeProtocol string           `yaml:"fallback_scrape_protocol,omitempty"`
+	HonorTimestamps        *bool            `yaml:"honor_timestamps,omitempty"`
+	Params                 url.Values       `yaml:"params,omitempty"`
+	Scheme                 string           `yaml:"scheme,omitempty"`
+	BodySizeLimit          units.Base2Bytes `yaml:"body_size_limit,omitempty"`
+	SampleLimit            uint             `yaml:"sample_limit,omitempty"`
+	TargetLimit            uint             `yaml:"target_limit,omitempty"`
+	LabelLimit             uint             `yaml:"label_limit,omitempty"`
+	LabelNameLengthLimit   uint             `yaml:"label_name_length_limit,omitempty"`
+	LabelValueLengthLimit  uint             `yaml:"label_value_length_limit,omitempty"`
+	MetricsPath            string           `yaml:"metrics_path,omitempty"`
+	ScrapeInterval         time.Duration    `yaml:"scrape_interval,omitempty"`
+	ScrapeTimeout          time.Duration    `yaml:"scrape_timeout,omitempty"`
+	TLSConfig              *TLSConfig       `yaml:"tls_config,omitempty"`
+	BasicAuth              *BasicAuth       `yaml:"basic_auth,omitempty"`
+	Authorization          Authorization    `yaml:"authorization,omitempty"`
+	OAuth2                 OAuth2           `yaml:"oauth2,omitempty"`
+	ProxyURL               string           `yaml:"proxy_url,omitempty"`
 
 	StaticConfigs        []StaticConfig       `yaml:"static_configs,omitempty"`
 	RelabelConfigs       []RelabelConfig      `yaml:"relabel_configs,omitempty"`
