@@ -51,7 +51,10 @@ func BuildPromConfig(nrConfig *NrConfig) (*PromConfig, error) {
 	}
 
 	for _, job := range k8sJobs {
-		job.FallbackScrapeProtocol = "PrometheusText0.0.4"
+		if job.FallbackScrapeProtocol == "" {
+			job.FallbackScrapeProtocol = "PrometheusText0.0.4"
+		}
+
 		prometheusConfig.ScrapeConfigs = append(prometheusConfig.ScrapeConfigs, job)
 	}
 

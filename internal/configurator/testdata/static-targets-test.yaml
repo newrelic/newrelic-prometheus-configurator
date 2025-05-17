@@ -16,7 +16,7 @@ static_targets:
         oe: [ "utf8" ]
       scheme: "https"
       body_size_limit: 100MiB
-      fallback_scrape_protocol: "PrometheusText0.0.4"
+      fallback_scrape_protocol: "PrometheusText1.0.0"
       sample_limit: 2000
       target_limit: 2000
       label_limit: 2000
@@ -138,7 +138,7 @@ extra_scrape_configs:
       oe: [ "utf8" ]
     scheme: "https"
     body_size_limit: 100MiB
-    fallback_scrape_protocol: "PrometheusText0.0.4"
+    fallback_scrape_protocol: "PrometheusText1.0.0"
     sample_limit: 2000
     target_limit: 2000
     label_limit: 2000
