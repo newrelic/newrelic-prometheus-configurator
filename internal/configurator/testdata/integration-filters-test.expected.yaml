@@ -1,5 +1,6 @@
 scrape_configs:
   - job_name: default-pod
+    fallback_scrape_protocol: PrometheusText0.0.4
     kubernetes_sd_configs:
       - role: pod
     relabel_configs:
@@ -38,6 +39,7 @@ scrape_configs:
         separator: ";"
         regex: ".*(?i)(test1|test2).*"
   - job_name: default-endpoints
+    fallback_scrape_protocol: PrometheusText0.0.4
     kubernetes_sd_configs:
       - role: endpoints
     relabel_configs:

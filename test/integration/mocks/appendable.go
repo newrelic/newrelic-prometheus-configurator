@@ -7,11 +7,13 @@ import (
 	"sync"
 
 	"github.com/prometheus/prometheus/model/exemplar"
+	"github.com/prometheus/prometheus/model/histogram"
 	"github.com/prometheus/prometheus/model/labels"
+	"github.com/prometheus/prometheus/model/metadata"
 	"github.com/prometheus/prometheus/storage"
 )
 
-// AppendableSample represent a sample that the appendable.go would stores.
+// AppendableSample represent a sample that the appendable.go would store.
 type AppendableSample struct {
 	Labels    labels.Labels
 	Timestamp int64
@@ -43,12 +45,35 @@ func (m *Appendable) Append(_ storage.SeriesRef, l labels.Labels, t int64, v flo
 	return 0, nil
 }
 
+func (m *Appendable) AppendHistogram(ref storage.SeriesRef, l labels.Labels, t int64, h *histogram.Histogram, fh *histogram.FloatHistogram) (storage.SeriesRef, error) {
+	return 0, nil
+}
+
+func (m *Appendable) AppendCTZeroSample(ref storage.SeriesRef, l labels.Labels, _, ct int64) (storage.SeriesRef, error) {
+	return m.Append(ref, l, ct, 0.0)
+}
+
+func (m *Appendable) AppendHistogramCTZeroSample(ref storage.SeriesRef, l labels.Labels, _, ct int64, h *histogram.Histogram, _ *histogram.FloatHistogram) (storage.SeriesRef, error) {
+	if h != nil {
+		return m.AppendHistogram(ref, l, ct, &histogram.Histogram{}, nil)
+	}
+	return m.AppendHistogram(ref, l, ct, nil, &histogram.FloatHistogram{})
+}
+
 func (m *Appendable) Commit() error {
 	return nil
 }
 
 func (*Appendable) Rollback() error {
 	return nil
+}
+
+func (m *Appendable) SetOptions(_ *storage.AppendOptions) {
+	panic("unimplemented")
+}
+
+func (m *Appendable) UpdateMetadata(_ storage.SeriesRef, l labels.Labels, mp metadata.Metadata) (storage.SeriesRef, error) {
+	return 0, nil
 }
 
 func (m *Appendable) AppendExemplar(_ storage.SeriesRef, _ labels.Labels, _ exemplar.Exemplar) (storage.SeriesRef, error) {

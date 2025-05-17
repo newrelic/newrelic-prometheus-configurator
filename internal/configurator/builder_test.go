@@ -255,6 +255,6 @@ func assertIsPrometheusConfig(t *testing.T, y []byte) {
 	require.NoError(t, err)
 	_, err = tmpFile.Write(y)
 	require.NoError(t, err)
-	_, err = prometheusConfig.LoadFile(tmpFile.Name(), true, false, nil)
+	_, err = prometheusConfig.LoadFile(tmpFile.Name(), true, nil)
 	require.NoError(t, err, "file content was %s", string(y))
 }
