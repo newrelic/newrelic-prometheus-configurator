@@ -17,6 +17,7 @@ scrape_configs:
       oe: [ "utf8" ]
     scheme: "https"
     body_size_limit: 100MiB
+    fallback_scrape_protocol: "PrometheusText0.0.4"
     sample_limit: 2000
     target_limit: 2000
     label_limit: 2000
@@ -138,6 +139,7 @@ scrape_configs:
       oe: [ "utf8" ]
     scheme: "https"
     body_size_limit: 100MiB
+    fallback_scrape_protocol: "PrometheusText0.0.4"
     sample_limit: 2000
     target_limit: 2000
     label_limit: 2000

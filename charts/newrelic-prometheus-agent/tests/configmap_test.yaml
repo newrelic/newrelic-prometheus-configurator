@@ -121,6 +121,7 @@ tests:
             insecure_skip_verify: true
           queue_config:
             retry_on_http_429: false
+            sample_age_limit: 90s
           extra_write_relabel_configs:
             - source_labels:
               - __name__
@@ -161,6 +162,7 @@ tests:
               proxy_url: http://proxy.url
               queue_config:
                 retry_on_http_429: false
+                sample_age_limit: 90s
               remote_timeout: 30s
               staging: true
               tls_config:
@@ -319,6 +321,7 @@ tests:
                 oe: [ "utf8" ]
               scheme: "https"
               body_size_limit: 100MiB
+              fallback_scrape_protocol: "PrometheusText1.0.0"
               sample_limit: 2000
               target_limit: 2000
               label_limit: 2000
@@ -385,6 +388,7 @@ tests:
                   credentials: fancy-credentials
                   type: Bearer
                 body_size_limit: 100MiB
+                fallback_scrape_protocol: PrometheusText1.0.0
                 extra_metric_relabel_config:
                 - action: drop
                   regex: node_memory_active_bytes;localhost:9100

@@ -139,6 +139,7 @@ type QueueConfig struct {
 	MinBackoff        time.Duration `yaml:"min_backoff"`
 	MaxBackoff        time.Duration `yaml:"max_backoff"`
 	RetryOnHTTP429    *bool         `yaml:"retry_on_http_429"`
+	SampleAgeLimit    time.Duration `yaml:"sample_age_limit"`
 }
 
 // RemoteWrite represents a prometheus remote_write config.
