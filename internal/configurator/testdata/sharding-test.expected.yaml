@@ -26,6 +26,24 @@ scrape_configs:
         regex: node_memory_active_bytes;localhost:9100
         action: drop
 
+  - job_name: my-custom-fallback
+    static_configs:
+      - targets:
+          - "192.168.3.1:9911"
+    fallback_scrape_protocol: "PrometheusText1.0.0"
+    relabel_configs:
+      - source_labels: [ '__address__' ]
+        regex: (\d{1,3}\.\d{1,3}\.\d{1,3}.\d{1,3})(?::\d+)?
+        action: replace
+        target_label: __tmp_hash
+      - source_labels: [ '__tmp_hash' ]
+        modulus: 2
+        action: hashmod
+        target_label: __tmp_hash
+      - source_labels: [ '__tmp_hash' ]
+        regex: ^1$
+        action: keep
+
   # pod
   - job_name: default-pod
     fallback_scrape_protocol: PrometheusText0.0.4
