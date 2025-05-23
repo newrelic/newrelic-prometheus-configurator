@@ -25,16 +25,14 @@ tests:
               scrape_interval: 30s
             kubernetes:
               jobs:
-              - fallback_scrape_protocol: PrometheusText0.0.4
-                job_name_prefix: default
+              - job_name_prefix: default
                 target_discovery:
                   endpoints: true
                   filter:
                     annotations:
                       prometheus.io/scrape: true
                   pod: true
-              - fallback_scrape_protocol: PrometheusText0.0.4
-                integrations_filter:
+              - integrations_filter:
                   enabled: false
                 job_name_prefix: newrelic
                 target_discovery:
@@ -85,16 +83,14 @@ tests:
               scrape_interval: 30s
             kubernetes:
               jobs:
-              - fallback_scrape_protocol: PrometheusText0.0.4
-                job_name_prefix: default
+              - job_name_prefix: default
                 target_discovery:
                   endpoints: true
                   filter:
                     annotations:
                       prometheus.io/scrape: true
                   pod: true
-              - fallback_scrape_protocol: PrometheusText0.0.4
-                integrations_filter:
+              - integrations_filter:
                   enabled: false
                 job_name_prefix: newrelic
                 target_discovery:
