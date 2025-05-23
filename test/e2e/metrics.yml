@@ -13,7 +13,7 @@ entities:
       - name: prometheus_agent_checkpoint_creations_failed_total
       - name: prometheus_agent_checkpoint_deletions_failed_total
 #        Removed from test due to change from prometheus.Counter to *prometheus.CounterVec that results in 0 values not sent
-#      - name: prometheus_remote_storage_samples_dropped_total
+      - name: prometheus_remote_storage_samples_dropped_total
       - name: prometheus_remote_storage_samples_failed_total
       - name: prometheus_sd_kubernetes_http_request_total
       - name: prometheus_agent_truncate_duration_seconds_sum
