@@ -21,6 +21,7 @@ remote_write:
       min_backoff: 30ms
       max_backoff: 5s
       retry_on_http_429: false
+      sample_age_limit: 45s
     write_relabel_configs:
       - action: drop
         regex: node_memory_active_bytes;localhost:9100

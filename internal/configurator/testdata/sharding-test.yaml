@@ -29,6 +29,10 @@ static_targets:
         - source_labels: [ '__name__', 'instance' ]
           regex: node_memory_active_bytes;localhost:9100
           action: drop
+    - job_name: my-custom-fallback
+      targets:
+        - "192.168.3.1:9911"
+      fallback_scrape_protocol: "PrometheusText1.0.0"
 
 newrelic_remote_write:
   license_key: nrLicenseKey
