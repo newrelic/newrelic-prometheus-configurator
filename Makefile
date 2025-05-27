@@ -25,7 +25,7 @@ clean:
 .PHONY: test
 test:
 	mkdir -p $(TEST_COVERAGE_DIR)
-	go test ./... -count=1 -coverprofile=$(TEST_COVERAGE_DIR)/coverage.out -covermode=count
+	go test ./... -count=1 -coverprofile=$(TEST_COVERAGE_DIR)/coverage.out -coverpkg=./cmd/...,./internal/... -covermode=count
 
 .PHONY: build
 build: BINARY_NAME := $(if $(GOOS),$(BINARY_NAME)-$(GOOS),$(BINARY_NAME))
