@@ -8,6 +8,200 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### breaking
+- Upgrade to Prometheus v3. Please see our migration guide [here](https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/migrations/v2-upgrade) @dbudziwojskiNR [#458](https://github.com/newrelic/newrelic-prometheus-configurator/pull/458)
+
+## v1.20.0 - 2025-03-24
+
+### 🚀 Enhancements
+- Add v1.32 support and drop support for v1.27 @kpattaswamy [#447](https://github.com/newrelic/newrelic-prometheus-configurator/pull/447)
+
+### ⛓️ Dependencies
+- Updated golang.org/x/sync to v0.11.0
+- Updated kubernetes packages to v0.32.3
+- Updated go to v1.24.1
+
+## v1.19.2 - 2025-02-17
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.32.1
+- Updated alpine to v3.21.3
+
+## v1.19.1 - 2025-01-27
+
+### ⛓️ Dependencies
+- Updated go to v1.23.5
+
+## v1.19.0 - 2025-01-20
+
+### ⛓️ Dependencies
+- Upgraded golang.org/x/net from 0.30.0 to 0.33.0
+
+## v1.18.6 - 2025-01-13
+
+### ⛓️ Dependencies
+- Updated alpine to v3.21.2
+
+## v1.18.5 - 2024-12-23
+
+### ⛓️ Dependencies
+- Updated go to v1.23.4
+- Updated golang.org/x/sync to v0.10.0
+- Updated kubernetes packages to v0.32.0
+
+## v1.18.4 - 2024-12-09
+
+### ⛓️ Dependencies
+- Updated alpine to v3.21.0
+
+## v1.18.3 - 2024-11-25
+
+### ⛓️ Dependencies
+- Updated github.com/alecthomas/units digest
+- Updated golang.org/x/sync to v0.9.0
+
+## v1.18.2 - 2024-11-18
+
+### ⛓️ Dependencies
+- Updated go to v1.23.3
+
+## v1.18.1 - 2024-11-04
+
+### ⛓️ Dependencies
+- Updated golang.org/x/sync to v0.8.0
+
+## v1.18.0 - 2024-10-28
+
+### 🚀 Enhancements
+- Add 1.31 support and drop 1.26 @zeitlerc [#421](https://github.com/newrelic/newrelic-prometheus-configurator/pull/421)
+
+## v1.17.4 - 2024-10-07
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.3
+
+## v1.17.3 - 2024-07-29
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.2
+- Updated kubernetes packages to v0.30.3
+
+## v1.17.2 - 2024-07-22
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.30.2
+
+## v1.17.1 - 2024-07-15
+
+### ⛓️ Dependencies
+- Updated github.com/alecthomas/units digest
+
+## v1.17.0 - 2024-06-24
+
+### 🚀 Enhancements
+- Add 1.29 and 1.30 support and drop 1.25 and 1.24 @dbudziwojskiNR [#399](https://github.com/newrelic/newrelic-prometheus-configurator/pull/399)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.1
+
+## v1.16.4 - 2024-06-17
+
+### ⛓️ Dependencies
+- Updated go to v1.22.4
+
+## v1.16.3 - 2024-06-10
+
+### ⛓️ Dependencies
+- Updated go to v1.22.3
+- Updated kubernetes packages to v0.30.1
+
+## v1.16.2 - 2024-05-27
+
+### ⛓️ Dependencies
+- Updated alpine to v3.20.0
+
+## v1.16.1 - 2024-05-20
+
+### 🐞 Bug fixes
+- Update statefulset initcontainer to use container level security context from values [#385](https://github.com/newrelic/newrelic-prometheus-configurator/pull/385)
+
+## v1.16.0 - 2024-04-29
+
+### ⛓️ Dependencies
+- Upgraded golang.org/x/net from 0.19.0 to 0.23.0
+
+## v1.15.0 - 2024-03-25
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.3
+- Upgraded google.golang.org/protobuf from 1.31.0 to 1.33.0
+
+## v1.15.0 - 2024-03-08 
+
+### 🚀 Enhancements
+
+- Add `examples/metrictypes` directory for metric type conversion examples. @bpschmitt [#369] (https://github.com/newrelic/newrelic-prometheus-configurator/pull/369)
+
+## v1.14.0 - 2024-02-26
+
+### 🚀 Enhancements
+- Add linux node selector @dbudziwojskiNR [#362](https://github.com/newrelic/newrelic-prometheus-configurator/pull/362)
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.2
+
+## v1.13.0 - 2024-02-05
+
+### 🚀 Enhancements
+- Add Codecov @dbudziwojskiNR [#349](https://github.com/newrelic/newrelic-prometheus-configurator/pull/349)
+- Add Codecov badge @dbudziwojskiNR [#352](https://github.com/newrelic/newrelic-prometheus-configurator/pull/352)
+
+### 🐞 Bug fixes
+- Fix flaky tests @dbudziwojskiNR [#344](https://github.com/newrelic/newrelic-prometheus-configurator/pull/344)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.19.1
+
+## v1.12.1 - 2024-01-22
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.1
+- Updated go to v1.21.6
+
+## v1.12.0 - 2024-01-15
+
+### 🚀 Enhancements
+- Trigger release creation by @juanjjaramillo [#341](https://github.com/newrelic/newrelic-prometheus-configurator/pull/341)
+
+## v1.11.3 - 2024-01-09
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.29.0
+- Updated golang.org/x/sync to v0.6.0
+
+## v1.11.2 - 2023-12-18
+
+### ⛓️ Dependencies
+- Updated alpine to v3.19.0
+
+## v1.11.1 - 2023-12-11
+
+### ⛓️ Dependencies
+- Updated go to v1.21.5
+
+## v1.11.0 - 2023-12-06
+
+### 🚀 Enhancements
+- Update reusable workflow dependency by @juanjjaramillo [#325](https://github.com/newrelic/newrelic-prometheus-configurator/pull/325)
+
+### 🐞 Bug fixes
+- Fix integration test by @svetlanabrennan in [#324](https://github.com/newrelic/newrelic-prometheus-configurator/pull/324)
+
+### ⛓️ Dependencies
+- Updated kubernetes packages to v0.28.4
+- Updated alpine to v3.18.5
+- Updated github.com/alecthomas/units digest
+
 ## v1.10.0 - 2023-11-13
 
 ### 🚀 Enhancements

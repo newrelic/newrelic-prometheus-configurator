@@ -8,25 +8,25 @@ on:
 
 env:
   # NOTICE that apart from this, the versions in the chart linter matrix needs to be bumped too.
-  LATEST_K8S_VERSION: 'v1.28.3'
-  MINIKUBE_VERSION: 'v1.32.0'
+  LATEST_K8S_VERSION: 'v1.32.0'
+  MINIKUBE_VERSION: 'v1.35.0'
 
 jobs:
   chart-lint:
     name: Helm chart Lint
-    runs-on: ubuntu-22.04 # Pinning this version is needed till k8s 1.16, 1.17, 1.18 are supported/tested
+    runs-on: ubuntu-24.04 # Pinning this version is needed till k8s 1.16, 1.17, 1.18 are supported/tested
     timeout-minutes: 10
     strategy:
       matrix:
-        kubernetes-version: [ "v1.24.17", "v1.25.13", "v1.26.8", "v1.27.5", "v1.28.3" ]
+        kubernetes-version: ["v1.32.0", "v1.31.0", "v1.30.0", "v1.29.5", "v1.28.3"]
     steps:
-      - uses: azure/setup-helm@v3
+      - uses: azure/setup-helm@v4
         with:
           version: 'v3.0.0'
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: helm/chart-testing-action@v2.6.1
+      - uses: helm/chart-testing-action@v2.7.0
 
       - name: Lint charts
         run: ct --config .github/ct.yaml lint --debug
@@ -50,7 +50,7 @@ jobs:
               echo "No unit tests found for $chart"
             fi
           done
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         if: steps.list-changed.outputs.changed == 'true'
         with:
           go-version-file: 'go.mod'
@@ -64,7 +64,7 @@ jobs:
             exit 1
           fi
       - name: Setup Minikube
-        uses: manusa/actions-setup-minikube@v2.9.0
+        uses: manusa/actions-setup-minikube@v2.14.0
         if: steps.list-changed.outputs.changed == 'true'
         with:
           minikube version: ${{ env.MINIKUBE_VERSION }}
@@ -95,14 +95,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup Minikube
-        uses: manusa/actions-setup-minikube@v2.9.0
+        uses: manusa/actions-setup-minikube@v2.14.0
         with:
           minikube version: ${{ env.MINIKUBE_VERSION }}
           kubernetes version: ${{ env.LATEST_K8S_VERSION }}
           # default driver doesn't support 'eval $$(minikube docker-env)'.
           driver: docker
           github token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
       # tilt 0.33.3 introduces a breaking change that results in 
@@ -113,7 +113,7 @@ jobs:
           curl -fsSL https://github.com/tilt-dev/tilt/releases/download/v0.33.2/tilt.0.33.2.linux.x86_64.tar.gz | tar -xzv tilt && sudo mv tilt /usr/local/bin/tilt
       - name: Run e2e-test
         env:
-          SECRET_AVAILABLE: ${{ secrets.COREINT_E2E_ACCOUNT_ID }}
+          SECRET_AVAILABLE: ${{ secrets.K8S_AGENTS_E2E_ACCOUNT_ID }}
         if: ${{ env.SECRET_AVAILABLE != '' }}
         uses: newrelic/newrelic-integration-e2e-action@v1
         with:
@@ -121,30 +121,28 @@ jobs:
           retry_attempts: 5
           agent_enabled: false
           spec_path: test/e2e/test-specs.yml
-          account_id: ${{ secrets.COREINT_E2E_ACCOUNT_ID }}
-          api_key: ${{ secrets.COREINT_E2E_API_KEY }}
-          license_key: ${{ secrets.COREINT_E2E_LICENSE_KEY }}
+          account_id: ${{ secrets.K8S_AGENTS_E2E_ACCOUNT_ID }}
+          api_key: ${{ secrets.K8S_AGENTS_E2E_API_KEY }}
+          license_key: ${{ secrets.K8S_AGENTS_E2E_LICENSE_KEY }}
 
   test:
     name: Run tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
       - name: Run unit tests
         run: make test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
+        with:
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Setup Minikube
-        uses: manusa/actions-setup-minikube@v2.9.0
+        uses: manusa/actions-setup-minikube@v2.14.0
         with:
           minikube version: ${{ env.MINIKUBE_VERSION }}
           kubernetes version: ${{ env.LATEST_K8S_VERSION }}
@@ -158,7 +156,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
       - uses: newrelic/newrelic-infra-checkers@v1
@@ -169,7 +167,7 @@ jobs:
       #   with:
       #     auditOn: push
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v8
         continue-on-error: ${{ github.event_name != 'pull_request' }}
         with:
           only-new-issues: true

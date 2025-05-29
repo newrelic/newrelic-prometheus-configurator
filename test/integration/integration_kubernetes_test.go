@@ -402,17 +402,26 @@ kubernetes:
 
 	asserter := newAsserter(ps)
 
+	// Active targets
 	asserter.activeTargetLabels(t, map[string]string{
 		"__meta_kubernetes_pod_name":     runningPod.Name,
 		"__meta_kubernetes_service_name": svc.Name,
 	})
+	asserter.activeTargetCount(t, 1)
+
+	// gsanchezgavier 9/13/2022: Failed Pods are not added as endpoints of the service in K8s.
+	// This could fail if not using a patched version of k8s to executed the test.
+	// https://github.com/kubernetes/kubernetes/pull/110479
+	// See also https://github.com/newrelic/newrelic-prometheus-configurator/pull/85
+	// svetlanabrennan 11/28/2023: Succeeded pods are not added as endpoints of the service in K8s 1.27.0 or higher.
+	// https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.27.md#urgent-upgrade-notes
+	// See also https://github.com/newrelic/newrelic-prometheus-configurator/pull/324
+	// czeitler 10/18/2024: Succeeded pods are once again added as endpoints in K8s 1.31.0 or higher.
+	// See also https://github.com/newrelic/newrelic-prometheus-configurator/pull/421
 	asserter.droppedTargetLabels(t, map[string]string{
 		"__meta_kubernetes_pod_name":     succeededPod.Name,
 		"__meta_kubernetes_service_name": svc.Name,
 	})
-
-	// Failed Pods are not added as endpoints of the service in K8s.
-	// This could fail if not using a patched version of k8s to executed the test.
-	// https://github.com/kubernetes/kubernetes/pull/110479
 	asserter.droppedTargetCount(t, 1)
+
 }
