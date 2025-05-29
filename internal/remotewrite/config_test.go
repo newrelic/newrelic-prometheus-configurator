@@ -29,7 +29,7 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 		Expected promcfg.RemoteWrite
 	}{
 		{
-			Name: "Prod,  non-eu and only mandatory fields",
+			Name: "Prod, non-eu and only mandatory fields",
 			NrConfig: args{
 				remoteConfig: remotewrite.Config{
 					LicenseKey: "fake-prod",
@@ -44,7 +44,7 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 			},
 		},
 		{
-			Name: "Staging, eu and all fields set",
+			Name: "Staging, eu and all fields set with ProxyURL",
 			NrConfig: args{
 				remoteConfig: remotewrite.Config{
 					DataSourceName: "source-of-metrics",
@@ -106,6 +106,77 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 					MaxBackoff:        time.Second,
 					RetryOnHTTP429:    &trueValue,
 					SampleAgeLimit:    60 * time.Second,
+				},
+				WriteRelabelConfigs: []promcfg.RelabelConfig{
+					{
+						SourceLabels: []string{"src.label"},
+						Regex:        "to_drop.*",
+						Action:       "drop",
+					},
+				},
+			},
+		},
+		{
+			Name: "Staging, eu and all fields set with ProxyFromEnvironment",
+			NrConfig: args{
+				remoteConfig: remotewrite.Config{
+					DataSourceName:       "source-of-metrics",
+					LicenseKey:           "eu-fake-staging",
+					Staging:              true,
+					ProxyFromEnvironment: true,
+					TLSConfig: &promcfg.TLSConfig{
+						CAFile:             "ca-file",
+						CertFile:           "cert-file",
+						KeyFile:            "key-file",
+						ServerName:         "server.name",
+						InsecureSkipVerify: &trueValue,
+						MinVersion:         "TLS12",
+					},
+					QueueConfig: &promcfg.QueueConfig{
+						Capacity:          100,
+						MaxShards:         10,
+						MinShards:         2,
+						MaxSamplesPerSend: 1000,
+						BatchSendDeadLine: time.Second,
+						MinBackoff:        100 * time.Microsecond,
+						MaxBackoff:        time.Second,
+						RetryOnHTTP429:    &trueValue,
+					},
+					RemoteTimeout: 10 * time.Second,
+					ExtraWriteRelabelConfigs: []promcfg.RelabelConfig{
+						{
+							SourceLabels: []string{"src.label"},
+							Regex:        "to_drop.*",
+							Action:       "drop",
+						},
+					},
+				},
+			},
+			Expected: promcfg.RemoteWrite{
+				Name:          remotewrite.Name,
+				URL:           "https://staging-metric-api.eu.newrelic.com/prometheus/v1/write?collector_name=prometheus-agent&prometheus_server=source-of-metrics",
+				RemoteTimeout: 10 * time.Second,
+				Authorization: promcfg.Authorization{
+					Credentials: "eu-fake-staging",
+				},
+				ProxyFromEnvironment: true,
+				TLSConfig: &promcfg.TLSConfig{
+					CAFile:             "ca-file",
+					CertFile:           "cert-file",
+					KeyFile:            "key-file",
+					ServerName:         "server.name",
+					InsecureSkipVerify: &trueValue,
+					MinVersion:         "TLS12",
+				},
+				QueueConfig: &promcfg.QueueConfig{
+					Capacity:          100,
+					MaxShards:         10,
+					MinShards:         2,
+					MaxSamplesPerSend: 1000,
+					BatchSendDeadLine: time.Second,
+					MinBackoff:        100 * time.Microsecond,
+					MaxBackoff:        time.Second,
+					RetryOnHTTP429:    &trueValue,
 				},
 				WriteRelabelConfigs: []promcfg.RelabelConfig{
 					{

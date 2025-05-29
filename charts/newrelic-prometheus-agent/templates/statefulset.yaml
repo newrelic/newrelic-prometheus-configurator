@@ -121,6 +121,25 @@ spec:
             {{- if include "newrelic.common.verboseLog" . }}
             - --log.level=debug
             {{- end }}
+          {{- if .Values.config.extraEnvs }}
+          env:
+            {{- range .Values.config.extraEnvs }}
+            - name: {{ .name }}
+              {{- if .value }}
+              value: {{ .value | quote }}
+              {{- else if .valueFrom.configMapKeyRef }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .valueFrom.configMapKeyRef.name }}
+                  key: {{ .valueFrom.configMapKeyRef.key }}
+              {{- else if .valueFrom.secretKeyRef }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .valueFrom.secretKeyRef.name }}
+                  key: {{ .valueFrom.secretKeyRef.key }}
+              {{- end }}
+            {{- end }}
+            {{- end }}            
           {{- with .Values.resources.prometheus }}
           resources: {{ toYaml . | nindent 12 }}
           {{- end }}

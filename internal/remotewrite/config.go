@@ -32,6 +32,7 @@ type Config struct {
 	QueueConfig              *promcfg.QueueConfig    `yaml:"queue_config"`
 	RemoteTimeout            time.Duration           `yaml:"remote_timeout"`
 	ExtraWriteRelabelConfigs []promcfg.RelabelConfig `yaml:"extra_write_relabel_configs"`
+	ProxyFromEnvironment     bool                    `yaml:"proxy_from_environment,omitempty"`
 }
 
 // FedRAMP in charts are configured like `.fedramp.enabled: true` just in case we have to
@@ -57,14 +58,15 @@ func (c Config) Build() (promcfg.RemoteWrite, error) {
 	}
 
 	rw := promcfg.RemoteWrite{
-		Name:                Name,
-		URL:                 url,
-		RemoteTimeout:       c.RemoteTimeout,
-		Authorization:       promcfg.Authorization{Credentials: c.LicenseKey},
-		TLSConfig:           c.TLSConfig,
-		ProxyURL:            c.ProxyURL,
-		QueueConfig:         c.QueueConfig,
-		WriteRelabelConfigs: c.ExtraWriteRelabelConfigs,
+		Name:                 Name,
+		URL:                  url,
+		RemoteTimeout:        c.RemoteTimeout,
+		ProxyFromEnvironment: c.ProxyFromEnvironment,
+		Authorization:        promcfg.Authorization{Credentials: c.LicenseKey},
+		TLSConfig:            c.TLSConfig,
+		ProxyURL:             c.ProxyURL,
+		QueueConfig:          c.QueueConfig,
+		WriteRelabelConfigs:  c.ExtraWriteRelabelConfigs,
 	}
 
 	return rw, nil
