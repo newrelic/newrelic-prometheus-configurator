@@ -23,6 +23,7 @@ newrelic_remote_write:
     min_backoff: 30ms
     max_backoff: 5s
     retry_on_http_429: false
+    sample_age_limit: 45s
   remote_timeout: 30s
 
 extra_remote_write:

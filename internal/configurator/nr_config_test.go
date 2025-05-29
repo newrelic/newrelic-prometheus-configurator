@@ -20,7 +20,6 @@ func TestNrConfig(t *testing.T) {
 	expected := testNrConfigExpectation(t, false)
 	nrConfigData, err := os.ReadFile("testdata/nr-config-test.yaml")
 	require.NoError(t, err)
-
 	checkNrConfig(t, expected, nrConfigData)
 
 	expected = testNrConfigExpectation(t, true)
