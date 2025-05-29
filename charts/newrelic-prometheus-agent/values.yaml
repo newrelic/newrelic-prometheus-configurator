@@ -207,6 +207,9 @@ config:
       # -- Retry upon receiving a 429 status code from the remote-write storage.
       # @default -- `false`
       # retry_on_http_429:
+      # -- Maximum sample age before dropping.
+      # @default -- `0s`
+      # sample_age_limit:
 
   # -- (object) It includes additional remote-write configuration. Note this configuration is not parsed, so valid
   # [prometheus remote_write configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write)
@@ -245,6 +248,7 @@ config:
     # 'default' scrapes all targets having 'prometheus.io/scrape: true'.
     # Out of the box, since kubernetes.integrations_filter.enabled=true then only targets selected by the integration filters are considered.
     - job_name_prefix: default
+      fallback_scrape_protocol: "PrometheusText0.0.4"
       target_discovery:
         pod: true
         endpoints: true
@@ -257,6 +261,7 @@ config:
       # 'newrelic' scrapes all targets having 'newrelic.io/scrape: true'.
       # This is useful to extend the targets scraped by the 'default' job allowlisting services leveraging `newrelic.io/scrape` annotation
     - job_name_prefix: newrelic
+      fallback_scrape_protocol: "PrometheusText0.0.4"
       integrations_filter:
         enabled: false
       target_discovery:

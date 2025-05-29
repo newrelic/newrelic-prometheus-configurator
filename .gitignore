@@ -12,8 +12,6 @@
 # Prometheus binary for integration tests
 /test/integration/prometheus
 
-.golangci.yml
-
 # local kubeconfig generated from minikube for integration tests.
 .kubeconfig-dev
 

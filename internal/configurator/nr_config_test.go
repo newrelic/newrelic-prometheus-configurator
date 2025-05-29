@@ -65,6 +65,7 @@ func testNrConfigExpectation(t *testing.T, useProxyFromEnv bool) NrConfig {
 			MinBackoff:        30 * time.Millisecond,
 			MaxBackoff:        5 * time.Second,
 			RetryOnHTTP429:    &falseValue,
+			SampleAgeLimit:    22 * time.Second,
 		},
 		RemoteTimeout: 30 * time.Second,
 		ExtraWriteRelabelConfigs: []promcfg.RelabelConfig{

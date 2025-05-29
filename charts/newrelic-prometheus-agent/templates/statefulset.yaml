@@ -114,7 +114,7 @@ spec:
             successThreshold: 1
           args:
             - --config.file=/etc/prometheus/config/config.yaml
-            - --enable-feature=agent,expand-external-labels
+            - --agent
             - --storage.agent.retention.max-time=30m
             - --storage.agent.wal-truncate-frequency=30m
             - --storage.agent.path=/etc/prometheus/storage

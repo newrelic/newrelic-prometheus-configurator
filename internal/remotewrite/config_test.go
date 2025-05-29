@@ -68,6 +68,7 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 						MinBackoff:        100 * time.Microsecond,
 						MaxBackoff:        time.Second,
 						RetryOnHTTP429:    &trueValue,
+						SampleAgeLimit:    60 * time.Second,
 					},
 					RemoteTimeout: 10 * time.Second,
 					ExtraWriteRelabelConfigs: []promcfg.RelabelConfig{
@@ -104,6 +105,7 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 					MinBackoff:        100 * time.Microsecond,
 					MaxBackoff:        time.Second,
 					RetryOnHTTP429:    &trueValue,
+					SampleAgeLimit:    60 * time.Second,
 				},
 				WriteRelabelConfigs: []promcfg.RelabelConfig{
 					{

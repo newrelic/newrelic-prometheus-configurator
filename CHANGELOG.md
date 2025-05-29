@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### breaking
+- Upgrade to Prometheus v3. Please see our migration guide [here](https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/migrations/v2-upgrade) @dbudziwojskiNR [#458](https://github.com/newrelic/newrelic-prometheus-configurator/pull/458)
+
 ### bugfix
 - Fix some bug in some file @dpacheconr [#455](https://github.com/newrelic/newrelic-prometheus-configurator/pull/457)
 
