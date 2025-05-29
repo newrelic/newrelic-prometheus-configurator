@@ -298,6 +298,10 @@ config:
           # @default -- `{}`
           # labels:
 
+      # -- Set up the proxy used to send metrics to New Relic.
+      # @default -- `""`
+      # proxy_url:
+
       # -- Use proxy URL indicated by environment variables (HTTP_PROXY, http_proxy, HTTPS_PROXY, https_proxy, and no_proxy) can be configured via config.extraEnvs
       # @default -- `""`
       # proxy_from_environment:
@@ -439,6 +443,14 @@ config:
       # -- Per-scrape timeout when scraping this job.
       # @default -- defined in `common.scrape_timeout`
       # scrape_timeout:
+
+      # -- Set up the proxy used to send metrics to New Relic.
+      # @default -- `""`
+      # proxy_url:
+
+      # -- Use proxy URL indicated by environment variables (HTTP_PROXY, http_proxy, HTTPS_PROXY, https_proxy, and no_proxy) can be configured via config.extraEnvs
+      # @default -- `""`
+      # proxy_from_environment:
 
       # -- Configures the scrape request's TLS settings.
       # @default -- `{}`
