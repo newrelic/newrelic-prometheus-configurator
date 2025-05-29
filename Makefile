@@ -25,7 +25,7 @@ clean:
 .PHONY: test
 test:
 	mkdir -p $(TEST_COVERAGE_DIR)
-	go test ./... -count=1 -coverprofile=$(TEST_COVERAGE_DIR)/coverage.out -covermode=count
+	go test ./... -count=1 -coverprofile=$(TEST_COVERAGE_DIR)/coverage.out -coverpkg=./cmd/...,./internal/... -covermode=count
 
 .PHONY: build
 build: BINARY_NAME := $(if $(GOOS),$(BINARY_NAME)-$(GOOS),$(BINARY_NAME))
@@ -70,15 +70,23 @@ chart-unit-test:
 	helm dependency update ./charts/newrelic-prometheus-agent
 	helm unittest ./charts/newrelic-prometheus-agent -3
 
-PROMETHEUS_VERSION_CHART := $(shell grep "appVersion" charts/newrelic-prometheus-agent/Chart.yaml | grep -o -E "(\.[0-9]+\.[0-9]+)")
-PROMETHEUS_VERSION_GO := $(shell grep "github.com/prometheus/prometheus" go.mod| grep -o -E "(\.[0-9]+\.[0-9]+)")
+PROMETHEUS_VERSION_GO := $(shell grep "github.com/prometheus/prometheus" go.mod | grep -o -E "(v0\.[0-9]+\.[0-9]+)")
+PROMETHEUS_VERSION_CHART := $(shell grep "appVersion" charts/newrelic-prometheus-agent/Chart.yaml | grep -o -E "(v[2-3]\.[0-9]+\.[0-9]+)")
+
 .PHONY: check-prometheus-version
 check-prometheus-version:
-	@echo PROMETHEUS_VERSION_CHART=$(PROMETHEUS_VERSION_CHART), PROMETHEUS_VERSION_GO=$(PROMETHEUS_VERSION_GO)
-ifneq ($(PROMETHEUS_VERSION_CHART), $(PROMETHEUS_VERSION_GO))
-	@echo "Prometheus server version defined in chart does not match with the one in Go dependency"
-	exit 1
-endif
+	@converted_version=$$(echo "$(PROMETHEUS_VERSION_CHART)" | awk -F. '{ \
+		if ($$1 == "v3") { \
+			printf("v0.3%02d.%d\n", $$2, $$3) \
+		} else if ($$1 == "v2") { \
+			printf("v0.%d.%d\n", $$2, $$3) \
+		}\
+	}'); \
+	echo "PROMETHEUS_VERSION_CHART=$(PROMETHEUS_VERSION_CHART)(AKA $${converted_version}), PROMETHEUS_VERSION_GO=$(PROMETHEUS_VERSION_GO)"; \
+	if [ "$${converted_version}" != "$(PROMETHEUS_VERSION_GO)" ]; then \
+		echo "Prometheus server version defined in chart does not match with the one in Go dependency"; \
+		exit 1; \
+	fi
 
 NEWRELIC_E2E ?= go run github.com/newrelic/newrelic-integration-e2e-action@latest
 .PHONY: e2e-test
@@ -87,10 +95,10 @@ e2e-test:
 		--commit_sha=test-string \
 		--retry_attempts=5 \
 		--retry_seconds=60 \
-        --account_id=${ACCOUNT_ID} \
+		--account_id=${ACCOUNT_ID} \
 		--api_key=${API_REST_KEY} \
 		--license_key=${LICENSE_KEY} \
-        --spec_path=./test/e2e/test-specs.yml \
+		--spec_path=./test/e2e/test-specs.yml \
 		--verbose_mode=true \
 		--agent_enabled="false"
 

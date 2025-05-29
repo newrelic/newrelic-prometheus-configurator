@@ -64,7 +64,7 @@ func (ps *prometheusServer) start(t *testing.T, configPath string) {
 	//nolint: gosec
 	prom := exec.Command(
 		prometheusBinaryPath,
-		"--enable-feature=agent",
+		"--agent",
 		fmt.Sprintf("--config.file=%s", configPath),
 		fmt.Sprintf("--web.listen-address=0.0.0.0:%s", ps.port),
 		fmt.Sprintf("--storage.agent.path=%s", t.TempDir()),
