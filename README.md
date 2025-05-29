@@ -21,9 +21,9 @@ style id2 stroke:#333,stroke-width:2px
 The `Configurator` generates a configuration file that is used to run a [Prometheus Server](https://github.com/prometheus/prometheus) in Agent mode, and send metrics to the New Relic Remote Write Endpoint.
 
 ## v2 Release
-`v2` of the `newrelic-prometheus-configurator` requires the use of [Prometheus v3](https://prometheus.io/blog/2024/11/14/prometheus-3-0/). As such, any [breaking changes](https://prometheus.io/docs/prometheus/latest/migration) made in Prometheus `v3` may also be present in `v2` of this agent. Specifically, Prometheus v3 is more [strict](https://prometheus.io/docs/prometheus/latest/migration/#scrape-protocols) concerning the Content-Type header received when scraping. While Prometheus v2 would default to the standard Prometheus text protocol if the header was missing or invalid, Prometheus v3 will now fail the scrape in such cases. As a result, the following changed need to be made.
+`v2` of the `newrelic-prometheus-configurator` requires the use of [Prometheus v3](https://prometheus.io/blog/2024/11/14/prometheus-3-0/). As such, any [breaking changes](https://prometheus.io/docs/prometheus/latest/migration) made in Prometheus `v3` may also be present in `v2` of this agent. Specifically, Prometheus v3 is more [strict](https://prometheus.io/docs/prometheus/latest/migration/#scrape-protocols) concerning the `Content-Type` header received when scraping. While Prometheus v2 would default to the standard Prometheus text protocol if the header was missing or invalid, Prometheus v3 will now fail the scrape. As a result, the following changes need to be made.
 
-- Both default kubernetes jobs now need `fallback_scrape_protocol: "PrometheusText0.0.4"` added to their spec. The default jobs for `config.kubernetes.jobs` should look as follows:
+- Both default Kubernetes jobs now need `fallback_scrape_protocol: "PrometheusText0.0.4"` added to their spec. The default jobs for `config.kubernetes.jobs` should look as follows:
 ```yaml
     - job_name_prefix: default
       fallback_scrape_protocol: "PrometheusText0.0.4"
