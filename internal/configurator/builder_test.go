@@ -27,16 +27,19 @@ func TestBuilder(t *testing.T) { //nolint: paralleltest,tparallel
 
 	// it relies on testdata/<placeholder>.yaml and testdata/<placeholder>.expected.yaml
 	testCases := []string{
-		"remote-write-test",
-		"static-targets-test",
-		"external-labels-test",
 		"endpoints-test",
+		"external-labels-test",
 		"filter-test",
-		"pods-test",
+		"integration-filters-test",
 		"kubernetes-scrape-fields-test",
+		"kubernetes-scrape-fields-test-proxyfromenv",
+		"pods-test",
+		"remote-write-test",
+		"remote-write-test-proxyfromenv",
 		"sharding-test",
 		"skip-sharding-test",
-		"integration-filters-test",
+		"static-targets-test",
+		"static-targets-test-proxyfromenv",
 	}
 
 	for _, c := range testCases {

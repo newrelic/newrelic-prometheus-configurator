@@ -1,0 +1,40 @@
+kubernetes:
+  jobs:
+    - job_name_prefix: default
+      # prometheus scrape_config fields
+      proxy_from_environment: true
+      body_size_limit: 100MiB
+      sample_limit: 2000
+      target_limit: 2000
+      label_limit: 2000
+      label_name_length_limit: 2000
+      label_value_length_limit: 2000
+      scrape_interval: 15s
+      scrape_timeout: 15s
+      tls_config:
+        insecure_skip_verify: true
+        ca_file: /path/to/ca.crt
+        key_file: /path/to/key.crt
+        cert_file: /path/to/cert.crt
+        server_name: server.name
+        min_version: TLS12
+      authorization:
+        type: Bearer
+        # Sets the credentials. It is mutually exclusive with
+        # `credentials_file`, we add both for testing purposes
+        credentials: "fancy-credentials"
+      # Kubernetes job specific configuration
+      target_discovery:
+        pod: true
+        endpoints: true
+        additional_config:
+          namespaces:
+            own_namespace: true
+            names:
+              - n1
+          selectors:
+            - role: pod
+              label: label-name
+
+newrelic_remote_write:
+  license_key: nrLicenseKey

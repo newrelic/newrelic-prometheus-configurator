@@ -36,14 +36,15 @@ type BasicAuth struct {
 
 // OAuth2 defines the config for prometheus to gather a token from the endpoint.
 type OAuth2 struct {
-	ClientID         string            `yaml:"client_id"`
-	ClientSecret     string            `yaml:"client_secret,omitempty"`
-	ClientSecretFile string            `yaml:"client_secret_file,omitempty"`
-	Scopes           []string          `yaml:"scopes,omitempty"`
-	TokenURL         string            `yaml:"token_url"`
-	EndpointParams   map[string]string `yaml:"endpoint_params,omitempty"`
-	TLSConfig        *TLSConfig        `yaml:"tls_config,omitempty"`
-	ProxyURL         string            `yaml:"proxy_url,omitempty"`
+	ClientID             string            `yaml:"client_id"`
+	ClientSecret         string            `yaml:"client_secret,omitempty"`
+	ClientSecretFile     string            `yaml:"client_secret_file,omitempty"`
+	Scopes               []string          `yaml:"scopes,omitempty"`
+	TokenURL             string            `yaml:"token_url"`
+	EndpointParams       map[string]string `yaml:"endpoint_params,omitempty"`
+	TLSConfig            *TLSConfig        `yaml:"tls_config,omitempty"`
+	ProxyURL             string            `yaml:"proxy_url,omitempty"`
+	ProxyFromEnvironment bool              `yaml:"proxy_from_environment,omitempty"`
 }
 
 // Job holds fields which do not change from nrConfig and prometheusConfig jobs.
@@ -68,6 +69,7 @@ type Job struct {
 	Authorization          Authorization    `yaml:"authorization,omitempty"`
 	OAuth2                 OAuth2           `yaml:"oauth2,omitempty"`
 	ProxyURL               string           `yaml:"proxy_url,omitempty"`
+	ProxyFromEnvironment   bool             `yaml:"proxy_from_environment,omitempty"`
 
 	StaticConfigs        []StaticConfig       `yaml:"static_configs,omitempty"`
 	RelabelConfigs       []RelabelConfig      `yaml:"relabel_configs,omitempty"`
@@ -144,12 +146,13 @@ type QueueConfig struct {
 
 // RemoteWrite represents a prometheus remote_write config.
 type RemoteWrite struct {
-	Name                string          `yaml:"name"`
-	URL                 string          `yaml:"url"`
-	RemoteTimeout       time.Duration   `yaml:"remote_timeout,omitempty"`
-	Authorization       Authorization   `yaml:"authorization"`
-	TLSConfig           *TLSConfig      `yaml:"tls_config,omitempty"`
-	ProxyURL            string          `yaml:"proxy_url,omitempty"`
-	QueueConfig         *QueueConfig    `yaml:"queue_config,omitempty"`
-	WriteRelabelConfigs []RelabelConfig `yaml:"write_relabel_configs,omitempty"`
+	Name                 string          `yaml:"name"`
+	URL                  string          `yaml:"url"`
+	RemoteTimeout        time.Duration   `yaml:"remote_timeout,omitempty"`
+	Authorization        Authorization   `yaml:"authorization"`
+	TLSConfig            *TLSConfig      `yaml:"tls_config,omitempty"`
+	ProxyURL             string          `yaml:"proxy_url,omitempty"`
+	ProxyFromEnvironment bool            `yaml:"proxy_from_environment,omitempty"`
+	QueueConfig          *QueueConfig    `yaml:"queue_config,omitempty"`
+	WriteRelabelConfigs  []RelabelConfig `yaml:"write_relabel_configs,omitempty"`
 }
