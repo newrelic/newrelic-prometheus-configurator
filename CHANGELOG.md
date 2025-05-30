@@ -12,7 +12,7 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 - Upgrade to Prometheus v3. Please see our migration guide [here](https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/migrations/v2-upgrade) @dbudziwojskiNR [#458](https://github.com/newrelic/newrelic-prometheus-configurator/pull/458)
 
 ### enhancement
-- Update namespace and serviceaccount name to match standard values from guided install @maxlemieux [#461](https://github.com/newrelic/newrelic-prometheus-configurator/pull/461)
+- Update namespace and serviceaccount name to match standard values from guided install @maxlemieux [#318](https://github.com/newrelic/newrelic-prometheus-configurator/pull/318)
 
 ### bugfix
 - Fix some bug in some file @dpacheconr [#457](https://github.com/newrelic/newrelic-prometheus-configurator/pull/457)
