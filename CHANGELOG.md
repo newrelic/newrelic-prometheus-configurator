@@ -8,14 +8,20 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### breaking
+## v2.0.0 - 2025-06-02
+
+### ⚠️️ Breaking changes ⚠️
 - Upgrade to Prometheus v3. Please see our migration guide [here](https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/migrations/v2-upgrade) @dbudziwojskiNR [#458](https://github.com/newrelic/newrelic-prometheus-configurator/pull/458)
 
-### enhancement
+### 🚀 Enhancements
 - Update namespace and serviceaccount name to match standard values from guided install @maxlemieux [#318](https://github.com/newrelic/newrelic-prometheus-configurator/pull/318)
 
-### bugfix
+### 🐞 Bug fixes
 - Fix some bug in some file @dpacheconr [#457](https://github.com/newrelic/newrelic-prometheus-configurator/pull/457)
+
+### ⛓️ Dependencies
+- Updated go to v1.24.3
+- Updated alpine to v3.22.0
 
 ## v1.20.0 - 2025-03-24
 
