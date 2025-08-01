@@ -6,6 +6,10 @@ on:
       - main
       - renovate/**
 
+permissions:
+  contents: read
+  pull-requests: read
+
 env:
   # NOTICE that apart from this, the versions in the chart linter matrix needs to be bumped too.
   LATEST_K8S_VERSION: 'v1.32.0'

@@ -20,6 +20,9 @@ on:
         required: false
         default: false
 
+permissions:
+  contents: read
+
 jobs:
   push-image:
     name: Build and Push images to Docker Hub
