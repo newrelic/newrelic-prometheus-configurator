@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### enhancement
+- Add v1.33 support and drop support for v1.28 @TmNguyen12
+
 ## v2.1.0 - 2025-07-21
 
 ### ⛓️ Dependencies
