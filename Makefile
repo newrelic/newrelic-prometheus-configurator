@@ -68,7 +68,7 @@ integration-test:
 chart-unit-test:
 	ct --config .github/ct.yaml lint --debug
 	helm dependency update ./charts/newrelic-prometheus-agent
-	helm unittest ./charts/newrelic-prometheus-agent -3
+	helm unittest ./charts/newrelic-prometheus-agent
 
 PROMETHEUS_VERSION_GO := $(shell grep "github.com/prometheus/prometheus" go.mod | grep -o -E "(v0\.[0-9]+\.[0-9]+)")
 PROMETHEUS_VERSION_CHART := $(shell grep "appVersion" charts/newrelic-prometheus-agent/Chart.yaml | grep -o -E "(v[2-3]\.[0-9]+\.[0-9]+)")
