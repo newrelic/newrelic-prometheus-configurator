@@ -15,7 +15,7 @@ jobs:
     outputs:
       version: ${{ steps.release-variables.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Configurator version
         id: release-variables
         run: |
