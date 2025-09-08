@@ -8,6 +8,13 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.3.0 - 2025-09-08
+
+### ⛓️ Dependencies
+- Updated actions/checkout to v5
+- Updated go to v1.25.0
+- Upgraded github.com/go-viper/mapstructure/v2 from 2.3.0 to 2.4.0 - [Changelog 🔗](https://github.com/go-viper/mapstructure/releases/tag/v2.4.0)
+
 ## v2.2.1 - 2025-08-18
 
 ### ⛓️ Dependencies
