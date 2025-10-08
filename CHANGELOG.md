@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### enhancement
+- Add support for k8s v1.34.0, remove support for v1.29.5 @TmNguyen12 []()
+
 ## v2.3.0 - 2025-09-08
 
 ### ⛓️ Dependencies
