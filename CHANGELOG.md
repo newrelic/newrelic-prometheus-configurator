@@ -9,7 +9,7 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 ## Unreleased
 
 ### enhancement
-- Add support for k8s v1.34.0, remove support for v1.29.5 @TmNguyen12 []()
+- Add support for k8s v1.34.0, remove support for v1.29.5 @TmNguyen12 [#491](https://github.com/newrelic/newrelic-prometheus-configurator/pull/491)
 
 ## v2.3.0 - 2025-09-08
 
