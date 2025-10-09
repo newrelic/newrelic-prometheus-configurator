@@ -21,7 +21,7 @@ import (
 	_ "github.com/prometheus/prometheus/discovery/kubernetes"
 )
 
-func TestBuilder(t *testing.T) { //nolint: paralleltest,tparallel
+func TestBuilder(t *testing.T) { //nolint: tparallel
 	t.Setenv(configurator.LicenseKeyEnvKey, "")
 	t.Setenv(configurator.DataSourceNameEnvKey, "")
 
@@ -141,7 +141,7 @@ func TestLicenseKey(t *testing.T) { //nolint: tparallel
 	})
 }
 
-func TestShardingIndex(t *testing.T) { //nolint: paralleltest
+func TestShardingIndex(t *testing.T) {
 	t.Setenv(configurator.LicenseKeyEnvKey, "fake")
 
 	testCases := []struct {
@@ -204,7 +204,7 @@ func TestShardingIndex(t *testing.T) { //nolint: paralleltest
 	}
 }
 
-func TestChartVersion(t *testing.T) { //nolint: paralleltest
+func TestChartVersion(t *testing.T) {
 	t.Setenv(configurator.LicenseKeyEnvKey, "fake")
 
 	testCases := []struct {
