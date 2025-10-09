@@ -19,13 +19,13 @@ type Job struct {
 
 // WithRelabelConfigs returns Config with the provided relabel configs added in the underlying `promcfg.Job`.
 func (j Job) WithRelabelConfigs(relabelConfigs []promcfg.RelabelConfig) Job {
-	j.Job.RelabelConfigs = append(j.Job.RelabelConfigs, relabelConfigs...)
+	j.RelabelConfigs = append(j.RelabelConfigs, relabelConfigs...)
 	return j
 }
 
 // WithName returns Config with the underlying `promcfg.Job` name updated.
 func (j Job) WithName(name string) Job {
-	j.Job.JobName = name
+	j.JobName = name
 	return j
 }
 
