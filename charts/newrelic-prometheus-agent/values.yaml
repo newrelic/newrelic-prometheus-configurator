@@ -31,7 +31,7 @@ images:
     repository: newrelic/newrelic-prometheus-configurator
     pullPolicy: IfNotPresent
     # @default It defaults to `annotation.configuratorVersion` in `Chart.yaml`.
-    tag: "v3.7.0-rc.0"
+    tag: ""
   # -- Image for prometheus which is executed in agent mode.
   # @default -- See `values.yaml`
   prometheus:
