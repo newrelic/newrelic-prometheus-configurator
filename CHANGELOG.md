@@ -8,13 +8,18 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### enhancement
-- Add support for k8s v1.34.0, remove support for v1.29.5 @TmNguyen12 [#491](https://github.com/newrelic/newrelic-prometheus-configurator/pull/491)
+## v2.4.0 - 2025-10-13
 
 ### dependency
-- Upgrade github.com/prometheus/prometheus to v0.307.0-rc.0 
+- Upgrade github.com/prometheus/prometheus to v0.307.0-rc.0
 - golang.org/x/sync to v0.17.0
 - k8s.io/api , apimachinery, client-go to v0.34.1 @danielstokes [#491](https://github.com/newrelic/newrelic-prometheus-configurator/pull/491)
+
+### 🚀 Enhancements
+- Add support for k8s v1.34.0, remove support for v1.29.5 @TmNguyen12 [#491](https://github.com/newrelic/newrelic-prometheus-configurator/pull/491)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.22.2
 
 ## v2.3.0 - 2025-09-08
 
