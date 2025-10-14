@@ -4,7 +4,7 @@ go 1.25.3
 
 require (
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b
-	github.com/prometheus/prometheus v0.307.0-rc.0
+	github.com/prometheus/prometheus v2.5.0+incompatible
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/sync v0.17.0
