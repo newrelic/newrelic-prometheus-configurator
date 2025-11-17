@@ -199,3 +199,44 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 		})
 	}
 }
+
+func TestBuildRemoteWritePromConfig_Errors(t *testing.T) {
+	t.Parallel()
+
+	testCases := []struct {
+		name          string
+		config        remotewrite.Config
+		expectedError error
+	}{
+		{
+			name: "FedRAMP and Staging both enabled returns error",
+			config: remotewrite.Config{
+				LicenseKey: "fake-license",
+				Staging:    true,
+				FedRAMP: remotewrite.FedRAMP{
+					Enabled: true,
+				},
+			},
+			expectedError: remotewrite.ErrFedRAMPStaging,
+		},
+		{
+			name: "EU region and FedRAMP both enabled returns error",
+			config: remotewrite.Config{
+				LicenseKey: "eu01xx-fake-license",
+				FedRAMP: remotewrite.FedRAMP{
+					Enabled: true,
+				},
+			},
+			expectedError: remotewrite.ErrEuFedRAMP,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			_, err := tc.config.Build()
+			assert.ErrorIs(t, err, tc.expectedError)
+		})
+	}
+}
