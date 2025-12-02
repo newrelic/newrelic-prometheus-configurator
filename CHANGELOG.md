@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### 🧪 Testing
+- Added comprehensive global value inheritance test suite with 36 test cases validating proper propagation and override precedence of global configuration values (cluster, images.registry, images.pullSecrets, nodeSelector, tolerations, affinity, priorityClassName, dnsConfig, hostNetwork, serviceAccount.name, podSecurityContext, containerSecurityContext, labels, podLabels, customAttributes, nrStaging, verboseLog)
+
 ## v1.20.0 - 2025-03-24
 
 ### 🚀 Enhancements
