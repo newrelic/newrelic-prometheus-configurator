@@ -541,6 +541,48 @@ tests:
           content: "--verbose=true"
         template: templates/statefulset.yaml
 
+  # ========== PROXY TESTS ==========
+  - it: uses global.proxy when local not set and proxyFromSecret disabled
+    set:
+      licenseKey: us-whatever
+      cluster: test-cluster
+      global:
+        proxy: http://global-proxy.example.com:3128
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].env[3].name
+          value: NR_PROM_PROXY_URL
+        template: templates/statefulset.yaml
+      - equal:
+          path: spec.template.spec.initContainers[0].env[3].value
+          value: http://global-proxy.example.com:3128
+        template: templates/statefulset.yaml
+
+  - it: proxyFromSecret takes precedence over global.proxy
+    set:
+      licenseKey: us-whatever
+      cluster: test-cluster
+      config:
+        proxyFromSecret:
+          enabled: true
+          name: my-proxy-secret
+          key: proxy-url
+      global:
+        proxy: http://global-proxy.example.com:3128
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].env[3].name
+          value: NR_PROM_PROXY_URL
+        template: templates/statefulset.yaml
+      - equal:
+          path: spec.template.spec.initContainers[0].env[3].valueFrom.secretKeyRef.name
+          value: my-proxy-secret
+        template: templates/statefulset.yaml
+      - equal:
+          path: spec.template.spec.initContainers[0].env[3].valueFrom.secretKeyRef.key
+          value: proxy-url
+        template: templates/statefulset.yaml
+
   # ========== LICENSE KEY TESTS ==========
   - it: uses global.licenseKey when local not set
     set:
