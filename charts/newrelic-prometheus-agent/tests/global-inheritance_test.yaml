@@ -3,6 +3,7 @@ templates:
   - templates/statefulset.yaml
   - templates/configmap.yaml
   - templates/secret.yaml
+  - templates/serviceaccount.yaml
 release:
   name: my-release
   namespace: my-namespace
@@ -539,3 +540,134 @@ tests:
           path: spec.template.spec.initContainers[0].args
           content: "--verbose=true"
         template: templates/statefulset.yaml
+
+  # ========== LICENSE KEY TESTS ==========
+  - it: uses global.licenseKey when local not set
+    set:
+      cluster: test-cluster
+      global:
+        licenseKey: global-license-key
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].env[1].name
+          value: NR_PROM_LICENSE_KEY
+        template: templates/statefulset.yaml
+      - equal:
+          path: spec.template.spec.initContainers[0].env[1].valueFrom.secretKeyRef.name
+          value: my-release-newrelic-prometheus-agent-license
+        template: templates/statefulset.yaml
+
+  - it: local licenseKey overrides global
+    set:
+      cluster: test-cluster
+      licenseKey: local-license-key
+      global:
+        licenseKey: global-license-key
+    asserts:
+      - equal:
+          path: spec.template.spec.initContainers[0].env[1].name
+          value: NR_PROM_LICENSE_KEY
+        template: templates/statefulset.yaml
+      - equal:
+          path: spec.template.spec.initContainers[0].env[1].valueFrom.secretKeyRef.name
+          value: my-release-newrelic-prometheus-agent-license
+        template: templates/statefulset.yaml
+
+  # ========== CUSTOM SECRET TESTS ==========
+  - it: uses global.customSecretName when local not set
+    set:
+      cluster: test-cluster
+      global:
+        customSecretName: global-secret
+        customSecretLicenseKey: global-key
+    asserts:
+      - contains:
+          path: spec.template.spec.initContainers[0].env
+          content:
+            name: NR_PROM_LICENSE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: global-secret
+                key: global-key
+        template: templates/statefulset.yaml
+
+  - it: local customSecretName overrides global
+    set:
+      cluster: test-cluster
+      global:
+        customSecretName: global-secret
+        customSecretLicenseKey: global-key
+      customSecretName: local-secret
+      customSecretLicenseKey: local-key
+    asserts:
+      - contains:
+          path: spec.template.spec.initContainers[0].env
+          content:
+            name: NR_PROM_LICENSE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: local-secret
+                key: local-key
+        template: templates/statefulset.yaml
+
+  # ========== SERVICE ACCOUNT TESTS ==========
+  - it: creates service account from global.serviceAccount.create
+    set:
+      licenseKey: us-whatever
+      cluster: test-cluster
+      global:
+        serviceAccount:
+          create: true
+    asserts:
+      - hasDocuments:
+          count: 1
+        template: templates/serviceaccount.yaml
+
+  - it: local serviceAccount.create overrides global
+    set:
+      licenseKey: us-whatever
+      cluster: test-cluster
+      global:
+        serviceAccount:
+          create: true
+      serviceAccount:
+        create: false
+    asserts:
+      - hasDocuments:
+          count: 0
+        template: templates/serviceaccount.yaml
+
+  - it: applies global.serviceAccount.annotations when local not set
+    set:
+      licenseKey: us-whatever
+      cluster: test-cluster
+      global:
+        serviceAccount:
+          annotations:
+            global-annotation: global-value
+    asserts:
+      - equal:
+          path: metadata.annotations.global-annotation
+          value: global-value
+        template: templates/serviceaccount.yaml
+
+  - it: merges global and local serviceAccount.annotations
+    set:
+      licenseKey: us-whatever
+      cluster: test-cluster
+      global:
+        serviceAccount:
+          annotations:
+            global-annotation: global-value
+      serviceAccount:
+        annotations:
+          local-annotation: local-value
+    asserts:
+      - equal:
+          path: metadata.annotations.local-annotation
+          value: local-value
+        template: templates/serviceaccount.yaml
+      - equal:
+          path: metadata.annotations.global-annotation
+          value: global-value
+        template: templates/serviceaccount.yaml
