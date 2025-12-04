@@ -86,6 +86,9 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.config.proxyFromSecret.name }}
                   key: {{ .Values.config.proxyFromSecret.key }}
+            {{- else if include "newrelic-prometheus.proxy" . }}
+            - name: NR_PROM_PROXY_URL
+              value: {{ include "newrelic-prometheus.proxy" . | quote }}
             {{- end}}
 
       containers:
