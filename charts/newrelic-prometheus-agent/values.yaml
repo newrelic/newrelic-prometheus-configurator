@@ -142,7 +142,27 @@ config:
     # # -- Includes additional [relabel configs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config)
     # # for the New Relic remote write.
     # # @default -- `[]`
-    # extra_write_relabel_configs: []
+     extra_write_relabel_configs:
+       - source_labels: [ __name__ ]
+         regex: ^envoy_cluster_membership_total$
+         target_label: newrelic_metric_type
+         replacement: "gauge"
+         action: replace
+       - source_labels: [ __name__ ]
+         regex: ^envoy_server_main_thread_watchdog_miss|envoy_listener_downstream_cx_overflow|envoy_cluster_upstream_rq_completed|envoy_http_downstream_rq_rx_reset|envoy_http_tracing_service_forced|envoy_http_health_check_ok|envoy_http_health_check_cached_response|envoy_cluster_original_dst_host_invalid|envoy_http_downstream_rq_tx_reset|envoy_cluster_external_upstream_rq|envoy_listener_downstream_cx_transport_socket_connect_timeout|envoy_cluster_manager_cds_init_fetch_timeout|envoy_cluster_upstream_cx_destroy_remote_with_active_rq|envoy_cluster_ssl_ocsp_staple_requests|envoy_cluster_upstream_rq_retry_limit_exceeded|envoy_cluster_internal_upstream_rq_xx|envoy_listener_extension_config_missing|envoy_cluster_upstream_rq_pending_failure_eject|envoy_http_downstream_rq_http1_total|envoy_dns_cares_resolve_total|envoy_listener_manager_lds_update_success|envoy_http_downstream_cx_http2_total|envoy_cluster_lb_subsets_fallback_panic|envoy_listener_manager_listener_removed|envoy_cluster_manager_cds_update_failure|envoy_filesystem_flushed_by_timer|envoy_listener_admin_downstream_listener_filter_remote_close|envoy_dns_cares_timeouts|envoy_cluster_upstream_cx_destroy_local_with_active_rq|envoy_dns_cares_reinits|envoy_control_plane_rate_limit_enforced|envoy_listener_admin_downstream_global_cx_overflow|envoy_cluster_upstream_cx_rx_bytes_total|envoy_http_rq_direct_response|envoy_tcmalloc_released_by_timer|envoy_cluster_upstream_rq|envoy_http_health_check_degraded|envoy_cluster_http2_inbound_window_update_frames_flood|envoy_http_downstream_rq_ws_on_non_ws_route|envoy_cluster_internal_upstream_rq|envoy_cluster_update_failure|envoy_http_downstream_cx_max_duration_reached|envoy_cluster_lb_zone_routing_cross_zone|envoy_sds_xds_certificate_update_success|envoy_sds_xds_certificate_init_fetch_timeout|envoy_cluster_upstream_cx_destroy|envoy_http_health_check_failed_cluster_not_found|envoy_server_envoy_notifications|envoy_listener_manager_lds_update_attempt|envoy_cluster_lb_recalculate_zone_structures|envoy_dns_cares_get_addr_failure|envoy_cluster_upstream_cx_destroy_remote|envoy_listener_admin_downstream_listener_filter_error|envoy_cluster_http2_rx_messaging_error|envoy_cluster_upstream_cx_destroy_with_active_rq|envoy_http_downstream_cx_total|envoy_server_envoy_bug_failures|envoy_cluster_upstream_cx_max_requests|envoy_cluster_ssl_ciphers|envoy_listener_downstream_pre_cx_timeout|envoy_listener_admin_downstream_cx_total|envoy_cluster_upstream_rq_pending_overflow|envoy_http_rq_reset_after_downstream_response_started|envoy_sds_xds_trusted_ca_update_success|envoy_listener_manager_listener_modified|envoy_cluster_init_fetch_timeout|envoy_http_downstream_rq_response_before_rq_complete|envoy_listener_http_downstream_rq_completed|envoy_cluster_http2_dropped_headers_with_underscores|envoy_cluster_http2_inbound_empty_frames_flood|envoy_cluster_upstream_rq_retry_success|envoy_sds_xds_trusted_ca_init_fetch_timeout|envoy_cluster_manager_update_out_of_merge_window|envoy_server_wip_protos|envoy_listener_downstream_listener_filter_error|envoy_cluster_upstream_rq_rx_reset|envoy_http_downstream_cx_delayed_close_timeout|envoy_http_health_check_failed|envoy_http_rds_update_success|envoy_cluster_assignment_stale|envoy_http_downstream_rq_completed|envoy_cluster_http2_trailers|envoy_http_rq_total|envoy_sds_xds_certificate_update_attempt|envoy_cluster_client_ssl_socket_factory_ssl_context_update_by_sds|envoy_http_rq_redirect|envoy_http1_dropped_headers_with_underscores|envoy_cluster_manager_cluster_updated_via_merge|envoy_cluster_upstream_cx_connect_fail|envoy_cluster_ssl_connection_error|envoy_cluster_http2_inbound_priority_frames_flood|envoy_http_downstream_rq_total|envoy_main_thread_watchdog_miss|envoy_main_thread_watchdog_mega_miss|envoy_cluster_upstream_rq_retry_backoff_ratelimited|envoy_server_dynamic_unknown_fields|envoy_sds_xds_certificate_key_rotation_failed|envoy_sds_xds_trusted_ca_key_rotation_failed|envoy_cluster_http2_outbound_flood|envoy_envoy_overload_actions_reset_high_memory_stream_count|envoy_http_rs_too_large|envoy_cluster_upstream_cx_total|envoy_http_downstream_rq_rejected_via_ip_detection|envoy_cluster_default_total_match_count|envoy_http_no_cluster|envoy_cluster_http1_metadata_not_supported_error|envoy_cluster_upstream_rq_per_try_timeout|envoy_http_downstream_rq_failed_path_normalization|envoy_server_main_thread_watchdog_mega_miss|envoy_http_downstream_cx_http3_total|envoy_cluster_upstream_cx_close_notify|envoy_filesystem_write_buffered|envoy_listener_downstream_listener_filter_remote_close|envoy_cluster_upstream_rq_maintenance_mode|envoy_cluster_manager_cluster_added|envoy_cluster_upstream_cx_destroy_local|envoy_cluster_lb_local_cluster_not_ok|envoy_http_passthrough_internal_redirect_too_many_redirects|envoy_listener_network_extension_config_missing|envoy_listener_admin_main_thread_downstream_cx_total|envoy_listener_downstream_cx_destroy|envoy_cluster_upstream_flow_control_drained_total|envoy_http_downstream_rq_redirected_with_normalized_path|envoy_server_static_unknown_fields|envoy_cluster_assignment_timeout_received|envoy_cluster_lb_subsets_selected|envoy_cluster_update_attempt|envoy_workers_watchdog_mega_miss|envoy_cluster_upstream_flow_control_resumed_reading_total|envoy_cluster_http2_outbound_control_flood|envoy_http_downstream_cx_protocol_error|envoy_cluster_upstream_internal_redirect_succeeded_total|envoy_runtime_load_success|envoy_cluster_upstream_cx_idle_timeout|envoy_cluster_zone_us_west_1b__upstream_rq_xx|envoy_http_downstream_cx_destroy|envoy_http_downstream_cx_idle_timeout|envoy_cluster_upstream_rq_retry_overflow|envoy_http_downstream_rq_too_many_premature_resets|envoy_cluster_manager_cluster_removed|envoy_cluster_ssl_curves|envoy_http_passthrough_internal_redirect_bad_location|envoy_cluster_ssl_fail_verify_error|envoy_http_passthrough_internal_redirect_no_route|envoy_http_downstream_rq_overload_close|envoy_cluster_ssl_fail_verify_san|envoy_cluster_zone_us_west_1b__upstream_rq_completed|envoy_http_downstream_cx_rx_bytes_total|envoy_cluster_update_rejected|envoy_cluster_http1_response_flood|envoy_listener_manager_lds_update_rejected|envoy_cluster_manager_cds_update_success|envoy_cluster_manager_cds_update_attempt|envoy_server_debug_assertion_failures|envoy_cluster_upstream_rq_total|envoy_http_rds_update_empty|envoy_http_rq_overload_local_reply|envoy_cluster_lb_zone_cluster_too_small|envoy_cluster_update_empty|envoy_cluster_upstream_cx_pool_overflow|envoy_cluster_internal_upstream_rq_completed|envoy_listener_admin_downstream_cx_destroy|envoy_cluster_upstream_internal_redirect_failed_total|envoy_http_health_check_failed_cluster_empty|envoy_cluster_lb_subsets_created|envoy_http_downstream_cx_http1_total|envoy_http_downstream_cx_destroy_remote|envoy_http_no_route|envoy_listener_admin_http_downstream_rq_completed|envoy_listener_downstream_cx_total|envoy_http_rds_update_rejected|envoy_sds_xds_certificate_update_rejected|envoy_http_passthrough_internal_redirect_predicate|envoy_listener_admin_no_filter_chain_match|envoy_filesystem_reopen_failed|envoy_cluster_upstream_rq_cancelled|envoy_http_passthrough_internal_redirect_unsafe_scheme|envoy_overload_envoy_resource_monitors_global_downstream_max_connections_failed_updates|envoy_http_downstream_flow_control_paused_reading_total|envoy_cluster_update_success|envoy_filesystem_write_completed|envoy_cluster_ssl_handshake|envoy_cluster_ssl_session_reused|envoy_runtime_load_error|envoy_http1_requests_rejected_with_underscores_in_headers|envoy_listener_manager_lds_update_failure|envoy_cluster_assignment_use_cached|envoy_listener_manager_listener_in_place_updated|envoy_http_downstream_cx_ssl_total|envoy_listener_admin_downstream_pre_cx_timeout|envoy_cluster_retry_or_shadow_abandoned|envoy_listener_worker_downstream_cx_total|envoy_cluster_upstream_rq_pending_total|envoy_http_downstream_rq_xx|envoy_cluster_http1_dropped_headers_with_underscores|envoy_http_tracing_client_enabled|envoy_http_tracing_not_traceable|envoy_cluster_ssl_ocsp_staple_responses|envoy_runtime_override_dir_not_exists|envoy_cluster_upstream_cx_connect_attempts_exceeded|envoy_http_downstream_cx_drain_close|envoy_cluster_ssl_fail_verify_cert_hash|envoy_listener_downstream_global_cx_overflow|envoy_cluster_upstream_cx_connect_timeout|envoy_cluster_lb_zone_routing_all_directly|envoy_http_rds_update_attempt|envoy_cluster_client_ssl_socket_factory_upstream_context_secrets_not_ready|envoy_sds_xds_certificate_update_failure|envoy_cluster_bind_errors|envoy_http_downstream_rq_http3_total|envoy_listener_manager_listener_stopped|envoy_cluster_http2_header_overflow|envoy_cluster_upstream_cx_none_healthy|envoy_filesystem_write_failed|envoy_http_downstream_rq_header_timeout|envoy_http_downstream_cx_destroy_remote_active_rq|envoy_cluster_http2_tx_reset|envoy_cluster_lb_subsets_fallback|envoy_cluster_upstream_cx_http2_total|envoy_http_downstream_cx_destroy_local|envoy_http_downstream_rq_timeout|envoy_cluster_upstream_rq_retry_backoff_exponential|envoy_http_downstream_rq_non_relative_path|envoy_server_worker_watchdog_mega_miss|envoy_cluster_ssl_sigalgs|envoy_cluster_upstream_cx_connect_with_0_rtt|envoy_runtime_deprecated_feature_use|envoy_workers_watchdog_miss|envoy_cluster_manager_cds_update_rejected|envoy_http_tracing_health_check|envoy_listener_admin_downstream_cx_overload_reject|envoy_sds_xds_trusted_ca_update_failure|envoy_cluster_upstream_cx_http3_total|envoy_cluster_upstream_cx_protocol_error|envoy_cluster_http2_metadata_empty_frames|envoy_http_health_check_failed_cluster_unhealthy|envoy_http_health_check_request_total|envoy_cluster_lb_zone_routing_sampled|envoy_http1_metadata_not_supported_error|envoy_http_downstream_rq_too_large|envoy_http_tracing_random_sampling|envoy_cluster_external_upstream_rq_xx|envoy_http_downstream_flow_control_resumed_reading_total|envoy_runtime_override_dir_exists|envoy_http_rds_update_failure|envoy_http_downstream_cx_max_requests_reached|envoy_http_downstream_cx_upgrades_total|envoy_listener_manager_listener_added|envoy_server_worker_watchdog_miss|envoy_cluster_client_ssl_socket_factory_downstream_context_secrets_not_ready|envoy_cluster_upstream_rq_max_duration_reached|envoy_cluster_external_upstream_rq_completed|envoy_http_downstream_rq_max_duration_reached|envoy_cluster_manager_cluster_modified|envoy_listener_manager_listener_create_failure|envoy_cluster_http1_requests_rejected_with_underscores_in_headers|envoy_cluster_lb_healthy_panic|envoy_cluster_manager_cds_config_reload|envoy_listener_admin_downstream_cx_transport_socket_connect_timeout|envoy_cluster_upstream_cx_overflow|envoy_listener_manager_listener_create_success|envoy_cluster_upstream_rq_0rtt|envoy_http1_response_flood|envoy_http_downstream_rq_idle_timeout|envoy_sds_xds_trusted_ca_update_attempt|envoy_cluster_update_no_rebuild|envoy_http_downstream_cx_destroy_local_active_rq|envoy_http_downstream_rq_http2_total|envoy_http_downstream_cx_destroy_active_rq|envoy_cluster_upstream_rq_retry|envoy_cluster_http2_tx_flush_timeout|envoy_cluster_membership_change|envoy_cluster_ssl_no_certificate|envoy_cluster_manager_cluster_updated|envoy_listener_admin_downstream_cx_overflow|envoy_cluster_zone_us_west_1b__upstream_rq|envoy_cluster_lb_subsets_removed|envoy_cluster_upstream_rq_xx|envoy_cluster_upstream_cx_http1_total|envoy_cluster_upstream_cx_tx_bytes_total|envoy_cluster_upstream_flow_control_backed_up_total|envoy_listener_admin_http_downstream_rq_xx|envoy_listener_downstream_cx_overload_reject|envoy_cluster_lb_zone_no_capacity_left|envoy_cluster_upstream_flow_control_paused_reading_total|envoy_cluster_http2_rx_reset|envoy_http_downstream_cx_overload_disable_keepalive|envoy_server_dropped_stat_flushes|envoy_cluster_http2_requests_rejected_with_underscores_in_headers|envoy_cluster_upstream_cx_max_duration_reached|envoy_http_downstream_cx_tx_bytes_total|envoy_listener_manager_lds_init_fetch_timeout|envoy_cluster_http2_keepalive_timeout|envoy_cluster_http2_headers_cb_no_stream|envoy_cluster_http2_stream_refused_errors|envoy_cluster_ssl_ocsp_staple_omitted|envoy_cluster_ssl_was_key_usage_invalid|envoy_cluster_upstream_rq_per_try_idle_timeout|envoy_dns_cares_not_found|envoy_http_rds_init_fetch_timeout|envoy_listener_no_filter_chain_match|envoy_cluster_manager_update_merge_cancelled|envoy_cluster_ssl_versions|envoy_listener_http_downstream_rq_xx|envoy_cluster_ssl_ocsp_staple_failed|envoy_cluster_upstream_rq_timeout|envoy_sds_xds_trusted_ca_update_rejected|envoy_cluster_upstream_rq_tx_reset|envoy_cluster_http2_goaway_sent|envoy_cluster_upstream_http3_broken|envoy_http_rds_config_reload|envoy_cluster_ssl_fail_verify_no_cert$
+         target_label: newrelic_metric_type
+         replacement: "counter"
+         action: replace
+       - source_labels: [ __name__ ]
+         regex: ^keda_resource_registered_total|keda_trigger_registered_total$
+         target_label: newrelic_metric_type
+         replacement: "gauge"
+         action: replace
+       - source_labels: [ __name__ ]
+         regex: ^nginx_ingress_controller_requests|nginx_ingress_controller_check_success|nginx_ingress_controller_success$
+         target_label: newrelic_metric_type
+         replacement: "counter"
+         action: replace
 
     #   # Enable the extra_write_relabel_configs below for backwards compatibility with legacy POMI labels.
     #   # This helpful when migrating from POMI to ensure that Prometheus metrics will contain both labels (e.g. cluster_name and clusterName).
@@ -232,7 +252,7 @@ config:
       source_labels: ["app.kubernetes.io/name", "app.newrelic.io/name", "k8s-app"]
       # -- app_values used to create the regex used in the relabel config added by the integration filters configuration.
       # Note that a single regex will be created from this list, example: '.*(?i)(app1|app2|app3).*'
-      app_values: ["redis", "traefik", "calico", "nginx", "coredns", "kube-dns", "etcd", "cockroachdb", "velero", "harbor", "argocd"]
+      app_values: ["redis", "traefik", "calico", "nginx", "coredns", "kube-dns", "etcd", "cockroachdb", "velero", "harbor", "argocd", "gateway-helm", "envoy", "keda", "istio", "ztunnel", "node-exporter"] #gateway-helm=envoy-gateway
 
     # Kubernetes jobs define [kubernetes_sd_configs](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config)
     # to discover and scrape Kubernetes objects. Besides, a set of relabel_configs are included in order to include some Kubernetes metadata as
@@ -388,6 +408,12 @@ config:
       skip_sharding: true  # sharding is skipped to obtain self-metrics from all Prometheus servers.
       targets:
         - "localhost:9090"
+#      extra_relabel_config:
+#        - source_labels: [ __meta_kubernetes_pod_name ]
+#          separator: ;
+#          target_label: pod
+#          replacement: "my-evil-pod"
+#          action: replace
       extra_metric_relabel_config:
         - source_labels: [__name__]
           regex: "\
@@ -510,4 +536,35 @@ config:
   # WARNING extra_scrape_configs is a raw Prometheus config. Therefore, the metrics collected thanks to it will not have by default the metadata (pod_name, service_name, ...) added by the configurator for the static or kubernetes jobs.
   # This configuration should be used as a workaround whenever kubernetes and static job do not cover a particular use-case.
   # @default -- `[]`
-  extra_scrape_configs: []
+  extra_scrape_configs:
+    - job_name: 'istio-envoy-stats'
+      metrics_path: /stats/prometheus
+      kubernetes_sd_configs:
+        - role: pod
+      relabel_configs:
+        - source_labels: [ __meta_kubernetes_pod_container_port_name ]
+          action: keep
+          regex: '.*-envoy-prom'
+        - separator: ;
+          regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+          replacement: __param_$1
+          action: labelmap
+        - separator: ;
+          regex: __meta_kubernetes_pod_label_(.+)
+          replacement: $1
+          action: labelmap
+        - source_labels: [ __meta_kubernetes_namespace ]
+          separator: ;
+          target_label: namespace
+          replacement: $1
+          action: replace
+        - source_labels: [ __meta_kubernetes_pod_node_name ]
+          separator: ;
+          target_label: node
+          replacement: $1
+          action: replace
+        - source_labels: [ __meta_kubernetes_pod_name ]
+          separator: ;
+          target_label: pod
+          replacement: $1
+          action: replace
