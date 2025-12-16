@@ -83,6 +83,10 @@ jobs:
           GOOS=linux GOARCH=amd64 DOCKER_BUILDKIT=1 docker build -t ct/prometheus-configurator:ct  .
           minikube image load ct/prometheus-configurator:ct
           kubectl create ns ct
+      - name: Clean up Kubernetes Namespace
+        run: |
+          kubectl delete namespace ct --ignore-not-found=true
+          kubectl create namespace ct
       - name: Test install charts
         if: steps.list-changed.outputs.changed == 'true'
         run: ct install --namespace ct --config .github/ct.yaml --debug
