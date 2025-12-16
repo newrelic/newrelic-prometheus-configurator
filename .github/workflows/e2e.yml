@@ -33,7 +33,7 @@ jobs:
           # default driver doesn't support 'eval $$(minikube docker-env)'.
           driver: docker
           github token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version-file: 'go.mod'
       # tilt 0.33.3 introduces a breaking change that results in
