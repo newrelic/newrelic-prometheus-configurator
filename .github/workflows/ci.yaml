@@ -83,20 +83,19 @@ jobs:
           GOOS=linux GOARCH=amd64 DOCKER_BUILDKIT=1 docker build -t ct/prometheus-configurator:ct  .
           minikube image load ct/prometheus-configurator:ct
           kubectl create ns ct
-      - name: Clean up Kubernetes Namespace
+      - name: 🗑️ Delete orphaned license secret
         run: |
-          kubectl delete namespace ct --ignore-not-found=true
-          kubectl create namespace ct
+          kubectl delete secret newrelic-prometheus-agent-license --namespace ct --ignore-not-found=true
       - name: Test install charts
         if: steps.list-changed.outputs.changed == 'true'
         run: ct install --namespace ct --config .github/ct.yaml --debug
       - name: Test upgrade charts
         if: steps.list-changed.outputs.changed == 'true'
         run: ct install --namespace ct --config .github/ct.yaml --debug --upgrade
-      - name: Clean up Kubernetes Namespace
+      - name: Final Helm release cleanup
         if: always()
         run: |
-          kubectl delete namespace ct --ignore-not-found=true
+          helm list --namespace ct --all --short | xargs -r helm uninstall --namespace ct
 
   test:
     name: Run tests
