@@ -93,6 +93,10 @@ jobs:
       - name: Test upgrade charts
         if: steps.list-changed.outputs.changed == 'true'
         run: ct install --namespace ct --config .github/ct.yaml --debug --upgrade
+      - name: Clean up Kubernetes Namespace
+        if: always()
+        run: |
+          kubectl delete namespace ct --ignore-not-found=true
 
   test:
     name: Run tests
