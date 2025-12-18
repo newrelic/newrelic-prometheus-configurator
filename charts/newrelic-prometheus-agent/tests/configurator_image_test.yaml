@@ -17,7 +17,7 @@ tests:
       - template: templates/statefulset.yaml
         equal:
           path: spec.template.spec.initContainers[0].image
-          value: "newrelic/newrelic-prometheus-configurator:test"
+          value: "docker.io/newrelic/newrelic-prometheus-configurator:test"
       - equal:
           path: spec.template.spec.initContainers[0].imagePullPolicy
           value: "Never"

@@ -35,8 +35,8 @@ images:
   # -- Image for prometheus which is executed in agent mode.
   # @default -- See `values.yaml`
   prometheus:
-    registry: ""
-    repository: quay.io/prometheus/prometheus
+    registry: "quay.io"
+    repository: "prometheus/prometheus"
     pullPolicy: IfNotPresent
     # @default It defaults to `appVersion` in `Chart.yaml`.
     tag: ""
