@@ -1,22 +1,39 @@
-suite: test prometheus image registry
+suite: test image configuration
 templates:
   - templates/statefulset.yaml
   - templates/configmap.yaml
 tests:
-  - it: should use quay.io as default registry for prometheus
+  # Default image configuration
+  - it: should use default registries and tags
     set:
       licenseKey: license-key-test
       cluster: cluster-test
       images:
+        configurator:
+          tag: "test"
+          pullPolicy: Never
         prometheus:
-          tag: "v3.0.0"
+          tag: "test-2"
     asserts:
       - template: templates/statefulset.yaml
         equal:
+          path: spec.template.spec.initContainers[0].image
+          value: "docker.io/newrelic/newrelic-prometheus-configurator:test"
+      - equal:
+          path: spec.template.spec.initContainers[0].imagePullPolicy
+          value: "Never"
+        template: templates/statefulset.yaml
+      - template: templates/statefulset.yaml
+        equal:
           path: spec.template.spec.containers[0].image
-          value: "quay.io/prometheus/prometheus:v3.0.0"
+          value: "quay.io/prometheus/prometheus:test-2"
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: "IfNotPresent"
+        template: templates/statefulset.yaml
 
-  - it: should override prometheus registry with global.images.registry
+  # Global registry override
+  - it: should override both images with global.images.registry
     set:
       licenseKey: license-key-test
       cluster: cluster-test
@@ -24,14 +41,21 @@ tests:
         images:
           registry: "my-custom-registry.io"
       images:
+        configurator:
+          tag: "2.0.0"
         prometheus:
           tag: "v3.0.0"
     asserts:
       - template: templates/statefulset.yaml
         equal:
+          path: spec.template.spec.initContainers[0].image
+          value: "my-custom-registry.io/newrelic/newrelic-prometheus-configurator:2.0.0"
+      - template: templates/statefulset.yaml
+        equal:
           path: spec.template.spec.containers[0].image
           value: "my-custom-registry.io/prometheus/prometheus:v3.0.0"
 
+  # Local registry overrides
   - it: should override prometheus registry with local images.prometheus.registry
     set:
       licenseKey: license-key-test
@@ -46,6 +70,21 @@ tests:
           path: spec.template.spec.containers[0].image
           value: "local-registry.io/prometheus/prometheus:v3.0.0"
 
+  - it: should override configurator registry with local images.configurator.registry
+    set:
+      licenseKey: license-key-test
+      cluster: cluster-test
+      images:
+        configurator:
+          registry: "local-registry.io"
+          tag: "2.0.0"
+    asserts:
+      - template: templates/statefulset.yaml
+        equal:
+          path: spec.template.spec.initContainers[0].image
+          value: "local-registry.io/newrelic/newrelic-prometheus-configurator:2.0.0"
+
+  # Priority tests - local registry over global
   - it: should prioritize local registry over global registry for prometheus
     set:
       licenseKey: license-key-test
@@ -62,49 +101,6 @@ tests:
         equal:
           path: spec.template.spec.containers[0].image
           value: "local-registry.io/prometheus/prometheus:v3.0.0"
-
-  - it: should use docker.io as default registry for configurator
-    set:
-      licenseKey: license-key-test
-      cluster: cluster-test
-      images:
-        configurator:
-          tag: "2.0.0"
-    asserts:
-      - template: templates/statefulset.yaml
-        equal:
-          path: spec.template.spec.initContainers[0].image
-          value: "docker.io/newrelic/newrelic-prometheus-configurator:2.0.0"
-
-  - it: should override configurator registry with global.images.registry
-    set:
-      licenseKey: license-key-test
-      cluster: cluster-test
-      global:
-        images:
-          registry: "my-custom-registry.io"
-      images:
-        configurator:
-          tag: "2.0.0"
-    asserts:
-      - template: templates/statefulset.yaml
-        equal:
-          path: spec.template.spec.initContainers[0].image
-          value: "my-custom-registry.io/newrelic/newrelic-prometheus-configurator:2.0.0"
-
-  - it: should override configurator registry with local images.configurator.registry
-    set:
-      licenseKey: license-key-test
-      cluster: cluster-test
-      images:
-        configurator:
-          registry: "local-registry.io"
-          tag: "2.0.0"
-    asserts:
-      - template: templates/statefulset.yaml
-        equal:
-          path: spec.template.spec.initContainers[0].image
-          value: "local-registry.io/newrelic/newrelic-prometheus-configurator:2.0.0"
 
   - it: should prioritize local registry over global registry for configurator
     set:
