@@ -11,6 +11,7 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 ### dependency
 - Updated quay.io/prometheus/prometheus to v3.8.0
 - Updated github.com/prometheus/prometheus to v0.308.0
+- Updated helm to v3.19.4
 
 ## v2.4.3 - 2025-12-08
 
