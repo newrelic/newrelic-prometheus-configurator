@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: azure/setup-helm@v4
         with:
-          version: 'v3.19.0'
+          version: 'v3.19.4'
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
