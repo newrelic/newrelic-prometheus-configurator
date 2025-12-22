@@ -8,10 +8,17 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.4.4 - 2025-12-22
+
 ### dependency
 - Updated quay.io/prometheus/prometheus to v3.8.0
 - Updated github.com/prometheus/prometheus to v0.308.0
 - Updated helm to v3.19.4 @jamescripter [#516](https://github.com/newrelic/newrelic-prometheus-configurator/pull/516)
+
+### ⛓️ Dependencies
+- Updated go to v1.25.5
+- Updated kubernetes packages to v0.34.3
+- Updated alpine to v3.23.2
 
 ## v2.4.3 - 2025-12-08
 
