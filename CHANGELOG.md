@@ -8,6 +8,12 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.5.0 - 2025-12-29
+
+### ⛓️ Dependencies
+- Updated golang.org/x/sync to v0.19.0
+- Upgraded golang.org/x/crypto from 0.42.0 to 0.45.0
+
 ## v2.4.4 - 2025-12-22
 
 ### dependency
