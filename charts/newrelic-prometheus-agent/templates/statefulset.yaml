@@ -70,8 +70,8 @@ spec:
               mountPath: /etc/prometheus/config
           env:
             - name: NR_PROM_DATA_SOURCE_NAME
-              valueFrom: 
-                fieldRef: 
+              valueFrom:
+                fieldRef:
                   fieldPath: metadata.name
             - name: NR_PROM_LICENSE_KEY
               valueFrom:
@@ -139,7 +139,7 @@ spec:
                   key: {{ .valueFrom.secretKeyRef.key }}
               {{- end }}
             {{- end }}
-            {{- end }}            
+            {{- end }}
           {{- with .Values.resources.prometheus }}
           resources: {{ toYaml . | nindent 12 }}
           {{- end }}

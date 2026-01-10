@@ -66,6 +66,7 @@ podLabels: {}
 # @default -- `{}`
 resources:
   prometheus: {}
+  configurator: {}
 
 # -- Sets pod's priorityClassName. Can be configured also with `global.priorityClassName`
 priorityClassName: ""
