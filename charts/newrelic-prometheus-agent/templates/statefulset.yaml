@@ -87,7 +87,7 @@ spec:
           securityContext:
             {{- . | nindent 12 }}
           {{- end }}
-          image: {{ include "newrelic.common.images.image" ( dict "imageRoot" .Values.images.prometheus "context" .) }}
+          image: {{ include "newrelic.common.images.image" ( dict "imageRoot" .Values.images.prometheus "defaultRegistry" "quay.io" "context" .) }}
           imagePullPolicy: {{ .Values.images.prometheus.pullPolicy }}
           ports:
             - containerPort: 9090

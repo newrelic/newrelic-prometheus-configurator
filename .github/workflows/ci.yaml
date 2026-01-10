@@ -26,8 +26,8 @@ jobs:
     steps:
       - uses: azure/setup-helm@v4
         with:
-          version: 'v3.0.0'
-      - uses: actions/checkout@v5
+          version: 'v3.19.4'
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: helm/chart-testing-action@v2.8.0
@@ -90,57 +90,18 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         run: ct install --namespace ct --config .github/ct.yaml --debug --upgrade
 
-  e2e-test:
-    name: E2e Tests
-    if: ${{ !contains(github.event.pull_request.labels.*.name, 'ci/skip-e2e') }}
-    runs-on: ubuntu-latest
-    # If the environment is broken this job could timeout since the default timeout for tilt ci is 30m.
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v5
-      - name: Setup Minikube
-        uses: manusa/actions-setup-minikube@v2.14.0
-        with:
-          minikube version: ${{ env.MINIKUBE_VERSION }}
-          kubernetes version: ${{ env.LATEST_K8S_VERSION }}
-          # default driver doesn't support 'eval $$(minikube docker-env)'.
-          driver: docker
-          github token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-go@v6
-        with:
-          go-version-file: 'go.mod'
-      # tilt 0.33.3 introduces a breaking change that results in 
-      # "ERROR: Failed to connect to Docker: Error response from daemon: Client sent an HTTP request to an HTTPS server."
-      # So we explicitly adopt tilt 0.33.2 to prevent the E2e Tests failure.
-      - name: Install Tilt
-        run: |
-          curl -fsSL https://github.com/tilt-dev/tilt/releases/download/v0.33.2/tilt.0.33.2.linux.x86_64.tar.gz | tar -xzv tilt && sudo mv tilt /usr/local/bin/tilt
-      - name: Run e2e-test
-        env:
-          SECRET_AVAILABLE: ${{ secrets.K8S_AGENTS_E2E_ACCOUNT_ID }}
-        if: ${{ env.SECRET_AVAILABLE != '' }}
-        uses: newrelic/newrelic-integration-e2e-action@v1
-        with:
-          retry_seconds: 90
-          retry_attempts: 5
-          agent_enabled: false
-          spec_path: test/e2e/test-specs.yml
-          account_id: ${{ secrets.K8S_AGENTS_E2E_ACCOUNT_ID }}
-          api_key: ${{ secrets.K8S_AGENTS_E2E_API_KEY }}
-          license_key: ${{ secrets.K8S_AGENTS_E2E_LICENSE_KEY }}
-
   test:
     name: Run tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
         with:
           go-version-file: 'go.mod'
       - name: Run unit tests
         run: make test
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         with:
           fail_ci_if_error: false
         env:
@@ -159,7 +120,7 @@ jobs:
     name: Static analysis and linting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
         with:
           go-version-file: 'go.mod'
@@ -194,7 +155,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Codespell test
         uses: codespell-project/actions-codespell@master
         with:

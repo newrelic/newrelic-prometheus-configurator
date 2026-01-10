@@ -36,7 +36,7 @@ images:
   # @default -- See `values.yaml`
   prometheus:
     registry: ""
-    repository: quay.io/prometheus/prometheus
+    repository: prometheus/prometheus
     pullPolicy: IfNotPresent
     # @default It defaults to `appVersion` in `Chart.yaml`.
     tag: ""
