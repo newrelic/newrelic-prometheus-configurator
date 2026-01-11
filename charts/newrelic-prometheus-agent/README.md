@@ -58,25 +58,7 @@ means that it honors a wide range of defaults and globals common to most New Rel
 Options that can be defined globally include `affinity`, `nodeSelector`, `tolerations`, `proxy` and others. The full list can be found at
 [user's guide of the common library](https://github.com/newrelic/helm-charts/blob/master/library/common-library/README.md).
 
-## GKE Autopilot
-When installing this chart in a GKE Autopilot cluster, it's recommended to set resource defaults for the prometheus, and configurator containers.
-If resources are not set, GKE Autopilot will assign default resource values, and you will see the following warning in the in your console:
-
-`defaulted unspecified 'cpu' resource for containers [configurator, prometheus]`
-
-To avoid this warning, and having GKE Autopilot set resource values for you, you can set the following values in your `values.yaml` file.
-``` yaml
-resources:
-  prometheus:
-    requests:
-      cpu: 50m
-      memory: 100Mi
-  configurator:
-    requests:
-      cpu: 50m
-      memory: 100Mi
-```
-
+## Chart particularities
 
 ### Configuration
 
