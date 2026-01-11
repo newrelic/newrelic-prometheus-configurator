@@ -5,7 +5,6 @@ package mocks
 import (
 	"errors"
 	"fmt"
-	"github.com/prometheus/prometheus/config"
 	"io"
 	"log/slog"
 	"net"
@@ -16,6 +15,7 @@ import (
 	"syscall"
 	"testing"
 
+	remoteapi "github.com/prometheus/client_golang/exp/api/remote"
 	"github.com/prometheus/prometheus/storage"
 	"github.com/prometheus/prometheus/storage/remote"
 	"github.com/stretchr/testify/require"
@@ -27,7 +27,7 @@ func StartRemoteWriteEndpoint(t *testing.T, appendable storage.Appendable) *http
 	t.Helper()
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	handler := remote.NewWriteHandler(logger, nil, appendable, []config.RemoteWriteProtoMsg{config.RemoteWriteProtoMsgV1}, false)
+	handler := remote.NewWriteHandler(logger, nil, appendable, []remoteapi.WriteMessageType{remoteapi.WriteV1MessageType}, false, false, false)
 
 	url := ""
 	remoteWriteServer := httptest.NewTLSServer(handlerWithProxy(t, handler, &url))
