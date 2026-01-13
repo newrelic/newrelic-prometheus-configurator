@@ -12,6 +12,8 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 - Added section in values.yaml resources for configurator init container. @pbeckwith [526](https://github.com/newrelic/newrelic-prometheus-configurator/pull/526)
 - Added section in ReadMe about installation on GKE Autopilot. @pbeckwith [526](https://github.com/newrelic/newrelic-prometheus-configurator/pull/526)
  
+## v2.5.0 - 2026-01-12
+
 ### dependency
 - Updated renovate config to handle prometheus version updates @jamescripter [#524](https://github.com/newrelic/newrelic-prometheus-configurator/pull/524)
 
