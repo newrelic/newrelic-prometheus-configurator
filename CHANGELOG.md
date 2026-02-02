@@ -8,6 +8,14 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.6.1 - 2026-02-02
+
+### ⛓️ Dependencies
+- Updated github.com/prometheus/client_golang/exp digest to fb0838f
+- Updated go to v1.25.6
+- Updated kubernetes packages to v0.35.0
+- Updated alpine to v3.23.3
+
 ## v2.6.0 - 2026-01-19
 
 ### 🚀 Enhancements
