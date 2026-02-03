@@ -154,7 +154,7 @@ config:
 
 ### Metrics Filtering
 
-Check [docs](https://github.com/newrelic/newrelic-prometheus-configurator/blob/main/docs/MetricsFilters.md) for a detailed explanation and examples of how to filter metrics and labels.
+Check the [metric and label transformations documentation](https://docs.newrelic.com/docs/infrastructure/prometheus-integrations/install-configure-prometheus-agent/setup-prometheus-agent/#metric-label-transformations) for a detailed explanation and examples of how to filter metrics and labels.
 
 ### Self metrics
 
