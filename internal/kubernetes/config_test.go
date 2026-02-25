@@ -347,7 +347,7 @@ func TestBuildIntegrationFilter(t *testing.T) { //nolint: funlen
 				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
 				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
 			},
-			len: 11,
+			len: 12,
 		},
 		{
 			name: "two labels two app values from default even if disabled",
@@ -374,7 +374,7 @@ func TestBuildIntegrationFilter(t *testing.T) { //nolint: funlen
 				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
 				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
 			},
-			len: 11,
+			len: 12,
 		},
 		{
 			name: "two labels two regexes at different levels",
@@ -403,7 +403,7 @@ func TestBuildIntegrationFilter(t *testing.T) { //nolint: funlen
 				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
 				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
 			},
-			len: 11,
+			len: 12,
 		},
 		{
 			name: "no labels no regex but disabled at job label",
@@ -424,7 +424,7 @@ func TestBuildIntegrationFilter(t *testing.T) { //nolint: funlen
 					Enabled: boolPtr(true),
 				},
 			},
-			len: 10,
+			len: 11,
 		},
 		{
 			name: "No labels no regex but disabled at default label",
@@ -442,7 +442,7 @@ func TestBuildIntegrationFilter(t *testing.T) { //nolint: funlen
 					Enabled: boolPtr(false),
 				},
 			},
-			len: 10,
+			len: 11,
 		},
 	}
 
@@ -525,16 +525,16 @@ func TestBuildIntegrationFilterDifferentConfig(t *testing.T) {
 				"__meta_kubernetes_pod_label_label1": ".*(?i)(regex1|regex2).*",
 				"__meta_kubernetes_pod_label_label2": ".*(?i)(regex1|regex2).*",
 			},
-			len: 11,
+			len: 12,
 		},
 		1: {
 			want: &map[string]string{
 				"__meta_kubernetes_pod_label_different_label": ".*(?i)(different-regex).*",
 			},
-			len: 11,
+			len: 12,
 		},
 		2: {
-			len: 10,
+			len: 11,
 		},
 	}
 
