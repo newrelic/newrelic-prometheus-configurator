@@ -1,5 +1,28 @@
 {
   "extends": [
     "github>newrelic/k8s-agents-automation:renovate-base.json5"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["github.com/prometheus/prometheus", "quay.io/prometheus/prometheus"],
+      "versioning": "semver",
+      "postUpgradeTasks": {
+        "commands": ["go mod tidy"],
+        "fileFilters": ["go.mod", "go.sum"]
+      },
+      "groupName": "prometheus version",
+      "commitMessageTopic": "Prometheus"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["(^|/)Chart\\.yaml$"],
+      "matchStrings": [
+        "appVersion: \"(?<currentValue>.*)\""
+      ],
+      "depNameTemplate": "quay.io/prometheus/prometheus",
+      "datasourceTemplate": "docker"
+    }
   ]
 }

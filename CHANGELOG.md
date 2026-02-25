@@ -8,6 +8,46 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.6.1 - 2026-02-02
+
+### ⛓️ Dependencies
+- Updated github.com/prometheus/client_golang/exp digest to fb0838f
+- Updated go to v1.25.6
+- Updated kubernetes packages to v0.35.0
+- Updated alpine to v3.23.3
+
+## v2.6.0 - 2026-01-19
+
+### 🚀 Enhancements
+- Added section in values.yaml resources for configurator init container. @pbeckwith [526](https://github.com/newrelic/newrelic-prometheus-configurator/pull/526)
+- Added section in ReadMe about installation on GKE Autopilot. @pbeckwith [526](https://github.com/newrelic/newrelic-prometheus-configurator/pull/526)
+
+### ⛓️ Dependencies
+- Updated github.com/sirupsen/logrus to v1.9.4 - [Changelog 🔗](https://github.com/sirupsen/logrus/releases/tag/v1.9.4)
+
+## v2.5.0 - 2026-01-12
+
+### dependency
+- Updated renovate config to handle prometheus version updates @jamescripter [#524](https://github.com/newrelic/newrelic-prometheus-configurator/pull/524)
+
+## v2.5.0 - 2025-12-29
+
+### ⛓️ Dependencies
+- Updated golang.org/x/sync to v0.19.0
+- Upgraded golang.org/x/crypto from 0.42.0 to 0.45.0
+
+## v2.4.4 - 2025-12-22
+
+### dependency
+- Updated quay.io/prometheus/prometheus to v3.8.0
+- Updated github.com/prometheus/prometheus to v0.308.0
+- Updated helm to v3.19.4 @jamescripter [#516](https://github.com/newrelic/newrelic-prometheus-configurator/pull/516)
+
+### ⛓️ Dependencies
+- Updated go to v1.25.5
+- Updated kubernetes packages to v0.34.3
+- Updated alpine to v3.23.2
+
 ## v2.4.3 - 2025-12-08
 
 ### ⛓️ Dependencies
