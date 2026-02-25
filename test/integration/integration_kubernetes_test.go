@@ -193,7 +193,6 @@ kubernetes:
 
 	scrapeURL := fmt.Sprintf("%s://%s:%s%s",
 		pod.Annotations["prometheus.io/scheme"],
-		pod.Status.PodIP,
 		pod.Annotations["prometheus.io/port"],
 		pod.Annotations["prometheus.io/path"],
 	)
