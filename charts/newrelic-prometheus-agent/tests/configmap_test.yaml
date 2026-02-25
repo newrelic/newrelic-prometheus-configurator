@@ -319,8 +319,8 @@ tests:
               targets:
                 - "192.168.3.1:2379"
               params:
-                q: [ "puppies" ]
-                oe: [ "utf8" ]
+                q: ["puppies"]
+                oe: ["utf8"]
               scheme: "https"
               body_size_limit: 100MiB
               fallback_scrape_protocol: "PrometheusText1.0.0"
@@ -342,11 +342,11 @@ tests:
                 type: Bearer
                 credentials: "fancy-credentials"
               extra_relabel_config:
-                - source_labels: [ '__name__', 'instance' ]
+                - source_labels: ['__name__', 'instance']
                   regex: node_memory_active_bytes;localhost:9100
                   action: drop
               extra_metric_relabel_config:
-                - source_labels: [ '__name__', 'instance' ]
+                - source_labels: ['__name__', 'instance']
                   regex: node_memory_active_bytes;localhost:9100
                   action: drop
         extra_scrape_configs:
@@ -370,11 +370,11 @@ tests:
               type: Bearer
               credentials: "fancy-credentials"
             relabel_configs:
-              - source_labels: [ '__name__', 'instance' ]
+              - source_labels: ['__name__', 'instance']
                 regex: node_memory_active_bytes;localhost:9100
                 action: drop
             metric_relabel_configs:
-              - source_labels: [ '__name__', 'instance' ]
+              - source_labels: ['__name__', 'instance']
                 regex: node_memory_active_bytes;localhost:9100
                 action: drop
         # Set empty to make this test simple
