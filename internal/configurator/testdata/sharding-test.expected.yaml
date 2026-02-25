@@ -7,22 +7,22 @@ scrape_configs:
           - "192.168.3.1:2379"
     metrics_path: /metrics-custom
     relabel_configs:
-      - source_labels: [ '__address__' ]
+      - source_labels: ['__address__']
         regex: (\d{1,3}\.\d{1,3}\.\d{1,3}.\d{1,3})(?::\d+)?
         action: replace
         target_label: __tmp_hash
-      - source_labels: [ '__tmp_hash' ]
+      - source_labels: ['__tmp_hash']
         modulus: 2
         action: hashmod
         target_label: __tmp_hash
-      - source_labels: [ '__tmp_hash' ]
+      - source_labels: ['__tmp_hash']
         regex: ^1$
         action: keep
-      - source_labels: [ '__name__', 'instance' ]
+      - source_labels: ['__name__', 'instance']
         regex: node_memory_active_bytes;localhost:9100
         action: drop
     metric_relabel_configs:
-      - source_labels: [ '__name__', 'instance' ]
+      - source_labels: ['__name__', 'instance']
         regex: node_memory_active_bytes;localhost:9100
         action: drop
 
@@ -32,15 +32,15 @@ scrape_configs:
           - "192.168.3.1:9911"
     fallback_scrape_protocol: "PrometheusText1.0.0"
     relabel_configs:
-      - source_labels: [ '__address__' ]
+      - source_labels: ['__address__']
         regex: (\d{1,3}\.\d{1,3}\.\d{1,3}.\d{1,3})(?::\d+)?
         action: replace
         target_label: __tmp_hash
-      - source_labels: [ '__tmp_hash' ]
+      - source_labels: ['__tmp_hash']
         modulus: 2
         action: hashmod
         target_label: __tmp_hash
-      - source_labels: [ '__tmp_hash' ]
+      - source_labels: ['__tmp_hash']
         regex: ^1$
         action: keep
 
@@ -49,34 +49,34 @@ scrape_configs:
     kubernetes_sd_configs:
       - role: pod
     relabel_configs:
-      - source_labels: [ '__address__' ]
+      - source_labels: ['__address__']
         regex: (\d{1,3}\.\d{1,3}\.\d{1,3}.\d{1,3})(?::\d+)?
         action: replace
         target_label: __tmp_hash
-      - source_labels: [ '__tmp_hash' ]
+      - source_labels: ['__tmp_hash']
         modulus: 2
         action: hashmod
         target_label: __tmp_hash
-      - source_labels: [ '__tmp_hash' ]
+      - source_labels: ['__tmp_hash']
         regex: ^1$
         action: keep
-      - source_labels: [ __meta_kubernetes_pod_phase ]
+      - source_labels: [__meta_kubernetes_pod_phase]
         regex: Pending|Succeeded|Failed|Completed
         action: drop
-      - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_scheme ]
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
         action: replace
         regex: (https?)
         target_label: __scheme__
-      - source_labels: [ __meta_kubernetes_pod_annotation_prometheus_io_path ]
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
         action: replace
         target_label: __metrics_path__
         regex: (.+)
-      - source_labels: [ __address__ ]
+      - source_labels: [__address__]
         action: replace
         regex: ([0-9a-fA-F:]+:[0-9a-fA-F:]+)
-        replacement: [ $1 ]
+        replacement: "[$1]"
         target_label: __address__
-      - source_labels: [ __address__, __meta_kubernetes_pod_annotation_prometheus_io_port ]
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
         action: replace
         regex: ([^;]+);(\d+)
         replacement: $1:$2
@@ -86,13 +86,13 @@ scrape_configs:
         replacement: __param_$1
       - action: labelmap
         regex: __meta_kubernetes_pod_label_(.+)
-      - source_labels: [ __meta_kubernetes_namespace ]
+      - source_labels: [__meta_kubernetes_namespace]
         action: replace
         target_label: namespace
-      - source_labels: [ __meta_kubernetes_pod_node_name ]
+      - source_labels: [__meta_kubernetes_pod_node_name]
         action: replace
         target_label: node
-      - source_labels: [ __meta_kubernetes_pod_name ]
+      - source_labels: [__meta_kubernetes_pod_name]
         action: replace
         target_label: pod
 
@@ -101,34 +101,34 @@ scrape_configs:
     kubernetes_sd_configs:
       - role: endpoints
     relabel_configs:
-      - source_labels: [ '__address__' ]
+      - source_labels: ['__address__']
         regex: (\d{1,3}\.\d{1,3}\.\d{1,3}.\d{1,3})(?::\d+)?
         action: replace
         target_label: __tmp_hash
-      - source_labels: [ '__tmp_hash' ]
+      - source_labels: ['__tmp_hash']
         modulus: 2
         action: hashmod
         target_label: __tmp_hash
-      - source_labels: [ '__tmp_hash' ]
+      - source_labels: ['__tmp_hash']
         regex: ^1$
         action: keep
-      - source_labels: [ __meta_kubernetes_pod_phase ]
+      - source_labels: [__meta_kubernetes_pod_phase]
         action: drop
         regex: Succeeded|Failed|Completed
-      - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_scheme ]
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
         action: replace
         target_label: __scheme__
         regex: (https?)
-      - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_path ]
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
         action: replace
         target_label: __metrics_path__
         regex: (.+)
-      - source_labels: [ __address__ ]
+      - source_labels: [__address__]
         action: replace
         regex: ([0-9a-fA-F:]+:[0-9a-fA-F:]+)
-        replacement: [ $1 ]
+        replacement: "[$1]"
         target_label: __address__
-      - source_labels: [ __address__, __meta_kubernetes_service_annotation_prometheus_io_port ]
+      - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
         action: replace
         regex: ([^;]+);(\d+)
         target_label: __address__
@@ -138,19 +138,19 @@ scrape_configs:
         replacement: __param_$1
       - action: labelmap
         regex: __meta_kubernetes_service_label_(.+)
-      - source_labels: [ __meta_kubernetes_namespace ]
+      - source_labels: [__meta_kubernetes_namespace]
         action: replace
         target_label: namespace
-      - source_labels: [ __meta_kubernetes_service_name ]
+      - source_labels: [__meta_kubernetes_service_name]
         action: replace
         target_label: service
-      - source_labels: [ __meta_kubernetes_endpoint_node_name, __meta_kubernetes_pod_node_name ]
+      - source_labels: [__meta_kubernetes_endpoint_node_name, __meta_kubernetes_pod_node_name]
         separator: ;
         action: replace
         regex: ".*;(.+)|(.+);"
         replacement: "$1$2"
         target_label: node
-      - source_labels: [ __meta_kubernetes_pod_name ]
+      - source_labels: [__meta_kubernetes_pod_name]
         action: replace
         target_label: pod
 
