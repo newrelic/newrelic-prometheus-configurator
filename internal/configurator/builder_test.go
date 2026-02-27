@@ -241,9 +241,9 @@ func TestChartVersion(t *testing.T) {
 	}
 }
 
-func TestProxyUrl(t *testing.T) { //nolint: tparallel
+func TestProxyURL(t *testing.T) {
 	t.Setenv(configurator.LicenseKeyEnvKey, "fake")
-	t.Setenv(configurator.ProxyUrlEnvKey, "")
+	t.Setenv(configurator.ProxyURLEnvKey, "")
 
 	configWithProxyURL := configurator.NrConfig{
 		RemoteWrite: remotewrite.Config{},
@@ -260,11 +260,10 @@ func TestProxyUrl(t *testing.T) { //nolint: tparallel
 	})
 
 	expectedProxyURL := "http://proxy-from-env.com"
-	t.Setenv(configurator.ProxyUrlEnvKey, expectedProxyURL)
+	t.Setenv(configurator.ProxyURLEnvKey, expectedProxyURL)
 
+	//nolint: paralleltest // need clean env variables.
 	t.Run("IsSetFromEnvVar", func(t *testing.T) {
-		t.Parallel()
-
 		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
 		require.NoError(t, err)
 
@@ -272,9 +271,8 @@ func TestProxyUrl(t *testing.T) { //nolint: tparallel
 		require.Contains(t, string(data), fmt.Sprintf("proxy_url: %s", expectedProxyURL))
 	})
 
+	//nolint: paralleltest // need clean env variables.
 	t.Run("EnvVarOverridesConfig", func(t *testing.T) {
-		t.Parallel()
-
 		configWithProxyURL.RemoteWrite.ProxyURL = "http://proxy-from-config.com"
 		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
 		require.NoError(t, err)
@@ -284,7 +282,7 @@ func TestProxyUrl(t *testing.T) { //nolint: tparallel
 	})
 
 	t.Run("IsNotPresentWhenUnset", func(t *testing.T) {
-		t.Setenv(configurator.ProxyUrlEnvKey, "")
+		t.Setenv(configurator.ProxyURLEnvKey, "")
 		configWithProxyURL.RemoteWrite.ProxyURL = ""
 
 		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
