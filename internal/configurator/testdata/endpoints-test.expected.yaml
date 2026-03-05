@@ -21,7 +21,7 @@ scrape_configs:
         target_label: __address__
       - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
         action: replace
-        regex: ([^;]+);(\d+)
+        regex: (\[[^\]]+\]|[^:]+)(?::\d+)?;(\d+)
         target_label: __address__
         replacement: $1:$2
       - action: labelmap
@@ -84,7 +84,7 @@ scrape_configs:
         target_label: __address__
       - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
         action: replace
-        regex: ([^;]+);(\d+)
+        regex: (\[[^\]]+\]|[^:]+)(?::\d+)?;(\d+)
         target_label: __address__
         replacement: $1:$2
       - action: labelmap

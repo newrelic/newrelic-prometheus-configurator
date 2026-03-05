@@ -48,7 +48,7 @@ func endpointsDefaultRelabelConfigs() []promcfg.RelabelConfig {
 			SourceLabels: []string{"__address__", "__meta_kubernetes_service_annotation_prometheus_io_port"},
 			Action:       "replace",
 			TargetLabel:  "__address__",
-			Regex:        `([^;]+);(\d+)`,
+			Regex:        `(\[[^\]]+\]|[^:]+)(?::\d+)?;(\d+)`,
 			Replacement:  "$1:$2",
 		},
 		{
