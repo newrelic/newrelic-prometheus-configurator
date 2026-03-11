@@ -11,6 +11,14 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 ### enhancement
 - Improve scraping of IPv6 endpoints @dbudziwojski [#541](https://github.com/newrelic/newrelic-prometheus-configurator/pull/541)
 
+## v2.6.2 - 2026-03-09
+
+### ⛓️ Dependencies
+- Updated github.com/prometheus/client_golang/exp digest
+- Updated kubernetes packages to v0.35.2
+- Updated go to v1.26.1
+- Updated aquasecurity/trivy-action to v0.34.0
+
 ## v2.6.1 - 2026-02-02
 
 ### ⛓️ Dependencies
