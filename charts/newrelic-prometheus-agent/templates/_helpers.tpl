@@ -42,6 +42,11 @@ common:
 {{- end -}}
 {{- end -}}
 
+{{- /* Remove proxy_url if proxyFromSecret.enabled is true */ -}}
+{{- if .Values.config.proxyFromSecret.enabled -}}
+  {{- $_ := unset $tmp "proxy_url" -}}
+{{- end -}}
+
 {{- if not (empty $tmp) -}}
   {{- dict "newrelic_remote_write" $tmp | toYaml -}}
 {{- end -}}
@@ -162,4 +167,18 @@ Return the proper image tag for the configurator image
 */ -}}
 {{- define "newrelic-prometheus.configurator.configurator_image.tag" -}}
     {{- .imageRoot.tag | default .context.Chart.Annotations.configuratorVersion | toString -}}
+{{- end -}}
+
+{{- /*
+Return the proxy URL with proper precedence: proxyFromSecret > global.proxy
+Returns empty string if no proxy is configured
+*/ -}}
+{{- define "newrelic-prometheus.proxy" -}}
+{{- if .Values.config.proxyFromSecret.enabled -}}
+  {{- /* proxyFromSecret takes precedence - handled via env var in statefulset */ -}}
+{{- else if .Values.global -}}
+  {{- if .Values.global.proxy -}}
+    {{- .Values.global.proxy -}}
+  {{- end -}}
+{{- end -}}
 {{- end -}}

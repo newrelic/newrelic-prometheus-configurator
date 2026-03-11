@@ -241,6 +241,58 @@ func TestChartVersion(t *testing.T) {
 	}
 }
 
+func TestProxyURL(t *testing.T) {
+	t.Setenv(configurator.LicenseKeyEnvKey, "fake")
+	t.Setenv(configurator.ProxyURLEnvKey, "")
+
+	configWithProxyURL := configurator.NrConfig{
+		RemoteWrite: remotewrite.Config{},
+	}
+
+	//nolint: paralleltest // need clean env variables.
+	t.Run("IsSetFromConfig", func(t *testing.T) {
+		configWithProxyURL.RemoteWrite.ProxyURL = "http://proxy-from-config.com"
+		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		require.NoError(t, err)
+
+		data, _ := yaml.Marshal(promConf)
+		require.Contains(t, string(data), fmt.Sprintf("proxy_url: %s", "http://proxy-from-config.com"))
+	})
+
+	expectedProxyURL := "http://proxy-from-env.com"
+	t.Setenv(configurator.ProxyURLEnvKey, expectedProxyURL)
+
+	//nolint: paralleltest // need clean env variables.
+	t.Run("IsSetFromEnvVar", func(t *testing.T) {
+		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		require.NoError(t, err)
+
+		data, _ := yaml.Marshal(promConf)
+		require.Contains(t, string(data), fmt.Sprintf("proxy_url: %s", expectedProxyURL))
+	})
+
+	//nolint: paralleltest // need clean env variables.
+	t.Run("EnvVarOverridesConfig", func(t *testing.T) {
+		configWithProxyURL.RemoteWrite.ProxyURL = "http://proxy-from-config.com"
+		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		require.NoError(t, err)
+
+		data, _ := yaml.Marshal(promConf)
+		require.Contains(t, string(data), fmt.Sprintf("proxy_url: %s", expectedProxyURL), "Environment variable should override the configuration value")
+	})
+
+	t.Run("IsNotPresentWhenUnset", func(t *testing.T) {
+		t.Setenv(configurator.ProxyURLEnvKey, "")
+		configWithProxyURL.RemoteWrite.ProxyURL = ""
+
+		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		require.NoError(t, err)
+
+		data, _ := yaml.Marshal(promConf)
+		require.NotContains(t, string(data), "proxy_url:", "proxy_url should not be present when unset in both config and environment")
+	})
+}
+
 func assertYamlPromConfigsAreEqual(t *testing.T, y1, y2 []byte) {
 	t.Helper()
 

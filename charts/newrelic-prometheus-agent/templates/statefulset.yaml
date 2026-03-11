@@ -80,6 +80,16 @@ spec:
                   key: {{ include "newrelic.common.license.secretKeyName" . }}
             - name: NR_PROM_CHART_VERSION
               value: {{ .Chart.Version }}
+            {{- if .Values.config.proxyFromSecret.enabled }}
+            - name: NR_PROM_PROXY_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.proxyFromSecret.name }}
+                  key: {{ .Values.config.proxyFromSecret.key }}
+            {{- else if include "newrelic-prometheus.proxy" . }}
+            - name: NR_PROM_PROXY_URL
+              value: {{ include "newrelic-prometheus.proxy" . | quote }}
+            {{- end}}
 
       containers:
         - name: prometheus
