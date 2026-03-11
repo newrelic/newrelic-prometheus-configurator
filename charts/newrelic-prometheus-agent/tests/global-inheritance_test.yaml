@@ -34,7 +34,7 @@ tests:
 
   # ========== IMAGE INHERITANCE TESTS ==========
   - it: uses default images when no registry override
-    set:
+    set: &base
       licenseKey: us-whatever
       cluster: test-cluster
     asserts:
@@ -49,8 +49,7 @@ tests:
 
   - it: uses global.images.registry for both images
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         images:
           registry: harbor.corp.net/newrelic
@@ -66,8 +65,7 @@ tests:
 
   - it: local image registries override global registry
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       images:
         configurator:
           registry: local-registry.io
@@ -88,8 +86,7 @@ tests:
 
   - it: sets imagePullSecrets from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         images:
           pullSecrets:
@@ -102,8 +99,7 @@ tests:
 
   - it: merges global and local imagePullSecrets (global then local)
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       images:
         pullSecrets:
           - name: local-secret
@@ -124,8 +120,7 @@ tests:
   # ========== NODE SCHEDULING TESTS ==========
   - it: sets nodeSelector from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         nodeSelector:
           node.role/monitoring: "true"
@@ -139,8 +134,7 @@ tests:
 
   - it: local nodeSelector overrides global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       nodeSelector:
         local-node: "true"
       global:
@@ -156,8 +150,7 @@ tests:
 
   - it: sets tolerations from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         tolerations:
           - key: monitoring-taint
@@ -172,8 +165,7 @@ tests:
 
   - it: local tolerations override global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       tolerations:
         - key: local-taint
           operator: Exists
@@ -190,8 +182,7 @@ tests:
 
   - it: sets affinity from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         affinity:
           nodeAffinity:
@@ -209,8 +200,7 @@ tests:
 
   - it: local affinity overrides global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -237,8 +227,7 @@ tests:
   # ========== PRIORITY & RESOURCE CONSTRAINTS ==========
   - it: sets priorityClassName from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         priorityClassName: high-priority
     asserts:
@@ -249,8 +238,7 @@ tests:
 
   - it: local priorityClassName overrides global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       priorityClassName: local-priority
       global:
         priorityClassName: global-priority
@@ -263,8 +251,7 @@ tests:
   # ========== DNS & NETWORK TESTS ==========
   - it: sets dnsConfig from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         dnsConfig:
           options:
@@ -278,8 +265,7 @@ tests:
 
   - it: local dnsConfig overrides global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       dnsConfig:
         options:
           - name: local-ndots
@@ -297,8 +283,7 @@ tests:
 
   - it: default hostNetwork is false
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
     asserts:
       - equal:
           path: spec.template.spec.hostNetwork
@@ -307,8 +292,7 @@ tests:
 
   - it: sets hostNetwork from global when true
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         hostNetwork: true
     asserts:
@@ -323,8 +307,7 @@ tests:
 
   - it: local hostNetwork overrides global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       hostNetwork: false
       global:
         hostNetwork: true
@@ -337,8 +320,7 @@ tests:
   # ========== SECURITY CONTEXT TESTS ==========
   - it: sets podSecurityContext from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         podSecurityContext:
           runAsUser: 2000
@@ -356,8 +338,7 @@ tests:
 
   - it: local podSecurityContext overrides global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       podSecurityContext:
         runAsUser: 5000
       global:
@@ -371,8 +352,7 @@ tests:
 
   - it: sets containerSecurityContext from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         containerSecurityContext:
           allowPrivilegeEscalation: false
@@ -389,8 +369,7 @@ tests:
 
   - it: local containerSecurityContext overrides global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       containerSecurityContext:
         allowPrivilegeEscalation: true
       global:
@@ -405,8 +384,7 @@ tests:
   # ========== SERVICE ACCOUNT TESTS ==========
   - it: uses service account name from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       serviceAccount:
         create: false
       global:
@@ -420,8 +398,7 @@ tests:
 
   - it: local service account name overrides global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       serviceAccount:
         create: false
         name: local-sa
@@ -437,8 +414,7 @@ tests:
   # ========== LABELS TESTS ==========
   - it: applies labels from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         labels:
           global-label: "true"
@@ -450,8 +426,7 @@ tests:
 
   - it: applies podLabels from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         podLabels:
           global-pod-label: "true"
@@ -464,8 +439,7 @@ tests:
   # ========== CUSTOM ATTRIBUTES & CONFIG TESTS ==========
   - it: applies customAttributes from global to configmap
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         customAttributes:
           environment: production
@@ -477,8 +451,7 @@ tests:
 
   - it: local customAttributes override global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       customAttributes:
         environment: staging
       global:
@@ -493,8 +466,7 @@ tests:
   # ========== STAGING & DEBUG TESTS ==========
   - it: enables nrStaging from global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         nrStaging: true
     asserts:
@@ -505,8 +477,7 @@ tests:
 
   - it: local nrStaging overrides global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       nrStaging: false
       global:
         nrStaging: true
@@ -518,8 +489,7 @@ tests:
 
   - it: enables verbose logging from global.verboseLog
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         verboseLog: true
     asserts:
@@ -530,8 +500,7 @@ tests:
 
   - it: local verboseLog=false disables verbose even with global=true
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       verboseLog: false
       global:
         verboseLog: true
@@ -544,8 +513,7 @@ tests:
   # ========== PROXY TESTS ==========
   - it: uses global.proxy when local not set and proxyFromSecret disabled
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         proxy: http://global-proxy.example.com:3128
     asserts:
@@ -560,8 +528,7 @@ tests:
 
   - it: proxyFromSecret takes precedence over global.proxy
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       config:
         proxyFromSecret:
           enabled: true
@@ -598,6 +565,10 @@ tests:
           path: spec.template.spec.initContainers[0].env[1].valueFrom.secretKeyRef.name
           value: my-release-newrelic-prometheus-agent-license
         template: templates/statefulset.yaml
+      - equal:
+          path: spec.template.spec.initContainers[0].env[1].valueFrom.secretKeyRef.key
+          value: licenseKey
+        template: templates/statefulset.yaml
 
   - it: local licenseKey overrides global
     set:
@@ -613,6 +584,10 @@ tests:
       - equal:
           path: spec.template.spec.initContainers[0].env[1].valueFrom.secretKeyRef.name
           value: my-release-newrelic-prometheus-agent-license
+        template: templates/statefulset.yaml
+      - equal:
+          path: spec.template.spec.initContainers[0].env[1].valueFrom.secretKeyRef.key
+          value: licenseKey
         template: templates/statefulset.yaml
 
   # ========== CUSTOM SECRET TESTS ==========
@@ -655,8 +630,7 @@ tests:
   # ========== SERVICE ACCOUNT TESTS ==========
   - it: creates service account from global.serviceAccount.create
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         serviceAccount:
           create: true
@@ -667,8 +641,7 @@ tests:
 
   - it: local serviceAccount.create overrides global
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         serviceAccount:
           create: true
@@ -681,8 +654,7 @@ tests:
 
   - it: applies global.serviceAccount.annotations when local not set
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         serviceAccount:
           annotations:
@@ -695,8 +667,7 @@ tests:
 
   - it: merges global and local serviceAccount.annotations
     set:
-      licenseKey: us-whatever
-      cluster: test-cluster
+      <<: *base
       global:
         serviceAccount:
           annotations:
