@@ -7,11 +7,11 @@ scrape_configs:
           - "192.168.3.1:2379"
     metrics_path: /metrics-custom
     relabel_configs:
-      - source_labels: [ '__name__', 'instance' ]
+      - source_labels: ['__name__', 'instance']
         regex: node_memory_active_bytes;localhost:9100
         action: drop
     metric_relabel_configs:
-      - source_labels: [ '__name__', 'instance' ]
+      - source_labels: ['__name__', 'instance']
         regex: node_memory_active_bytes;localhost:9100
         action: drop
 

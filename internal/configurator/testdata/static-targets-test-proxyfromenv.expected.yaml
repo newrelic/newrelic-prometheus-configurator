@@ -13,8 +13,8 @@ scrape_configs:
     honor_labels: true
     honor_timestamps: true
     params:
-      q: [ "puppies" ]
-      oe: [ "utf8" ]
+      q: ["puppies"]
+      oe: ["utf8"]
     scheme: "https"
     body_size_limit: 100MiB
     fallback_scrape_protocol: "PrometheusText1.0.0"
@@ -36,11 +36,11 @@ scrape_configs:
       # `credentials_file`, we add both for testing purposes
       credentials: "fancy-credentials"
     relabel_configs:
-      - source_labels: [ '__name__', 'instance' ]
+      - source_labels: ['__name__', 'instance']
         regex: node_memory_active_bytes;localhost:9100
         action: drop
     metric_relabel_configs:
-      - source_labels: [ '__name__', 'instance' ]
+      - source_labels: ['__name__', 'instance']
         regex: node_memory_active_bytes;localhost:9100
         action: drop
 
@@ -135,8 +135,8 @@ scrape_configs:
     honor_labels: true
     honor_timestamps: true
     params:
-      q: [ "puppies" ]
-      oe: [ "utf8" ]
+      q: ["puppies"]
+      oe: ["utf8"]
     scheme: "https"
     body_size_limit: 100MiB
     fallback_scrape_protocol: "PrometheusText1.0.0"
@@ -158,11 +158,11 @@ scrape_configs:
       # `credentials_file`, we add both for testing purposes
       credentials: "fancy-credentials"
     relabel_configs:
-      - source_labels: [ '__name__', 'instance' ]
+      - source_labels: ['__name__', 'instance']
         regex: node_memory_active_bytes;localhost:9100
         action: drop
     metric_relabel_configs:
-      - source_labels: [ '__name__', 'instance' ]
+      - source_labels: ['__name__', 'instance']
         regex: node_memory_active_bytes;localhost:9100
         action: drop
 
