@@ -8,7 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### enhancement
+## v2.7.0 - 2026-03-16
+
+### 🚀 Enhancements
 - Improve scraping of IPv6 endpoints @dbudziwojski [#541](https://github.com/newrelic/newrelic-prometheus-configurator/pull/541)
 
 ## v2.6.2 - 2026-03-09
