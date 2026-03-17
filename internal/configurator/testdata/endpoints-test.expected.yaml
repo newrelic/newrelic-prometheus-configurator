@@ -3,7 +3,7 @@ scrape_configs:
     kubernetes_sd_configs:
       - role: endpoints
     relabel_configs:
-      - source_labels: [ __meta_kubernetes_pod_phase ]
+      - source_labels: [__meta_kubernetes_pod_phase]
         action: drop
         regex: Succeeded|Failed|Completed
       - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
@@ -14,9 +14,14 @@ scrape_configs:
         action: replace
         target_label: __metrics_path__
         regex: (.+)
-      - source_labels: [ __address__, __meta_kubernetes_service_annotation_prometheus_io_port ]
+      - source_labels: [__address__]
         action: replace
-        regex: (.+?)(?::\d+)?;(\d+)
+        regex: ([0-9a-fA-F:]+:[0-9a-fA-F:]+)
+        replacement: "[$1]"
+        target_label: __address__
+      - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+        action: replace
+        regex: (\[[^\]]+\]|[^:]+)(?::\d+)?;(\d+)
         target_label: __address__
         replacement: $1:$2
       - action: labelmap
@@ -30,18 +35,18 @@ scrape_configs:
       - source_labels: [__meta_kubernetes_service_name]
         action: replace
         target_label: service
-      - source_labels: [ __meta_kubernetes_endpoint_node_name, __meta_kubernetes_pod_node_name ]
+      - source_labels: [__meta_kubernetes_endpoint_node_name, __meta_kubernetes_pod_node_name]
         separator: ;
         action: replace
         regex: ".*;(.+)|(.+);"
         replacement: "$1$2"
         target_label: node
-      - source_labels: [ __meta_kubernetes_pod_name ]
+      - source_labels: [__meta_kubernetes_pod_name]
         action: replace
         target_label: pod
 
         # Extra relabel config
-      - source_labels: [ test_label ]
+      - source_labels: [test_label]
         action: drop
         regex: (.+)
 
@@ -61,20 +66,25 @@ scrape_configs:
         attach_metadata:
           node: false
     relabel_configs:
-      - source_labels: [ __meta_kubernetes_pod_phase ]
+      - source_labels: [__meta_kubernetes_pod_phase]
         action: drop
         regex: Succeeded|Failed|Completed
-      - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_scheme ]
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
         action: replace
         target_label: __scheme__
         regex: (https?)
-      - source_labels: [ __meta_kubernetes_service_annotation_prometheus_io_path ]
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
         action: replace
         target_label: __metrics_path__
         regex: (.+)
-      - source_labels: [ __address__, __meta_kubernetes_service_annotation_prometheus_io_port ]
+      - source_labels: [__address__]
         action: replace
-        regex: (.+?)(?::\d+)?;(\d+)
+        regex: ([0-9a-fA-F:]+:[0-9a-fA-F:]+)
+        replacement: "[$1]"
+        target_label: __address__
+      - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+        action: replace
+        regex: (\[[^\]]+\]|[^:]+)(?::\d+)?;(\d+)
         target_label: __address__
         replacement: $1:$2
       - action: labelmap
@@ -82,19 +92,19 @@ scrape_configs:
         replacement: __param_$1
       - action: labelmap
         regex: __meta_kubernetes_service_label_(.+)
-      - source_labels: [ __meta_kubernetes_namespace ]
+      - source_labels: [__meta_kubernetes_namespace]
         action: replace
         target_label: namespace
-      - source_labels: [ __meta_kubernetes_service_name ]
+      - source_labels: [__meta_kubernetes_service_name]
         action: replace
         target_label: service
-      - source_labels: [ __meta_kubernetes_endpoint_node_name, __meta_kubernetes_pod_node_name ]
+      - source_labels: [__meta_kubernetes_endpoint_node_name, __meta_kubernetes_pod_node_name]
         separator: ;
         action: replace
         regex: ".*;(.+)|(.+);"
         replacement: "$1$2"
         target_label: node
-      - source_labels: [ __meta_kubernetes_pod_name ]
+      - source_labels: [__meta_kubernetes_pod_name]
         action: replace
         target_label: pod
 

@@ -12,11 +12,11 @@ static_targets:
         - "192.168.3.1:2379"
       metrics_path: /metrics-custom
       extra_relabel_config:
-        - source_labels: [ '__name__', 'instance' ]
+        - source_labels: ['__name__', 'instance']
           regex: node_memory_active_bytes;localhost:9100
           action: drop
       extra_metric_relabel_config:
-        - source_labels: [ '__name__', 'instance' ]
+        - source_labels: ['__name__', 'instance']
           regex: node_memory_active_bytes;localhost:9100
           action: drop
 
