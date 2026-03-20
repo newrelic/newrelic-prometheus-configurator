@@ -80,6 +80,12 @@ spec:
                   key: {{ include "newrelic.common.license.secretKeyName" . }}
             - name: NR_PROM_CHART_VERSION
               value: {{ .Chart.Version }}
+            {{- if and .Values.config.proxyFromSecret.enabled (not .Values.config.proxyFromSecret.name) }}
+              {{- fail "config.proxyFromSecret.enabled is true but config.proxyFromSecret.name is not set" }}
+            {{- end }}
+            {{- if and .Values.config.proxyFromSecret.enabled (not .Values.config.proxyFromSecret.key) }}
+              {{- fail "config.proxyFromSecret.enabled is true but config.proxyFromSecret.key is not set" }}
+            {{- end }}
             {{- if .Values.config.proxyFromSecret.enabled }}
             - name: NR_PROM_PROXY_URL
               valueFrom:
