@@ -264,7 +264,7 @@ func TestProxyURL(t *testing.T) {
 
 	//nolint: paralleltest // need clean env variables.
 	t.Run("IsSetFromEnvVar", func(t *testing.T) {
-		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		promConf, err := configurator.BuildPromConfig(&emptyConfig)
 		require.NoError(t, err)
 
 		data, _ := yaml.Marshal(promConf)
