@@ -222,7 +222,7 @@ The order to set the affinity is to set `affinity` field (at root level), if tha
 | config.kubernetes.integrations_filter.enabled | bool | `true` | enabling the integration filters, merely the targets having one of the specified labels matching    one of the values of app_values are scraped. Each job configuration can override this default. |
 | config.kubernetes.integrations_filter.source_labels | list | `["app.kubernetes.io/name","app.newrelic.io/name","k8s-app"]` | source_labels used to fetch label values in the relabel config added by the integration filters configuration |
 | config.newrelic_remote_write | object | See `values.yaml` | Newrelic remote-write configuration settings. |
-| config.proxyFromSecret | object | `false` | Retrieve proxy_url from a secret.  If set will overwrite the proxy_url if set by newrelic_remote_write.proxy_url.  Ensure secret to use exists before setting this to true. |
+| config.proxyFromSecret | object | `false` | Retrieve proxy_url from a secret. If set will overwrite the proxy_url if set by newrelic_remote_write.proxy_url. Ensure secret to use exists before setting this to true. |
 | config.proxyFromSecret.key | string | `""` | The key in the secret containing the proxy URL. |
 | config.proxyFromSecret.name | string | `""` | The name of the secret containing the proxy URL. |
 | config.static_targets | object | See `values.yaml`. | It allows defining scrape jobs for targets with static URLs. |
