@@ -212,8 +212,8 @@ config:
       # @default -- `0s`
       # sample_age_limit:
 
-  # -- Retrieve proxy_url from a secret. 
-  # If set will overwrite the proxy_url if set by newrelic_remote_write.proxy_url. 
+  # -- Retrieve proxy_url from a secret.
+  # If set will overwrite the proxy_url if set by newrelic_remote_write.proxy_url.
   # Ensure secret to use exists before setting this to true.
   # @default -- `false`
   proxyFromSecret:
