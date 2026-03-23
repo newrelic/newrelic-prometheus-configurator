@@ -245,28 +245,23 @@ func TestProxyURL(t *testing.T) {
 	t.Setenv(configurator.LicenseKeyEnvKey, "fake")
 	t.Setenv(configurator.ProxyURLEnvKey, "")
 
-	configWithProxyURL := configurator.NrConfig{
-		RemoteWrite: remotewrite.Config{},
-	}
-
 	//nolint: paralleltest // need clean env variables.
 	t.Run("IsSetFromConfig", func(t *testing.T) {
-		configWithProxyURL.RemoteWrite.ProxyURL = "http://proxy-from-config.com"
-		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		emptyConfig := configurator.NrConfig{RemoteWrite: remotewrite.Config{}}
+		emptyConfig.RemoteWrite.ProxyURL = "http://proxy-from-config.com"
+		promConf, err := configurator.BuildPromConfig(&emptyConfig)
 		require.NoError(t, err)
 
 		data, _ := yaml.Marshal(promConf)
 		require.Contains(t, string(data), fmt.Sprintf("proxy_url: %s", "http://proxy-from-config.com"))
 	})
 
-	emptyConfig := configurator.NrConfig{
-		RemoteWrite: remotewrite.Config{},
-	}
 	expectedProxyURL := "http://proxy-from-env.com"
 	t.Setenv(configurator.ProxyURLEnvKey, expectedProxyURL)
 
 	//nolint: paralleltest // need clean env variables.
 	t.Run("IsSetFromEnvVar", func(t *testing.T) {
+		emptyConfig := configurator.NrConfig{RemoteWrite: remotewrite.Config{}}
 		promConf, err := configurator.BuildPromConfig(&emptyConfig)
 		require.NoError(t, err)
 
@@ -276,8 +271,9 @@ func TestProxyURL(t *testing.T) {
 
 	//nolint: paralleltest // need clean env variables.
 	t.Run("EnvVarOverridesConfig", func(t *testing.T) {
-		configWithProxyURL.RemoteWrite.ProxyURL = "http://proxy-from-config.com"
-		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		emptyConfig := configurator.NrConfig{RemoteWrite: remotewrite.Config{}}
+		emptyConfig.RemoteWrite.ProxyURL = "http://proxy-from-config.com"
+		promConf, err := configurator.BuildPromConfig(&emptyConfig)
 		require.NoError(t, err)
 
 		data, _ := yaml.Marshal(promConf)
@@ -286,9 +282,8 @@ func TestProxyURL(t *testing.T) {
 
 	t.Run("IsNotPresentWhenUnset", func(t *testing.T) {
 		t.Setenv(configurator.ProxyURLEnvKey, "")
-		configWithProxyURL.RemoteWrite.ProxyURL = ""
-
-		promConf, err := configurator.BuildPromConfig(&configWithProxyURL)
+		emptyConfig := configurator.NrConfig{RemoteWrite: remotewrite.Config{}}
+		promConf, err := configurator.BuildPromConfig(&emptyConfig)
 		require.NoError(t, err)
 
 		data, _ := yaml.Marshal(promConf)
