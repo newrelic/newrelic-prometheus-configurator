@@ -259,6 +259,9 @@ func TestProxyURL(t *testing.T) {
 		require.Contains(t, string(data), fmt.Sprintf("proxy_url: %s", "http://proxy-from-config.com"))
 	})
 
+	emptyConfig := configurator.NrConfig{
+		RemoteWrite: remotewrite.Config{},
+	}
 	expectedProxyURL := "http://proxy-from-env.com"
 	t.Setenv(configurator.ProxyURLEnvKey, expectedProxyURL)
 
