@@ -31,6 +31,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: helm/chart-testing-action@v2.8.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint charts
         run: ct --config .github/ct.yaml lint --debug
