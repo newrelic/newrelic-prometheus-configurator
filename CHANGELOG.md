@@ -8,7 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### enhancement
+## v2.8.0 - 2026-03-30
+
+### 🚀 Enhancements
 - Added comprehensive global value inheritance test suite validating propagation and override precedence of all applicable global values
 
 ## v2.7.0 - 2026-03-16
