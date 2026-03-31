@@ -8,7 +8,7 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### Security
+### security
 - Fix security vulnerability in GitHub workflow @mvicknr [#558](https://github.com/newrelic/newrelic-prometheus-configurator/pull/558)
 
 ## v2.8.0 - 2026-03-30
