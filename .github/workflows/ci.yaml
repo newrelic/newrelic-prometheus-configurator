@@ -24,7 +24,7 @@ jobs:
       matrix:
         kubernetes-version: ["v1.34.0", "v1.33.0", "v1.32.0", "v1.31.0", "v1.30.0"]
     steps:
-      - uses: azure/setup-helm@v4
+      - uses: azure/setup-helm@v5
         with:
           version: 'v3.19.4'
       - uses: actions/checkout@v6
