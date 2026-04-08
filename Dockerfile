@@ -3,7 +3,7 @@ FROM alpine:3.23.3
 ARG TARGETOS
 ARG TARGETARCH
 
-RUN apk add --no-cache --upgrade && apk add --no-cache tini curl bind-tools
+RUN apk upgrade --no-cache && apk add --no-cache tini curl bind-tools
 
 COPY bin/prometheus-configurator-${TARGETOS}-${TARGETARCH} /
 
