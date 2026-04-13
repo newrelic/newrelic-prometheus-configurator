@@ -8,6 +8,15 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.9.0 - 2026-04-13
+
+### ⛓️ Dependencies
+- Updated golang.org/x/sync to v0.20.0
+- Updated github.com/prometheus/client_golang/exp digest to f23aad5
+- Updated kubernetes monorepo to v0.35.3
+- Updated go to v1.26.2
+- Upgraded google.golang.org/grpc from 1.76.0 to 1.79.3
+
 ## v2.8.0 - 2026-03-30
 
 ### 🚀 Enhancements
