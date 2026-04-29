@@ -4,7 +4,7 @@ go 1.26.2
 
 require (
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b
-	github.com/prometheus/client_golang/exp v0.0.0-20260402111901-f23aad527b97
+	github.com/prometheus/client_golang/exp v0.0.0-20260429134713-79042c63b36a
 	github.com/prometheus/prometheus v0.308.0
 	github.com/sirupsen/logrus v1.9.4
 	github.com/stretchr/testify v1.11.1
