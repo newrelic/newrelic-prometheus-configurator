@@ -279,6 +279,8 @@ github.com/prometheus/client_golang v1.23.2 h1:Je96obch5RDVy3FDMndoUsjAhG5Edi49h
 github.com/prometheus/client_golang v1.23.2/go.mod h1:Tb1a6LWHB3/SPIzCoaDXI4I8UHKeFTEQ1YCr+0Gyqmg=
 github.com/prometheus/client_golang/exp v0.0.0-20260402111901-f23aad527b97 h1:hCCTdwPJFz4bVQWJJV7AbFCmE5upnRlIAdpF4eXSuJk=
 github.com/prometheus/client_golang/exp v0.0.0-20260402111901-f23aad527b97/go.mod h1:xA9/W/d/j+zeg2Kp3UgOF+E2rbq7KNVa5PLJPJBE0lw=
+github.com/prometheus/client_golang/exp v0.0.0-20260429134713-79042c63b36a h1:cLuSR1FkSXJP2OZQiNT600VJW5V1DOEIk45qOIFLyGY=
+github.com/prometheus/client_golang/exp v0.0.0-20260429134713-79042c63b36a/go.mod h1:xA9/W/d/j+zeg2Kp3UgOF+E2rbq7KNVa5PLJPJBE0lw=
 github.com/prometheus/client_model v0.6.2 h1:oBsgwpGs7iVziMvrGhE53c/GrLUsZdHnqNwqPLxwZyk=
 github.com/prometheus/client_model v0.6.2/go.mod h1:y3m2F6Gdpfy6Ut/GBsUqTWZqCUvMVzSfMLjcu6wAwpE=
 github.com/prometheus/common v0.67.5 h1:pIgK94WWlQt1WLwAC5j2ynLaBRDiinoAb86HZHTUGI4=
