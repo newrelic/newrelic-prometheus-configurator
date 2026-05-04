@@ -8,6 +8,11 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.9.2 - 2026-05-04
+
+### ⛓️ Dependencies
+- Updated github.com/prometheus/client_golang/exp digest
+
 ## v2.9.1 - 2026-04-20
 
 ### ⛓️ Dependencies
