@@ -60,6 +60,17 @@ func (m *Appendable) AppendHistogramCTZeroSample(ref storage.SeriesRef, l labels
 	return m.AppendHistogram(ref, l, ct, nil, &histogram.FloatHistogram{})
 }
 
+func (m *Appendable) AppendSTZeroSample(ref storage.SeriesRef, l labels.Labels, t int64, st int64) (storage.SeriesRef, error) {
+	return m.Append(ref, l, st, 0.0)
+}
+
+func (m *Appendable) AppendHistogramSTZeroSample(ref storage.SeriesRef, l labels.Labels, _, st int64, h *histogram.Histogram, _ *histogram.FloatHistogram) (storage.SeriesRef, error) {
+	if h != nil {
+		return m.AppendHistogram(ref, l, st, &histogram.Histogram{}, nil)
+	}
+	return m.AppendHistogram(ref, l, st, nil, &histogram.FloatHistogram{})
+}
+
 func (m *Appendable) Commit() error {
 	return nil
 }
