@@ -31,7 +31,7 @@ func TestRemoteWriteURL(t *testing.T) {
 			Name:       "staging eu",
 			Staging:    true,
 			FedRAMP:    false,
-			LicenseKey: "eu-license-key",
+			LicenseKey: "eu01xx-license-key",
 			Expected:   "https://staging-metric-api.eu.newrelic.com/prometheus/v1/write",
 		},
 		{
@@ -45,8 +45,15 @@ func TestRemoteWriteURL(t *testing.T) {
 			Name:       "prod -eu",
 			Staging:    false,
 			FedRAMP:    false,
-			LicenseKey: "eu-license-key",
+			LicenseKey: "euxx-license-key",
 			Expected:   "https://metric-api.eu.newrelic.com/prometheus/v1/write",
+		},
+		{
+			Name:       "prod -eu",
+			Staging:    false,
+			FedRAMP:    false,
+			LicenseKey: "jpx-license-key",
+			Expected:   "https://metric-api.jp.newrelic.com/prometheus/v1/write",
 		},
 		{
 			Name:       "fedramp",
@@ -59,7 +66,7 @@ func TestRemoteWriteURL(t *testing.T) {
 			Name:           "dataSourceName",
 			Staging:        false,
 			FedRAMP:        false,
-			LicenseKey:     "non-eu-license-key",
+			LicenseKey:     "NRJS-e97non-eu-license-key",
 			DataSourceName: "source",
 			Expected:       "https://metric-api.newrelic.com/prometheus/v1/write?prometheus_server=source",
 		},
@@ -105,25 +112,28 @@ func TestRemoteWriteURLErrors(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		Name           string
-		Staging        bool
-		FedRAMP        bool
-		LicenseKey     string
-		Expected       error
-		DataSourceName string
+		Name            string
+		Staging         bool
+		FedRAMP         bool
+		LicenseKey      string
+		DataSourceName  string
+		ExpectedError   error
+		ExpectedMessage string
 	}{
 		{
-			Name:     "staging FedRAMP",
-			Staging:  true,
-			FedRAMP:  true,
-			Expected: remotewrite.ErrFedRAMPStaging,
+			Name:            "staging FedRAMP",
+			Staging:         true,
+			FedRAMP:         true,
+			ExpectedError:   remotewrite.ErrFedRAMPRegions,
+			ExpectedMessage: "FedRAMP Region Error: There is no FedRamp compatible endpoints for staging",
 		},
 		{
-			Name:       "European FedRAMP",
-			Staging:    false,
-			FedRAMP:    true,
-			LicenseKey: "eu-license-key",
-			Expected:   remotewrite.ErrEuFedRAMP,
+			Name:            "European FedRAMP",
+			Staging:         false,
+			FedRAMP:         true,
+			LicenseKey:      "eu01xx-license-key",
+			ExpectedError:   remotewrite.ErrFedRAMPRegions,
+			ExpectedMessage: "FedRAMP Region Error: There is no FedRamp compatible endpoints for the region eu.",
 		},
 	}
 
@@ -138,7 +148,8 @@ func TestRemoteWriteURLErrors(t *testing.T) {
 				remotewrite.WithDataSourceName(c.DataSourceName),
 			)
 			_, err := rwu.Build()
-			assert.Equal(t, c.Expected, err)
+			assert.ErrorIs(t, err, c.ExpectedError)
+			assert.EqualError(t, err, c.ExpectedMessage)
 		})
 	}
 }
