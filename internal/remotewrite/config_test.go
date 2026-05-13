@@ -48,7 +48,7 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 			NrConfig: args{
 				remoteConfig: remotewrite.Config{
 					DataSourceName: "source-of-metrics",
-					LicenseKey:     "eu-fake-staging",
+					LicenseKey:     "euxx-fake-staging",
 					Staging:        true,
 					ProxyURL:       "http://proxy.url",
 					TLSConfig: &promcfg.TLSConfig{
@@ -85,7 +85,7 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 				URL:           "https://staging-metric-api.eu.newrelic.com/prometheus/v1/write?collector_name=prometheus-agent&prometheus_server=source-of-metrics",
 				RemoteTimeout: 10 * time.Second,
 				Authorization: promcfg.Authorization{
-					Credentials: "eu-fake-staging",
+					Credentials: "euxx-fake-staging",
 				},
 				ProxyURL: "http://proxy.url",
 				TLSConfig: &promcfg.TLSConfig{
@@ -121,7 +121,7 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 			NrConfig: args{
 				remoteConfig: remotewrite.Config{
 					DataSourceName:       "source-of-metrics",
-					LicenseKey:           "eu-fake-staging",
+					LicenseKey:           "eu01x-fake-staging",
 					Staging:              true,
 					ProxyFromEnvironment: true,
 					TLSConfig: &promcfg.TLSConfig{
@@ -157,7 +157,7 @@ func TestBuildRemoteWritePromConfig(t *testing.T) {
 				URL:           "https://staging-metric-api.eu.newrelic.com/prometheus/v1/write?collector_name=prometheus-agent&prometheus_server=source-of-metrics",
 				RemoteTimeout: 10 * time.Second,
 				Authorization: promcfg.Authorization{
-					Credentials: "eu-fake-staging",
+					Credentials: "eu01x-fake-staging",
 				},
 				ProxyFromEnvironment: true,
 				TLSConfig: &promcfg.TLSConfig{
@@ -217,7 +217,7 @@ func TestBuildRemoteWritePromConfig_Errors(t *testing.T) {
 					Enabled: true,
 				},
 			},
-			expectedError: remotewrite.ErrFedRAMPStaging,
+			expectedError: remotewrite.ErrFedRAMPRegions,
 		},
 		{
 			name: "EU region and FedRAMP both enabled returns error",
@@ -227,7 +227,7 @@ func TestBuildRemoteWritePromConfig_Errors(t *testing.T) {
 					Enabled: true,
 				},
 			},
-			expectedError: remotewrite.ErrEuFedRAMP,
+			expectedError: remotewrite.ErrFedRAMPRegions,
 		},
 	}
 

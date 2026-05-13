@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### enhancement
+- Adds support for japan region @philip-r-beckwith [#576](https://github.com/newrelic/newrelic-prometheus-configurator/pull/576)
+
 ## v2.9.3 - 2026-05-11
 
 ### ⛓️ Dependencies

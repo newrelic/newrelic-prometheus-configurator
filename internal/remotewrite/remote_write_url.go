@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"regexp"
 )
 
 const (
@@ -15,7 +16,6 @@ const (
 	remoteWritePath          = "prometheus/v1/write"
 	environmentStagingPrefix = "staging-"
 	environmentFedRAMPPrefix = "gov-"
-	regionEUPrefix           = "eu."
 	// prometheusServerQueryParam is added to remoteWrite url when nrConfig's name is defined.
 	prometheusServerQueryParam = "prometheus_server"
 	// collectorNameQueryParam is a NR identifier of the component collecting the data. This is added as query parameter of the PRW and converted
@@ -28,8 +28,7 @@ const (
 )
 
 var (
-	ErrFedRAMPStaging = errors.New("there is no staging environment for FedRAMP")
-	ErrEuFedRAMP      = errors.New("there is no European FedRAMP region")
+	ErrFedRAMPRegions = errors.New("FedRAMP Region Error")
 )
 
 type URLOption func(url *URL)
@@ -51,10 +50,21 @@ func NewURL(opts ...URLOption) *URL {
 	return u
 }
 
+// licenseGetRegion returns license region or empty if none.
+func licenseGetRegion(licenseKey string) string {
+	regionLicenseRegex := regexp.MustCompile(`^([a-wyz]{2,3})(?:[0-9]{2})?x{1,2}`)
+	matches := regionLicenseRegex.FindStringSubmatch(licenseKey)
+	if len(matches) > 1 {
+		return matches[1]
+	}
+	return ""
+}
+
 func WithLicense(license string) URLOption {
 	return func(u *URL) {
-		if licenseIsRegionEU(license) {
-			u.RegionPrefix = regionEUPrefix
+		region := licenseGetRegion(license)
+		if region != "" && region != "gov" {
+			u.RegionPrefix = region + "."
 		} else {
 			u.RegionPrefix = ""
 		}
@@ -105,10 +115,10 @@ func WithCollectorVersion(collectorVersion string) URLOption {
 
 func (u *URL) Build() (string, error) {
 	if u.Staging && u.FedRAMP {
-		return "", ErrFedRAMPStaging
+		return "", fmt.Errorf("%w: There is no FedRamp compatible endpoints for staging", ErrFedRAMPRegions)
 	}
-	if u.RegionPrefix == regionEUPrefix && u.FedRAMP {
-		return "", ErrEuFedRAMP
+	if u.RegionPrefix != "" && u.FedRAMP {
+		return "", fmt.Errorf("%w: There is no FedRamp compatible endpoints for the region %s", ErrFedRAMPRegions, u.RegionPrefix)
 	}
 
 	var prefix string
