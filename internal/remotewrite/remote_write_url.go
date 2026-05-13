@@ -52,7 +52,7 @@ func NewURL(opts ...URLOption) *URL {
 
 // licenseGetRegion returns license region or empty if none.
 func licenseGetRegion(licenseKey string) string {
-	var regionLicenseRegex = regexp.MustCompile(`^([a-wyz]{2,3})(?:[0-9]{2})?x{1,2}`)
+	regionLicenseRegex := regexp.MustCompile(`^([a-wyz]{2,3})(?:[0-9]{2})?x{1,2}`)
 	matches := regionLicenseRegex.FindStringSubmatch(licenseKey)
 	if len(matches) > 1 {
 		return matches[1]
