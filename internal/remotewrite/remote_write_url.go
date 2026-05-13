@@ -62,7 +62,7 @@ func licenseGetRegion(licenseKey string) string {
 
 func WithLicense(license string) URLOption {
 	return func(u *URL) {
-		var region = licenseGetRegion(license)
+		region := licenseGetRegion(license)
 		if region != "" && region != "gov" {
 			u.RegionPrefix = region + "."
 		} else {
