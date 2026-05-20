@@ -32,7 +32,6 @@ const (
 
 var (
 	ErrFedRAMPRegions = errors.New("FedRAMP Region Error")
-	newDomainRegions  = []string{"jp"}
 )
 
 type URLOption func(url *URL)
@@ -65,6 +64,7 @@ func getPrefix(staging, fedRAMP bool) string {
 }
 
 func getDomain(region string) string {
+	newDomainRegions := []string{"jp"}
 	for _, r := range newDomainRegions {
 		if strings.EqualFold(region, r) {
 			return collectionDomain
