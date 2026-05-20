@@ -12,7 +12,7 @@ import (
 
 const (
 	remoteWriteScheme        = "https"
-	remoteWriteHostTemplate  = "%smetric-api.%snewrelic.com"
+	remoteWriteHostTemplate  = "%smetric-api.%snr-data.net"
 	remoteWritePath          = "prometheus/v1/write"
 	environmentStagingPrefix = "staging-"
 	environmentFedRAMPPrefix = "gov-"
