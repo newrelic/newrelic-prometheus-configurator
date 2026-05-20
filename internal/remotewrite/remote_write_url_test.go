@@ -25,31 +25,31 @@ func TestRemoteWriteURL(t *testing.T) {
 			Staging:    true,
 			FedRAMP:    false,
 			LicenseKey: "non-eu-license-key",
-			Expected:   "https://staging-metric-api.nr-data.net/prometheus/v1/write",
+			Expected:   "https://staging-metric-api.newrelic.com/prometheus/v1/write",
 		},
 		{
 			Name:       "staging eu",
 			Staging:    true,
 			FedRAMP:    false,
 			LicenseKey: "eu01xx-license-key",
-			Expected:   "https://staging-metric-api.eu.nr-data.net/prometheus/v1/write",
+			Expected:   "https://staging-metric-api.eu.newrelic.com/prometheus/v1/write",
 		},
 		{
 			Name:       "prod non-eu",
 			Staging:    false,
 			FedRAMP:    false,
 			LicenseKey: "non-eu-license-key",
-			Expected:   "https://metric-api.nr-data.net/prometheus/v1/write",
+			Expected:   "https://metric-api.newrelic.com/prometheus/v1/write",
 		},
 		{
 			Name:       "prod -eu",
 			Staging:    false,
 			FedRAMP:    false,
 			LicenseKey: "euxx-license-key",
-			Expected:   "https://metric-api.eu.nr-data.net/prometheus/v1/write",
+			Expected:   "https://metric-api.eu.newrelic.com/prometheus/v1/write",
 		},
 		{
-			Name:       "prod -eu",
+			Name:       "prod - JP",
 			Staging:    false,
 			FedRAMP:    false,
 			LicenseKey: "jpx-license-key",
@@ -60,7 +60,7 @@ func TestRemoteWriteURL(t *testing.T) {
 			Staging:    false,
 			FedRAMP:    true,
 			LicenseKey: "non-eu-license-key",
-			Expected:   "https://gov-metric-api.nr-data.net/prometheus/v1/write",
+			Expected:   "https://gov-metric-api.newrelic.com/prometheus/v1/write",
 		},
 		{
 			Name:           "dataSourceName",
@@ -68,7 +68,7 @@ func TestRemoteWriteURL(t *testing.T) {
 			FedRAMP:        false,
 			LicenseKey:     "NRJS-e97non-eu-license-key",
 			DataSourceName: "source",
-			Expected:       "https://metric-api.nr-data.net/prometheus/v1/write?prometheus_server=source",
+			Expected:       "https://metric-api.newrelic.com/prometheus/v1/write?prometheus_server=source",
 		},
 		{
 			Name:          "collectorName",
@@ -76,7 +76,7 @@ func TestRemoteWriteURL(t *testing.T) {
 			FedRAMP:       false,
 			LicenseKey:    "non-eu-license-key",
 			CollectorName: "foo",
-			Expected:      "https://metric-api.nr-data.net/prometheus/v1/write?collector_name=foo",
+			Expected:      "https://metric-api.newrelic.com/prometheus/v1/write?collector_name=foo",
 		},
 		{
 			Name:             "collectorVersion",
@@ -84,7 +84,7 @@ func TestRemoteWriteURL(t *testing.T) {
 			FedRAMP:          false,
 			LicenseKey:       "non-eu-license-key",
 			CollectorVersion: "1.0.0",
-			Expected:         "https://metric-api.nr-data.net/prometheus/v1/write?collector_version=1.0.0",
+			Expected:         "https://metric-api.newrelic.com/prometheus/v1/write?collector_version=1.0.0",
 		},
 	}
 
