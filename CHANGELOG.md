@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Unreleased section should follow [Release Toolkit](https://github.com/newrelic/release-toolkit#readme)
 
 ## Unreleased
+### enhancement
+- Updating ingest endpoint to nr-data.net aliases. These endpoints exist in all regions and only exist in JP. Forcing us to move off of newrelic.com ingest endpoints. @philip-r-beckwith [#580](https://github.com/newrelic/newrelic-prometheus-configurator/pull/580)
 
 ## v2.10.0 - 2026-05-18
 
