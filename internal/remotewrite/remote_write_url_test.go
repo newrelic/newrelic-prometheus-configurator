@@ -133,7 +133,7 @@ func TestRemoteWriteURLErrors(t *testing.T) {
 			FedRAMP:         true,
 			LicenseKey:      "eu01xx-license-key",
 			ExpectedError:   remotewrite.ErrFedRAMPRegions,
-			ExpectedMessage: "FedRAMP Region Error: There is no FedRamp compatible endpoints for the region eu.",
+			ExpectedMessage: "FedRAMP Region Error: There is no FedRamp compatible endpoints for the region eu",
 		},
 	}
 
