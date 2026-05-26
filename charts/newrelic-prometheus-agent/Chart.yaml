@@ -10,7 +10,7 @@ annotations:
   configuratorVersion: "2.10.0"
 dependencies:
   - name: common-library
-    version: 2.2.0
+    version: 2.3.0
     repository: "https://helm-charts.newrelic.com"
 keywords:
   - newrelic
