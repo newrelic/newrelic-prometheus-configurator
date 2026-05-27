@@ -49,11 +49,11 @@ func TestRemoteWriteURL(t *testing.T) {
 			Expected:   "https://metric-api.eu.newrelic.com/prometheus/v1/write",
 		},
 		{
-			Name:       "prod -eu",
+			Name:       "prod - JP",
 			Staging:    false,
 			FedRAMP:    false,
 			LicenseKey: "jpx-license-key",
-			Expected:   "https://metric-api.jp.newrelic.com/prometheus/v1/write",
+			Expected:   "https://metric-api.jp.nr-data.net/prometheus/v1/write",
 		},
 		{
 			Name:       "fedramp",
@@ -133,7 +133,7 @@ func TestRemoteWriteURLErrors(t *testing.T) {
 			FedRAMP:         true,
 			LicenseKey:      "eu01xx-license-key",
 			ExpectedError:   remotewrite.ErrFedRAMPRegions,
-			ExpectedMessage: "FedRAMP Region Error: There is no FedRamp compatible endpoints for the region eu.",
+			ExpectedMessage: "FedRAMP Region Error: There is no FedRamp compatible endpoints for the region eu",
 		},
 	}
 
