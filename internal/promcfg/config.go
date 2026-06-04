@@ -92,6 +92,18 @@ type GlobalConfig struct {
 	ScrapeTimeout time.Duration `yaml:"scrape_timeout,omitempty"`
 	// The labels to add to any timeseries that this Prometheus instance scrapes.
 	ExternalLabels map[string]string `yaml:"external_labels,omitempty"`
+	// An uncompressed response body larger than this many bytes will cause the scrape to fail.
+	BodySizeLimit int `yaml:"body_size_limit,omitempty"`
+	// Per-scrape limit on number of scraped samples that will be accepted.
+	SampleLimit int `yaml:"sample_limit,omitempty"`
+	// Per-scrape limit on number of labels that will be accepted for a sample.
+	LabelLimit int `yaml:"label_limit,omitempty"`
+	// Per-scrape limit on length of labels name that will be accepted for a sample.
+	LabelNameLengthLimit int `yaml:"label_name_length_limit,omitempty"`
+	// Per-scrape limit on length of labels value that will be accepted for a sample.
+	LabelValueLengthLimit int `yaml:"label_value_length_limit,omitempty"`
+	// Limit per scrape config on the number of targets dropped by relabeling that will be kept in memory. 0 means no limit.
+	KeepDroppedTargets int `yaml:"keep_dropped_targets,omitempty"`
 }
 
 // RelabelConfig defines relabel config rules which can be used in other configuration objects.
