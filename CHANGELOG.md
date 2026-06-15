@@ -8,6 +8,13 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.11.2 - 2026-06-15
+
+### ⛓️ Dependencies
+- Updated prometheus version
+- Updated golang.org/x/sync to v0.21.0
+- Updated alpine to v3.24.0
+
 ## v2.11.1 - 2026-06-08
 
 ### ⛓️ Dependencies
