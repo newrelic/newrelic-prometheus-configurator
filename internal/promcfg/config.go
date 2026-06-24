@@ -90,8 +90,37 @@ type GlobalConfig struct {
 	ScrapeInterval time.Duration `yaml:"scrape_interval,omitempty"`
 	// The default timeout when scraping targets.
 	ScrapeTimeout time.Duration `yaml:"scrape_timeout,omitempty"`
+	// The protocols to negotiate during a scrape with the client.
+	ScrapeProtocols []string `yaml:"scrape_protocols,omitempty"`
+	// How frequently to evaluate rules.
+	EvaluationInterval time.Duration `yaml:"evaluation_interval,omitempty"`
+	// Offset the rule evaluation timestamp of this particular group by the specified duration into the past to ensure
+	// the underlying metrics have been received.
+	RuleQueryOffset time.Duration `yaml:"rule_query_offset,omitempty"`
 	// The labels to add to any timeseries that this Prometheus instance scrapes.
 	ExternalLabels map[string]string `yaml:"external_labels,omitempty"`
+	// File to which PromQL queries are logged.
+	QueryLogFile string `yaml:"query_log_file,omitempty"`
+	// File to which scrape failures are logged.
+	ScrapeFailureLogFile string `yaml:"scrape_failure_log_file,omitempty"`
+	// An uncompressed response body larger than this many bytes will cause the scrape to fail.
+	BodySizeLimit uint `yaml:"body_size_limit,omitempty"`
+	// Per-scrape limit on number of scraped samples that will be accepted.
+	SampleLimit uint `yaml:"sample_limit,omitempty"`
+	// Per-scrape limit on number of labels that will be accepted for a sample.
+	LabelLimit uint `yaml:"label_limit,omitempty"`
+	// Per-scrape limit on length of labels name that will be accepted for a sample.
+	LabelNameLengthLimit uint `yaml:"label_name_length_limit,omitempty"`
+	// Per-scrape limit on length of labels value that will be accepted for a sample.
+	LabelValueLengthLimit uint `yaml:"label_value_length_limit,omitempty"`
+	// Limit per scrape config on number of unique targets that will be accepted.
+	TargetLimit uint `yaml:"target_limit,omitempty"`
+	// Limit per scrape config on the number of targets dropped by relabeling that will be kept in memory. 0 means no limit.
+	KeepDroppedTargets uint `yaml:"keep_dropped_targets,omitempty"`
+	// Specifies the validation scheme for metric and label names.
+	MetricNameValidationScheme string `yaml:"metric_name_validation_scheme,omitempty"`
+	// When enabled, Prometheus stores additional time series for each scrape: scrape_timeout_seconds, scrape_sample_limit, and scrape_body_size_bytes.
+	ExtraScrapeMetrics bool `yaml:"extra_scrape_metrics,omitempty"`
 }
 
 // RelabelConfig defines relabel config rules which can be used in other configuration objects.
