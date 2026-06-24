@@ -1,0 +1,26 @@
+remote_write:
+  - name: newrelic_rw
+    url: https://metric-api.newrelic.com/prometheus/v1/write?collector_name=prometheus-agent&prometheus_server=test-source
+    authorization:
+      credentials: test-license-key
+global:
+  scrape_interval: 30s
+  scrape_timeout: 10s
+  scrape_protocols:
+    - PrometheusProto
+    - OpenMetricsText1.0.0
+  evaluation_interval: 1m0s
+  rule_query_offset: 10s
+  external_labels:
+    cluster: test-cluster
+  query_log_file: /var/log/queries.log
+  scrape_failure_log_file: /var/log/scrape-failures.log
+  body_size_limit: 5MiB
+  sample_limit: 500
+  label_limit: 30
+  label_name_length_limit: 100
+  label_value_length_limit: 250
+  target_limit: 50
+  keep_dropped_targets: 5
+  metric_name_validation_scheme: utf8
+  extra_scrape_metrics: true

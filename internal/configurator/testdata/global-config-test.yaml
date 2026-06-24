@@ -1,0 +1,25 @@
+common:
+  external_labels:
+    cluster: test-cluster
+  scrape_interval: 30s
+  scrape_timeout: 10s
+  scrape_protocols:
+    - PrometheusProto
+    - OpenMetricsText1.0.0
+  evaluation_interval: 1m
+  rule_query_offset: 10s
+  query_log_file: /var/log/queries.log
+  scrape_failure_log_file: /var/log/scrape-failures.log
+  body_size_limit: 5MiB
+  sample_limit: 500
+  label_limit: 30
+  label_name_length_limit: 100
+  label_value_length_limit: 250
+  target_limit: 50
+  keep_dropped_targets: 5
+  metric_name_validation_scheme: utf8
+  extra_scrape_metrics: true
+
+newrelic_remote_write:
+  license_key: test-license-key
+  data_source_name: test-source

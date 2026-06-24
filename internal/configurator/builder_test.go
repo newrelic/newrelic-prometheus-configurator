@@ -30,6 +30,7 @@ func TestBuilder(t *testing.T) { //nolint: tparallel
 		"endpoints-test",
 		"external-labels-test",
 		"filter-test",
+		"global-config-test",
 		"integration-filters-test",
 		"kubernetes-scrape-fields-test",
 		"kubernetes-scrape-fields-test-proxyfromenv",

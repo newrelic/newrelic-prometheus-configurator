@@ -104,7 +104,7 @@ type GlobalConfig struct {
 	// File to which scrape failures are logged.
 	ScrapeFailureLogFile string `yaml:"scrape_failure_log_file,omitempty"`
 	// An uncompressed response body larger than this many bytes will cause the scrape to fail.
-	BodySizeLimit uint `yaml:"body_size_limit,omitempty"`
+	BodySizeLimit units.Base2Bytes `yaml:"body_size_limit,omitempty"`
 	// Per-scrape limit on number of scraped samples that will be accepted.
 	SampleLimit uint `yaml:"sample_limit,omitempty"`
 	// Per-scrape limit on number of labels that will be accepted for a sample.

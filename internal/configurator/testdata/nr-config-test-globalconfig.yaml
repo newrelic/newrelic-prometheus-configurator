@@ -4,6 +4,22 @@ common:
     three: four
   scrape_interval: 1m
   scrape_timeout: 1s
+  scrape_protocols:
+    - PrometheusProto
+    - OpenMetricsText1.0.0
+  evaluation_interval: 2m
+  rule_query_offset: 5s
+  query_log_file: /var/log/prometheus/query.log
+  scrape_failure_log_file: /var/log/prometheus/scrape-failures.log
+  body_size_limit: 10MiB
+  sample_limit: 1000
+  label_limit: 50
+  label_name_length_limit: 200
+  label_value_length_limit: 500
+  target_limit: 100
+  keep_dropped_targets: 10
+  metric_name_validation_scheme: utf8
+  extra_scrape_metrics: true
 
 newrelic_remote_write:
   data_source_name: data-source
