@@ -17,15 +17,29 @@ import (
 func TestNrConfig(t *testing.T) {
 	t.Parallel()
 
-	expected := testNrConfigExpectation(t, false)
-	nrConfigData, err := os.ReadFile("testdata/nr-config-test.yaml")
-	require.NoError(t, err)
-	checkNrConfig(t, expected, nrConfigData)
+	t.Run("with proxy URL", func(t *testing.T) {
+		t.Parallel()
+		expected := testNrConfigWithProxyURL(t)
+		nrConfigData, err := os.ReadFile("testdata/nr-config-test.yaml")
+		require.NoError(t, err)
+		checkNrConfig(t, expected, nrConfigData)
+	})
 
-	expected = testNrConfigExpectation(t, true)
-	nrConfigData, err = os.ReadFile("testdata/nr-config-test-proxyfromenv.yaml")
-	require.NoError(t, err)
-	checkNrConfig(t, expected, nrConfigData)
+	t.Run("with proxy from environment", func(t *testing.T) {
+		t.Parallel()
+		expected := testNrConfigWithProxyFromEnv(t)
+		nrConfigData, err := os.ReadFile("testdata/nr-config-test-proxyfromenv.yaml")
+		require.NoError(t, err)
+		checkNrConfig(t, expected, nrConfigData)
+	})
+
+	t.Run("with full global config", func(t *testing.T) {
+		t.Parallel()
+		expected := testNrConfigWithFullGlobalConfig(t)
+		nrConfigData, err := os.ReadFile("testdata/nr-config-test-globalconfig.yaml")
+		require.NoError(t, err)
+		checkNrConfig(t, expected, nrConfigData)
+	})
 }
 
 func checkNrConfig(t *testing.T, expected NrConfig, nrConfigData []byte) {
@@ -37,13 +51,11 @@ func checkNrConfig(t *testing.T, expected NrConfig, nrConfigData []byte) {
 	require.EqualValues(t, expected, nrConfig)
 }
 
-func testNrConfigExpectation(t *testing.T, useProxyFromEnv bool) NrConfig {
-	t.Helper()
-
+func baseRemoteWriteConfig() remotewrite.Config {
 	trueValue := true
 	falseValue := false
 
-	remoteWriteConfig := remotewrite.Config{
+	return remotewrite.Config{
 		DataSourceName: "data-source",
 		LicenseKey:     "nrLicenseKey",
 		Staging:        true,
@@ -75,28 +87,78 @@ func testNrConfigExpectation(t *testing.T, useProxyFromEnv bool) NrConfig {
 			},
 		},
 	}
+}
 
-	// Decide whether to use ProxyURL or ProxyFromEnvironment
-	if useProxyFromEnv {
-		remoteWriteConfig.ProxyFromEnvironment = true
-	} else {
-		remoteWriteConfig.ProxyURL = "http://proxy.url.to.use:1234"
+func baseGlobalConfig() promcfg.GlobalConfig {
+	return promcfg.GlobalConfig{
+		ScrapeInterval: time.Second * 60,
+		ScrapeTimeout:  time.Second,
+		ExternalLabels: map[string]string{
+			"one":   "two",
+			"three": "four",
+		},
 	}
+}
+
+func baseExtraRemoteWriteConfig() []RawPromConfig {
+	return []RawPromConfig{
+		map[string]any{
+			"url": "https://extra.prometheus.remote.write",
+		},
+	}
+}
+
+func testNrConfigWithProxyURL(t *testing.T) NrConfig {
+	t.Helper()
+
+	remoteWriteConfig := baseRemoteWriteConfig()
+	remoteWriteConfig.ProxyURL = "http://proxy.url.to.use:1234"
 
 	return NrConfig{
-		Common: promcfg.GlobalConfig{
-			ScrapeInterval: time.Second * 60,
-			ScrapeTimeout:  time.Second,
-			ExternalLabels: map[string]string{
-				"one":   "two",
-				"three": "four",
-			},
-		},
-		RemoteWrite: remoteWriteConfig,
-		ExtraRemoteWrite: []RawPromConfig{
-			map[string]any{
-				"url": "https://extra.prometheus.remote.write",
-			},
-		},
+		Common:           baseGlobalConfig(),
+		RemoteWrite:      remoteWriteConfig,
+		ExtraRemoteWrite: baseExtraRemoteWriteConfig(),
+	}
+}
+
+func testNrConfigWithProxyFromEnv(t *testing.T) NrConfig {
+	t.Helper()
+
+	remoteWriteConfig := baseRemoteWriteConfig()
+	remoteWriteConfig.ProxyFromEnvironment = true
+
+	return NrConfig{
+		Common:           baseGlobalConfig(),
+		RemoteWrite:      remoteWriteConfig,
+		ExtraRemoteWrite: baseExtraRemoteWriteConfig(),
+	}
+}
+
+func testNrConfigWithFullGlobalConfig(t *testing.T) NrConfig {
+	t.Helper()
+
+	remoteWriteConfig := baseRemoteWriteConfig()
+	remoteWriteConfig.ProxyURL = "http://proxy.url.to.use:1234"
+
+	globalConfig := baseGlobalConfig()
+	globalConfig.ScrapeProtocols = []string{"PrometheusProto", "OpenMetricsText1.0.0"}
+	globalConfig.EvaluationInterval = 2 * time.Minute
+	globalConfig.RuleQueryOffset = 5 * time.Second
+	globalConfig.QueryLogFile = "/var/log/prometheus/query.log"
+	globalConfig.ScrapeFailureLogFile = "/var/log/prometheus/scrape-failures.log"
+	globalConfig.BodySizeLimit = 10 * 1024 * 1024 // 10MiB
+	globalConfig.SampleLimit = 1000
+	globalConfig.LabelLimit = 50
+	globalConfig.LabelNameLengthLimit = 200
+	globalConfig.LabelValueLengthLimit = 500
+	globalConfig.TargetLimit = 100
+	globalConfig.KeepDroppedTargets = 10
+	globalConfig.MetricNameValidationScheme = "utf8"
+	globalConfig.ExtraScrapeMetrics = true
+
+	return NrConfig{
+		Common:           globalConfig,
+		RemoteWrite:      remoteWriteConfig,
+		ExtraRemoteWrite: baseExtraRemoteWriteConfig(),
 	}
 }
