@@ -9,7 +9,7 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 ## Unreleased
 
 ### enhancement
-- Adds new global configuration options @dbudziwojski [#594](https://github.com/newrelic/newrelic-prometheus-configurator/pull/594):
+- Adds new global configuration options @dbudziwojski @woehrl01 [#594](https://github.com/newrelic/newrelic-prometheus-configurator/pull/594):
   - rule_query_offset
   - query_log_file
   - scrape_failure_log_file 
