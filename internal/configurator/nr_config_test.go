@@ -100,6 +100,14 @@ func baseGlobalConfig() promcfg.GlobalConfig {
 	}
 }
 
+func baseExtraRemoteWriteConfig() []RawPromConfig {
+	return []RawPromConfig{
+		map[string]any{
+			"url": "https://extra.prometheus.remote.write",
+		},
+	}
+}
+
 func testNrConfigWithProxyURL(t *testing.T) NrConfig {
 	t.Helper()
 
@@ -107,13 +115,9 @@ func testNrConfigWithProxyURL(t *testing.T) NrConfig {
 	remoteWriteConfig.ProxyURL = "http://proxy.url.to.use:1234"
 
 	return NrConfig{
-		Common:      baseGlobalConfig(),
-		RemoteWrite: remoteWriteConfig,
-		ExtraRemoteWrite: []RawPromConfig{
-			map[string]any{
-				"url": "https://extra.prometheus.remote.write",
-			},
-		},
+		Common:           baseGlobalConfig(),
+		RemoteWrite:      remoteWriteConfig,
+		ExtraRemoteWrite: baseExtraRemoteWriteConfig(),
 	}
 }
 
@@ -124,13 +128,9 @@ func testNrConfigWithProxyFromEnv(t *testing.T) NrConfig {
 	remoteWriteConfig.ProxyFromEnvironment = true
 
 	return NrConfig{
-		Common:      baseGlobalConfig(),
-		RemoteWrite: remoteWriteConfig,
-		ExtraRemoteWrite: []RawPromConfig{
-			map[string]any{
-				"url": "https://extra.prometheus.remote.write",
-			},
-		},
+		Common:           baseGlobalConfig(),
+		RemoteWrite:      remoteWriteConfig,
+		ExtraRemoteWrite: baseExtraRemoteWriteConfig(),
 	}
 }
 
@@ -157,12 +157,8 @@ func testNrConfigWithFullGlobalConfig(t *testing.T) NrConfig {
 	globalConfig.ExtraScrapeMetrics = true
 
 	return NrConfig{
-		Common:      globalConfig,
-		RemoteWrite: remoteWriteConfig,
-		ExtraRemoteWrite: []RawPromConfig{
-			map[string]any{
-				"url": "https://extra.prometheus.remote.write",
-			},
-		},
+		Common:           globalConfig,
+		RemoteWrite:      remoteWriteConfig,
+		ExtraRemoteWrite: baseExtraRemoteWriteConfig(),
 	}
 }
