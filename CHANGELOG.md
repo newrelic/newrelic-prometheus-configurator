@@ -8,8 +8,14 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### enhancement
+## v2.12.0 - 2026-06-29
+
+### 🚀 Enhancements
 - Adds new global configuration options: `rule_query_offset`, `query_log_file`, `scrape_failure_log_file`, `body_size_limit`, `sample_limit`, `label_limit`, `label_name_length_limit`, `label_value_length_limit`, `target_limit`, `keep_dropped_targets`, `metric_name_validation_scheme`, and `extra_scrape_metrics` @dbudziwojski @woehrl01 [#594](https://github.com/newrelic/newrelic-prometheus-configurator/pull/594):
+
+### ⛓️ Dependencies
+- Updated github.com/prometheus/client_golang/exp digest
+- Updated common-library to v2.3.2
 
 ## v2.11.3 - 2026-06-22
 
