@@ -14,7 +14,7 @@ env:
   # NOTICE that apart from this, the versions in the chart linter matrix needs to be bumped too.
   LATEST_K8S_VERSION: 'v1.35.0'
   MINIKUBE_VERSION: 'v1.38.1'
-  DOCKER_API_VERSION: "1.44"
+  DOCKER_API_VERSION: '1.44'
 
 jobs:
   e2e-test:
@@ -43,11 +43,6 @@ jobs:
       - name: Install Tilt
         run: |
           curl -fsSL https://github.com/tilt-dev/tilt/releases/download/v0.33.2/tilt.0.33.2.linux.x86_64.tar.gz | tar -xzv tilt && sudo mv tilt /usr/local/bin/tilt
-
-      - name: Update Docker CLI Components
-        run: |
-          sudo apt-get update
-          sudo apt-get upgrade -y docker-ce-cli
       - name: Run e2e-test
         uses: newrelic/newrelic-integration-e2e-action@v1
         with:
