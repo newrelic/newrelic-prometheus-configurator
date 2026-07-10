@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### enhancement
+- Add support for Kubernetes 1.35, remove support for 1.30 @jamescripter [#597](https://github.com/newrelic/newrelic-prometheus-configurator/pull/597)
+
 ## v2.12.0 - 2026-06-29
 
 ### 🚀 Enhancements
