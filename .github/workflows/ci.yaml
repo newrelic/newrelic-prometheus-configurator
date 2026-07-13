@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: azure/setup-helm@v5
         with:
-          version: v3.21.3 #Do NOT update to v4 until https://github.com/helm-unittest/helm-unittest/issues/777 is resolved
+          version: v4.2.3 #Do NOT update to v4 until https://github.com/helm-unittest/helm-unittest/issues/777 is resolved
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
