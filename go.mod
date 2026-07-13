@@ -4,7 +4,7 @@ go 1.26.5
 
 require (
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b
-	github.com/prometheus/client_golang/exp v0.0.0-20260624042014-28914d017fba
+	github.com/prometheus/client_golang/exp v0.0.0-20260710134234-de192175ccd6
 	github.com/prometheus/prometheus v0.312.0
 	github.com/sirupsen/logrus v1.9.4
 	github.com/stretchr/testify v1.11.1
@@ -76,7 +76,7 @@ require (
 	github.com/hashicorp/go-version v1.9.0 // indirect
 	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.18.6 // indirect
+	github.com/klauspost/compress v1.19.0 // indirect
 	github.com/knadh/koanf/maps v0.1.2 // indirect
 	github.com/knadh/koanf/providers/confmap v1.0.0 // indirect
 	github.com/knadh/koanf/v2 v2.3.4 // indirect
