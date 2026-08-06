@@ -1,0 +1,2969 @@
+# Configure your <cluster name> and <license key> values
+cluster: <cluster-name>
+licenseKey: <license-key>
+nrStaging: true
+
+config:
+  common:
+    scrape_interval: 15s
+
+  newrelic_remote_write:
+    extra_write_relabel_configs:
+      - source_labels: [ 'job' ]
+        regex: ^self-metrics$
+        action: keep
+
+  extra_remote_write:
+    - name: newrelic_rw2
+      url: http://rwmock:8000
+      write_relabel_configs:
+        - source_labels: [ 'job' ]
+          regex: ^self-metrics$
+          action: drop
+        - source_labels: [ __name__ ]
+          regex: ^addsstable_applications$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^addsstable_aswrites$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^addsstable_copies$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^addsstable_delay_enginebackpressure$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^addsstable_proposals$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_admitted_kv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_admitted_kv_stores$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_admitted_sql_kv_response$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_admitted_sql_leaf_start$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_admitted_sql_root_start$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_admitted_sql_sql_response$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_errored_kv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_errored_kv_stores$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_errored_sql_kv_response$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_errored_sql_leaf_start$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_errored_sql_root_start$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_errored_sql_sql_response$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_granter_io_tokens_exhausted_duration_kv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_requested_kv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_requested_kv_stores$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_requested_sql_kv_response$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_requested_sql_leaf_start$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_requested_sql_root_start$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_requested_sql_sql_response$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_wait_sum_kv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_wait_sum_kv_stores$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_wait_sum_sql_kv_response$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_wait_sum_sql_leaf_start$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_wait_sum_sql_root_start$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^admission_wait_sum_sql_sql_response$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_buffer_entries_in$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_buffer_entries_mem_acquired$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_buffer_entries_mem_released$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_buffer_entries_out$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_buffer_entries_released$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_buffer_pushback_nanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_bytes_messages_pushback_nanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_emitted_bytes$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_emitted_messages$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_error_retries$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_failures$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_flush_messages_pushback_nanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_flushed_bytes$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_flushes$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_forwarded_resolved_messages$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_frontier_updates$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_messages_messages_pushback_nanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_queue_time_nanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^changefeed_table_metadata_nanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_batches$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_batches_async_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_batches_async_throttled$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_batches_partial$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_errors_inleasetransferbackoffs$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_errors_notleaseholder$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rangefeed_error_catchup_ranges$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rangefeed_restart_stuck$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rangelookups$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_addsstable_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_adminchangereplicas_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_adminmerge_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_adminrelocaterange_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_adminscatter_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_adminsplit_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_admintransferlease_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_adminunsplit_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_adminverifyprotectedtimestamp_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_barrier_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_checkconsistency_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_clearrange_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_computechecksum_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_conditionalput_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_delete_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_deleterange_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_endtxn_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_ambiguousresulterrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_batchtimestampbeforegcerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_communicationerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_conditionfailederrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_errordetailtype_0_$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_errordetailtype_15_$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_errordetailtype_19_$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_errordetailtype_20_$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_errordetailtype_21_$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_errordetailtype_23_$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_errordetailtype_24_$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_errordetailtype_29_$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_errordetailtype_30_$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_errordetailtype_33_$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_indeterminatecommiterrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_integeroverflowerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_intentmissingerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_internalerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_invalidleaseerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_leaserejectederrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_mergeinprogresserrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_mintimestampboundunsatisfiableerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_mvcchistorymutationerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_nodeunavailableerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_notleaseholdererrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_oprequirestxnerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_optimisticevalconflictserrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_raftgroupdeletederrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_rangefeedretryerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_rangekeymismatcherrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_rangenotfounderrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_readwithinuncertaintyintervalerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_refreshfailederrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_replicacorruptionerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_replicatooolderrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_storenotfounderrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_transactionabortederrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_transactionpusherrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_transactionretryerrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_transactionretrywithprotorefresherrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_transactionstatuserrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_txnalreadyencounterederrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_unsupportedrequesterrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_writeintenterrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_err_writetooolderrtype$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_export_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_gc_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_get_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_heartbeattxn_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_increment_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_initput_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_leaseinfo_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_merge_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_migrate_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_probe_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_pushtxn_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_put_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_queryintent_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_querylocks_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_queryresolvedtimestamp_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_querytxn_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_rangestats_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_recomputestats_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_recovertxn_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_refresh_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_refreshrange_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_requestlease_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_resolveintent_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_resolveintentrange_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_reversescan_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_revertrange_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_scan_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_scaninterleavedintents_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_sent_local$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_sent_nextreplicaerror$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_subsume_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_transferlease_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_truncatelog_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^distsender_rpc_writebatch_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^engine_stalls$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^exec_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^exec_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^gossip_bytes_received$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^gossip_bytes_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^gossip_connections_refused$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^gossip_infos_received$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^gossip_infos_sent$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^intentresolver_async_throttled$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^intentresolver_finalized_txns_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^intentresolver_intents_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^intents_abort_attempts$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^intents_poison_attempts$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^intents_resolve_attempts$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_adopt_iterations$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_create_stats_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_create_stats_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_create_stats_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_create_stats_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_create_stats_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_create_stats_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_span_config_reconciliation_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_span_config_reconciliation_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_span_config_reconciliation_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_span_config_reconciliation_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_span_config_reconciliation_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_span_config_reconciliation_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_sql_stats_compaction_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_sql_stats_compaction_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_sql_stats_compaction_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_sql_stats_compaction_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_sql_stats_compaction_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_auto_sql_stats_compaction_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_backup_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_backup_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_backup_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_backup_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_backup_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_backup_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_changefeed_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_changefeed_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_changefeed_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_changefeed_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_changefeed_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_changefeed_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_claimed_jobs$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_create_stats_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_create_stats_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_create_stats_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_create_stats_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_create_stats_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_create_stats_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_import_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_import_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_import_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_import_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_import_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_import_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_migration_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_migration_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_migration_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_migration_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_migration_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_migration_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_new_schema_change_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_new_schema_change_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_new_schema_change_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_new_schema_change_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_new_schema_change_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_new_schema_change_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_restore_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_restore_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_restore_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_restore_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_restore_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_restore_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_resumed_claimed_jobs$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_row_level_ttl_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_row_level_ttl_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_row_level_ttl_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_row_level_ttl_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_row_level_ttl_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_row_level_ttl_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_row_level_ttl_rows_deleted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_row_level_ttl_rows_selected$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_gc_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_gc_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_gc_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_gc_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_gc_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_gc_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_schema_change_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_ingestion_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_ingestion_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_ingestion_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_ingestion_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_ingestion_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_ingestion_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_replication_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_replication_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_replication_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_replication_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_replication_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_stream_replication_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_typedesc_schema_change_fail_or_cancel_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_typedesc_schema_change_fail_or_cancel_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_typedesc_schema_change_fail_or_cancel_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_typedesc_schema_change_resume_completed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_typedesc_schema_change_resume_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^jobs_typedesc_schema_change_resume_retry_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_lease_transfers_cannot_find_better_candidate$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_lease_transfers_delta_not_significant$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_lease_transfers_existing_not_overfull$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_lease_transfers_missing_stats_for_existing_stores$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_lease_transfers_should_transfer$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_lease_transfers_significantly_switches_relative_disposition$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_replica_rebalancing_cannot_find_better_candidate$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_replica_rebalancing_delta_not_significant$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_replica_rebalancing_existing_not_overfull$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_replica_rebalancing_missing_stats_for_existing_store$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_replica_rebalancing_should_transfer$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_allocator_load_based_replica_rebalancing_significantly_switches_relative_disposition$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_prober_planning_attempts$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_prober_planning_failures$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_prober_read_attempts$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_prober_read_failures$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_prober_write_attempts$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_prober_write_failures$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_protectedts_reconciliation_errors$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_protectedts_reconciliation_num_runs$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_protectedts_reconciliation_records_processed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_protectedts_reconciliation_records_removed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_rangefeed_budget_allocation_blocked$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_rangefeed_budget_allocation_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_rangefeed_catchup_scan_nanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_replica_circuit_breaker_num_tripped_events$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_tenant_rate_limit_read_batches_admitted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_tenant_rate_limit_read_bytes_admitted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_tenant_rate_limit_read_requests_admitted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_tenant_rate_limit_write_batches_admitted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_tenant_rate_limit_write_bytes_admitted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^kv_tenant_rate_limit_write_requests_admitted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^leases_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^leases_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^leases_transfers_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^leases_transfers_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^liveness_epochincrements$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^liveness_heartbeatfailures$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^liveness_heartbeatsuccesses$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_consistency_process_failure$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_consistency_process_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_consistency_processingnanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_abortspanconsidered$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_abortspangcnum$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_abortspanscanned$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_intentsconsidered$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_intenttxns$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_numkeysaffected$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_pushtxn$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_resolvefailed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_resolvesuccess$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_resolvetotal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_transactionresolvefailed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_transactionspangcaborted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_transactionspangccommitted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_transactionspangcpending$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_transactionspangcstaging$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_info_transactionspanscanned$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_process_failure$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_process_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_gc_processingnanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_merge_process_failure$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_merge_process_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_merge_processingnanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_raftlog_process_failure$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_raftlog_process_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_raftlog_processingnanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_raftsnapshot_process_failure$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_raftsnapshot_process_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_raftsnapshot_processingnanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicagc_process_failure$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicagc_process_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicagc_processingnanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicagc_removereplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_addnonvoterreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_addreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_addvoterreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_nonvoterpromotions$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_process_failure$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_process_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_processingnanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_rebalancenonvoterreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_rebalancereplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_rebalancevoterreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_removedeadnonvoterreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_removedeadreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_removedeadvoterreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_removedecommissioningnonvoterreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_removedecommissioningreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_removedecommissioningvoterreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_removelearnerreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_removenonvoterreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_removereplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_removevoterreplica$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_transferlease$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_replicate_voterdemotions$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_split_process_failure$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_split_process_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_split_processingnanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_tsmaintenance_process_failure$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_tsmaintenance_process_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^queue_tsmaintenance_processingnanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_commandsapplied$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_entrycache_accesses$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_entrycache_hits$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_process_tickingnanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_process_workingnanos$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_app$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_appresp$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_dropped$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_heartbeat$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_heartbeatresp$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_prevote$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_prevoteresp$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_prop$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_snap$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_timeoutnow$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_transferleader$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_vote$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_rcvd_voteresp$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_ticks$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raft_timeoutcampaign$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^raftlog_truncated$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_adds$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_merges$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_raftleadertransfers$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_recoveries$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_removes$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_snapshots_applied_initial$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_snapshots_applied_non_voter$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_snapshots_applied_voter$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_snapshots_generated$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_snapshots_rcvd_bytes$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_snapshots_sent_bytes$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^range_splits$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rebalancing_lease_transfers$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rebalancing_range_rebalances$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_batches_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_heartbeats_loops_exited$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_heartbeats_loops_started$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_addsstable_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_adminchangereplicas_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_adminmerge_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_adminrelocaterange_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_adminscatter_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_adminsplit_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_admintransferlease_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_adminunsplit_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_adminverifyprotectedtimestamp_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_barrier_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_checkconsistency_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_clearrange_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_computechecksum_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_conditionalput_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_delete_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_deleterange_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_endtxn_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_export_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_gc_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_get_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_heartbeattxn_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_increment_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_initput_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_leaseinfo_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_merge_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_migrate_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_probe_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_pushtxn_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_put_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_queryintent_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_querylocks_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_queryresolvedtimestamp_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_querytxn_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_rangestats_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_recomputestats_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_recovertxn_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_refresh_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_refreshrange_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_requestlease_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_resolveintent_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_resolveintentrange_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_reversescan_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_revertrange_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_scan_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_scaninterleavedintents_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_subsume_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_transferlease_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_truncatelog_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^rpc_method_writebatch_recv$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^schedules_BACKUP_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^schedules_BACKUP_started$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^schedules_BACKUP_succeeded$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^schedules_scheduled_row_level_ttl_executor_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^schedules_scheduled_row_level_ttl_executor_started$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^schedules_scheduled_row_level_ttl_executor_succeeded$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^schedules_scheduled_sql_stats_compaction_executor_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^schedules_scheduled_sql_stats_compaction_executor_started$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^schedules_scheduled_sql_stats_compaction_executor_succeeded$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_bytesin$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_bytesout$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_conn_failures$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_contention_resolver_failed_resolutions$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_contention_resolver_retries$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_contention_txn_id_cache_miss$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_contention_txn_id_cache_read$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_copy_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_copy_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_ddl_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_ddl_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_delete_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_delete_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_disk_distsql_spilled_bytes_read$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_disk_distsql_spilled_bytes_written$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_distsql_flows_scheduled$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_distsql_queries_spilled$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_distsql_select_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_failure_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_feature_flag_denial$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_full_scan_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_guardrails_full_scan_rejected_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_guardrails_max_row_size_err_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_guardrails_max_row_size_log_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_guardrails_transaction_rows_read_err_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_guardrails_transaction_rows_read_log_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_guardrails_transaction_rows_written_err_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_guardrails_transaction_rows_written_log_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_hydrated_table_cache_hits$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_hydrated_table_cache_misses$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_insert_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_insert_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_misc_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_misc_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_new_conns$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_optimizer_fallback_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_optimizer_plan_cache_hits$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_optimizer_plan_cache_hits_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_optimizer_plan_cache_misses$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_optimizer_plan_cache_misses_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_pgwire_cancel_ignored$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_pgwire_cancel_successful$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_query_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_query_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_restart_savepoint_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_restart_savepoint_release_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_restart_savepoint_release_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_restart_savepoint_rollback_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_restart_savepoint_rollback_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_restart_savepoint_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_savepoint_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_savepoint_release_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_savepoint_release_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_savepoint_rollback_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_savepoint_rollback_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_savepoint_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_schema_changer_permanent_errors$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_schema_changer_retry_errors$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_schema_changer_successes$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_select_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_select_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_stats_cleanup_rows_removed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_stats_discarded_current$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_stats_flush_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_temp_object_cleaner_schemas_deletion_error$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_temp_object_cleaner_schemas_deletion_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_temp_object_cleaner_schemas_to_delete$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_txn_abort_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_txn_begin_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_txn_begin_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_txn_commit_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_txn_commit_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_txn_contended_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_txn_rollback_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_txn_rollback_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_update_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sql_update_started_count_internal$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sqlliveness_is_alive_cache_hits$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sqlliveness_is_alive_cache_misses$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sqlliveness_sessions_deleted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sqlliveness_sessions_deletion_runs$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sqlliveness_write_failures$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^sqlliveness_write_successes$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^streaming_events_ingested$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^streaming_flushes$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^streaming_ingested_bytes$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^streaming_resolved_events_ingested$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^timeseries_write_bytes$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^timeseries_write_errors$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^timeseries_write_samples$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^tscache_skl_rotations$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_aborts$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_commit_waits$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_commit_waits_before_commit_trigger$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_commits$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_commits1PC$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_condensed_intent_spans$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_condensed_intent_spans_rejected$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_parallelcommits$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_refresh_auto_retries$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_refresh_fail$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_refresh_fail_with_condensed_spans$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_refresh_memory_limit_exceeded$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_refresh_success$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_restarts_asyncwritefailure$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_restarts_commitdeadlineexceeded$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_restarts_readwithinuncertainty$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_restarts_serializable$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_restarts_txnaborted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_restarts_txnpush$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_restarts_unknown$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_restarts_writetooold$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_restarts_writetoooldmulti$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_rollbacks_async_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txn_rollbacks_failed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txnrecovery_failures$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txnrecovery_successes_aborted$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txnrecovery_successes_committed$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+        - source_labels: [ __name__ ]
+          regex: ^txnrecovery_successes_pending$
+          target_label: newrelic_metric_type
+          replacement: "counter"
+          action: replace
+
+  kubernetes:
+    jobs:
+      - job_name_prefix: kubernetes-job
+        tls_config:
+          insecure_skip_verify: true
+        target_discovery:
+          pod: true
+          endpoints: true
+          filter:
+            annotations:
+              prometheus.io/scrape: true
