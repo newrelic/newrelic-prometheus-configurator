@@ -7,7 +7,7 @@ require (
 	github.com/prometheus/client_golang/exp v0.0.0-20260710134234-de192175ccd6
 	github.com/prometheus/prometheus v0.313.1
 	github.com/sirupsen/logrus v1.10.0
-	github.com/stretchr/testify v1.11.1
+	github.com/stretchr/testify v1.12.0
 	golang.org/x/sync v0.22.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.36.2
