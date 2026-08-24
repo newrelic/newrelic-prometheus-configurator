@@ -8,6 +8,14 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.13.3 - 2026-08-24
+
+### ⛓️ Dependencies
+- Updated github.com/sirupsen/logrus to v1.10.1 - [Changelog 🔗](https://github.com/sirupsen/logrus/releases/tag/v1.10.1)
+- Updated kubernetes monorepo to v0.36.4
+- Updated github.com/prometheus/client_golang/exp digest
+- Updated prometheus version
+
 ## v2.13.2 - 2026-08-17
 
 ### ⛓️ Dependencies
