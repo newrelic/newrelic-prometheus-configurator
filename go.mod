@@ -6,7 +6,7 @@ require (
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b
 	github.com/prometheus/client_golang/exp v0.0.0-20260820153414-89c60c055469
 	github.com/prometheus/prometheus v0.314.0
-	github.com/sirupsen/logrus v1.10.1
+	github.com/sirupsen/logrus v1.10.2
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/sync v0.22.0
 	gopkg.in/yaml.v3 v3.0.1
