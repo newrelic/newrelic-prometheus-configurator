@@ -8,8 +8,13 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.13.4 - 2026-08-31
+
 ### dependency
 - Updated go to v1.26.6 @dbudziwojski [#615](https://github.com/newrelic/newrelic-prometheus-configurator/pull/615)
+
+### ⛓️ Dependencies
+- Updated github.com/sirupsen/logrus to v1.10.2 - [Changelog 🔗](https://github.com/sirupsen/logrus/releases/tag/v1.10.2)
 
 ## v2.13.3 - 2026-08-24
 
