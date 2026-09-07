@@ -8,6 +8,11 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.13.5 - 2026-09-07
+
+### ⛓️ Dependencies
+- Updated kubernetes monorepo to v0.37.0
+
 ## v2.13.4 - 2026-08-31
 
 ### dependency
