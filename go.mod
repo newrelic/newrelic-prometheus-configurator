@@ -1,6 +1,6 @@
 module github.com/newrelic/newrelic-prometheus-configurator
 
-go 1.26.6
+go 1.27.1
 
 require (
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b
