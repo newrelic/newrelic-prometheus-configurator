@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### 🚀 Enhancements
+- Add support for Kubernetes 1.36, remove support for 1.31
+
 ## v2.13.5 - 2026-09-07
 
 ### ⛓️ Dependencies
