@@ -12,7 +12,7 @@ permissions:
 
 env:
   LATEST_K8S_VERSION: 'v1.36.0'
-  MINIKUBE_VERSION: 'v1.39.0'
+  MINIKUBE_VERSION: '1.39.0'
   DOCKER_API_VERSION: '1.44'
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
           curl -fsSL https://github.com/tilt-dev/tilt/releases/download/v$TILT_VERSION/tilt.$TILT_VERSION.linux.x86_64.tar.gz | tar -xzv tilt && sudo mv tilt /usr/local/bin/tilt
       - name: Start Minikube
         run: |
-          ctlptl create cluster minikube --registry=ctlptl-registry --kubernetes-version=${{ env.MINIKUBE_VERSION }}
+          ctlptl create cluster minikube --registry=ctlptl-registry --kubernetes-version=${{ env.LATEST_K8S_VERSION }}
 
       - name: Run e2e-test
         uses: newrelic/newrelic-integration-e2e-action@v1
