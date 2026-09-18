@@ -52,12 +52,12 @@ helm-deps:
 .PHONY: tilt-up
 tilt-up:
 	$(MAKE) helm-deps
-	eval $$(minikube docker-env) && tilt up -- --helm_values_file=$(HELM_VALUES_FILE) ; tilt down -- --helm_values_file=$(HELM_VALUES_FILE)
+	tilt up -- --helm_values_file=$(HELM_VALUES_FILE) ; tilt down -- --helm_values_file=$(HELM_VALUES_FILE)
 
 .PHONY: tilt-ci
 tilt-ci:
 	$(MAKE) helm-deps
-	eval $$(minikube docker-env) && tilt ci -- --helm_values_file=$(HELM_VALUES_FILE)
+	tilt ci -- --helm_values_file=$(HELM_VALUES_FILE)
 
 .PHONY: integration-test
 integration-test:

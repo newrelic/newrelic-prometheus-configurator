@@ -16,7 +16,6 @@ local_resource('Configurator binary', 'make build-multiarch', deps=[
   './configurator',
 ])
 
-# Images are pushed to the docker inside minikube since we use 'eval $(minikube docker-env)'.
 docker_build('prometheus-configurator', '.')
 docker_build('openmetrics-fake-exporter', './test/openmetrics-fake-exporter/.')
 
