@@ -42,4 +42,4 @@ jobs:
           agent-type: NRPrometheusAgent
           version: ${{ steps.version.outputs.version }}
           git-ref: ${{ github.event.release.tag_name }}
-          apm-control-nr-license-key: ${{ secrets.APM_CONTROL_NR_LICENSE_KEY_STAGING }}
+          newrelic-license-key: ${{ secrets.AGENT_METADATA_ACTION_LICENSE_KEY }}
