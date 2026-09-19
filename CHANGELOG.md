@@ -8,6 +8,9 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+### enhancement
+- Update E2E tests to work with Minikube v1.39 @dbudziwojski [#624](https://github.com/newrelic/newrelic-prometheus-configurator/pull/624)
+
 ## v2.13.5 - 2026-09-07
 
 ### ⛓️ Dependencies
