@@ -128,8 +128,6 @@ make start-local-cluster
 make tilt-up
 ```
 
-Notice that local images are build and pushed to docker running inside the minikube cluster since we are running `eval $(minikube docker-env)` before launching Tilt.
-
 For more in depth details regarding importing dashboards, you can check the official [docs](https://docs.newrelic.com/docs/query-your-data/explore-query-data/dashboards/introduction-dashboards/#dashboards-import).
 
 ### Testing
