@@ -5,7 +5,7 @@ type: application
 version: 2.14.0
 # Prometheus Server Version
 # https://pkg.go.dev/github.com/prometheus/prometheus#readme-prometheus-code-base
-appVersion: "v3.14.0"
+appVersion: "v3.15.0"
 annotations:
   configuratorVersion: "2.14.0"
 dependencies:
