@@ -1,0 +1,12 @@
+configurationDefinitions:
+  - platform: KUBERNETESCLUSTER
+    description: prometheus agent config 
+    type: AgentConfig
+    version: 1.0.0
+    format: yml
+    bindings:
+      - type: CONFIGURES
+        targetType: AGENT
+        target: NRPrometheusAgent
+        versions:
+          - ">=2.4.4"
