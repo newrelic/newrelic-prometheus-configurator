@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: helm/chart-testing-action@v2.8.0
+      - uses: helm/chart-testing-action@v2.9.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
