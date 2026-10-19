@@ -8,6 +8,11 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.14.2 - 2026-10-19
+
+### ⛓️ Dependencies
+- Updated google.golang.org/grpc to v1.83.2
+
 ## v2.14.1 - 2026-10-05
 
 ### ⛓️ Dependencies
