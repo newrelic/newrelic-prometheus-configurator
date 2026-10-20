@@ -26,11 +26,11 @@ jobs:
     steps:
       - uses: azure/setup-helm@v5
         with:
-          version: v4.3.0 #Do NOT update to v4 until https://github.com/helm-unittest/helm-unittest/issues/777 is resolved
+          version: v4.3.1 #Do NOT update to v4 until https://github.com/helm-unittest/helm-unittest/issues/777 is resolved
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: helm/chart-testing-action@v2.8.0
+      - uses: helm/chart-testing-action@v2.9.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -70,7 +70,7 @@ jobs:
             exit 1
           fi
       - name: Setup Minikube
-        uses: manusa/actions-setup-minikube@v2.18.0
+        uses: manusa/actions-setup-minikube@v2.19.0
         if: steps.list-changed.outputs.changed == 'true'
         with:
           minikube version: ${{ env.MINIKUBE_VERSION }}
@@ -108,7 +108,7 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Setup Minikube
-        uses: manusa/actions-setup-minikube@v2.18.0
+        uses: manusa/actions-setup-minikube@v2.19.0
         with:
           minikube version: ${{ env.MINIKUBE_VERSION }}
           kubernetes version: ${{ env.LATEST_K8S_VERSION }}

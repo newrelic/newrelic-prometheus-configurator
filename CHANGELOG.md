@@ -8,9 +8,24 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
-### enhancement
+## v2.14.2 - 2026-10-19
+
+### ⛓️ Dependencies
+- Updated google.golang.org/grpc to v1.83.2
+
+## v2.14.1 - 2026-10-05
+
+### ⛓️ Dependencies
+- Updated kubernetes monorepo to v0.37.1
+
+## v2.14.0 - 2026-09-21
+
+### 🚀 Enhancements
 - Add support for Kubernetes 1.36, remove support for 1.31 [#621](https://github.com/newrelic/newrelic-prometheus-configurator/pull/621)
 - Update E2E tests to work with Minikube v1.39 @dbudziwojski [#624](https://github.com/newrelic/newrelic-prometheus-configurator/pull/624)
+
+### ⛓️ Dependencies
+- Updated alpine to v3.24.2
 
 ## v2.13.5 - 2026-09-07
 
