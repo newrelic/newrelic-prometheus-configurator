@@ -8,6 +8,11 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.14.4 - 2026-10-29
+
+### ⛓️ Dependencies
+- Updated prometheus version
+
 ## v2.14.3 - 2026-10-26
 
 ### ⛓️ Dependencies
