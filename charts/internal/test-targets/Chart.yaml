@@ -1,0 +1,13 @@
+apiVersion: v2
+
+name: test-targets
+description: A Helm chart to deploy test prometheus targets
+
+version: 0.0.1
+appVersion: 0.0.1
+
+dependencies:
+  - name: cockroachdb
+    version: 8.1.8
+    repository: "https://charts.cockroachdb.com/"
+    condition: cockroachdb.enabled
