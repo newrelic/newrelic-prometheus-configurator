@@ -8,6 +8,11 @@ Unreleased section should follow [Release Toolkit](https://github.com/newrelic/r
 
 ## Unreleased
 
+## v2.14.6 - 2026-11-16
+
+### ⛓️ Dependencies
+- Updated go.opentelemetry.io/otel/trace to v1.47.0
+
 ## v2.14.5 - 2026-11-09
 
 ### ⛓️ Dependencies
